@@ -3,4 +3,6 @@
     <dimen name="title_size">20sp</dimen>
     <dimen name="list_view_padding_left">8dp</dimen>
     <dimen name="list_view_padding_right">8dp</dimen>
+
+    <dimen name="grid_card_size">235dp</dimen>
 </resources>
