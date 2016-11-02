@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="FlowLayout">
+        <attr name="rowsCount" format="integer" />
+        <attr name="verticalSpacing" format="dimension" />
+        <attr name="horizontalSpacing" format="dimension" />
+        <attr name="state" format="enum">
+            <enum name="collapsed" value="0" />
+            <enum name="expanded" value="1" />
+        </attr>
+    </declare-styleable>
+
+    <!-- Keywords Flow Layout attrs -->
+    <attr name="keywords_flow_layout_blob_active_edit_color" format="reference" />
+    <attr name="keywords_flow_layout_blob_active_edit_cross" format="reference" />
+    <attr name="keywords_flow_layout_blob_active_color"      format="reference" />
+    <attr name="keywords_flow_layout_blob_passive_color"     format="reference" />
+    <attr name="keywords_flow_layout_blob_more_color"        format="reference" />
+    <attr name="keywords_flow_layout_blob_more_text_color"   format="reference" />
+
+    <!-- Title Flow View attrs -->
+    <attr name="titled_flow_view_edit_button_bg" format="reference" />
+</resources>

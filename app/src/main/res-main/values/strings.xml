@@ -4,4 +4,7 @@
     <string name="error_text">Data error</string>
     <string name="error_text_extended">An error has occurred.</string>
     <string name="str_about_message">Author: Maxim (Orcchg) Alov\nContact: alovmax@yandex.ru\nWeb: orcchg.wordpress.com\nMusicSquare application for Yandex</string>
+
+    <string name="keywords_flow_layout_more">more %d</string>
+    <string name="keywords_flow_layout_more_collapse">collapse</string>
 </resources>

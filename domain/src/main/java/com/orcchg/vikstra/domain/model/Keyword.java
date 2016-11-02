@@ -5,9 +5,9 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Keyword {
 
-    private String keyword;
-
-    public static Keyword create() {
-        return new AutoValue_Keyword();
+    public static Keyword create(String keyword) {
+        return new AutoValue_Keyword(keyword);
     }
+
+    abstract String keyword();
 }

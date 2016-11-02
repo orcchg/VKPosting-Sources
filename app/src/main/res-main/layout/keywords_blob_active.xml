@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="?attr/keywords_flow_layout_blob_active_color"
+    android:textColor="#ffffffff"
+    style="@style/KeywordsFlowLayoutBlob"/>

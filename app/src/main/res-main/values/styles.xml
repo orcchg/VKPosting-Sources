@@ -16,4 +16,16 @@
         <item name="cpb_sweep_speed">@string/cpb_default_sweep_speed</item>
         <item name="cpb_rotation_speed">@string/cpb_default_rotation_speed</item>
     </style>
+
+    <style name="KeywordsFlowLayoutBlob">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textSize">13dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+    </style>
 </resources>

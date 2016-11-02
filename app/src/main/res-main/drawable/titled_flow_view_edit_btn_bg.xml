@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:tint="#66000000"
+            android:src="@drawable/ic_create_white_24dp"/>
+    </item>
+</layer-list>
