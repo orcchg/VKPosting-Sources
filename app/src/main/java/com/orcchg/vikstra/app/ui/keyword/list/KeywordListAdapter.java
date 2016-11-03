@@ -14,6 +14,6 @@ public class KeywordListAdapter extends BaseAdapter<KeywordViewHolder, KeywordLi
     @Override
     protected KeywordViewHolder createModelViewHolder(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_item_keywords, parent, false);
-        return new KeywordViewHolder(view);
+        return new KeywordViewHolder(view, onItemClickListener);
     }
 }

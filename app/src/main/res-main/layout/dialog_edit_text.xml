@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/dialog_side_margin"
+    android:paddingStart="@dimen/dialog_side_margin"
+    android:paddingRight="@dimen/dialog_side_margin"
+    android:paddingEnd="@dimen/dialog_side_margin"
+    android:orientation="horizontal">
+
+    <AutoCompleteTextView
+        android:id="@+id/et_input"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

@@ -8,6 +8,8 @@ import java.util.List;
 @AutoValue
 public abstract class KeywordListItemVO {
 
+    protected boolean isSelected;
+
     public static Builder builder() {
         return new AutoValue_KeywordListItemVO.Builder();
     }
@@ -21,4 +23,7 @@ public abstract class KeywordListItemVO {
 
     public abstract String title();
     public abstract List<Keyword> keywords();
+
+    public void setSelection(boolean isSelected) { this.isSelected = isSelected; }
+    public boolean getSelection() { return isSelected; }
 }

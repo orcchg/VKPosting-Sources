@@ -14,11 +14,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_musician_list"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="@dimen/list_view_padding_left"
-            android:paddingStart="@dimen/list_view_padding_left"
-            android:paddingRight="@dimen/list_view_padding_right"
-            android:paddingEnd="@dimen/list_view_padding_right"/>
+            android:layout_height="match_parent"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
     <include layout="@layout/rv_empty_data"/>

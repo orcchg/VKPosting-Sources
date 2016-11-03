@@ -4,8 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:vikstra="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar_layout"
@@ -25,23 +24,56 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <com.orcchg.vikstra.app.ui.common.KeywordsFlowLayout
-            android:id="@+id/flow"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="16dp"
-            android:layout_gravity="center"
-            vikstra:rowsCount="4"
-            vikstra:verticalSpacing="8dp"
-            vikstra:horizontalSpacing="6dp"
-            vikstra:state="expanded"/>
-    </FrameLayout>
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <com.orcchg.vikstra.app.ui.common.view.KeywordsFlowLayout
+                android:id="@+id/flow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                vikstra:editable="true"
+                vikstra:rowsCount="4"
+                vikstra:verticalSpacing="8dp"
+                vikstra:horizontalSpacing="6dp"
+                vikstra:state="expanded"/>
+        </ScrollView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_grey_bg"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingStart="16dp"
+            android:paddingRight="4dp"
+            android:paddingEnd="4dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/et_keyword_input"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="@dimen/floating_action_button_size_mini"
+                android:layout_height="@dimen/floating_action_button_size_mini"
+                android:layout_margin="4dp"
+                android:src="@drawable/ic_add_white_24dp"
+                android:elevation="6dp"
+                app:pressedTranslationZ="12dp"/>
+        </LinearLayout>
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/rl_toolbar_dropshadow"

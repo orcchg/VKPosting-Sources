@@ -7,19 +7,26 @@ import java.util.List;
 @AutoValue
 public abstract class GroupBundle {
 
-    static Builder builder() {
+    public static Builder builder() {
         return new AutoValue_GroupBundle.Builder();
     }
 
     @AutoValue.Builder
-    abstract static class Builder {
-        abstract Builder setTitle(String title);
-        abstract Builder setGroups(List<Group> groups);
-        abstract Builder setKeywords(List<Keyword> keywords);
-        abstract GroupBundle build();
+    public abstract static class Builder {
+        public abstract Builder setTitle(String title);
+        public abstract Builder setGroups(List<Group> groups);
+        public abstract Builder setKeywords(List<Keyword> keywords);
+        public abstract GroupBundle build();
     }
 
-    abstract String title();
-    abstract List<Group> groups();
-    abstract List<Keyword> keywords();
+    public abstract String title();
+    public abstract List<Group> groups();
+    public abstract List<Keyword> keywords();
+
+    public KeywordBundle extractKeywordBundle() {
+        return KeywordBundle.builder()
+                .setTitle(title())
+                .setKeywords(keywords())
+                .build();
+    }
 }

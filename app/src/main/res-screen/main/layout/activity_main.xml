@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/fl_top"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/groups_list_title_height"
+            android:orientation="horizontal">
+
+            <Space
+                android:layout_width="@dimen/standard_space_width"
+                android:layout_height="match_parent"/>
+
+            <TextView
+                android:id="@+id/tv_groups_list_title"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginLeft="@dimen/standard_side_padding_small"
+                android:layout_marginStart="@dimen/standard_side_padding_small"
+                android:text="@string/groups_list_title"
+                style="@style/Block.Title"/>
+
+            <TextView
+                android:id="@+id/tv_groups_selection_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/standard_side_padding_mini"
+                android:layout_marginStart="@dimen/standard_side_padding_mini"
+                style="@style/Block.Title"/>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/standard_side_padding_small"
+                android:layout_marginStart="@dimen/standard_side_padding_small">
+
+                <ImageButton
+                    android:id="@+id/btn_groups_selection_drop"
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_clear_white_24dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@null"/>
+            </FrameLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="@dimen/floating_action_button_size_normal"
+        android:layout_height="@dimen/floating_action_button_size_normal"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_file_upload_white_24dp"
+        android:elevation="6dp"
+        app:pressedTranslationZ="12dp"/>
+
+</android.support.design.widget.CoordinatorLayout>

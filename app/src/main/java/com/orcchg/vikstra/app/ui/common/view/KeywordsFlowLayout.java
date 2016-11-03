@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.common;
+package com.orcchg.vikstra.app.ui.common.view;
 
 import android.content.Context;
 import android.os.Build;
@@ -60,6 +60,7 @@ public class KeywordsFlowLayout extends AbstractFlowLayout {
         });
     }
 
+    /* API */
     // ------------------------------------------
     @Override
     protected void onDotsViewClicked() {
@@ -67,15 +68,26 @@ public class KeywordsFlowLayout extends AbstractFlowLayout {
         setUpLayoutChangeListener();
     }
 
-    public void setKeywords(@NonNull List<Keyword> keywords, boolean isEditable) {
+    public void addKeyword(@NonNull Keyword keyword) {
+        LayoutInflater inflater = LayoutInflater.from(getContext());
+        addKeyword(keyword, inflater);
+    }
+
+    public void setKeywords(@NonNull List<Keyword> keywords) {
         removeAllViews();
         LayoutInflater inflater = LayoutInflater.from(getContext());
         for (Keyword keyword : keywords) {
-            // TODO: use passive view, if need
-            @LayoutRes int resId = isEditable ? R.layout.keywords_blob_active_edit : R.layout.keywords_blob_active;
-            TextView blob = (TextView) inflater.inflate(resId, null, false);
-            blob.setText(keyword.keyword());
-            addView(blob);
+            addKeyword(keyword, inflater);
         }
+    }
+
+    /* Internal */
+    // ------------------------------------------
+    private void addKeyword(@NonNull Keyword keyword, LayoutInflater inflater) {
+        // TODO: use passive view, if need
+        @LayoutRes int resId = isEditable() ? R.layout.keywords_blob_active_edit : R.layout.keywords_blob_active;
+        TextView blob = (TextView) inflater.inflate(resId, null, false);
+        blob.setText(keyword.keyword());
+        addView(blob);
     }
 }

@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.common;
+package com.orcchg.vikstra.app.ui.common.view;
 
 import android.animation.LayoutTransition;
 import android.animation.LayoutTransition.TransitionListener;
@@ -40,6 +40,7 @@ public class AbstractFlowLayout extends ViewGroup {
     protected @LayoutState int mCurrentState = STATE_COLLAPSED;
     protected boolean mIsAnimated = false;
     protected boolean mShouldDeferMeasure = false;
+    protected boolean mIsEditable = false;
 
     protected View mDotsView;
     protected LayoutTransition mLayoutTransition;
@@ -52,6 +53,14 @@ public class AbstractFlowLayout extends ViewGroup {
 
     public void setOnExpandChangedListener(OnExpandChangedListener listener) {
         mOnExpandChangedListener = listener;
+    }
+
+    public void setEditable(boolean isEditable) {
+        mIsEditable = isEditable;
+    }
+
+    public boolean isEditable() {
+        return mIsEditable;
     }
 
     /* Init */
@@ -72,6 +81,7 @@ public class AbstractFlowLayout extends ViewGroup {
         int defHorizontalSpacing = resources.getDimensionPixelSize(R.dimen.flow_layout_horizontal_spacing);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout, defStyle, 0);
+        mIsEditable = a.getBoolean(R.styleable.FlowLayout_editable, false);
         ALLOWED_ROWS_COUNT = a.getInt(R.styleable.FlowLayout_rowsCount, 0);
         VERTICAL_SPACING = a.getDimensionPixelSize(R.styleable.FlowLayout_verticalSpacing, defVerticalSpacing);
         HORIZONTAL_SPACING = a.getDimensionPixelSize(R.styleable.FlowLayout_horizontalSpacing, defHorizontalSpacing);
@@ -80,7 +90,7 @@ public class AbstractFlowLayout extends ViewGroup {
 
         mCurrentState = INITIAL_STATE == 0 ? STATE_COLLAPSED : STATE_EXPANDED;
 
-        mLastRowViews = new HashSet<WeakReference<View>>();
+        mLastRowViews = new HashSet<>();
     }
 
     public void enableLayoutTransition(boolean isEnabled) {
@@ -116,12 +126,7 @@ public class AbstractFlowLayout extends ViewGroup {
 
     /* Listener */
     // --------------------------------------------------------------------------------------------
-    protected View.OnClickListener mDotsViewClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            onDotsViewClicked();
-        }
-    };
+    protected View.OnClickListener mDotsViewClickListener = (view) -> onDotsViewClicked();
 
     protected void onDotsViewClicked() {
         @LayoutState int oldState = mCurrentState;
@@ -259,7 +264,7 @@ public class AbstractFlowLayout extends ViewGroup {
                 if (mCurrentState == STATE_EXPANDED &&
                         ALLOWED_ROWS_COUNT > 0 &&
                         currentRow >= ALLOWED_ROWS_COUNT + 1) {  // last row only: ==
-                    WeakReference<View> viewRef = new WeakReference<View>(child);
+                    WeakReference<View> viewRef = new WeakReference<>(child);
                     mLastRowViews.add(viewRef);
                 }
 

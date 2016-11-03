@@ -5,8 +5,10 @@
     <color name="colorPrimaryLight">#D7CCC8</color>
     <color name="colorAccent">#4CAF50</color>
     <color name="colorAccentSemitransparent">#884CAF50</color>
+    <color name="colorAccentOverlay">#334CAF50</color>
 
     <color name="semitransparent">#88000000</color>
+    <color name="light_grey_bg">#ededed</color>
 
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#757575</color>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.orcchg.vikstra.app.ui.common.LtrTextView
+<com.orcchg.vikstra.app.ui.common.view.LtrTextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="?attr/keywords_flow_layout_blob_more_color"
     android:clickable="true"

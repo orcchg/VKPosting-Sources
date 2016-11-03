@@ -17,6 +17,10 @@ import java.util.List;
 
 public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model>, Model> extends RecyclerView.Adapter<BaseViewHolder> {
 
+    public interface OnItemClickListener<Model> {
+        void onItemClick(View view, Model model, int position);
+    }
+
     protected static final int VIEW_TYPE_NORMAL = 0;
     protected static final int VIEW_TYPE_LOADING = 1;
     protected static final int VIEW_TYPE_ERROR = 2;
@@ -25,6 +29,7 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
     protected boolean isThereMore = false;
     protected boolean isInError = false;
 
+    protected OnItemClickListener<Model> onItemClickListener;
     protected View.OnClickListener onErrorClickListener;
 
     public BaseAdapter() {
@@ -76,6 +81,10 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
 
     /* Data access */
     // ------------------------------------------
+    public void setOnItemClickListener(OnItemClickListener<Model> onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
     public void populate(List<Model> items, boolean isThereMore) {
         isInError = false;
         if (items != null && !items.isEmpty()) {

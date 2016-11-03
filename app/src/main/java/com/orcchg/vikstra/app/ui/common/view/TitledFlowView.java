@@ -1,7 +1,6 @@
-package com.orcchg.vikstra.app.ui.common;
+package com.orcchg.vikstra.app.ui.common.view;
 
 import android.content.Context;
-import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.util.AttributeSet;
@@ -29,6 +28,8 @@ public class TitledFlowView extends FrameLayout {
     @BindView(R.id.block_title) TextView titleView;
     @BindView(R.id.block_edit_button) ImageButton editButton;
     @BindView(R.id.block_container) KeywordsFlowLayout keywordsFlowLayout;
+    @BindView(R.id.line_selector) View lineSelectorView;
+    @BindView(R.id.overlay_selector) View overlaySelectorView;
 
     private boolean isEditable;
     private boolean isSelected;
@@ -60,7 +61,20 @@ public class TitledFlowView extends FrameLayout {
 
     public void setSelection(boolean isSelected) {
         this.isSelected = isSelected;
-        // TODO: selection overlay
+        lineSelectorView.setVisibility(isSelected ? VISIBLE : INVISIBLE);
+        overlaySelectorView.setVisibility(isSelected ? VISIBLE : INVISIBLE);
+    }
+
+    public boolean isEditable() {
+        return isEditable;
+    }
+
+    public boolean getSelection() {
+        return isSelected;
+    }
+
+    public KeywordsFlowLayout getFlowLayout() {
+        return keywordsFlowLayout;
     }
 
     /* Content */
@@ -70,7 +84,7 @@ public class TitledFlowView extends FrameLayout {
 
     public void setKeywords(@NonNull List<Keyword> keywords) {
         if (keywordsFlowLayout != null) {
-            keywordsFlowLayout.setKeywords(keywords, isEditable);
+            keywordsFlowLayout.setKeywords(keywords);
         }
     }
 

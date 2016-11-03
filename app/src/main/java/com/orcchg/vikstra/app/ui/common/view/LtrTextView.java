@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.common;
+package com.orcchg.vikstra.app.ui.common.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

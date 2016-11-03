@@ -13,6 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.View> implements KeywordListContract.Presenter {
 
@@ -27,7 +28,12 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     @Override
     protected BaseAdapter createListAdapter() {
-        return new KeywordListAdapter();
+        KeywordListAdapter adapter = new KeywordListAdapter();
+        adapter.setOnItemClickListener(((view, keywordListItemVO, position) -> {
+            // TODO: impl
+            Timber.d("Clicked item at position: " + position);
+        }));
+        return adapter;
     }
 
     /* Lifecycle */

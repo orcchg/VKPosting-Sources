@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Common -->
+    <attr name="colorAccentOverlay" format="reference"/>
+
     <declare-styleable name="FlowLayout">
+        <attr name="editable" format="boolean" />
         <attr name="rowsCount" format="integer" />
         <attr name="verticalSpacing" format="dimension" />
         <attr name="horizontalSpacing" format="dimension" />

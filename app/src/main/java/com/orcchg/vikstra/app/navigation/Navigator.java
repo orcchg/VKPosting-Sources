@@ -12,6 +12,7 @@ import android.view.View;
 import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.app.ui.details.DetailsActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
+import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.list.ListActivity;
 import com.orcchg.vikstra.app.ui.tab.TabActivity;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
@@ -23,6 +24,11 @@ public class Navigator {
 
     @Inject
     public Navigator() {
+    }
+
+    public void openKeywordsListScreen(@NonNull Context context) {
+        Intent intent = KeywordListActivity.getCallingIntent(context);
+        context.startActivity(intent);
     }
 
     public void openNewKeywordsBundleScreen(@NonNull Context context) {
