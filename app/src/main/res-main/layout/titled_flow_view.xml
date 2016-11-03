@@ -38,7 +38,7 @@
             android:layout_weight="1"
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
-            style="@style/Profile.Title"/>
+            style="@style/Block.Title"/>
 
         <FrameLayout
             android:layout_width="wrap_content"
@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="24dp"
                 android:layout_gravity="left|top"
-                android:src="?attr/titled_flow_view_edit_button_bg"
+                android:src="@drawable/titled_flow_view_edit_btn_bg"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:contentDescription="@null"
                 android:visibility="gone"/>

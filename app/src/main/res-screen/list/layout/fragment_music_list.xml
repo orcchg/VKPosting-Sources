@@ -21,7 +21,7 @@
             android:paddingEnd="@dimen/list_view_padding_right"/>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <include layout="@layout/rv_empty_musicians"/>
+    <include layout="@layout/rv_empty_data"/>
     <include layout="@layout/loading_view"/>
     <include layout="@layout/error_view"/>
 

@@ -1,6 +1,9 @@
 package com.orcchg.vikstra.app.ui.common;
 
 import android.content.Context;
+import android.support.annotation.LayoutRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
+import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.model.KeywordBundle;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,5 +61,21 @@ public class TitledFlowView extends FrameLayout {
     public void setSelection(boolean isSelected) {
         this.isSelected = isSelected;
         // TODO: selection overlay
+    }
+
+    /* Content */
+    // ------------------------------------------
+    public void setTitle(String text) { if (titleView != null) titleView.setText(text); }
+    public void setTitle(@StringRes int resId) { if (titleView != null) titleView.setText(resId); }
+
+    public void setKeywords(@NonNull List<Keyword> keywords) {
+        if (keywordsFlowLayout != null) {
+            keywordsFlowLayout.setKeywords(keywords, isEditable);
+        }
+    }
+
+    public void setKeywords(@NonNull KeywordBundle bundle) {
+        setTitle(bundle.title());
+        setKeywords(bundle.keywords());
     }
 }

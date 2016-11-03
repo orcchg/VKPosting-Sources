@@ -9,6 +9,7 @@ import com.orcchg.vikstra.domain.repository.IGenreRepository;
 import com.orcchg.vikstra.data.source.remote.injection.CloudComponent;
 import com.orcchg.vikstra.data.source.remote.injection.CloudModule;
 import com.orcchg.vikstra.app.injection.module.ApplicationModule;
+import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 
 import javax.inject.Singleton;
 
@@ -26,4 +27,5 @@ public interface ApplicationComponent extends CloudComponent {
     PostExecuteScheduler postExecuteScheduler();
     IArtistRepository artistRepository();
     IGenreRepository genresRepository();
+    IKeywordRepository keywordRepository();
 }

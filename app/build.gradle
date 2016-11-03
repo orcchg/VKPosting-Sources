@@ -80,7 +80,9 @@ android {
 
     sourceSets {
         main {
-            res.srcDirs = ['src/main/res-main']
+            res.srcDirs = ['src/main/res-main',
+                           'src/main/res-screen/keyword/create',
+                           'src/main/res-screen/keyword/list']
             file('src/main/res-screen')
                     .listFiles()
                     .each { res.srcDirs += it.path }
@@ -104,6 +106,7 @@ dependencies {
     compile presentationDependencies.androidSupportV4
     compile presentationDependencies.androidSupportV7
     compile presentationDependencies.androidSupportV13
+    compile presentationDependencies.autoValue
     compile presentationDependencies.butterKnife
     compile presentationDependencies.cardView
     compile presentationDependencies.circleImageView

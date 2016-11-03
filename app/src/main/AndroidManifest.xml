@@ -11,8 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".app.ui.list.ListActivity"
-                  android:label="@string/str_musicians_list">
+        <activity android:name=".app.ui.keyword.list.KeywordListActivity"
+                  android:label="@string/app_name"
+                  android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />

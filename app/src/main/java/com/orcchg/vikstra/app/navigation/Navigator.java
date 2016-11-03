@@ -5,13 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.app.ui.details.DetailsActivity;
+import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.list.ListActivity;
 import com.orcchg.vikstra.app.ui.tab.TabActivity;
+import com.orcchg.vikstra.domain.model.KeywordBundle;
 
 import javax.inject.Inject;
 
@@ -20,6 +23,15 @@ public class Navigator {
 
     @Inject
     public Navigator() {
+    }
+
+    public void openNewKeywordsBundleScreen(@NonNull Context context) {
+        openNewKeywordsBundleScreen(context, null);
+    }
+
+    public void openNewKeywordsBundleScreen(@NonNull Context context, @Nullable KeywordBundle keywords) {
+        Intent intent = KeywordCreateActivity.getCallingIntent(context, keywords);
+        context.startActivity(intent);
     }
 
     public void openListScreen(@NonNull Context context) {

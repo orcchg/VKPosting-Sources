@@ -9,7 +9,7 @@ buildscript {
     }
 }
 
-apply plugin: 'java'
+apply plugin: 'com.android.library'
 apply plugin: "net.ltgt.apt"
 
 //noinspection GroovyUnusedAssignment
@@ -27,15 +27,23 @@ sourceSets {
     }
 }
 
+android {
+    def globalConfiguration = rootProject.extensions.getByName("ext")
+
+    compileSdkVersion globalConfiguration.getAt("androidCompileSdkVersion")
+    buildToolsVersion globalConfiguration.getAt("androidBuildToolsVersion")
+}
+
 dependencies {
     def domainDependencies = rootProject.ext.domainDependencies
     def domainTestDependencies = rootProject.ext.domainTestDependencies
 
     apt domainDependencies.autoValue
+    apt domainDependencies.autoValueParcel
 
     provided domainDependencies.javaxAnnotation
 
-    compileOnly domainDependencies.autoValue
+    compile domainDependencies.autoValue
     compile domainDependencies.javaxInject
     compile domainDependencies.rxJava
 

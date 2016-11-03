@@ -51,7 +51,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <include layout="@layout/rv_empty_musicians"/>
+        <include layout="@layout/rv_empty_data"/>
         <include layout="@layout/loading_view"/>
         <include layout="@layout/error_view"/>
     </FrameLayout>

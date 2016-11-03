@@ -9,5 +9,5 @@ public abstract class Keyword {
         return new AutoValue_Keyword(keyword);
     }
 
-    abstract String keyword();
+    public abstract String keyword();
 }

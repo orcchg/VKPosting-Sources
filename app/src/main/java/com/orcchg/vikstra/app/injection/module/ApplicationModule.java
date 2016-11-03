@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.injection.module;
 
 import android.content.Context;
 
+import com.orcchg.vikstra.data.source.repository.keyword.KeywordRepositoryImpl;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.executor.UseCaseExecutor;
@@ -21,6 +22,7 @@ import com.orcchg.vikstra.data.source.repository.artist.ServerArtistRepositoryIm
 import com.orcchg.vikstra.data.source.repository.genre.ServerGenreRepositoryImpl;
 import com.orcchg.vikstra.app.AndroidApplication;
 import com.orcchg.vikstra.app.executor.UIThread;
+import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -87,6 +89,12 @@ public class ApplicationModule {
 
     @Provides @Singleton
     IGenreRepository provideGenresRepository(ServerGenreRepositoryImpl repository) {
+        return repository;
+    }
+
+    // TODO: remove
+    @Provides @Singleton
+    IKeywordRepository provideKeywordRepository(KeywordRepositoryImpl repository) {
         return repository;
     }
 }

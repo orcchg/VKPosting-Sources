@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MusicSquare</string>
+    <string name="app_name">ViKStra</string>
     <integer name="com_vk_sdk_AppId">5691108</integer>
-
-    <string name="error_text">Data error</string>
-    <string name="error_text_extended">An error has occurred.</string>
     <string name="str_about_message">Author: Maxim (Orcchg) Alov\nContact: alovmax@yandex.ru\nWeb: orcchg.wordpress.com\nMusicSquare application for Yandex</string>
 
     <string name="keywords_flow_layout_more">more %d</string>
     <string name="keywords_flow_layout_more_collapse">collapse</string>
+
+    <string name="empty_data">Data is empty</string>
+    <string name="error_btn_label">Retry</string>
+    <string name="error_text">Data error</string>
+    <string name="error_text_extended">An error has occurred.</string>
 </resources>

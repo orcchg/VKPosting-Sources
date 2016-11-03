@@ -2,8 +2,16 @@
 <resources>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">8dp</dimen>
+
     <dimen name="toolbar_min_height">56dp</dimen>
+
+    <dimen name="floating_action_button_size_normal">56dp</dimen>
 
     <dimen name="flow_layout_vertical_spacing">8dp</dimen>
     <dimen name="flow_layout_horizontal_spacing">6dp</dimen>
+
+    <dimen name="list_view_padding_left">0dp</dimen>
+    <dimen name="list_view_padding_right">0dp</dimen>
+    <dimen name="list_item_height">56dp</dimen>
+    <dimen name="list_item_icon_size">40dp</dimen>
 </resources>

@@ -1,4 +1,6 @@
 package com.orcchg.vikstra.app.ui.keyword.create;
 
-public class KeywordCreatePresenter {
+import com.orcchg.vikstra.app.ui.base.BasePresenter;
+
+public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.View> implements KeywordCreateContract.Presenter {
 }

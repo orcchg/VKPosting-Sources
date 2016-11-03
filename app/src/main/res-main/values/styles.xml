@@ -6,6 +6,13 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:actionBarSize">@dimen/toolbar_min_height</item>
+
+        <item name="keywords_flow_layout_blob_active_edit_color">@drawable/keywords_blob_active_edit_bg</item>
+        <item name="keywords_flow_layout_blob_active_edit_cross">@drawable/keywords_blob_active_edit_cross</item>
+        <item name="keywords_flow_layout_blob_active_color">@drawable/keywords_blob_active_bg</item>
+        <item name="keywords_flow_layout_blob_passive_color">@drawable/keywords_blob_passive_bg</item>
+        <item name="keywords_flow_layout_blob_more_color">@drawable/keywords_blob_more_selector</item>
+        <item name="keywords_flow_layout_blob_more_text_color">@drawable/keywords_blob_more_text_selector</item>
     </style>
 
     <style name="CircularThemeProgressBar" parent="android:Widget.Holo.ProgressBar">
@@ -20,12 +27,21 @@
     <style name="KeywordsFlowLayoutBlob">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
-        <item name="android:textSize">13dp</item>
+        <item name="android:textSize">13sp</item>
         <item name="android:paddingTop">8dp</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:paddingLeft">12dp</item>
         <item name="android:paddingStart">12dp</item>
         <item name="android:paddingRight">12dp</item>
         <item name="android:paddingEnd">12dp</item>
+    </style>
+
+    <style name="Block"/>
+    <style name="Block.Title">
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:singleLine">false</item>
+        <item name="android:textColor">?colorPrimary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

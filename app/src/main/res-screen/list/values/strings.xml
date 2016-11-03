@@ -5,8 +5,5 @@
     <string name="str_animation">Animation</string>
     <string name="str_tabs">Tabs</string>
 
-    <string name="empty_data">Data is empty</string>
-    <string name="error_btn_label">Retry</string>
-
     <string name="str_musicians_list">Musicians</string>
 </resources>
