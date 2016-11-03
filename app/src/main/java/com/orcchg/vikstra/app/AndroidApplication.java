@@ -8,6 +8,7 @@ import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.injection.component.DaggerApplicationComponent;
 import com.orcchg.vikstra.app.injection.module.ApplicationModule;
 import com.squareup.leakcanary.LeakCanary;
+import com.vk.sdk.VKSdk;
 
 import timber.log.Timber;
 
@@ -21,6 +22,7 @@ public class AndroidApplication extends Application {
         initializeLogger();
         initializeInjector();
         initializeLeakDetection();
+        initializeVkontakteSdk();
     }
 
     private void initializeLogger() {
@@ -47,5 +49,9 @@ public class AndroidApplication extends Application {
         if (BuildConfig.DEBUG) {
             LeakCanary.install(this);
         }
+    }
+
+    private void initializeVkontakteSdk() {
+        VKSdk.initialize(getApplicationContext());
     }
 }
