@@ -60,6 +60,10 @@ public abstract class UseCase<Result> implements Runnable {
         threadExecutor.execute(this);
     }
 
+    public Result executeSync() {
+        return doAction();
+    }
+
     @Override
     public void run() {
         try {

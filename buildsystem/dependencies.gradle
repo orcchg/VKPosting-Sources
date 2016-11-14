@@ -94,6 +94,7 @@ ext {
             javaxAnnotation:      "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
             javaxInject:          "javax.inject:javax.inject:${javaxInjectVersion}",
             rxJava:               "io.reactivex:rxjava:${rxJavaVersion}",
+            vkontakteSdk:         "com.vk:androidsdk:${vkontakteSdkVersion}",
     ]
 
     domainTestDependencies = [
@@ -118,7 +119,6 @@ ext {
             rxAndroid:            "io.reactivex:rxandroid:${rxAndroidVersion}",
             rxJava:               "io.reactivex:rxjava:${rxJavaVersion}",
             timber:               "com.jakewharton.timber:timber:${timberVersion}",
-            vkontakteSdk:         "com.vk:androidsdk:${vkontakteSdkVersion}",
     ]
 
     dataTestDependencies = [

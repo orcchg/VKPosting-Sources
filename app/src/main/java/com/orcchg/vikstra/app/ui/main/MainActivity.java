@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,6 +13,10 @@ import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
 import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKCallback;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKError;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,9 +47,27 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        VKSdk.login(this);  // TODO: scopes
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
+            @Override
+            public void onResult(VKAccessToken res) {
+                // TODO: User passed Authorization
+            }
+            
+            @Override
+            public void onError(VKError error) {
+                // TODO: User didn't pass Authorization
+            }
+        })) {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     /* View */

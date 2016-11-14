@@ -40,6 +40,11 @@ android {
 
     compileSdkVersion globalConfiguration.getAt("androidCompileSdkVersion")
     buildToolsVersion globalConfiguration.getAt("androidBuildToolsVersion")
+
+    defaultConfig {
+        minSdkVersion globalConfiguration.getAt("androidMinSdkVersion")
+        targetSdkVersion globalConfiguration.getAt("androidTargetSdkVersion")
+    }
 }
 
 dependencies {
@@ -54,6 +59,7 @@ dependencies {
     compile domainDependencies.autoValue
     compile domainDependencies.javaxInject
     compile domainDependencies.rxJava
+    compile domainDependencies.vkontakteSdk
 
     testCompile domainTestDependencies.junit
     testCompile domainTestDependencies.mockito

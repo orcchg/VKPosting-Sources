@@ -75,7 +75,6 @@ dependencies {
     compile dataDependencies.rxJava
     compile dataDependencies.rxAndroid
     compile dataDependencies.timber
-    compile dataDependencies.vkontakteSdk
 
     provided dataDependencies.javaxAnnotation
 
