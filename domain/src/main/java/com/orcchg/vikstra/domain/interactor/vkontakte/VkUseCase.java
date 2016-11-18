@@ -14,6 +14,10 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
         super(threadExecutor, postExecuteScheduler);
     }
 
+    protected VkUseCase() {
+        super();
+    }
+
     protected abstract VKRequest prepareVkRequest();
 
     protected abstract Result parseVkResponse();

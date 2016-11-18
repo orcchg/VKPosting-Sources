@@ -15,8 +15,8 @@ public class GetGroupById extends VkUseCase<VKApiCommunityArray> {
     private String vkGroupId;
 
     @Inject
-    GetGroupById(String vkGroupId, ThreadExecutor threadExecutor,
-                 PostExecuteScheduler postExecuteScheduler) {
+    public GetGroupById(String vkGroupId, ThreadExecutor threadExecutor,
+                        PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
         this.vkGroupId = vkGroupId;
     }

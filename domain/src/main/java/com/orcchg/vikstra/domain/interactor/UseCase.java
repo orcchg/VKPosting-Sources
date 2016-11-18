@@ -36,6 +36,15 @@ public abstract class UseCase<Result> implements Runnable {
     }
 
     /**
+     * This ctor must be used only when this {@link UseCase} is executed synchronously within
+     * some another {@link UseCase}, which must call {@link UseCase#doAction()}.
+     */
+    protected UseCase() {
+        this.threadExecutor = null;
+        this.postExecuteScheduler = null;
+    }
+
+    /**
      * Sets external callback to observe the result of {@link UseCase} execution.
      *
      * @param postExecuteCallback how to process the result
@@ -57,11 +66,12 @@ public abstract class UseCase<Result> implements Runnable {
      * {@link UseCase#postExecuteCallback}.
      */
     public void execute() {
+        if (threadExecutor == null) {
+            String message = "UseCase created using default ctor must only be executed" +
+                    " synchronously within some another UseCase !";
+            throw new IllegalStateException(message);
+        }
         threadExecutor.execute(this);
-    }
-
-    public Result executeSync() {
-        return doAction();
     }
 
     @Override

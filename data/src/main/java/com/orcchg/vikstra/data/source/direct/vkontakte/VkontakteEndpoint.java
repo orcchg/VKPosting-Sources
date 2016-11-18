@@ -2,119 +2,105 @@ package com.orcchg.vikstra.data.source.direct.vkontakte;
 
 import android.support.annotation.Nullable;
 
-import com.orcchg.vikstra.domain.exception.BundledException;
-import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
+import com.orcchg.vikstra.data.source.direct.Endpoint;
+import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
+import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.UseCase;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupById;
-import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeyword;
-import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost;
+import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeywordsList;
 import com.orcchg.vikstra.domain.model.Group;
-import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.model.Keyword;
-import com.orcchg.vikstra.domain.util.ValueUtility;
-import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.model.VKApiCommunityArray;
+import com.vk.sdk.api.model.VKApiCommunityFull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
 
-public class VkontakteEndpoint {
-
-    @Inject GetGroupById getGroupByIdVkUseCase;
-    @Inject GetGroupsByKeyword getGroupsByKeywordVkUseCase;
-    @Inject MakeWallPost makeWallPostVkUseCase;
-
-    protected Object mLock = new Object();
+public class VkontakteEndpoint extends Endpoint {
 
     @Inject
-    public VkontakteEndpoint() {
+    public VkontakteEndpoint(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
+        super(threadExecutor, postExecuteScheduler);
     }
 
-    public GroupBundle getGroupsByKeywords(List<Keyword> keywords) {
-        //
+    /**
+     * Get group {@link Group} by it's string id {@param id}.
+     */
+    private Group getGroupById(String id, @Nullable final UseCase.OnPostExecuteCallback<Group> callback) {
+        GetGroupById useCase = new GetGroupById(id, threadExecutor, postExecuteScheduler);
+        useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKApiCommunityArray>() {
+            @Override
+            public void onFinish(VKApiCommunityArray values) {
+                if (callback != null) {
+                    callback.onFinish(convert(values.get(0)));
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) callback.onError(e);
+            }
+        });
+        useCase.execute();
+    }
+
+    /**
+     * For each keyword {@link Keyword} in list {@param keywords} retrieves a list of groups {@link Group}.
+     * Because one keyword generally corresponds to multiple groups, the resulting list is merged
+     * and contains all retrieved groups.
+     */
+    public void getGroupsByKeywords(final List<Keyword> keywords,
+                                    @Nullable final UseCase.OnPostExecuteCallback<List<Group>> callback) {
+        GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
+        useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKApiCommunityArray>>() {
+            @Override
+            public void onFinish(List<VKApiCommunityArray> values) {
+                if (callback != null) {
+                    callback.onFinish(convertMerge(values));
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) callback.onError(e);
+            }
+        });
+        useCase.execute();
     }
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    private List<Group> requestGroupsByKeywords(List<Keyword> keywords) {
-        //
+
+    /* Convertion */
+    // --------------------------------------------------------------------------------------------
+    private List<Group> convertMerge(List<VKApiCommunityArray> vkModels) {
+        List<Group> groups = new ArrayList<>();
+        for (VKApiCommunityArray vkCommunityArray : vkModels) {
+            groups.addAll(convert(vkCommunityArray));
+        }
+        return groups;
     }
 
-    private <Result> void performMultipleRequests(int total, UseCase<Result> useCase) {
-        final List<Result> results = new ArrayList<>();
-        final List<Throwable> errors = new ArrayList<>();
-        final boolean[] doneFlags = new boolean[total];
-        Arrays.fill(doneFlags, false);
-
-        for (int i = 0; i < total; ++i) {
-            final int index = i;
-            final long start = System.currentTimeMillis();
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    long elapsed = start;
-                    boolean finishedWithError = false;
-                    Result result = null;
-                    while (elapsed - start < 30_000) {
-                        try {
-                            result = useCase.executeSync();
-                        } catch (VkUseCaseException e) {
-                            if (e.getErrorCode() == VKError.VK_API_ERROR) {
-                                // в случае VKError.VK_API_ERROR - подождать случайный тайм-аут и повторить запрос
-                                try {
-                                    long delta = ValueUtility.random(100, 1000);
-                                    Thread.sleep(1000 + delta);
-                                } catch (InterruptedException ie) {
-                                    Thread.interrupted();  // в случае прерывания - продолжить выполнение цикла
-                                }
-                            } else {
-                                addToErrors(errors, e);
-                                finishedWithError = true;
-                                break;
-                            }
-                        }
-                        elapsed = System.currentTimeMillis();
-                    }
-                    if (!finishedWithError) {
-                        addToResults(results, result);
-                    }
-                    synchronized (mLock) {
-                        doneFlags[index] = true;
-                        mLock.notify();  // пробудить поток-обработчик ответа
-                    }
-                }
-            }).start();
+    private List<List<Group>> convertSplit(List<VKApiCommunityArray> vkModels) {
+        List<List<Group>> groupsSplit = new ArrayList<>();
+        for (VKApiCommunityArray vkCommunityArray : vkModels) {
+            List<Group> groups = convert(vkCommunityArray);
+            groupsSplit.add(groups);
         }
-
-        synchronized (mLock) {
-            while (!ValueUtility.isAllTrue(doneFlags)) {
-                try {
-                    mLock.wait();
-                    if (!errors.isEmpty()) {
-                        /**
-                         * Обработка списка исключений, которые не удалось обработать в рабочих потоках выше.
-                         * Здесь - передача исключения "наверх", на вызывающий данную команду клиент.
-                         */
-                        throw new BundledException.Builder().addErrors(errors).build();
-                    }
-                } catch (InterruptedException e) {
-                    Thread.interrupted();  // в случае прерывания - продолжить выполнение цикла
-                }
-            }
-        }
+        return groupsSplit;
     }
 
-    synchronized <Result> void addToResults(List<Result> results, @Nullable Result result) {
-        if (result != null) {
-            results.add(result);
+    private List<Group> convert(VKApiCommunityArray vkCommunityArray) {
+        List<Group> groups = new ArrayList<>();
+        for (VKApiCommunityFull vkGroup : vkCommunityArray) {
+            groups.add(convert(vkGroup));
         }
+        return groups;
     }
 
-    synchronized void addToErrors(List<Throwable> errors, @Nullable VkUseCaseException error) {
-        if (error != null) {
-            errors.add(error);
-        }
+    private Group convert(VKApiCommunityFull vkGroup) {
+        return Group.builder().setName(vkGroup.name).build();
     }
 }

@@ -15,10 +15,14 @@ public class GetGroupsByKeyword extends VkUseCase<VKApiCommunityArray> {
     private Keyword keyword;
 
     @Inject
-    GetGroupsByKeyword(Keyword keyword, ThreadExecutor threadExecutor,
-                       PostExecuteScheduler postExecuteScheduler) {
+    public GetGroupsByKeyword(Keyword keyword, ThreadExecutor threadExecutor,
+                              PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
         this.keyword = keyword;
+    }
+
+    protected GetGroupsByKeyword(Keyword keyword) {
+        super();
     }
 
     @Override
