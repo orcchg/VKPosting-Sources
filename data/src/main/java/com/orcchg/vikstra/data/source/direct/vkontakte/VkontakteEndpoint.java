@@ -28,14 +28,12 @@ public class VkontakteEndpoint extends Endpoint {
     /**
      * Get group {@link Group} by it's string id {@param id}.
      */
-    private Group getGroupById(String id, @Nullable final UseCase.OnPostExecuteCallback<Group> callback) {
+    private void getGroupById(String id, @Nullable final UseCase.OnPostExecuteCallback<Group> callback) {
         GetGroupById useCase = new GetGroupById(id, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKApiCommunityArray>() {
             @Override
             public void onFinish(VKApiCommunityArray values) {
-                if (callback != null) {
-                    callback.onFinish(convert(values.get(0)));
-                }
+                if (callback != null) callback.onFinish(convert(values.get(0)));
             }
 
             @Override
@@ -57,9 +55,7 @@ public class VkontakteEndpoint extends Endpoint {
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKApiCommunityArray>>() {
             @Override
             public void onFinish(List<VKApiCommunityArray> values) {
-                if (callback != null) {
-                    callback.onFinish(convertMerge(values));
-                }
+                if (callback != null) callback.onFinish(convertMerge(values));
             }
 
             @Override

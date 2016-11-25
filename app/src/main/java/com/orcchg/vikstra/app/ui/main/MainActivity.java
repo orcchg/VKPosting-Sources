@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
@@ -13,10 +14,13 @@ import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
 import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
+import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,7 +64,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             public void onResult(VKAccessToken res) {
                 // TODO: User passed Authorization
             }
-            
+
             @Override
             public void onError(VKError error) {
                 // TODO: User didn't pass Authorization
@@ -86,6 +90,31 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     /* Contract */
     // ------------------------------------------
+    @Override
+    public RecyclerView getListView() {
+        KeywordListFragment fragment = getKeywordListFragment();
+        if (fragment != null) return fragment.getListView();
+        return null;
+    }
+
+    @Override
+    public void showKeywords(List<KeywordListItemVO> keywords) {
+        KeywordListFragment fragment = getKeywordListFragment();
+        if (fragment != null) fragment.showKeywords(keywords);
+    }
+
+    @Override
+    public void showError() {
+        KeywordListFragment fragment = getKeywordListFragment();
+        if (fragment != null) fragment.showError();
+    }
+
+    @Override
+    public void showLoading() {
+        KeywordListFragment fragment = getKeywordListFragment();
+        if (fragment != null) fragment.showLoading();
+    }
+
     @Override
     public void retry() {
         presenter.retry();

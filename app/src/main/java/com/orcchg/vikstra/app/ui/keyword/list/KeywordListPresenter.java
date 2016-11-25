@@ -59,7 +59,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @DebugLog
-    private void start() {
+    public void start() {
         getKeywordBundlesUseCase.execute();
     }
 

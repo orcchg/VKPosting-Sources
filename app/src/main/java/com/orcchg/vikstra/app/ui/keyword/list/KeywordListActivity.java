@@ -118,7 +118,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
                 music.add(Keyword.create("Dima Bilan XXX"));
                 music.add(Keyword.create("Mark Aurelis XXX"));
                 music.add(Keyword.create("Sandro Sanders XXX"));
-                KeywordBundle keywords = KeywordBundle.builder().setTitle("Music 2").setKeywords(music).build();
+                KeywordBundle keywords = KeywordBundle.builder().setId(1000).setTitle("Music 2").setKeywords(music).build();
                 navigationComponent.navigator().openNewKeywordsBundleScreen(this, keywords);
             }
         );
@@ -147,34 +147,26 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     @Override
     public RecyclerView getListView() {
         KeywordListFragment fragment = getFragment();
-        if (fragment != null) {
-            return fragment.getListView();
-        }
+        if (fragment != null) return fragment.getListView();
         return null;
     }
 
     @Override
     public void showKeywords(List<KeywordListItemVO> keywords) {
         KeywordListFragment fragment = getFragment();
-        if (fragment != null) {
-            fragment.showKeywords(keywords);
-        }
+        if (fragment != null) fragment.showKeywords(keywords);
     }
 
     @Override
     public void showError() {
         KeywordListFragment fragment = getFragment();
-        if (fragment != null) {
-            fragment.showError();
-        }
+        if (fragment != null) fragment.showError();
     }
 
     @Override
     public void showLoading() {
         KeywordListFragment fragment = getFragment();
-        if (fragment != null) {
-            fragment.showLoading();
-        }
+        if (fragment != null) fragment.showLoading();
     }
 
     @Override

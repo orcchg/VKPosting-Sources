@@ -33,7 +33,7 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         music.add(Keyword.create("Dima Bilan"));
         music.add(Keyword.create("Mark Aurelis"));
         music.add(Keyword.create("Sandro Sanders"));
-        mockData.add(KeywordBundle.builder().setTitle("Music").setKeywords(music).build());
+        mockData.add(KeywordBundle.builder().setId(1000).setTitle("Music").setKeywords(music).build());
 
         List<Keyword> travel = new ArrayList<>();
         travel.add(Keyword.create("South Korea"));
@@ -41,7 +41,7 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         travel.add(Keyword.create("Denmark"));
         travel.add(Keyword.create("Russia"));
         travel.add(Keyword.create("Scandinavia"));
-        mockData.add(KeywordBundle.builder().setTitle("Travel").setKeywords(travel).build());
+        mockData.add(KeywordBundle.builder().setId(1000).setTitle("Travel").setKeywords(travel).build());
 
         List<Keyword> sport = new ArrayList<>();
         sport.add(Keyword.create("Iron Man"));
@@ -49,7 +49,7 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         sport.add(Keyword.create("Tennis"));
         sport.add(Keyword.create("Hockey"));
         sport.add(Keyword.create("Footbal"));
-        mockData.add(KeywordBundle.builder().setTitle("Sport").setKeywords(sport).build());
+        mockData.add(KeywordBundle.builder().setId(1000).setTitle("Sport").setKeywords(sport).build());
 
         List<Keyword> movies = new ArrayList<>();
         movies.add(Keyword.create("Hobbit"));
@@ -57,7 +57,7 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         movies.add(Keyword.create("Lord of the Rings"));
         movies.add(Keyword.create("Doctor Strange"));
         movies.add(Keyword.create("Ride for 60 sec"));
-        mockData.add(KeywordBundle.builder().setTitle("Movies").setKeywords(movies).build());
+        mockData.add(KeywordBundle.builder().setId(1000).setTitle("Movies").setKeywords(movies).build());
 
         List<Keyword> cars = new ArrayList<>();
         cars.add(Keyword.create("VW gti"));
@@ -65,7 +65,7 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         cars.add(Keyword.create("Lamborgini"));
         cars.add(Keyword.create("Camarro"));
         cars.add(Keyword.create("Opel Astra"));
-        mockData.add(KeywordBundle.builder().setTitle("Cars").setKeywords(cars).build());
+        mockData.add(KeywordBundle.builder().setId(1000).setTitle("Cars").setKeywords(cars).build());
 
         return mockData;
     }

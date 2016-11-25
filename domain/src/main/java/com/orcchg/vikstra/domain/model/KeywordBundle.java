@@ -15,11 +15,13 @@ public abstract class KeywordBundle implements Parcelable {
 
     @AutoValue.Builder
     public abstract static class Builder {
+        public abstract Builder setId(long id);
         public abstract Builder setTitle(String title);
         public abstract Builder setKeywords(List<Keyword> keywords);
         public abstract KeywordBundle build();
     }
 
+    public abstract long id();
     public abstract String title();
     public abstract List<Keyword> keywords();
 }
