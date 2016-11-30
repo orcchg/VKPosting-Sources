@@ -2,12 +2,9 @@ package com.orcchg.vikstra.app.injection.module;
 
 import android.content.Context;
 
-import com.orcchg.vikstra.data.source.repository.keyword.KeywordRepositoryImpl;
-import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
-import com.orcchg.vikstra.domain.executor.ThreadExecutor;
-import com.orcchg.vikstra.domain.executor.UseCaseExecutor;
-import com.orcchg.vikstra.domain.repository.IArtistRepository;
-import com.orcchg.vikstra.domain.repository.IGenreRepository;
+import com.orcchg.vikstra.app.AndroidApplication;
+import com.orcchg.vikstra.app.executor.UIThread;
+import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.data.source.local.DatabaseHelper;
 import com.orcchg.vikstra.data.source.local.artist.ArtistLocalSource;
 import com.orcchg.vikstra.data.source.local.artist.ArtistLocalSourceImpl;
@@ -20,8 +17,12 @@ import com.orcchg.vikstra.data.source.remote.genre.GenreDataSource;
 import com.orcchg.vikstra.data.source.remote.genre.server.ServerGenreCloudSource;
 import com.orcchg.vikstra.data.source.repository.artist.ServerArtistRepositoryImpl;
 import com.orcchg.vikstra.data.source.repository.genre.ServerGenreRepositoryImpl;
-import com.orcchg.vikstra.app.AndroidApplication;
-import com.orcchg.vikstra.app.executor.UIThread;
+import com.orcchg.vikstra.data.source.repository.keyword.KeywordRepositoryImpl;
+import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
+import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.executor.UseCaseExecutor;
+import com.orcchg.vikstra.domain.repository.IArtistRepository;
+import com.orcchg.vikstra.domain.repository.IGenreRepository;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 
 import javax.inject.Named;
@@ -55,6 +56,11 @@ public class ApplicationModule {
     @Provides @Singleton
     PostExecuteScheduler providePostExecuteScheduler(UIThread uiThread) {
         return uiThread;
+    }
+
+    @Provides @Singleton
+    VkontakteEndpoint provideVkontakteEndpoint(ThreadExecutor executor, PostExecuteScheduler scheduler) {
+        return new VkontakteEndpoint(executor, scheduler);
     }
 
     @Provides @Singleton @Named("yandexCloud")

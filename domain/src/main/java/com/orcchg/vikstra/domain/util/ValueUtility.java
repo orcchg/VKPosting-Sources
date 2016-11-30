@@ -1,5 +1,8 @@
 package com.orcchg.vikstra.domain.util;
 
+import android.support.annotation.Nullable;
+
+import java.util.List;
 import java.util.Random;
 
 public class ValueUtility {
@@ -18,5 +21,10 @@ public class ValueUtility {
         }
         Random rng = new Random();
         return rng.nextLong() % (max - min) + min;
+    }
+
+    public static <T> int sizeOf(@Nullable List<T> items) {
+        if (items == null) return 0;
+        return items.size();
     }
 }

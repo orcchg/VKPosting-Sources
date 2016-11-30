@@ -19,6 +19,7 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
 
     public interface OnItemClickListener<Model> {
         void onItemClick(View view, Model model, int position);
+        void onItemLongClick(View view, Model model, int position);
     }
 
     protected static final int VIEW_TYPE_NORMAL = 0;

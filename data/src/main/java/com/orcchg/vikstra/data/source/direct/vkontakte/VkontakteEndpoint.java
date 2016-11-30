@@ -28,7 +28,7 @@ public class VkontakteEndpoint extends Endpoint {
     /**
      * Get group {@link Group} by it's string id {@param id}.
      */
-    private void getGroupById(String id, @Nullable final UseCase.OnPostExecuteCallback<Group> callback) {
+    public void getGroupById(String id, @Nullable final UseCase.OnPostExecuteCallback<Group> callback) {
         GetGroupById useCase = new GetGroupById(id, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKApiCommunityArray>() {
             @Override
@@ -56,6 +56,27 @@ public class VkontakteEndpoint extends Endpoint {
             @Override
             public void onFinish(List<VKApiCommunityArray> values) {
                 if (callback != null) callback.onFinish(convertMerge(values));
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) callback.onError(e);
+            }
+        });
+        useCase.execute();
+    }
+
+    /**
+     * Same as {@link VkontakteEndpoint#getGroupsByKeywords(List, UseCase.OnPostExecuteCallback)}, but
+     * splits groups by keywords.
+     */
+    public void getGroupsByKeywordsSplit(final List<Keyword> keywords,
+                                         @Nullable final UseCase.OnPostExecuteCallback<List<List<Group>>> callback) {
+        GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
+        useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKApiCommunityArray>>() {
+            @Override
+            public void onFinish(List<VKApiCommunityArray> values) {
+                if (callback != null) callback.onFinish(convertSplit(values));
             }
 
             @Override
@@ -97,6 +118,10 @@ public class VkontakteEndpoint extends Endpoint {
     }
 
     private Group convert(VKApiCommunityFull vkGroup) {
-        return Group.builder().setName(vkGroup.name).build();
+        return Group.builder()
+                .setId(vkGroup.id)
+                .setMembersCount(vkGroup.members_count)
+                .setName(vkGroup.name)
+                .build();
     }
 }

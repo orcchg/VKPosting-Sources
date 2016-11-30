@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".app.ui.main.MainActivity"
-                  android:label="@string/str_main"
+                  android:label="@string/main_screen_title"
                   android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,12 +21,16 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".app.ui.group.list.GroupListActivity"
+                  android:label="@string/group_list_screen_title"
+                  android:theme="@style/AppTheme"/>
+
         <activity android:name=".app.ui.keyword.list.KeywordListActivity"
-                  android:label="@string/str_keywords_list"
+                  android:label="@string/keyword_list_screen_title"
                   android:theme="@style/AppTheme"/>
 
         <activity android:name=".app.ui.keyword.create.KeywordCreateActivity"
-                  android:label="@string/str_keywords_create"
+                  android:label="@string/keyword_create_screen_title"
                   android:windowSoftInputMode="adjustResize"/>
 
         <activity android:name=".app.ui.tab.TabActivity"

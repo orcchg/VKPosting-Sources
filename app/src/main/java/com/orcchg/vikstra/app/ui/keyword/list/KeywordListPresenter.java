@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.app.ui.keyword.list;
 
+import android.view.View;
+
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
@@ -15,7 +17,8 @@ import javax.inject.Inject;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
-public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.View> implements KeywordListContract.Presenter {
+public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.View>
+        implements KeywordListContract.Presenter {
 
     private final GetKeywordBundles getKeywordBundlesUseCase;
 
@@ -29,10 +32,20 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @Override
     protected BaseAdapter createListAdapter() {
         KeywordListAdapter adapter = new KeywordListAdapter();
-        adapter.setOnItemClickListener(((view, keywordListItemVO, position) -> {
-            // TODO: impl
-            Timber.d("Clicked item at position: " + position);
-        }));
+        adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener<KeywordListItemVO>() {
+            @Override
+            public void onItemClick(View view, KeywordListItemVO keywordListItemVO, int position) {
+                Timber.d("Clicked item at position: " + position);
+                // TODO: click
+            }
+
+            @Override
+            public void onItemLongClick(View view, KeywordListItemVO keywordListItemVO, int position) {
+                Timber.d("Clicked item at position: " + position);
+                // TODO: long click, remove open screen
+
+            }
+        });
         return adapter;
     }
 
@@ -73,9 +86,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                 KeywordListItemMapper mapper = new KeywordListItemMapper();
                 List<KeywordListItemVO> vos = mapper.map(values);
                 listAdapter.populate(vos, isThereMore());
-                if (isViewAttached()) {
-                    getView().showKeywords(vos);
-                }
+                if (isViewAttached()) getView().showKeywords(vos);
             }
 
             @Override

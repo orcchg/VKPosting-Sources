@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
@@ -24,12 +25,22 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity<MainContract.View, MainContract.Presenter>
         implements MainContract.View, IScrollList {
     private static final String LIST_FRAGMENT_TAG = "list_fragment_tag";
 
     @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.tv_groups_selection_counter) TextView selectedGroupsTextView;
+    @OnClick(R.id.btn_add_new_groups)
+    public void onAddNewGroupsClick() {
+        navigationComponent.navigator().openKeywordsListScreen(this);
+    }
+    @OnClick(R.id.btn_groups_selection_drop)
+    public void onDropSelectedGroupsClick() {
+        // TODO: drop selection
+    }
 
     private MainComponent mainComponent;
 
@@ -85,7 +96,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         }
 
         // TODO: add fragments and change fab click listener
-        fab.setOnClickListener((view) -> navigationComponent.navigator().openKeywordsListScreen(this));
+        fab.setOnClickListener((view) -> navigationComponent.navigator().openGroupsListScreen(this));
     }
 
     /* Contract */

@@ -76,8 +76,8 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     private void initView() {
         Intent intent = getIntent();
         KeywordBundle keywords = intent.getParcelableExtra(EXTRA_KEYWORDS);
-        String dialogTitle = getResources().getString(R.string.dialog_input_keywords_bundle_title);
-        String dialogInputHint = getResources().getString(R.string.dialog_input_keywords_bundle_hint);
+        String dialogTitle = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_title);
+        String dialogInputHint = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_hint);
         keywordsFlowLayout.setKeywords(keywords.keywords());
         toolbar.setTitle(keywords.title());
         toolbar.setNavigationOnClickListener((view) -> finish());

@@ -37,9 +37,7 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
     private ShadowHolder shadowHolder;
 
     public static KeywordListFragment newInstance() {
-        KeywordListFragment fragment = new KeywordListFragment();
-        // TODO:
-        return fragment;
+        return new KeywordListFragment();
     }
 
     /* Lifecycle */

@@ -4,10 +4,11 @@ import android.os.Parcelable;
 
 import com.google.auto.value.AutoValue;
 
+import java.util.Iterator;
 import java.util.List;
 
 @AutoValue
-public abstract class KeywordBundle implements Parcelable {
+public abstract class KeywordBundle implements Iterable<Keyword>, Parcelable {
 
     public static Builder builder() {
         return new AutoValue_KeywordBundle.Builder();
@@ -24,4 +25,9 @@ public abstract class KeywordBundle implements Parcelable {
     public abstract long id();
     public abstract String title();
     public abstract List<Keyword> keywords();
+
+    @Override
+    public Iterator<Keyword> iterator() {
+        return keywords().iterator();
+    }
 }

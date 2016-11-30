@@ -81,6 +81,8 @@ android {
     sourceSets {
         main {
             res.srcDirs = ['src/main/res-main',
+                           'src/main/res-screen/group/detail',
+                           'src/main/res-screen/group/list',
                            'src/main/res-screen/keyword/create',
                            'src/main/res-screen/keyword/list']
             file('src/main/res-screen')
@@ -111,6 +113,7 @@ dependencies {
     compile presentationDependencies.cardView
     compile presentationDependencies.circleImageView
     compile presentationDependencies.dagger
+    compile presentationDependencies.expandRecyclerView
     compile presentationDependencies.eventbus
     compile presentationDependencies.glide
     compile presentationDependencies.javaxAnnotation

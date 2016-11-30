@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="group_list_parent_item_height">64dp</dimen>
+    <dimen name="group_list_parent_item_title_size">20dp</dimen>
+    <dimen name="group_list_parent_item_start_margin">20dp</dimen>
+    <dimen name="group_list_parent_item_end_margin">12dp</dimen>
+
+    <dimen name="group_list_child_item_height">48dp</dimen>
+    <dimen name="group_list_child_item_title_size">16dp</dimen>
+    <dimen name="group_list_child_item_start_margin">40dp</dimen>
+    <dimen name="group_list_child_item_end_margin">12dp</dimen>
+</resources>

@@ -1,0 +1,119 @@
+package com.orcchg.vikstra.app.ui.group.list;
+
+import android.support.v7.widget.RecyclerView;
+
+import com.orcchg.vikstra.app.ui.base.BasePresenter;
+import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
+import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
+import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
+import com.orcchg.vikstra.domain.interactor.GetKeywordBundleById;
+import com.orcchg.vikstra.domain.interactor.UseCase;
+import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.model.KeywordBundle;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.inject.Inject;
+
+import hugo.weaving.DebugLog;
+
+public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
+
+    private List<GroupParentItem> groupParentItems;
+    private GroupListAdapter listAdapter;
+
+    private final GetKeywordBundleById getKeywordBundleByIdUseCase;
+    private final VkontakteEndpoint vkontakteEndpoint;
+
+    @Inject
+    GroupListPresenter(GetKeywordBundleById getKeywordBundleByIdUseCase, VkontakteEndpoint vkontakteEndpoint) {
+        this.groupParentItems = new ArrayList<>();
+        this.listAdapter = createListAdapter();
+
+        this.getKeywordBundleByIdUseCase = getKeywordBundleByIdUseCase;
+        this.getKeywordBundleByIdUseCase.setPostExecuteCallback(createGetKeywordBundleByIdCallback());
+        this.vkontakteEndpoint = vkontakteEndpoint;
+    }
+
+    private GroupListAdapter createListAdapter() {
+        return new GroupListAdapter(groupParentItems);
+    }
+
+    /* Lifecycle */
+    // --------------------------------------------------------------------------------------------
+    @DebugLog @Override
+    public void onStart() {
+        super.onStart();
+        if (isViewAttached()) {  // TODO: try to use BaseListPresenter
+            RecyclerView list = getView().getListView();
+            if (list.getAdapter() == null) {
+                list.setAdapter(listAdapter);
+            }
+        }
+
+        start();
+    }
+
+    /* Contract */
+    // --------------------------------------------------------------------------------------------
+    @DebugLog @Override
+    public void retry() {
+        // TODO: re-issue groups by keywords
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    @DebugLog
+    public void start() {
+        getKeywordBundleByIdUseCase.execute();
+    }
+
+    /* Callback */
+    // --------------------------------------------------------------------------------------------
+    private UseCase.OnPostExecuteCallback<KeywordBundle> createGetKeywordBundleByIdCallback() {
+        return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
+            @Override
+            public void onFinish(KeywordBundle bundle) {
+                for (Keyword keyword : bundle) {
+                    GroupParentItem item = new GroupParentItem(keyword.keyword());
+                    groupParentItems.add(item);
+                }
+                vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (isViewAttached()) getView().showError();
+            }
+        };
+    }
+
+    private UseCase.OnPostExecuteCallback<List<List<Group>>> createGetGroupsByKeywordsListCallback() {
+        return new UseCase.OnPostExecuteCallback<List<List<Group>>>() {
+            @Override
+            public void onFinish(List<List<Group>> splitGroups) {
+                // TODO: only 20 groups by single keyword by default
+                int index = 0;
+                for (List<Group> groups : splitGroups) {
+                    List<GroupChildItem> childItems = new ArrayList<>(groups.size());
+                    for (Group group : groups) {
+                        GroupChildItem childItem = new GroupChildItem(group);
+                        childItems.add(childItem);
+                    }
+                    groupParentItems.get(index).setChildList(childItems);
+                    ++index;
+                }
+
+                listAdapter.notifyParentDataSetChanged(false);
+                if (isViewAttached()) getView().showGroups(splitGroups.isEmpty());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (isViewAttached()) getView().showError();
+            }
+        };
+    }
+}

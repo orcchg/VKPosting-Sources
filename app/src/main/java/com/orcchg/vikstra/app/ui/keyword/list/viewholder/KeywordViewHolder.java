@@ -34,5 +34,10 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
             flowView.setSelection(viewObject.getSelection());
             if (listener != null) listener.onItemClick(view, viewObject, getAdapterPosition());
         });
+
+        itemView.setOnLongClickListener((view) -> {
+            if (listener != null) listener.onItemLongClick(view, viewObject, getAdapterPosition());
+            return false;
+        });
     }
 }

@@ -11,6 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import hugo.weaving.DebugLog;
+import timber.log.Timber;
+
 public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCase<L> {
 
     protected int total;
@@ -41,13 +44,17 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
      * Performs {@param total} use-cases synchronously but each in a background thread,
      * then waits them to finish and accumulates results and possible errors in lists.
      */
+    @DebugLog
     protected <Result> List<Result> performMultipleRequests(int total, final List<? extends UseCase<Result>> useCases,
                                                             final List<Throwable> errors) {
+        Timber.v("Performing multiple requests, total: %s, different use-cases: %s", total, useCases.size());
+        Timber.v("Allowed errors total: %s", ValueUtility.sizeOf(allowedErrors));
         final List<Result> results = new ArrayList<>();
         final boolean[] doneFlags = new boolean[total];
         Arrays.fill(doneFlags, false);
 
         for (int i = 0; i < total; ++i) {
+            Timber.v("Request [%s / %s]", i + 1, total);
             final int index = i;
             final long start = System.currentTimeMillis();
             new Thread(new Runnable() {
@@ -56,10 +63,11 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
                     long elapsed = start;
                     boolean finishedWithError = false;
                     Result result = null;
-                    while (elapsed - start < 30_000) {
+                    REQUEST_ATTEMPT: while (elapsed - start < 30_000) {
                         try {
                             UseCase<Result> useCase = useCases.size() == 1 ? useCases.get(0) : useCases.get(index);
                             result = useCase.doAction();  // perform use case synchronously
+                            break REQUEST_ATTEMPT;
                         } catch (Throwable e) {
                             if (allowedErrors != null && !allowedErrors.isEmpty() && allowedErrors.contains(e)) {
                                 // in case of any allowed error - retry after randomized timeout
@@ -70,9 +78,10 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
                                     Thread.interrupted();  // continue executing at interruption
                                 }
                             } else {
+                                Timber.w(e, "Unhandled exception");
                                 addToErrors(errors, e);
                                 finishedWithError = true;
-                                break;
+                                break REQUEST_ATTEMPT;
                             }
                         }
                         elapsed = System.currentTimeMillis();

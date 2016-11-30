@@ -37,8 +37,7 @@ public class DetailsModule {
      *
      * @return an instance to inject
      */
-    @Provides
-    @PerActivity
+    @Provides @PerActivity
     GetArtistDetails provideGetArtistDetails(IArtistRepository artistRepository,
             ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         return new GetArtistDetails(artistId, artistRepository, threadExecutor, postExecuteScheduler);

@@ -11,9 +11,13 @@ public abstract class Group {
 
     @AutoValue.Builder
     public abstract static class Builder {
+        public abstract Builder setId(long id);
+        public abstract Builder setMembersCount(int count);
         public abstract Builder setName(String name);
         public abstract Group build();
     }
 
+    public abstract long id();
+    public abstract int membersCount();
     public abstract String name();
 }

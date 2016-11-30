@@ -11,6 +11,7 @@ import android.view.View;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.app.ui.details.DetailsActivity;
+import com.orcchg.vikstra.app.ui.group.list.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.list.ListActivity;
@@ -40,6 +41,13 @@ public class Navigator {
         context.startActivity(intent);
     }
 
+    public void openGroupsListScreen(@NonNull Context context) {
+        Intent intent = GroupListActivity.getCallingIntent(context);
+        context.startActivity(intent);
+    }
+
+    /* Sample screens */
+    // --------------------------------------------------------------------------------------------
     public void openListScreen(@NonNull Context context) {
         Intent intent = ListActivity.getCallingIntent(context);
         context.startActivity(intent);

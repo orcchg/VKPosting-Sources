@@ -20,7 +20,7 @@
             android:minHeight="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
             app:titleTextColor="@color/textIcons"
-            app:title="@string/str_keywords_list"/>
+            app:title="@string/keyword_list_screen_title"/>
 
     </android.support.design.widget.AppBarLayout>
 

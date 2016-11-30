@@ -18,6 +18,18 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
     }
 
     @Override
+    public KeywordBundle keywords(long id) {
+        // TODO: real impl
+        List<Keyword> travel = new ArrayList<>();
+        travel.add(Keyword.create("South Korea"));
+        travel.add(Keyword.create("Finland"));
+        travel.add(Keyword.create("Denmark"));
+        travel.add(Keyword.create("Russia"));
+        travel.add(Keyword.create("Scandinavia"));
+        return KeywordBundle.builder().setId(1000).setTitle("Travel").setKeywords(travel).build();
+    }
+
+    @Override
     public List<KeywordBundle> keywords() {
         return keywords(-1, 0);
     }

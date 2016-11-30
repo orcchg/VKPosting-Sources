@@ -20,6 +20,8 @@ public class GetGroupsByKeywordsList extends MultiUseCase<VKApiCommunityArray, L
     public GetGroupsByKeywordsList(List<Keyword> keywords, ThreadExecutor threadExecutor,
                                    PostExecuteScheduler postExecuteScheduler) {
         super(keywords.size(), threadExecutor, postExecuteScheduler);
+        this.keywords = keywords;
+//        setAllowedError();  // TODO: allow VkError with code = 6
     }
 
     @Override

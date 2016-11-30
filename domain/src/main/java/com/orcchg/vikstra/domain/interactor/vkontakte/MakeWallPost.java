@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
+import com.google.gson.Gson;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.vk.sdk.api.VKApi;
@@ -31,11 +32,13 @@ public class MakeWallPost extends VkUseCase<VKWallPostResult> {
         params.put(VKApiConst.OWNER_ID, ownerId);  // destination user / community id
         params.put(VKApiConst.ATTACHMENTS, attachments);
         params.put(VKApiConst.MESSAGE, message);
+        params.put(VKApiConst.EXTENDED, 1);
         return VKApi.wall().post(params);
     }
 
     @Override
     protected VKWallPostResult parseVkResponse() {
+//        return new Gson().fromJson(vkResponse.responseString, VKWallPostResult.class);
         return (VKWallPostResult) vkResponse.parsedModel;
     }
 }

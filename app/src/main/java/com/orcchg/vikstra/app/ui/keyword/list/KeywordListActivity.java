@@ -29,7 +29,7 @@ import butterknife.ButterKnife;
 
 public class KeywordListActivity extends BaseActivity<KeywordListContract.View, KeywordListContract.Presenter>
         implements KeywordListContract.View, IScrollList, ShadowHolder {
-    private static final String FRAGMENT_TAG = "fragment_tag";
+    private static final String FRAGMENT_TAG = "keyword_list_fragment_tag";
 
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -75,6 +75,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
             fm.executePendingTransactions();
         }
 
+        fab.setImageResource(R.drawable.ic_add_white_24dp);
         fab.setOnClickListener((view) -> {
                 // TODO: real data ; move to presenter
                 List<Keyword> music = new ArrayList<>();
@@ -125,6 +126,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     private void initToolbar() {
+        toolbar.setTitle(R.string.keyword_list_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());
         toolbar.inflateMenu(R.menu.search);
         toolbar.setOnMenuItemClickListener((item) -> {
