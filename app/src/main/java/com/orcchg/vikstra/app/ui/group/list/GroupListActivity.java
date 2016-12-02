@@ -51,6 +51,15 @@ public class GroupListActivity extends SimpleBaseActivity implements ShadowHolde
     private void initToolbar() {
         toolbar.setTitle(R.string.group_list_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());
+        toolbar.inflateMenu(R.menu.save);
+        toolbar.setOnMenuItemClickListener((item) -> {
+            switch (item.getItemId()) {
+                case R.id.save:
+                    // TODO: save
+                    return true;
+            }
+            return false;
+        });
     }
 
     @Override

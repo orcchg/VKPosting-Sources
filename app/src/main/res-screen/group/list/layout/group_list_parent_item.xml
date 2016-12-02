@@ -26,8 +26,8 @@
             android:id="@+id/tv_selected_count"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/standard_side_padding_small"
-            android:layout_marginStart="@dimen/standard_side_padding_small"
+            android:layout_marginLeft="@dimen/standard_side_padding"
+            android:layout_marginStart="@dimen/standard_side_padding"
             android:gravity="center_vertical"
             android:textColor="@color/description_color"
             android:textSize="@dimen/group_list_parent_item_title_size"/>
@@ -35,8 +35,8 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/standard_side_padding_small"
-            android:layout_marginStart="@dimen/standard_side_padding_small">
+            android:layout_marginLeft="@dimen/standard_side_padding"
+            android:layout_marginStart="@dimen/standard_side_padding">
 
             <ImageButton
                 android:id="@+id/ibtn_select_all"
@@ -51,8 +51,8 @@
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/standard_side_padding_small"
-            android:layout_marginStart="@dimen/standard_side_padding_small">
+            android:layout_marginLeft="@dimen/standard_side_padding"
+            android:layout_marginStart="@dimen/standard_side_padding">
 
             <ImageView
                 android:id="@+id/iv_arrow"

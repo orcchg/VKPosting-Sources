@@ -7,6 +7,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="colorAccentOverlay">@color/colorAccentOverlay</item>
         <item name="android:actionBarSize">@dimen/toolbar_min_height</item>
+        <item name="actionMenuTextColor">@color/textIcons</item>
 
         <item name="keywords_flow_layout_blob_active_edit_color">@drawable/keywords_blob_active_edit_bg</item>
         <item name="keywords_flow_layout_blob_active_edit_cross">@drawable/keywords_blob_active_edit_cross</item>

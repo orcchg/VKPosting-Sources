@@ -132,7 +132,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.search:
-                    // TODO:
+                    // TODO: search
                     return true;
             }
             return false;
