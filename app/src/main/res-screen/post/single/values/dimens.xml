@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="post_single_grid_item_size">126dp</dimen>
+</resources>

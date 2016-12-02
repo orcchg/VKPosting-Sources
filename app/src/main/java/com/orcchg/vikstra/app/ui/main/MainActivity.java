@@ -15,6 +15,7 @@ import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
 import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
+import com.orcchg.vikstra.app.ui.post.single.PostSingleGridFragment;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -29,7 +30,8 @@ import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity<MainContract.View, MainContract.Presenter>
         implements MainContract.View, IScrollList {
-    private static final String LIST_FRAGMENT_TAG = "list_fragment_tag";
+    private static final String POST_GRID_FRAGMENT_TAG = "post_grid_fragment_tag";
+    private static final String KEYW_LIST_FRAGMENT_TAG = "keyw_list_fragment_tag";
 
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.tv_groups_selection_counter) TextView selectedGroupsTextView;
@@ -89,9 +91,14 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     // ------------------------------------------
     private void initView() {
         FragmentManager fm = getSupportFragmentManager();
-        if (fm.findFragmentByTag(LIST_FRAGMENT_TAG) == null) {
+        if (fm.findFragmentByTag(POST_GRID_FRAGMENT_TAG) == null) {
+            PostSingleGridFragment fragment = PostSingleGridFragment.newInstance();
+            fm.beginTransaction().replace(R.id.fl_top, fragment, POST_GRID_FRAGMENT_TAG).commit();
+            fm.executePendingTransactions();
+        }
+        if (fm.findFragmentByTag(KEYW_LIST_FRAGMENT_TAG) == null) {
             KeywordListFragment fragment = KeywordListFragment.newInstance();
-            fm.beginTransaction().replace(R.id.fl_bottom, fragment, LIST_FRAGMENT_TAG).commit();
+            fm.beginTransaction().replace(R.id.fl_bottom, fragment, KEYW_LIST_FRAGMENT_TAG).commit();
             fm.executePendingTransactions();
         }
 
@@ -141,6 +148,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Nullable
     private KeywordListFragment getKeywordListFragment() {
         FragmentManager fm = getSupportFragmentManager();
-        return (KeywordListFragment) fm.findFragmentByTag(LIST_FRAGMENT_TAG);
+        return (KeywordListFragment) fm.findFragmentByTag(KEYW_LIST_FRAGMENT_TAG);
     }
 }

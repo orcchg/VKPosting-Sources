@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,6 +54,11 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
                 .groupListModule(new GroupListModule(keywordBundleId))
                 .build();
         groupComponent.inject(this);
+    }
+
+    @Override
+    protected LinearLayoutManager createLayoutManager() {
+        return new LinearLayoutManager(getActivity());
     }
 
     public static GroupListFragment newInstance(long keywordsBundleId) {

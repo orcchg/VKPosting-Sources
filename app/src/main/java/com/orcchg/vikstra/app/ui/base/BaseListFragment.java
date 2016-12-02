@@ -52,7 +52,7 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
         } else {
             memento = createMemento();
         }
-        layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager = createLayoutManager();
     }
 
     @Override
@@ -79,6 +79,8 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
+    protected abstract LinearLayoutManager createLayoutManager();
+
     private void processListScroll(RecyclerView recyclerView, int dx, int dy) {
         if (dy <= 0) {
             return;  // skip scroll up
