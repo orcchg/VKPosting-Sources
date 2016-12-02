@@ -21,8 +21,6 @@ public class GroupParentViewHolder extends ParentViewHolder<GroupParentItem, Gro
         // TODO: select all child items
     }
 
-    private int selectedCount;
-
     public GroupParentViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
@@ -30,7 +28,7 @@ public class GroupParentViewHolder extends ParentViewHolder<GroupParentItem, Gro
 
     public void bind(GroupParentItem model) {
         titleTextView.setText(model.getName());
-        updateCounter(selectedCount, model.getChildCount());
+        updateCounter(model.getSelectedCount(), model.getChildCount());
     }
 
     @Override
@@ -41,13 +39,6 @@ public class GroupParentViewHolder extends ParentViewHolder<GroupParentItem, Gro
         } else {
             arrowImageView.setImageResource(R.drawable.ic_keyboard_arrow_up_black_24dp);
         }
-    }
-
-    /* API */
-    // ------------------------------------------
-    public void setSelectedCount(int selectedCount) {
-        this.selectedCount = selectedCount;
-        updateCounter(selectedCount, getParent().getChildCount());
     }
 
     /* Internal */

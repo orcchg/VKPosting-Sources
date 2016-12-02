@@ -32,6 +32,72 @@ public class GroupChildViewHolder extends ChildViewHolder<GroupChildItem> {
     public void bind(GroupChildItem model) {
         titleTextView.setText(model.getName());
         countTextView.setText(Integer.toString(model.getCount()));
+
+        SupplyData data = new SupplyData.Builder()
+                .setModel(getChild())
+                .setParentAdapterPosition(getParentAdapterPosition())
+                .setChildAdapterPosition(getChildAdapterPosition())
+                .build();
+        switcher.setTag(data);
+        setCheckedSafe(model.isSelected());
         setSwitcherListener(switcherListener);
+    }
+
+    /* Support */
+    // ------------------------------------------
+    public static class SupplyData {
+        private GroupChildItem model;
+        private int parentAdapterPosition;
+        private int childAdapterPosition;
+
+        SupplyData(Builder builder) {
+            this.model = builder.model;
+            this.parentAdapterPosition = builder.parentAdapterPosition;
+            this.childAdapterPosition = builder.childAdapterPosition;
+        }
+
+        static class Builder {
+            private GroupChildItem model;
+            private int parentAdapterPosition;
+            private int childAdapterPosition;
+
+            Builder setModel(GroupChildItem model) {
+                this.model = model;
+                return this;
+            }
+
+            Builder setParentAdapterPosition(int parentAdapterPosition) {
+                this.parentAdapterPosition = parentAdapterPosition;
+                return this;
+            }
+
+            Builder setChildAdapterPosition(int childAdapterPosition) {
+                this.childAdapterPosition = childAdapterPosition;
+                return this;
+            }
+
+            SupplyData build() {
+                return new SupplyData(this);
+            }
+        }
+
+        public GroupChildItem getModel() {
+            return model;
+        }
+
+        public int getParentAdapterPosition() {
+            return parentAdapterPosition;
+        }
+
+        public int getChildAdapterPosition() {
+            return childAdapterPosition;
+        }
+    }
+
+    /* Internal */
+    // ------------------------------------------
+    private void setCheckedSafe(boolean isSelected) {
+        switcher.setOnCheckedChangeListener(null);  // remove listener to select safely
+        switcher.setChecked(isSelected);
     }
 }

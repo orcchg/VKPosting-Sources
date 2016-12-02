@@ -57,7 +57,13 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
         return new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // TODO: change parent item counter
+                GroupChildViewHolder.SupplyData data = (GroupChildViewHolder.SupplyData) buttonView.getTag();
+                int affectedParentItemPosition = data.getParentAdapterPosition();
+                GroupChildItem childItem = data.getModel();
+                GroupParentItem parentItem = getParentList().get(affectedParentItemPosition);
+                childItem.setSelected(isChecked);
+                parentItem.incrementSelectedCount(isChecked ? 1 : -1);
+                notifyParentChanged(affectedParentItemPosition);  // re-bind parent and all it's childs
                 // TODO: keep checked group id to use further
             }
         };

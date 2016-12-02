@@ -8,6 +8,7 @@ public class GroupParentItem implements Parent<GroupChildItem> {
 
     private String name;
     private List<GroupChildItem> childItems;
+    private int selectedCount;
 
     public GroupParentItem(String name) {
         this(name, null);
@@ -22,6 +23,14 @@ public class GroupParentItem implements Parent<GroupChildItem> {
         this.childItems = childItems;
     }
 
+    public void setSelectedCount(int selectedCount) {
+        this.selectedCount = selectedCount;
+    }
+
+    public void incrementSelectedCount(int add) {
+        this.selectedCount += add;
+    }
+
     public String getName() {
         return name;
     }
@@ -34,6 +43,10 @@ public class GroupParentItem implements Parent<GroupChildItem> {
     public int getChildCount() {
         if (childItems == null) return 0;
         return childItems.size();
+    }
+
+    public int getSelectedCount() {
+        return selectedCount;
     }
 
     @Override
