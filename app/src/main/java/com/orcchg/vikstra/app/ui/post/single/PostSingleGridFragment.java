@@ -63,4 +63,14 @@ public class PostSingleGridFragment extends BaseListFragment<PostSingleGridContr
     protected void onScroll(int itemsLeftToEnd) {
         // TODO: impl
     }
+
+    @Override
+    public void openNewPostScreen() {
+        navigationComponent.navigator().openNewPostScreen(getActivity());
+    }
+
+    @Override
+    public void openPostViewScreen() {
+        navigationComponent.navigator().openPostViewScreen(getActivity());
+    }
 }

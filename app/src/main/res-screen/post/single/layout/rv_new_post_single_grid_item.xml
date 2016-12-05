@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="@dimen/post_single_grid_item_size"
+   android:layout_height="@dimen/post_single_grid_item_size"
+   android:layout_margin="2dp">
+
+    <ImageView
+        android:layout_width="@dimen/standard_icon_size"
+        android:layout_height="@dimen/standard_icon_size"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_add_black_24dp"/>
+</FrameLayout>

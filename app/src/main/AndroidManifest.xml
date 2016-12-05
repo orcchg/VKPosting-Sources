@@ -21,10 +21,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".app.ui.group.list.GroupListActivity"
-                  android:label="@string/group_list_screen_title"
-                  android:theme="@style/AppTheme"/>
-
         <activity android:name=".app.ui.keyword.list.KeywordListActivity"
                   android:label="@string/keyword_list_screen_title"
                   android:theme="@style/AppTheme"/>
@@ -33,6 +29,19 @@
                   android:label="@string/keyword_create_screen_title"
                   android:windowSoftInputMode="adjustResize"/>
 
+        <activity android:name=".app.ui.group.list.GroupListActivity"
+                  android:label="@string/group_list_screen_title"
+                  android:theme="@style/AppTheme"/>
+
+        <activity android:name=".app.ui.post.create.PostCreateActivity"
+                  android:label="@string/post_create_screen_title"
+                  android:theme="@style/AppTheme"/>
+
+        <activity android:name=".app.ui.post.view.PostViewActivity"
+                  android:label="@string/post_view_screen_title"
+                  android:theme="@style/AppTheme"/>
+
+        <!-- Sample screens to be removed -->
         <activity android:name=".app.ui.tab.TabActivity"
                   android:label="@string/str_musicians_list"/>
 

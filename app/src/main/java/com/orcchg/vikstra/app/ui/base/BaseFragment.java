@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 
 import com.orcchg.vikstra.app.AndroidApplication;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
+import com.orcchg.vikstra.app.injection.component.DaggerNavigationComponent;
+import com.orcchg.vikstra.app.injection.component.NavigationComponent;
+import com.orcchg.vikstra.app.navigation.NavigatorHolder;
 
 import hugo.weaving.DebugLog;
 
@@ -14,6 +17,9 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
         extends Fragment implements MvpView {
 
     protected P presenter;
+    protected NavigationComponent navigationComponent;
+
+    private NavigatorHolder navigatorHolder = new NavigatorHolder();
 
     private boolean isStateRestored = false;
 
@@ -26,6 +32,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         isStateRestored = savedInstanceState != null;
+        injectNavigator();
         injectDependencies();
         presenter = createPresenter();
         presenter.attachView((V) this);
@@ -78,5 +85,10 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     @DebugLog
     protected boolean isStateRestored() {
         return isStateRestored;
+    }
+
+    private void injectNavigator() {
+        navigationComponent = DaggerNavigationComponent.create();
+        navigationComponent.inject(navigatorHolder);
     }
 }

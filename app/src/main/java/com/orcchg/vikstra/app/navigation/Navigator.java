@@ -15,6 +15,8 @@ import com.orcchg.vikstra.app.ui.group.list.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.list.ListActivity;
+import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
+import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
 import com.orcchg.vikstra.app.ui.tab.TabActivity;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 
@@ -27,6 +29,8 @@ public class Navigator {
     public Navigator() {
     }
 
+    /* Keywords */
+    // ------------------------------------------
     public void openKeywordsListScreen(@NonNull Context context) {
         Intent intent = KeywordListActivity.getCallingIntent(context);
         context.startActivity(intent);
@@ -41,8 +45,22 @@ public class Navigator {
         context.startActivity(intent);
     }
 
+    /* Groups */
+    // ------------------------------------------
     public void openGroupsListScreen(@NonNull Context context) {
         Intent intent = GroupListActivity.getCallingIntent(context);
+        context.startActivity(intent);
+    }
+
+    /* Posts */
+    // ------------------------------------------
+    public void openNewPostScreen(@NonNull Context context) {
+        Intent intent = PostCreateActivity.getCallingIntent(context);
+        context.startActivity(intent);
+    }
+
+    public void openPostViewScreen(@NonNull Context context) {
+        Intent intent = PostViewActivity.getCallingIntent(context);
         context.startActivity(intent);
     }
 

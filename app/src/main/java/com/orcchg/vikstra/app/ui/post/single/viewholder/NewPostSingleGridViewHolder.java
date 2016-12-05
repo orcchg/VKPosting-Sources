@@ -3,16 +3,15 @@ package com.orcchg.vikstra.app.ui.post.single.viewholder;
 import android.view.View;
 
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.NormalViewHolder;
-import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.app.ui.base.widget.viewholder.BaseViewHolder;
 
 import butterknife.ButterKnife;
 
-public class PostSingleGridViewHolder extends NormalViewHolder<PostSingleGridItemVO> {
+public class NewPostSingleGridViewHolder extends BaseViewHolder {
 
-    private BaseAdapter.OnItemClickListener<PostSingleGridItemVO> listener;
+    private BaseAdapter.OnItemClickListener<Object> listener;
 
-    public PostSingleGridViewHolder(View view, BaseAdapter.OnItemClickListener<PostSingleGridItemVO> listener) {
+    public NewPostSingleGridViewHolder(View view, BaseAdapter.OnItemClickListener<Object> listener) {
         super(view);
         ButterKnife.bind(this, view);
         this.listener = listener;
@@ -22,10 +21,5 @@ public class PostSingleGridViewHolder extends NormalViewHolder<PostSingleGridIte
                 if (listener != null) listener.onItemClick(view, null, getAdapterPosition());
             }
         });
-    }
-
-    @Override
-    public void bind(PostSingleGridItemVO postSingleGridItemVO) {
-        // TODO: bind
     }
 }

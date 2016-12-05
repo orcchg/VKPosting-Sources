@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.app.ui.post.single;
 
+import android.view.View;
+
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
@@ -21,7 +23,30 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     @Override
     protected BaseAdapter createListAdapter() {
-        return new PostSingleGridAdapter();
+        PostSingleGridAdapter adapter = new PostSingleGridAdapter();
+        adapter.setOnItemClickListener(new BaseAdapter.OnItemClickListener<PostSingleGridItemVO>() {
+            @Override
+            public void onItemClick(View view, PostSingleGridItemVO postSingleGridItemVO, int position) {
+                if (isViewAttached()) getView().openPostViewScreen();
+            }
+
+            @Override
+            public void onItemLongClick(View view, PostSingleGridItemVO postSingleGridItemVO, int position) {
+                // TODO: impl
+            }
+        });
+        adapter.setOnNewItemClickListener(new BaseAdapter.OnItemClickListener<Object>() {
+            @Override
+            public void onItemClick(View view, Object o, int position) {
+                if (isViewAttached()) getView().openNewPostScreen();
+            }
+
+            @Override
+            public void onItemLongClick(View view, Object o, int position) {
+                // TODO: impl
+            }
+        });
+        return adapter;
     }
 
     /* Lifecycle */

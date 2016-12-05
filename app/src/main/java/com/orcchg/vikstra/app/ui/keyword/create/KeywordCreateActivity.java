@@ -36,6 +36,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
         return getCallingIntent(context, null);
     }
 
+    // TODO: pass keywords bundle id instead of bundle itself
     public static Intent getCallingIntent(@NonNull Context context, @Nullable KeywordBundle keywords) {
         Intent intent = new Intent(context, KeywordCreateActivity.class);
         intent.putExtra(EXTRA_KEYWORDS, keywords);
