@@ -18,6 +18,7 @@ public class KeywordListItemMapper implements Mapper<KeywordBundle, KeywordListI
     @Override
     public KeywordListItemVO map(KeywordBundle object) {
         return KeywordListItemVO.builder()
+                .setId(object.id())
                 .setTitle(object.title())
                 .setKeywords(object.keywords())
                 .build();

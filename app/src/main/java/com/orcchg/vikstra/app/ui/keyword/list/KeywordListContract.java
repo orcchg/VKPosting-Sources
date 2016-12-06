@@ -7,7 +7,11 @@ import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import java.util.List;
 
 public interface KeywordListContract {
-    interface View extends MvpListView {
+    interface View extends SubView {
+        void openKeywordCreateScreen(long keywordBundleId);
+    }
+
+    interface SubView extends MvpListView {
         void showKeywords(List<KeywordListItemVO> keywords);
         void showError();
         void showLoading();

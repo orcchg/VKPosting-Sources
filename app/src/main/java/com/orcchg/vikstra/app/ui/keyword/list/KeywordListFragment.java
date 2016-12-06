@@ -22,7 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
 
-public class KeywordListFragment extends SimpleBaseListFragment implements KeywordListContract.View {
+public class KeywordListFragment extends SimpleBaseListFragment implements KeywordListContract.SubView {
 
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.empty_view) View emptyView;

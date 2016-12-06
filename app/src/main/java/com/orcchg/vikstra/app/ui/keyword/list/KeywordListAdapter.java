@@ -11,9 +11,19 @@ import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 
 public class KeywordListAdapter extends BaseAdapter<KeywordViewHolder, KeywordListItemVO> {
 
+    private BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener;
+
+    public void setOnEditClickListener(BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener) {
+        this.editClickListener = editClickListener;
+    }
+
     @Override
     protected KeywordViewHolder createModelViewHolder(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_item_keywords, parent, false);
-        return new KeywordViewHolder(view, onItemClickListener);
+        KeywordViewHolder viewHolder = new KeywordViewHolder(view);
+        viewHolder.setOnItemClickListener(onItemClickListener);
+        viewHolder.setOnItemLongClickListener(onItemLongClickListener);
+        viewHolder.setOnEditClickListener(editClickListener);
+        return viewHolder;
     }
 }

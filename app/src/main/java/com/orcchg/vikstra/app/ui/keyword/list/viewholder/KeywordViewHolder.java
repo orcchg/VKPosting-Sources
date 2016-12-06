@@ -15,12 +15,15 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
 
     @BindView(R.id.flow) TitledFlowView flowView;
 
-    private BaseAdapter.OnItemClickListener<KeywordListItemVO> listener;
+    private BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener;
 
-    public KeywordViewHolder(View view, BaseAdapter.OnItemClickListener<KeywordListItemVO> listener) {
+    public KeywordViewHolder(View view) {
         super(view);
         ButterKnife.bind(this, view);
-        this.listener = listener;
+    }
+
+    public void setOnEditClickListener(BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener) {
+        this.editClickListener = editClickListener;
     }
 
     @Override
@@ -28,6 +31,10 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
         flowView.setKeywords(viewObject.keywords());
         flowView.setTitle(viewObject.title());
         flowView.setSelection(viewObject.getSelection());
+        flowView.setEditable(editClickListener != null);
+        flowView.setOnEditClickListener((view) -> {
+            if (editClickListener != null) editClickListener.onItemClick(view, viewObject, getAdapterPosition());
+        });
 
         itemView.setOnClickListener((view) -> {
             viewObject.setSelection(!viewObject.getSelection());
@@ -36,7 +43,7 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
         });
 
         itemView.setOnLongClickListener((view) -> {
-            if (listener != null) listener.onItemLongClick(view, viewObject, getAdapterPosition());
+            if (longListener != null) longListener.onItemLongClick(view, viewObject, getAdapterPosition());
             return false;
         });
     }

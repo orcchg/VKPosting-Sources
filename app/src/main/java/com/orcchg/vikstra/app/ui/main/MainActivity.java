@@ -116,6 +116,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     @Override
+    public void openKeywordCreateScreen(long keywordBundleId) {
+        navigationComponent.navigator().openKeywordCreateScreen(this, keywordBundleId);
+    }
+
+    @Override
     public void showKeywords(List<KeywordListItemVO> keywords) {
         KeywordListFragment fragment = getKeywordListFragment();
         if (fragment != null) fragment.showKeywords(keywords);

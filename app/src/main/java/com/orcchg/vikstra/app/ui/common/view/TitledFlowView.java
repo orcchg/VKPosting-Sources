@@ -92,4 +92,10 @@ public class TitledFlowView extends FrameLayout {
         setTitle(bundle.title());
         setKeywords(bundle.keywords());
     }
+
+    /* Listener */
+    // ------------------------------------------
+    public void setOnEditClickListener(View.OnClickListener listener) {
+        if (editButton != null) editButton.setOnClickListener(listener);
+    }
 }

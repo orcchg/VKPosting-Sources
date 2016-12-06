@@ -19,6 +19,9 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
 
     public interface OnItemClickListener<Model> {
         void onItemClick(View view, Model model, int position);
+    }
+
+    public interface OnItemLongClickListener<Model> {
         void onItemLongClick(View view, Model model, int position);
     }
 
@@ -31,6 +34,7 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
     protected boolean isInError = false;
 
     protected OnItemClickListener<Model> onItemClickListener;
+    protected OnItemLongClickListener<Model> onItemLongClickListener;
     protected View.OnClickListener onErrorClickListener;
 
     public BaseAdapter() {
@@ -84,6 +88,10 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
     // ------------------------------------------
     public void setOnItemClickListener(OnItemClickListener<Model> onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener<Model> onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
     public void populate(List<Model> items, boolean isThereMore) {
