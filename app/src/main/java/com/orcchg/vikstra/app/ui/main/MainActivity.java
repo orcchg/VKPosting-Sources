@@ -37,7 +37,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @BindView(R.id.tv_groups_selection_counter) TextView selectedGroupsTextView;
     @OnClick(R.id.btn_add_new_groups)
     public void onAddNewGroupsClick() {
-        navigationComponent.navigator().openKeywordsListScreen(this);
+        navigationComponent.navigator().openKeywordListScreen(this);
     }
     @OnClick(R.id.btn_groups_selection_drop)
     public void onDropSelectedGroupsClick() {

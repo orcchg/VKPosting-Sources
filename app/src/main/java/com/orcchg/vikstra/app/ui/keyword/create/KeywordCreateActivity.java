@@ -15,15 +15,17 @@ import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.KeywordsFlowLayout;
 import com.orcchg.vikstra.app.ui.keyword.create.injection.DaggerKeywordCreateComponent;
 import com.orcchg.vikstra.app.ui.keyword.create.injection.KeywordCreateComponent;
+import com.orcchg.vikstra.app.ui.keyword.create.injection.KeywordCreateModule;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.View, KeywordCreateContract.Presenter>
         implements KeywordCreateContract.View {
-    private static final String EXTRA_KEYWORDS = "extra_keywords";
+    private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.flow) KeywordsFlowLayout keywordsFlowLayout;
@@ -31,15 +33,16 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     @BindView(R.id.fab) FloatingActionButton fab;
 
     private KeywordCreateComponent keywordCreateComponent;
+    private long keywordBundleId = Constant.BAD_ID;
 
     public static Intent getCallingIntent(@NonNull Context context) {
-        return getCallingIntent(context, null);
+        return getCallingIntent(context, Constant.BAD_ID);
     }
 
     // TODO: pass keywords bundle id instead of bundle itself
-    public static Intent getCallingIntent(@NonNull Context context, @Nullable KeywordBundle keywords) {
+    public static Intent getCallingIntent(@NonNull Context context, long keywordBunldeId) {
         Intent intent = new Intent(context, KeywordCreateActivity.class);
-        intent.putExtra(EXTRA_KEYWORDS, keywords);
+        intent.putExtra(EXTRA_KEYWORD_BUNDLE_ID, keywordBunldeId);
         return intent;
     }
 
@@ -52,6 +55,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     protected void injectDependencies() {
         keywordCreateComponent = DaggerKeywordCreateComponent.builder()
                 .applicationComponent(getApplicationComponent())
+                .keywordCreateModule(new KeywordCreateModule(keywordBundleId))
                 .build();
         keywordCreateComponent.inject(this);
     }
@@ -64,6 +68,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
         setContentView(R.layout.activity_keywords_create);
         ButterKnife.bind(this);
         initView();
+        initToolbar();
     }
 
     @Override
@@ -76,11 +81,15 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     // ------------------------------------------
     private void initView() {
         Intent intent = getIntent();
-        KeywordBundle keywords = intent.getParcelableExtra(EXTRA_KEYWORDS);
+        keywordBundleId = intent.getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+        fab.setOnClickListener((view) -> presenter.onAddPressed());
+    }
+
+    private void initToolbar() {
         String dialogTitle = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_title);
         String dialogInputHint = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_hint);
-        keywordsFlowLayout.setKeywords(keywords.keywords());
-        toolbar.setTitle(keywords.title());
+
+        toolbar.setTitle(R.string.keyword_create_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());
         toolbar.inflateMenu(R.menu.edit_save);
         toolbar.setOnMenuItemClickListener((item) -> {
@@ -95,8 +104,6 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
             }
             return false;
         });
-
-        fab.setOnClickListener((view) -> presenter.onAddPressed());
     }
 
     /* Contract */
@@ -114,5 +121,11 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     @Override
     public String getInputKeyword() {
         return inputEditText.getText().toString();
+    }
+
+    @Override
+    public void setInputKeywords(KeywordBundle keywords) {
+        toolbar.setTitle(keywords.title());
+        keywordsFlowLayout.setKeywords(keywords.keywords());
     }
 }

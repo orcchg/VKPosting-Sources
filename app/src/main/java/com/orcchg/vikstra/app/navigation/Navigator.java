@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
@@ -18,7 +17,7 @@ import com.orcchg.vikstra.app.ui.list.ListActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
 import com.orcchg.vikstra.app.ui.tab.TabActivity;
-import com.orcchg.vikstra.domain.model.KeywordBundle;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
 
@@ -31,17 +30,17 @@ public class Navigator {
 
     /* Keywords */
     // ------------------------------------------
-    public void openKeywordsListScreen(@NonNull Context context) {
+    public void openKeywordListScreen(@NonNull Context context) {
         Intent intent = KeywordListActivity.getCallingIntent(context);
         context.startActivity(intent);
     }
 
-    public void openNewKeywordsBundleScreen(@NonNull Context context) {
-        openNewKeywordsBundleScreen(context, null);
+    public void openKeywordCreateScreen(@NonNull Context context) {
+        openKeywordCreateScreen(context, Constant.BAD_ID);
     }
 
-    public void openNewKeywordsBundleScreen(@NonNull Context context, @Nullable KeywordBundle keywords) {
-        Intent intent = KeywordCreateActivity.getCallingIntent(context, keywords);
+    public void openKeywordCreateScreen(@NonNull Context context, long keywordBunldeId) {
+        Intent intent = KeywordCreateActivity.getCallingIntent(context, keywordBunldeId);
         context.startActivity(intent);
     }
 

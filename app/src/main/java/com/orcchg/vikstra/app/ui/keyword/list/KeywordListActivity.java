@@ -120,7 +120,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
                 music.add(Keyword.create("Mark Aurelis XXX"));
                 music.add(Keyword.create("Sandro Sanders XXX"));
                 KeywordBundle keywords = KeywordBundle.builder().setId(1000).setTitle("Music 2").setKeywords(music).build();
-                navigationComponent.navigator().openNewKeywordsBundleScreen(this, keywords);
+                navigationComponent.navigator().openKeywordCreateScreen(this, 1000);  // TODO: use proper id
             }
         );
     }
