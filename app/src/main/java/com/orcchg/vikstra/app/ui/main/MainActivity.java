@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.main;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
+import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
 import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
@@ -84,6 +86,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);
+            switch (requestCode) {
+                case KeywordCreateActivity.REQUEST_CODE:
+                    if (resultCode == Activity.RESULT_OK) presenter.retry();  // refresh keywords list
+                    break;
+            }
         }
     }
 
@@ -127,6 +134,12 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     @Override
+    public void showEmptyList() {
+        KeywordListFragment fragment = getKeywordListFragment();
+        if (fragment != null) fragment.showEmptyList();
+    }
+
+    @Override
     public void showError() {
         KeywordListFragment fragment = getKeywordListFragment();
         if (fragment != null) fragment.showError();
@@ -141,6 +154,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void retry() {
         presenter.retry();
+    }
+
+    @Override
+    public void onEmpty() {
+        navigationComponent.navigator().openKeywordCreateScreen(this);
     }
 
     @Override

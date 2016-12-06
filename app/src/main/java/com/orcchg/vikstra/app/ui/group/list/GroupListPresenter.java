@@ -1,12 +1,13 @@
 package com.orcchg.vikstra.app.ui.group.list;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
-import com.orcchg.vikstra.domain.interactor.GetKeywordBundleById;
+import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.UseCase;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.Keyword;
@@ -75,7 +76,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private UseCase.OnPostExecuteCallback<KeywordBundle> createGetKeywordBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
             @Override
-            public void onFinish(KeywordBundle bundle) {
+            public void onFinish(@Nullable KeywordBundle bundle) {
+                // TODO: NPE
                 for (Keyword keyword : bundle) {
                     GroupParentItem item = new GroupParentItem(keyword.keyword());
                     groupParentItems.add(item);
@@ -93,7 +95,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private UseCase.OnPostExecuteCallback<List<List<Group>>> createGetGroupsByKeywordsListCallback() {
         return new UseCase.OnPostExecuteCallback<List<List<Group>>>() {
             @Override
-            public void onFinish(List<List<Group>> splitGroups) {
+            public void onFinish(@Nullable List<List<Group>> splitGroups) {
+                // TODO: NPE
                 // TODO: only 20 groups by single keyword by default
                 int index = 0;
                 for (List<Group> groups : splitGroups) {

@@ -35,13 +35,13 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public void openKeywordCreateScreen(@NonNull Context context) {
+    public void openKeywordCreateScreen(@NonNull Activity context) {
         openKeywordCreateScreen(context, Constant.BAD_ID);
     }
 
-    public void openKeywordCreateScreen(@NonNull Context context, long keywordBunldeId) {
+    public void openKeywordCreateScreen(@NonNull Activity context, long keywordBunldeId) {
         Intent intent = KeywordCreateActivity.getCallingIntent(context, keywordBunldeId);
-        context.startActivity(intent);
+        context.startActivityForResult(intent, KeywordCreateActivity.REQUEST_CODE);
     }
 
     /* Groups */

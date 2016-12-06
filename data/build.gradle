@@ -5,7 +5,6 @@ buildscript {
     }
     dependencies {
         classpath 'me.tatarka:gradle-retrolambda:3.2.3'
-        classpath "io.realm:realm-gradle-plugin:2.0.2"
     }
 }
 

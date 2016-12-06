@@ -1,7 +1,8 @@
-package com.orcchg.vikstra.domain.interactor;
+package com.orcchg.vikstra.domain.interactor.keyword;
 
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.UseCase;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 

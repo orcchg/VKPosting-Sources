@@ -10,6 +10,7 @@
     <color name="semitransparent">#88000000</color>
     <color name="light_grey_bg">#ededed</color>
     <color name="list_line_separator">#42000000</color>
+    <color name="black_40_opacity">#66000000</color>
 
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#757575</color>

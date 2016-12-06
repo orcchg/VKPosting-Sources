@@ -7,6 +7,7 @@
     <string name="keywords_flow_layout_more_collapse">collapse</string>
 
     <string name="empty_data">Data is empty</string>
+    <string name="empty_btn_label">Create</string>
     <string name="error_btn_label">Retry</string>
     <string name="error_text">Data error</string>
     <string name="error_text_extended">An error has occurred.</string>

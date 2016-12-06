@@ -8,16 +8,17 @@ import com.orcchg.vikstra.domain.model.Keyword;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
 public class GetGroupsByKeywordsList extends MultiUseCase<VKApiCommunityArray, List<VKApiCommunityArray>> {
 
-    private List<Keyword> keywords;
+    private Collection<Keyword> keywords;
 
     @Inject
-    public GetGroupsByKeywordsList(List<Keyword> keywords, ThreadExecutor threadExecutor,
+    public GetGroupsByKeywordsList(Collection<Keyword> keywords, ThreadExecutor threadExecutor,
                                    PostExecuteScheduler postExecuteScheduler) {
         super(keywords.size(), threadExecutor, postExecuteScheduler);
         this.keywords = keywords;

@@ -15,6 +15,7 @@ import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 import javax.inject.Singleton;
 
 import dagger.Component;
+import io.realm.Realm;
 
 /**
  * A component whose lifetime is the life of the application.
@@ -23,10 +24,22 @@ import dagger.Component;
 @Component(modules = {ApplicationModule.class, CloudModule.class})
 public interface ApplicationComponent extends CloudComponent {
 
+    /* Context */
+    // ------------------------------------------
     Context context();
+    Realm realm();
+
+    /* Thread pool */
+    // ------------------------------------------
     ThreadExecutor threadExecutor();
     PostExecuteScheduler postExecuteScheduler();
+
+    /* Remote & Local data source */
+    // ------------------------------------------
     VkontakteEndpoint vkontakteEndpoint();
+
+    /* Repository */
+    // ------------------------------------------
     IArtistRepository artistRepository();
     IGenreRepository genresRepository();
     IKeywordRepository keywordRepository();

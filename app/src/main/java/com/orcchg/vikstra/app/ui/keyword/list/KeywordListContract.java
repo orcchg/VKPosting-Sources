@@ -13,6 +13,7 @@ public interface KeywordListContract {
 
     interface SubView extends MvpListView {
         void showKeywords(List<KeywordListItemVO> keywords);
+        void showEmptyList();
         void showError();
         void showLoading();
     }

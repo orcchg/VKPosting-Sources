@@ -9,10 +9,25 @@
     <TextView
         android:id="@+id/tv_empty_data"
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/cover_error_size"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:drawableTint="@color/black_40_opacity"
+        android:drawableTop="@drawable/ic_search_black_48dp"
+        android:drawablePadding="8dp"
         android:gravity="center"
         android:text="@string/empty_data"
-        android:textAppearance="@style/TextAppearance.AppCompat.Title"
-        android:textColor="@color/description_color"/>
+        android:textColor="@color/description_color"
+        android:textSize="@dimen/standard_title_text_size"/>
+
+    <Button
+        android:id="@+id/btn_empty_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_empty_data"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="8dp"
+        android:background="?selectableItemBackground"
+        android:text="@string/empty_btn_label"
+        android:textColor="?attr/colorAccent"
+        android:textSize="@dimen/standard_button_text_size"/>
 </RelativeLayout>

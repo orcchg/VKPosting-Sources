@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.interactor;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 
@@ -16,7 +18,7 @@ public abstract class UseCase<Result> implements Runnable {
      * Callback to notify when execution of this {@link UseCase} finishes.
      */
     public interface OnPostExecuteCallback<Result> {
-        void onFinish(Result values);
+        void onFinish(@Nullable Result values);
         void onError(Throwable e);
     }
 
@@ -87,7 +89,7 @@ public abstract class UseCase<Result> implements Runnable {
 
     /* Internal */
     // ------------------------------------------------------------------------
-    private Runnable wrapToRunnable(final Result result) {
+    private Runnable wrapToRunnable(final @Nullable Result result) {
         return new Runnable() {
             @Override
             public void run() {

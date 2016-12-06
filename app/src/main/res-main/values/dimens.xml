@@ -3,6 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">8dp</dimen>
 
+    <dimen name="standard_button_text_size">16dp</dimen>
+    <dimen name="standard_title_text_size">20dp</dimen>
     <dimen name="standard_icon_size">24dp</dimen>
     <dimen name="standard_side_padding">16dp</dimen>
     <dimen name="standard_side_padding_small">8dp</dimen>

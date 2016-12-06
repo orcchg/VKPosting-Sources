@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.keyword.list;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,14 +15,12 @@ import android.view.View;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
+import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.DaggerKeywordListComponent;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListComponent;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
-import com.orcchg.vikstra.domain.model.Keyword;
-import com.orcchg.vikstra.domain.model.KeywordBundle;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -65,6 +64,16 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
         initToolbar();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case KeywordCreateActivity.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) presenter.retry();  // refresh keywords list
+                break;
+        }
+    }
+
     /* View */
     // ------------------------------------------
     private void initView() {
@@ -76,53 +85,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
         }
 
         fab.setImageResource(R.drawable.ic_add_white_24dp);
-        fab.setOnClickListener((view) -> {
-                // TODO: real data ; move to presenter
-                List<Keyword> music = new ArrayList<>();
-                music.add(Keyword.create("Timbaland 2"));
-                music.add(Keyword.create("Jodi Foster 2"));
-                music.add(Keyword.create("Dima Bilan 2"));
-                music.add(Keyword.create("Mark Aurelis 2"));
-                music.add(Keyword.create("Sandro Sanders 2"));
-                music.add(Keyword.create("Timbaland 2"));
-                music.add(Keyword.create("Jodi Foster 2"));
-                music.add(Keyword.create("Dima Bilan 2"));
-                music.add(Keyword.create("Mark Aurelis 2"));
-                music.add(Keyword.create("Sandro Sanders 2"));
-                music.add(Keyword.create("Timbaland 2"));
-                music.add(Keyword.create("Jodi Foster 2"));
-                music.add(Keyword.create("Dima Bilan 2"));
-                music.add(Keyword.create("Mark Aurelis 2"));
-                music.add(Keyword.create("Sandro Sanders 2"));
-                music.add(Keyword.create("Timbaland 2"));
-                music.add(Keyword.create("Jodi Foster 2"));
-                music.add(Keyword.create("Dima Bilan 2"));
-                music.add(Keyword.create("Mark Aurelis 2"));
-                music.add(Keyword.create("Sandro Sanders 2"));
-                music.add(Keyword.create("Timbaland 2"));
-                music.add(Keyword.create("Jodi Foster 2"));
-                music.add(Keyword.create("Dima Bilan 2"));
-                music.add(Keyword.create("Mark Aurelis 2"));
-                music.add(Keyword.create("Sandro Sanders 2"));
-                music.add(Keyword.create("Timbaland 2"));
-                music.add(Keyword.create("Jodi Foster 2"));
-                music.add(Keyword.create("Dima Bilan 2"));
-                music.add(Keyword.create("Mark Aurelis 2"));
-                music.add(Keyword.create("Sandro Sanders 2"));
-                music.add(Keyword.create("Timbaland 2"));
-                music.add(Keyword.create("Jodi Foster 2"));
-                music.add(Keyword.create("Dima Bilan 2"));
-                music.add(Keyword.create("Mark Aurelis 2"));
-                music.add(Keyword.create("Sandro Sanders 2"));
-                music.add(Keyword.create("Timbaland XXX"));
-                music.add(Keyword.create("Jodi Foster XXX"));
-                music.add(Keyword.create("Dima Bilan XXX"));
-                music.add(Keyword.create("Mark Aurelis XXX"));
-                music.add(Keyword.create("Sandro Sanders XXX"));
-                KeywordBundle keywords = KeywordBundle.builder().setId(1000).setTitle("Music 2").setKeywords(music).build();
-                navigationComponent.navigator().openKeywordCreateScreen(this, 1000);  // TODO: use proper id
-            }
-        );
+        fab.setOnClickListener((view) -> navigationComponent.navigator().openKeywordCreateScreen(this, 1000));  // TODO: use proper id
     }
 
     private void initToolbar() {
@@ -165,6 +128,12 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     @Override
+    public void showEmptyList() {
+        KeywordListFragment fragment = getFragment();
+        if (fragment != null) fragment.showEmptyList();
+    }
+
+    @Override
     public void showError() {
         KeywordListFragment fragment = getFragment();
         if (fragment != null) fragment.showError();
@@ -179,6 +148,11 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     @Override
     public void retry() {
         presenter.retry();
+    }
+
+    @Override
+    public void onEmpty() {
+        navigationComponent.navigator().openKeywordCreateScreen(this);
     }
 
     @Override

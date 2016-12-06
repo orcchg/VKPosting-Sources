@@ -2,6 +2,6 @@
 <resources>
     <string name="keyword_create_dialog_input_keywords_bundle_title">Change title</string>
     <string name="keyword_create_dialog_input_keywords_bundle_hint">Enter new title</string>
-
     <string name="keyword_create_screen_title">New keywords</string>
+    <string name="keyword_create_new_bundle_added">Added new set of keywords.</string>
 </resources>

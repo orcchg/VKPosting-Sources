@@ -16,7 +16,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 
-import java.util.List;
+import java.util.Collection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -82,7 +82,7 @@ public class TitledFlowView extends FrameLayout {
     public void setTitle(String text) { if (titleView != null) titleView.setText(text); }
     public void setTitle(@StringRes int resId) { if (titleView != null) titleView.setText(resId); }
 
-    public void setKeywords(@NonNull List<Keyword> keywords) {
+    public void setKeywords(@NonNull Collection<Keyword> keywords) {
         if (keywordsFlowLayout != null) {
             keywordsFlowLayout.setKeywords(keywords);
         }

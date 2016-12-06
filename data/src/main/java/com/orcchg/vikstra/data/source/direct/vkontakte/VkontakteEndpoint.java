@@ -14,6 +14,7 @@ import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -70,7 +71,7 @@ public class VkontakteEndpoint extends Endpoint {
      * Same as {@link VkontakteEndpoint#getGroupsByKeywords(List, UseCase.OnPostExecuteCallback)}, but
      * splits groups by keywords.
      */
-    public void getGroupsByKeywordsSplit(final List<Keyword> keywords,
+    public void getGroupsByKeywordsSplit(final Collection<Keyword> keywords,
                                          @Nullable final UseCase.OnPostExecuteCallback<List<List<Group>>> callback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKApiCommunityArray>>() {

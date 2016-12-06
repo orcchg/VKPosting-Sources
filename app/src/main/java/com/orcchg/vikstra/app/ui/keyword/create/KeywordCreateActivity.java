@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.widget.AutoCompleteTextView;
+import android.widget.Toast;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
@@ -17,15 +18,19 @@ import com.orcchg.vikstra.app.ui.keyword.create.injection.DaggerKeywordCreateCom
 import com.orcchg.vikstra.app.ui.keyword.create.injection.KeywordCreateComponent;
 import com.orcchg.vikstra.app.ui.keyword.create.injection.KeywordCreateModule;
 import com.orcchg.vikstra.domain.model.Keyword;
-import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
+
+import java.util.Collection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.View, KeywordCreateContract.Presenter>
         implements KeywordCreateContract.View {
+    public static final int REQUEST_CODE = Constant.RequestCode.KEYWORD_CREATE_SCREEN;
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
+
+    private String DIALOG_TITLE, DIALOG_HINT;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.flow) KeywordsFlowLayout keywordsFlowLayout;
@@ -66,6 +71,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keywords_create);
         ButterKnife.bind(this);
+        initResources();
         initView();
         initToolbar();
     }
@@ -81,21 +87,19 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     private void initView() {
         Intent intent = getIntent();
         keywordBundleId = intent.getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+        keywordsFlowLayout.enableLayoutTransition(true);  // animation
+        keywordsFlowLayout.setOnKeywordItemClickListener((keyword) -> presenter.onKeywordPressed(keyword));
         fab.setOnClickListener((view) -> presenter.onAddPressed());
     }
 
     private void initToolbar() {
-        String dialogTitle = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_title);
-        String dialogInputHint = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_hint);
-
         toolbar.setTitle(R.string.keyword_create_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());
         toolbar.inflateMenu(R.menu.edit_save);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.edit:
-                    DialogProvider.showEditTextDialog(this, dialogTitle, dialogInputHint, toolbar.getTitle().toString(),
-                            (dialog, which, text) -> toolbar.setTitle(text), null);
+                    openEditTitleDialog(toolbar.getTitle().toString());
                     return true;
                 case R.id.save:
                     presenter.onSavePressed();
@@ -123,8 +127,35 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     }
 
     @Override
-    public void setInputKeywords(KeywordBundle keywords) {
-        toolbar.setTitle(keywords.title());
-        keywordsFlowLayout.setKeywords(keywords.keywords());
+    public void setInputKeywords(String title, Collection<Keyword> keywords) {
+        toolbar.setTitle(title);
+        keywordsFlowLayout.setKeywords(keywords);
+    }
+
+    @Override
+    public void notifyKeywordsSaved() {
+        Toast.makeText(this, R.string.keyword_create_new_bundle_added, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void openEditTitleDialog(@Nullable String initTitle) {
+        DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, initTitle,
+                (dialog, which, text) -> {
+                    toolbar.setTitle(text);
+                    presenter.onTitleChanged(text);
+                }, null);
+    }
+
+    @Override
+    public void closeView(int resultCode) {
+        setResult(resultCode);
+        finish();
+    }
+
+    /* Resources */
+    // ------------------------------------------
+    private void initResources() {
+        DIALOG_TITLE = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_title);
+        DIALOG_HINT = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_hint);
     }
 }

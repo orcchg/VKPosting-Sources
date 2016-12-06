@@ -28,6 +28,10 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
     @BindView(R.id.empty_view) View emptyView;
     @BindView(R.id.loading_view) View loadingView;
     @BindView(R.id.error_view) View errorView;
+    @OnClick(R.id.btn_empty_data)
+    public void onEmptyDataClick() {
+        iScrollList.onEmpty();
+    }
     @OnClick(R.id.btn_retry)
     public void onRetryClick() {
         iScrollList.retry();
@@ -87,6 +91,11 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
         }
 
         if (shadowHolder != null) shadowHolder.showShadow(true);
+    }
+
+    @Override
+    public void showEmptyList() {
+        showKeywords(null);
     }
 
     @Override

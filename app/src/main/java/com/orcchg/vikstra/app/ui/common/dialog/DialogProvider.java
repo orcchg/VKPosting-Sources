@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,12 +19,13 @@ public class DialogProvider {
         void onClick(DialogInterface dialog, int which, String text);
     }
 
-    public static void showEditTextDialog(Activity activity, String title, String hint, String init,
+    public static void showEditTextDialog(Activity activity, String title, String hint, @Nullable String init,
                                           @NonNull OnEditTextDialogOkPressed okListener,
                                           @Nullable DialogInterface.OnClickListener cancelListener) {
 
         View view = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null, false);
         EditText input = (EditText) view.findViewById(R.id.et_input);
+        init = TextUtils.isEmpty(init) ? "" : init;
         input.setText(init);
         input.setHint(hint);
         input.setSelection(init.length());

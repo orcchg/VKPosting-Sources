@@ -1,10 +1,12 @@
 package com.orcchg.vikstra.app.ui.keyword.list;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordListItemMapper;
-import com.orcchg.vikstra.domain.interactor.GetKeywordBundles;
+import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.interactor.UseCase;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 
@@ -69,12 +71,17 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private UseCase.OnPostExecuteCallback<List<KeywordBundle>> createGetKeywordBundlesCallback() {
         return new UseCase.OnPostExecuteCallback<List<KeywordBundle>>() {
             @Override
-            public void onFinish(List<KeywordBundle> values) {
-                memento.currentSize += values.size();
-                KeywordListItemMapper mapper = new KeywordListItemMapper();
-                List<KeywordListItemVO> vos = mapper.map(values);
-                listAdapter.populate(vos, isThereMore());
-                if (isViewAttached()) getView().showKeywords(vos);
+            public void onFinish(@Nullable List<KeywordBundle> values) {
+                // TODO: NPE
+                if (values == null || values.isEmpty()) {
+                    if (isViewAttached()) getView().showEmptyList();
+                } else {
+                    memento.currentSize += values.size();
+                    KeywordListItemMapper mapper = new KeywordListItemMapper();
+                    List<KeywordListItemVO> vos = mapper.map(values);
+                    listAdapter.populate(vos, isThereMore());
+                    if (isViewAttached()) getView().showKeywords(vos);
+                }
             }
 
             @Override

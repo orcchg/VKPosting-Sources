@@ -1,16 +1,14 @@
-package com.orcchg.vikstra.domain.repository;
+package com.orcchg.vikstra.data.source.repository.keyword;
 
-import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 
-import java.util.Collection;
 import java.util.List;
 
-public interface IKeywordRepository {
+public interface IKeywordStorage {
 
     /* Create */
     // ------------------------------------------
-    boolean addKeywords(String title, Collection<Keyword> keywords);
+    boolean addKeywords(KeywordBundle bundle);
 
     /* Read */
     // ------------------------------------------

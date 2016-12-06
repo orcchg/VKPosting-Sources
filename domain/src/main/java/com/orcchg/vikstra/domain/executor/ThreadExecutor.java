@@ -34,7 +34,8 @@ public class ThreadExecutor {
     }
 
     protected static class JobThreadFactory implements ThreadFactory {
-        private static final String THREAD_NAME = "musicsquare_thread_";
+        // TODO: add identificator to thread relative ot screen
+        private static final String THREAD_NAME = "vikstra_thread_";
         private int counter = 0;
 
         @Override
