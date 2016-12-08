@@ -1,6 +1,6 @@
 package com.orcchg.vikstra.domain.executor;
 
-import com.orcchg.vikstra.domain.interactor.UseCase;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
 
 import javax.inject.Inject;
 

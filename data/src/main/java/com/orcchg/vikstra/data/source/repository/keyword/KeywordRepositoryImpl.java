@@ -1,10 +1,11 @@
 package com.orcchg.vikstra.data.source.repository.keyword;
 
+import android.support.annotation.NonNull;
+
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,6 +18,8 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
 
     private final IKeywordStorage cloudSource;
     private final IKeywordStorage localSource;
+
+    private static long lastId = 1000;  // TODO: get last id
 
     @Inject
     KeywordRepositoryImpl(@Named("keywordCloud") IKeywordStorage cloudSource,
@@ -31,7 +34,7 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
     public boolean addKeywords(String title, Collection<Keyword> keywords) {
         // TODO: impl cloudly
         KeywordBundle bundle = KeywordBundle.builder()
-                .setId(1000)  // TODO: get last id
+                .setId(lastId++)  // TODO: get last id
                 .setTitle(title)
                 .setKeywords(keywords)
                 .build();
@@ -60,6 +63,11 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
 
     /* Update */
     // ------------------------------------------
+    @Override
+    public boolean updateKeywords(@NonNull KeywordBundle keywords) {
+        // TODO: impl cloudly
+        return localSource.updateKeywords(keywords);
+    }
 
     /* Delete */
     // ------------------------------------------

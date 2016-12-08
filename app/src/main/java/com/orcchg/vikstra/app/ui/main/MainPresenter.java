@@ -10,6 +10,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
+
 public class MainPresenter extends BaseCompositePresenter<MainContract.View> implements MainContract.Presenter {
 
     KeywordListPresenter keywordListPresenter;
@@ -43,5 +45,11 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Override
     public void onScroll(int itemsLeftToEnd) {
         keywordListPresenter.onScroll(itemsLeftToEnd);
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    @DebugLog @Override
+    protected void freshStart() {
     }
 }

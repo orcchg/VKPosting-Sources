@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.data.source.local.keyword;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.data.source.local.model.KeywordBundleDBO;
@@ -34,11 +35,13 @@ public class KeywordDatabase implements IKeywordStorage {
     /* Create */
     // ------------------------------------------
     @DebugLog @Override
-    public boolean addKeywords(KeywordBundle bundle) {
-        Realm.getDefaultInstance().executeTransaction((realm) -> {
-            KeywordBundleDBO dbo = realm.createObject(KeywordBundleDBO.class);
+    public boolean addKeywords(@NonNull KeywordBundle bundle) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction((xrealm) -> {
+            KeywordBundleDBO dbo = xrealm.createObject(KeywordBundleDBO.class);
             keywordBundleToDboPopulator.populate(bundle, dbo);
         });
+        realm.close();
         return true;
     }
 
@@ -47,8 +50,12 @@ public class KeywordDatabase implements IKeywordStorage {
     @DebugLog @Nullable @Override
     public KeywordBundle keywords(long id) {
         if (id != Constant.BAD_ID) {
-            KeywordBundleDBO dbo = Realm.getDefaultInstance().where(KeywordBundleDBO.class).equalTo("id", id).findFirst();
-            if (dbo != null) return keywordBundleToDboMapper.mapBack(dbo);
+            Realm realm = Realm.getDefaultInstance();
+            KeywordBundle model = null;
+            KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo("id", id).findFirst();
+            if (dbo != null) model = keywordBundleToDboMapper.mapBack(dbo);
+            realm.close();
+            return model;
         }
         Timber.w("No keywords found by id %s", id);
         return null;
@@ -62,16 +69,32 @@ public class KeywordDatabase implements IKeywordStorage {
     @DebugLog @Override
     public List<KeywordBundle> keywords(int limit, int offset) {
         // TODO: use limit & offset
-        RealmResults<KeywordBundleDBO> dbos = Realm.getDefaultInstance().where(KeywordBundleDBO.class).findAll();
+        Realm realm = Realm.getDefaultInstance();
+        RealmResults<KeywordBundleDBO> dbos = realm.where(KeywordBundleDBO.class).findAll();
         List<KeywordBundle> models = new ArrayList<>();
         for (KeywordBundleDBO dbo : dbos) {
             models.add(keywordBundleToDboMapper.mapBack(dbo));
         }
+        realm.close();
         return models;
     }
 
     /* Update */
     // ------------------------------------------
+    @DebugLog @Override
+    public boolean updateKeywords(@NonNull KeywordBundle bundle) {
+        boolean result = false;
+        Realm realm = Realm.getDefaultInstance();
+        KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo("id", bundle.id()).findFirst();
+        if (dbo != null) {
+            realm.executeTransaction((xrealm) -> {
+                keywordBundleToDboPopulator.populate(bundle, dbo);
+            });
+            result = true;
+        }
+        realm.close();
+        return result;
+    }
 
     /* Delete */
     // ------------------------------------------

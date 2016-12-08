@@ -9,7 +9,7 @@ public abstract class SimpleBaseFragment extends BaseFragment<StubMvpView, BaseP
 
     @NonNull @Override
     protected BasePresenter<StubMvpView> createPresenter() {
-        return new BasePresenter<>();
+        return new SimpleBasePresenter();
     }
 
     @Override

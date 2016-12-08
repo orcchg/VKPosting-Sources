@@ -9,4 +9,8 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
     @Inject
     PostViewPresenter() {
     }
+
+    @Override
+    protected void freshStart() {
+    }
 }

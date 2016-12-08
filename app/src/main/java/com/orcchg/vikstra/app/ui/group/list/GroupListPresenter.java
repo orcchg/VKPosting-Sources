@@ -7,8 +7,8 @@ import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
-import com.orcchg.vikstra.domain.interactor.UseCase;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
@@ -46,15 +46,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     public void onStart() {
-        super.onStart();
         if (isViewAttached()) {  // TODO: try to use BaseListPresenter
             RecyclerView list = getView().getListView();
             if (list.getAdapter() == null) {
                 list.setAdapter(listAdapter);
             }
         }
-
-        start();
+        super.onStart();
     }
 
     /* Contract */
@@ -66,8 +64,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    @DebugLog
-    public void start() {
+    @DebugLog @Override
+    protected void freshStart() {
         getKeywordBundleByIdUseCase.execute();
     }
 

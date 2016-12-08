@@ -11,14 +11,15 @@ import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
 
-public class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
+public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
 
     private WeakReference<V> viewRef;
     protected @Inject Navigator navigator;
 
+    private boolean isFresh = true;
     private boolean isStateRestored = false;
 
-    @Override
+    @DebugLog @Override
     public void attachView(V view) {
         viewRef = new WeakReference<>(view);
     }
@@ -32,12 +33,18 @@ public class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
         return viewRef != null && viewRef.get() != null;
     }
 
-    @DebugLog
+    protected boolean isOnFreshStart() {
+        return isFresh;
+    }
+
     protected boolean isStateRestored() {
         return isStateRestored;
     }
 
-    @Override
+    @DebugLog
+    protected abstract void freshStart();  // called only at fresh start in onStart() lifecycle callback
+
+    @DebugLog @Override
     public void detachView() {
         if (viewRef != null) {
             viewRef.clear();
@@ -51,17 +58,21 @@ public class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
         // to override
     }
 
-    @Override
+    @DebugLog @Override
     public void onStart() {
+        if (isFresh) {
+            isFresh = false;
+            freshStart();
+        }
         // to override
     }
 
-    @Override
+    @DebugLog @Override
     public void onResume() {
         // to override
     }
 
-    @Override
+    @DebugLog @Override
     public void onPause() {
         // to override
     }
@@ -71,12 +82,12 @@ public class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
         // to override
     }
 
-    @Override
+    @DebugLog @Override
     public void onStop() {
         // to override
     }
 
-    @Override
+    @DebugLog @Override
     public void onDestroy() {
         // to override
     }

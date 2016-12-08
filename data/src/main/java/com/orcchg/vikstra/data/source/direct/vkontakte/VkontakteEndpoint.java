@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.data.source.direct.Endpoint;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
-import com.orcchg.vikstra.domain.interactor.UseCase;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupById;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeywordsList;
 import com.orcchg.vikstra.domain.model.Group;

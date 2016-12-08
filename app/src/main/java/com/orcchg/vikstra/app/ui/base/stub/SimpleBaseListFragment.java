@@ -10,7 +10,7 @@ public class SimpleBaseListFragment extends BaseListFragment<StubMvpView, BasePr
 
     @NonNull @Override
     protected BasePresenter<StubMvpView> createPresenter() {
-        return new BasePresenter<>();
+        return new SimpleBasePresenter();
     }
 
     @Override

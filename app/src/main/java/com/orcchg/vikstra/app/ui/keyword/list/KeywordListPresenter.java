@@ -6,7 +6,7 @@ import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordListItemMapper;
-import com.orcchg.vikstra.domain.interactor.UseCase;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -48,19 +48,13 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         return adapter;
     }
 
-    /* Lifecycle */
-    // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
-    public void onStart() {
-        super.onStart();
-        start();
-    }
-
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     public void retry() {
-        start();
+        listAdapter.clear();
+        dropListStat();
+        freshStart();
     }
 
     @Override
@@ -74,8 +68,8 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         return selectedKeywordBundleId;
     }
 
-    @DebugLog
-    private void start() {
+    @DebugLog @Override
+    protected void freshStart() {
         getKeywordBundlesUseCase.execute();
     }
 

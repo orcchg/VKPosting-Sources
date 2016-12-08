@@ -141,8 +141,13 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     }
 
     @Override
-    public void notifyKeywordsSaved() {
-        Toast.makeText(this, R.string.keyword_create_new_bundle_added, Toast.LENGTH_SHORT).show();
+    public void notifyKeywordsAdded() {
+        Toast.makeText(this, R.string.keyword_create_bundle_added, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void notifyKeywordsUpdated() {
+        Toast.makeText(this, R.string.keyword_create_bundle_updated, Toast.LENGTH_SHORT).show();
     }
 
     @Override

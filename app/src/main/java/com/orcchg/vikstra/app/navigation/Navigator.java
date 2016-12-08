@@ -9,14 +9,14 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
-import com.orcchg.vikstra.app.ui.details.DetailsActivity;
+import com.orcchg.vikstra.app.ui.legacy.details.DetailsActivity;
 import com.orcchg.vikstra.app.ui.group.list.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
-import com.orcchg.vikstra.app.ui.list.ListActivity;
+import com.orcchg.vikstra.app.ui.legacy.list.ListActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
-import com.orcchg.vikstra.app.ui.tab.TabActivity;
+import com.orcchg.vikstra.app.ui.legacy.tab.TabActivity;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;

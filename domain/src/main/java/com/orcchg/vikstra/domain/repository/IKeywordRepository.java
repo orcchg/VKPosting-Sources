@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.repository;
 
+import android.support.annotation.NonNull;
+
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 
@@ -20,6 +22,7 @@ public interface IKeywordRepository {
 
     /* Update */
     // ------------------------------------------
+    boolean updateKeywords(@NonNull KeywordBundle keywords);
 
     /* Delete */
     // ------------------------------------------

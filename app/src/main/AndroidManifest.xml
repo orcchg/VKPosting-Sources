@@ -42,10 +42,10 @@
                   android:theme="@style/AppTheme"/>
 
         <!-- Sample screens to be removed -->
-        <activity android:name=".app.ui.tab.TabActivity"
+        <activity android:name=".app.ui.legacy.tab.TabActivity"
                   android:label="@string/str_musicians_list"/>
 
-        <activity android:name=".app.ui.details.DetailsActivity"
+        <activity android:name=".app.ui.legacy.details.DetailsActivity"
                   android:label="@string/str_title_details"
                   android:theme="@style/DetailsTheme"/>
 

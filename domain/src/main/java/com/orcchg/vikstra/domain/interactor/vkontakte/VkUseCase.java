@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
-import com.orcchg.vikstra.domain.interactor.UseCase;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.VKResponse;

@@ -5,11 +5,13 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
-import com.orcchg.vikstra.domain.interactor.UseCase;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
+import com.orcchg.vikstra.domain.interactor.keyword.PostKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.PutKeywordBundle;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.Set;
 import java.util.TreeSet;
@@ -18,31 +20,25 @@ import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
 
-import static rx.schedulers.Schedulers.start;
-
 public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.View> implements KeywordCreateContract.Presenter {
     private static final int KEYWORDS_LIMIT = 7;
 
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
-    private final PutKeywordBundle putKeywordBundle;
+    private final PostKeywordBundle postKeywordBundleUseCase;
+    private final PutKeywordBundle putKeywordBundleUseCase;
 
     private String title;
     private Set<Keyword> keywords = new TreeSet<>();
 
     @Inject
-    KeywordCreatePresenter(GetKeywordBundleById getKeywordBundleByIdUseCase, PutKeywordBundle putKeywordBundle) {
+    KeywordCreatePresenter(GetKeywordBundleById getKeywordBundleByIdUseCase,
+                           PostKeywordBundle postKeywordBundleUseCase, PutKeywordBundle putKeywordBundle) {
         this.getKeywordBundleByIdUseCase = getKeywordBundleByIdUseCase;
         this.getKeywordBundleByIdUseCase.setPostExecuteCallback(createGetKeywordBundleByIdCallback());
-        this.putKeywordBundle = putKeywordBundle;
-        this.putKeywordBundle.setPostExecuteCallback(createPutKeywordBundleCallback());
-    }
-
-    /* Lifecycle */
-    // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
-    public void onStart() {
-        super.onStart();
-        start();
+        this.postKeywordBundleUseCase = postKeywordBundleUseCase;
+        this.postKeywordBundleUseCase.setPostExecuteCallback(createPostKeywordBundleCallback());
+        this.putKeywordBundleUseCase = putKeywordBundle;
+        this.putKeywordBundleUseCase.setPostExecuteCallback(createPutKeywordBundleCallback());
     }
 
     /* Contract */
@@ -68,15 +64,27 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
 
     @Override
     public void onSavePressed() {
+        long keywordBundleId = getKeywordBundleByIdUseCase.getKeywordBundleId();
         if (TextUtils.isEmpty(title)) {
             if (isViewAttached()) getView().openEditTitleDialog(title);
-        } else {
+        } else if (keywordBundleId == Constant.BAD_ID) {
+            // add new keywords bundle to repository
             PutKeywordBundle.Parameters parameters = new PutKeywordBundle.Parameters.Builder()
                     .setTitle(title)
                     .setKeywords(keywords)
                     .build();
-            putKeywordBundle.setParameters(parameters);
-            putKeywordBundle.execute();
+            putKeywordBundleUseCase.setParameters(parameters);
+            putKeywordBundleUseCase.execute();
+        } else {
+            // update existing keywords bundle in repository
+            KeywordBundle keywordsBundle = KeywordBundle.builder()
+                    .setId(keywordBundleId)
+                    .setTitle(title)
+                    .setKeywords(keywords)
+                    .build();
+            PostKeywordBundle.Parameters parameters = new PostKeywordBundle.Parameters(keywordsBundle);
+            postKeywordBundleUseCase.setParameters(parameters);
+            postKeywordBundleUseCase.execute();
         }
     }
 
@@ -87,8 +95,8 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    @DebugLog
-    public void start() {
+    @DebugLog @Override
+    protected void freshStart() {
         getKeywordBundleByIdUseCase.execute();
     }
 
@@ -112,12 +120,29 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         };
     }
 
+    private UseCase.OnPostExecuteCallback<Boolean> createPostKeywordBundleCallback() {
+        return new UseCase.OnPostExecuteCallback<Boolean>() {
+            @Override
+            public void onFinish(@Nullable Boolean values) {
+                if (isViewAttached()) {
+                    getView().notifyKeywordsUpdated();
+                    getView().closeView(Activity.RESULT_OK);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO: impl
+            }
+        };
+    }
+
     private UseCase.OnPostExecuteCallback<Boolean> createPutKeywordBundleCallback() {
         return new UseCase.OnPostExecuteCallback<Boolean>() {
             @Override
             public void onFinish(@Nullable Boolean values) {
                 if (isViewAttached()) {
-                    getView().notifyKeywordsSaved();
+                    getView().notifyKeywordsAdded();
                     getView().closeView(Activity.RESULT_OK);
                 }
             }

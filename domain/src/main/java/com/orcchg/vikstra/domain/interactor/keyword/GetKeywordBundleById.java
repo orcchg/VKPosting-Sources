@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
-import com.orcchg.vikstra.domain.interactor.UseCase;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 
@@ -21,6 +21,10 @@ public class GetKeywordBundleById extends UseCase<KeywordBundle> {
         super(threadExecutor, postExecuteScheduler);
         this.id = id;
         this.keywordRepository = keywordRepository;
+    }
+
+    public long getKeywordBundleId() {
+        return id;
     }
 
     @Nullable @Override

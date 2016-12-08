@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.data.source.repository.keyword;
 
+import android.support.annotation.NonNull;
+
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 
 import java.util.List;
@@ -8,7 +10,7 @@ public interface IKeywordStorage {
 
     /* Create */
     // ------------------------------------------
-    boolean addKeywords(KeywordBundle bundle);
+    boolean addKeywords(@NonNull KeywordBundle bundle);
 
     /* Read */
     // ------------------------------------------
@@ -18,6 +20,7 @@ public interface IKeywordStorage {
 
     /* Update */
     // ------------------------------------------
+    boolean updateKeywords(@NonNull KeywordBundle bundle);
 
     /* Delete */
     // ------------------------------------------

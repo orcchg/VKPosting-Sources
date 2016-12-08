@@ -31,18 +31,10 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         return adapter;
     }
 
-    /* Lifecycle */
-    // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
-    public void onStart() {
-        super.onStart();
-        start();
-    }
-
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    @DebugLog
-    public void start() {
+    @DebugLog @Override
+    protected void freshStart() {
         // TODO: fill properly with posts thumbs
         List<PostSingleGridItemVO> items = new ArrayList<>();
         items.add(PostSingleGridItemVO.builder().build());
