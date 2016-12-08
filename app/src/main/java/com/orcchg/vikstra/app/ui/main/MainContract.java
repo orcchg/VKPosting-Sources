@@ -6,10 +6,12 @@ import com.orcchg.vikstra.app.ui.post.list.PostListContract;
 
 public interface MainContract {
     interface View extends KeywordListContract.View, PostListContract.View {
+        void openGroupListScreen(long keywordBundleId);
     }
 
     interface Presenter extends MvpPresenter<View> {
         void retry();
+        void onFabClick();
         void onScroll(int itemsLeftToEnd);
     }
 }

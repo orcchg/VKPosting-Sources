@@ -77,7 +77,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
             @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
-                // TODO: NPE
+                // TODO: NPE handle
                 for (Keyword keyword : bundle) {
                     GroupParentItem item = new GroupParentItem(keyword.keyword());
                     groupParentItems.add(item);

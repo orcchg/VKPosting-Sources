@@ -34,7 +34,7 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
     // --------------------------------------------------------------------------------------------
     protected abstract List<? extends UseCase<Result>> createUseCases();
 
-    @Override
+    @Nullable @Override
     protected L doAction() {
         List<? extends UseCase<Result>> useCases = createUseCases();
         return (L) performMultipleRequests(total, useCases, errors);

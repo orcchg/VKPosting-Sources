@@ -6,9 +6,10 @@ import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordListItemMapper;
-import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.interactor.UseCase;
+import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     private final GetKeywordBundles getKeywordBundlesUseCase;
 
+    private long selectedKeywordBundleId = Constant.BAD_ID;
+
     @Inject
     KeywordListPresenter(GetKeywordBundles getKeywordBundlesUseCase) {
         this.listAdapter = createListAdapter();
@@ -31,8 +34,14 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @Override
     protected BaseAdapter createListAdapter() {
         KeywordListAdapter adapter = new KeywordListAdapter();
-        adapter.setOnItemClickListener((view, keywordListItemVO, position) -> {});
-        adapter.setOnItemLongClickListener((view, keywordListItemVO, position) -> {});
+        adapter.setOnItemClickListener((view, keywordListItemVO, position) -> {
+            // TODO: impl multi-selection or not?
+            // TODO: hide fab when nothing is selected
+            selectedKeywordBundleId = keywordListItemVO.getSelection() ? keywordListItemVO.id() : Constant.BAD_ID;
+        });
+        adapter.setOnItemLongClickListener((view, keywordListItemVO, position) -> {
+            // TODO: impl long click
+        });
         adapter.setOnEditClickListener((view, keywordListItemVO, position) -> {
             if (isViewAttached()) getView().openKeywordCreateScreen(keywordListItemVO.id());
         });
@@ -61,8 +70,12 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
+    public long getSelectedKeywordBundleId() {
+        return selectedKeywordBundleId;
+    }
+
     @DebugLog
-    public void start() {
+    private void start() {
         getKeywordBundlesUseCase.execute();
     }
 

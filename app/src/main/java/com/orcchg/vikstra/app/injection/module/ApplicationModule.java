@@ -33,7 +33,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import io.realm.Realm;
 
 /**
  * Dagger module that provides objects which will live during the application lifecycle.
@@ -52,11 +51,6 @@ public class ApplicationModule {
     @Provides @Singleton
     Context provideApplicationContext() {
         return application.getApplicationContext();
-    }
-
-    @Provides @Singleton
-    Realm provideRealmEngine() {
-        return Realm.getDefaultInstance();
     }
 
     /* Thread pool */

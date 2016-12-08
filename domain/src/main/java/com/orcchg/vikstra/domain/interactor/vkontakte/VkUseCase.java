@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.UseCase;
@@ -27,7 +29,7 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    @Override
+    @Nullable @Override
     protected Result doAction() {
         prepareVkRequest().executeSyncWithListener(createVkResponseListener());
         return parseVkResponse();

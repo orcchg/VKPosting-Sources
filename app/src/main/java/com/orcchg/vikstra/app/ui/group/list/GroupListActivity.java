@@ -12,18 +12,24 @@ import android.view.View;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseActivity;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class GroupListActivity extends SimpleBaseActivity implements ShadowHolder {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
+    private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
 
-    public static Intent getCallingIntent(@NonNull Context context) {
-        return new Intent(context, GroupListActivity.class);
+    private long keywordBundleId = Constant.BAD_ID;
+
+    public static Intent getCallingIntent(@NonNull Context context, long keywordBunldeId) {
+        Intent intent = new Intent(context, GroupListActivity.class);
+        intent.putExtra(EXTRA_KEYWORD_BUNDLE_ID, keywordBunldeId);
+        return intent;
     }
 
     /* Lifecycle */
@@ -33,8 +39,15 @@ public class GroupListActivity extends SimpleBaseActivity implements ShadowHolde
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_list);
         ButterKnife.bind(this);
+        initData();
         initView();
         initToolbar();
+    }
+
+    /* Data */
+    // ------------------------------------------
+    private void initData() {
+        keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
     }
 
     /* View */
@@ -42,7 +55,7 @@ public class GroupListActivity extends SimpleBaseActivity implements ShadowHolde
     private void initView() {
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
-            GroupListFragment fragment = GroupListFragment.newInstance(1000);  // TODO: use proper id
+            GroupListFragment fragment = GroupListFragment.newInstance(keywordBundleId);
             fm.beginTransaction().replace(R.id.container, fragment, FRAGMENT_TAG).commit();
             fm.executePendingTransactions();
         }

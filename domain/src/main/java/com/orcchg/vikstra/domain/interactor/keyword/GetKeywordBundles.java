@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.interactor.keyword;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.UseCase;
@@ -56,7 +58,7 @@ public class GetKeywordBundles extends UseCase<List<KeywordBundle>> {
         this.parameters = parameters;
     }
 
-    @Override
+    @Nullable @Override
     protected List<KeywordBundle> doAction() {
         int limit = parameters.limit;
         int offset = parameters.offset;

@@ -110,7 +110,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         }
 
         // TODO: add fragments and change fab click listener
-        fab.setOnClickListener((view) -> navigationComponent.navigator().openGroupsListScreen(this));
+        fab.setOnClickListener((view) -> presenter.onFabClick());
     }
 
     /* Contract */
@@ -125,6 +125,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void openKeywordCreateScreen(long keywordBundleId) {
         navigationComponent.navigator().openKeywordCreateScreen(this, keywordBundleId);
+    }
+
+    @Override
+    public void openGroupListScreen(long keywordBundleId) {
+        navigationComponent.navigator().openGroupsListScreen(this, keywordBundleId);
     }
 
     @Override

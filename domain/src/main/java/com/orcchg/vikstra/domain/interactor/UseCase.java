@@ -60,6 +60,7 @@ public abstract class UseCase<Result> implements Runnable {
      *
      * @return concrete result of execution of this {@link UseCase}.
      */
+    @Nullable
     protected abstract Result doAction();
 
     /**

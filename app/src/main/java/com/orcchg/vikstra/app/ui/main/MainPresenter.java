@@ -13,13 +13,12 @@ import javax.inject.Inject;
 public class MainPresenter extends BaseCompositePresenter<MainContract.View> implements MainContract.Presenter {
 
     KeywordListPresenter keywordListPresenter;
-    PostSingleGridPresenter postSingleGridPresenter;
+    PostSingleGridPresenter postSingleGridPresenter;  // not added to list, fragment handles it automatically
 
     @Override
     protected List<? extends MvpPresenter> providePresenterList() {
         List<MvpPresenter> list = new ArrayList<>();
         list.add(keywordListPresenter);
-        list.add(postSingleGridPresenter);
         return list;
     }
 
@@ -34,6 +33,11 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Override
     public void retry() {
         keywordListPresenter.retry();
+    }
+
+    @Override
+    public void onFabClick() {
+        if (isViewAttached()) getView().openGroupListScreen(keywordListPresenter.getSelectedKeywordBundleId());
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.interactor.keyword;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.UseCase;
@@ -55,7 +57,7 @@ public class PutKeywordBundle extends UseCase<Boolean> {
         this.parameters = parameters;
     }
 
-    @Override
+    @Nullable @Override
     protected Boolean doAction() {
         return keywordRepository.addKeywords(parameters.title, parameters.keywords);
     }
