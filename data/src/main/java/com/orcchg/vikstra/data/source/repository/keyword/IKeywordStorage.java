@@ -14,6 +14,7 @@ public interface IKeywordStorage {
 
     /* Read */
     // ------------------------------------------
+    long getLastId();
     KeywordBundle keywords(long id);
     List<KeywordBundle> keywords();
     List<KeywordBundle> keywords(int limit, int offset);

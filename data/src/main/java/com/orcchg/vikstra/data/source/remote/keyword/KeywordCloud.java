@@ -25,6 +25,11 @@ public class KeywordCloud implements IKeywordStorage {
     /* Read */
     // ------------------------------------------
     @Override
+    public long getLastId() {
+        return 0;
+    }
+
+    @Override
     public KeywordBundle keywords(long id) {
         return null;
     }

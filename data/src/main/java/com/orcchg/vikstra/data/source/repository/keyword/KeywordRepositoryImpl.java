@@ -19,8 +19,6 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
     private final IKeywordStorage cloudSource;
     private final IKeywordStorage localSource;
 
-    private static long lastId = 1000;  // TODO: get last id
-
     @Inject
     KeywordRepositoryImpl(@Named("keywordCloud") IKeywordStorage cloudSource,
                           @Named("keywordDatabase") IKeywordStorage localSource) {
@@ -33,8 +31,9 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
     @Override
     public boolean addKeywords(String title, Collection<Keyword> keywords) {
         // TODO: impl cloudly
+        long lastId = localSource.getLastId();
         KeywordBundle bundle = KeywordBundle.builder()
-                .setId(lastId++)  // TODO: get last id
+                .setId(++lastId)
                 .setTitle(title)
                 .setKeywords(keywords)
                 .build();

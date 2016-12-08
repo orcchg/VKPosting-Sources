@@ -85,7 +85,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
         }
 
         fab.setImageResource(R.drawable.ic_add_white_24dp);
-        fab.setOnClickListener((view) -> navigationComponent.navigator().openKeywordCreateScreen(this, 1000));  // TODO: use proper id
+        fab.setOnClickListener((view) -> navigationComponent.navigator().openKeywordCreateScreen(this));
     }
 
     private void initToolbar() {

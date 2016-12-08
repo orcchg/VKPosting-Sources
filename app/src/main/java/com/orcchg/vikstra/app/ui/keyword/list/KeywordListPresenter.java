@@ -64,6 +64,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
+    @DebugLog
     public long getSelectedKeywordBundleId() {
         return selectedKeywordBundleId;
     }

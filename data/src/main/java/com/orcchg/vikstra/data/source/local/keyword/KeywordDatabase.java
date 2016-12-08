@@ -47,12 +47,20 @@ public class KeywordDatabase implements IKeywordStorage {
 
     /* Read */
     // ------------------------------------------
+    @DebugLog @Override
+    public long getLastId() {
+        Realm realm = Realm.getDefaultInstance();
+        long lastId = realm.where(KeywordBundleDBO.class).max(KeywordBundleDBO.COLUMN_ID).longValue();
+        realm.close();
+        return lastId;
+    }
+
     @DebugLog @Nullable @Override
     public KeywordBundle keywords(long id) {
         if (id != Constant.BAD_ID) {
             Realm realm = Realm.getDefaultInstance();
             KeywordBundle model = null;
-            KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo("id", id).findFirst();
+            KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
             if (dbo != null) model = keywordBundleToDboMapper.mapBack(dbo);
             realm.close();
             return model;
