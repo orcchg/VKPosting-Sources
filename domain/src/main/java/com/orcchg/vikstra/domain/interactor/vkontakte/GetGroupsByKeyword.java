@@ -30,7 +30,7 @@ public class GetGroupsByKeyword extends VkUseCase<VKApiCommunityArray> {
 
     @Override
     protected VKRequest prepareVkRequest() {
-        VKParameters params = VKParameters.from("q", keyword.keyword(), VKApiConst.EXTENDED, 1);
+        VKParameters params = VKParameters.from(VKApiConst.Q, keyword.keyword(), VKApiConst.FIELDS, "members_count");
         return VKApi.groups().search(params);
     }
 

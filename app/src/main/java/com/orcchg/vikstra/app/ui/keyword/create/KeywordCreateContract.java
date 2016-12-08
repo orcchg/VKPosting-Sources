@@ -15,6 +15,7 @@ public interface KeywordCreateContract {
         String getInputKeyword();
         void setInputKeywords(String title, Collection<Keyword> keywords);
         void notifyKeywordsSaved();
+        void onKeywordsLimitReached(int limit);
 
         void openEditTitleDialog(@Nullable String initTitle);
         void closeView(int resultCode);

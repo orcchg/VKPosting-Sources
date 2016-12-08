@@ -36,10 +36,10 @@ public class GroupListActivity extends SimpleBaseActivity implements ShadowHolde
     // ------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        initData();  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_list);
         ButterKnife.bind(this);
-        initData();
         initView();
         initToolbar();
     }

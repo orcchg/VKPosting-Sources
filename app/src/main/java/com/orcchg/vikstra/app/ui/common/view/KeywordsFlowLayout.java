@@ -23,6 +23,7 @@ public class KeywordsFlowLayout extends AbstractFlowLayout {
     }
 
     private OnKeywordItemClickListener listener;
+    private boolean isKeywordDeletable;
 
     public KeywordsFlowLayout(Context context) {
         this(context, null);
@@ -41,6 +42,10 @@ public class KeywordsFlowLayout extends AbstractFlowLayout {
 
     public void setOnKeywordItemClickListener(OnKeywordItemClickListener listener) {
         this.listener = listener;
+    }
+
+    public void setKeywordDeletable(boolean isKeywordDeletable) {
+        this.isKeywordDeletable = isKeywordDeletable;
     }
 
     /* Layout changes listener */
@@ -100,7 +105,7 @@ public class KeywordsFlowLayout extends AbstractFlowLayout {
         blob.setText(keyword.keyword());
         blob.setOnClickListener((view) -> {
             if (listener != null) listener.onKeywordClick(keyword);
-            blob.setVisibility(GONE);
+            if (isKeywordDeletable) blob.setVisibility(GONE);
         });
         addView(blob);
     }

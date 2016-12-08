@@ -18,7 +18,10 @@ import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
 
+import static rx.schedulers.Schedulers.start;
+
 public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.View> implements KeywordCreateContract.Presenter {
+    private static final int KEYWORDS_LIMIT = 7;
 
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final PutKeywordBundle putKeywordBundle;
@@ -51,11 +54,15 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
 
     @Override
     public void onAddPressed() {
-        Keyword keyword = Keyword.create(getView().getInputKeyword());
-        keywords.add(keyword);
-        if (isViewAttached()) {
-            getView().addKeyword(keyword);
-            getView().clearInputKeyword();
+        if (keywords.size() < KEYWORDS_LIMIT) {
+            Keyword keyword = Keyword.create(getView().getInputKeyword());
+            keywords.add(keyword);
+            if (isViewAttached()) {
+                getView().addKeyword(keyword);
+                getView().clearInputKeyword();
+            }
+        } else if (isViewAttached()) {
+            getView().onKeywordsLimitReached(KEYWORDS_LIMIT);
         }
     }
 

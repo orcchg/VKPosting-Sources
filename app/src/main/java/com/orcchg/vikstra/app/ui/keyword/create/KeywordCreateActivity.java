@@ -18,6 +18,7 @@ import com.orcchg.vikstra.app.ui.common.view.KeywordsFlowLayout;
 import com.orcchg.vikstra.app.ui.keyword.create.injection.DaggerKeywordCreateComponent;
 import com.orcchg.vikstra.app.ui.keyword.create.injection.KeywordCreateComponent;
 import com.orcchg.vikstra.app.ui.keyword.create.injection.KeywordCreateModule;
+import com.orcchg.vikstra.app.ui.util.ViewUtils;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -31,7 +32,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     public static final int REQUEST_CODE = Constant.RequestCode.KEYWORD_CREATE_SCREEN;
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
 
-    private String DIALOG_TITLE, DIALOG_HINT;
+    private String DIALOG_TITLE, DIALOG_HINT, SNACKBAR_KEYWORDS_LIMIT;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.flow) KeywordsFlowLayout keywordsFlowLayout;
@@ -69,11 +70,11 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     // ------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        initData();  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keywords_create);
         ButterKnife.bind(this);
         initResources();
-        initData();
         initView();
         initToolbar();
     }
@@ -95,6 +96,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     private void initView() {
         keywordsFlowLayout.enableLayoutTransition(true);  // animation
         keywordsFlowLayout.setOnKeywordItemClickListener((keyword) -> presenter.onKeywordPressed(keyword));
+        keywordsFlowLayout.setKeywordDeletable(true);
         fab.setOnClickListener((view) -> presenter.onAddPressed());
     }
 
@@ -144,6 +146,11 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     }
 
     @Override
+    public void onKeywordsLimitReached(int limit) {
+        ViewUtils.showSnackbar(this, String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
+    }
+
+    @Override
     public void openEditTitleDialog(@Nullable String initTitle) {
         DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, initTitle,
                 (dialog, which, text) -> {
@@ -163,5 +170,6 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     private void initResources() {
         DIALOG_TITLE = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_title);
         DIALOG_HINT = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_hint);
+        SNACKBAR_KEYWORDS_LIMIT = getResources().getString(R.string.keyword_create_snackbar_keywords_limit_message);
     }
 }
