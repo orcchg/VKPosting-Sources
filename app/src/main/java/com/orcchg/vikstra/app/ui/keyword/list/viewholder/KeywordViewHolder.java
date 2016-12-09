@@ -15,11 +15,13 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
 
     @BindView(R.id.flow) TitledFlowView flowView;
 
+    private final boolean isSelectable;
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener;
 
-    public KeywordViewHolder(View view) {
+    public KeywordViewHolder(View view, boolean isSelectable) {
         super(view);
         ButterKnife.bind(this, view);
+        this.isSelectable = isSelectable;
     }
 
     public void setOnEditClickListener(BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener) {
@@ -30,15 +32,17 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
     public void bind(KeywordListItemVO viewObject) {
         flowView.setKeywords(viewObject.keywords());
         flowView.setTitle(viewObject.title());
-        flowView.setSelection(viewObject.getSelection());
+        flowView.setSelection(isSelectable ? viewObject.getSelection() : false);
         flowView.setEditable(editClickListener != null);
         flowView.setOnEditClickListener((view) -> {
             if (editClickListener != null) editClickListener.onItemClick(view, viewObject, getAdapterPosition());
         });
 
         itemView.setOnClickListener((view) -> {
-            viewObject.setSelection(!viewObject.getSelection());
-            flowView.setSelection(viewObject.getSelection());
+            if (isSelectable) {
+                viewObject.setSelection(!viewObject.getSelection());
+                flowView.setSelection(viewObject.getSelection());
+            }
             if (listener != null) listener.onItemClick(view, viewObject, getAdapterPosition());
         });
 

@@ -17,6 +17,7 @@ import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.DaggerKeywordListComponent;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListComponent;
+import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListModule;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -54,6 +55,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     protected void injectDependencies() {
         keywordListComponent = DaggerKeywordListComponent.builder()
                 .applicationComponent(getApplicationComponent())
+                .keywordListModule(new KeywordListModule(false))  // items aren't selectable
                 .build();
         keywordListComponent.inject(this);
     }

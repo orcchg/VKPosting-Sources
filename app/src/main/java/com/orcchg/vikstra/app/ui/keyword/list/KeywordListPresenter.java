@@ -23,10 +23,12 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private final GetKeywordBundles getKeywordBundlesUseCase;
 
     private long selectedKeywordBundleId = Constant.BAD_ID;
+    private final boolean isListItemSelectable;
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> externalItemClickListener;
 
     @Inject
-    KeywordListPresenter(GetKeywordBundles getKeywordBundlesUseCase) {
+    public KeywordListPresenter(boolean isListItemsSelectable, GetKeywordBundles getKeywordBundlesUseCase) {
+        this.isListItemSelectable = isListItemsSelectable;
         this.listAdapter = createListAdapter();
         this.getKeywordBundlesUseCase = getKeywordBundlesUseCase;
         this.getKeywordBundlesUseCase.setPostExecuteCallback(createGetKeywordBundlesCallback());
@@ -38,7 +40,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     @Override
     protected BaseAdapter createListAdapter() {
-        KeywordListAdapter adapter = new KeywordListAdapter();
+        KeywordListAdapter adapter = new KeywordListAdapter(isListItemSelectable);
         adapter.setOnItemClickListener((view, keywordListItemVO, position) -> {
             // TODO: impl multi-selection or not?
             selectedKeywordBundleId = keywordListItemVO.getSelection() ? keywordListItemVO.id() : Constant.BAD_ID;

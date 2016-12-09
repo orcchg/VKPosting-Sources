@@ -18,6 +18,7 @@ import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
 import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
+import com.orcchg.vikstra.app.ui.main.injection.MainModule;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridFragment;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.vk.sdk.VKAccessToken;
@@ -62,6 +63,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     protected void injectDependencies() {
         mainComponent = DaggerMainComponent.builder()
                 .applicationComponent(getApplicationComponent())
+                .mainModule(new MainModule(true))  // items are selectable
                 .build();
         mainComponent.inject(this);
     }
