@@ -23,6 +23,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.orcchg.vikstra.R.id.container;
+
 public class GroupListFragment extends BaseListFragment<GroupListContract.View, GroupListContract.Presenter>
         implements GroupListContract.View {
 
@@ -37,6 +39,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
 //        iScrollList.retry();
     }
 
+    private GroupsCounterHolder groupsCounterHolder;
     private ShadowHolder shadowHolder;
 
     private GroupListComponent groupComponent;
@@ -74,6 +77,9 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        if (GroupsCounterHolder.class.isInstance(activity)) {
+            groupsCounterHolder = (GroupsCounterHolder) activity;
+        }
         if (ShadowHolder.class.isInstance(activity)) {
             shadowHolder = (ShadowHolder) activity;
         }
@@ -104,6 +110,11 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     @Override
     protected void onScroll(int itemsLeftToEnd) {
         // TODO: impl
+    }
+
+    @Override
+    public void updateSelectedGroupsCounter(int newCount) {
+        if (groupsCounterHolder != null) groupsCounterHolder.updateSelectedGroupsCounter(newCount);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 
 public interface GroupListContract {
     interface View extends MvpListView {
+        void updateSelectedGroupsCounter(int newCount);
         void showGroups(boolean isEmpty);
         void showError();
     }

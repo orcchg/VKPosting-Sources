@@ -64,8 +64,8 @@
                     android:layout_width="@dimen/standard_icon_size"
                     android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_add_black_24dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_add_black_24dp"
                     android:contentDescription="@null"/>
             </FrameLayout>
 
@@ -80,8 +80,8 @@
                     android:layout_width="@dimen/standard_icon_size"
                     android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_clear_black_24dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_clear_black_24dp"
                     android:contentDescription="@null"/>
             </FrameLayout>
         </LinearLayout>

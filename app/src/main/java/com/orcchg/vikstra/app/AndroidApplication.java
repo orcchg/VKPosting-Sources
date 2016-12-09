@@ -26,7 +26,7 @@ public class AndroidApplication extends Application {
     public void onCreate() {
         super.onCreate();
         initializeInjector();
-        initializeLeakDetection();
+//        initializeLeakDetection();
         initializeLogger();
         initializeRealmEngine();
         initializeVkontakteSdk();

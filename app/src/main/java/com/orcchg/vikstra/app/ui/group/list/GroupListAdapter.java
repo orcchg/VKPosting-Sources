@@ -18,11 +18,20 @@ import java.util.List;
 
 public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem, GroupChildItem, GroupParentViewHolder, GroupChildViewHolder> {
 
+    public interface OnCheckedChangeListener {
+        void onCheckedChange(GroupChildItem data, boolean isChecked);
+    }
+
     private CompoundButton.OnCheckedChangeListener childItemSwitcherListener;
+    private OnCheckedChangeListener externalChildItemSwitcherListener;
 
     public GroupListAdapter(@NonNull List<GroupParentItem> parentItems) {
         super(parentItems);
         this.childItemSwitcherListener = createChildItemSwitcherListener();
+    }
+
+    public void setExternalChildItemSwitcherListener(OnCheckedChangeListener listener) {
+        externalChildItemSwitcherListener = listener;
     }
 
     @NonNull @Override
@@ -65,6 +74,9 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
                 parentItem.incrementSelectedCount(isChecked ? 1 : -1);
                 notifyParentChanged(affectedParentItemPosition);  // re-bind parent and all it's childs
                 // TODO: keep checked group id to use further
+                if (externalChildItemSwitcherListener != null) {
+                    externalChildItemSwitcherListener.onCheckedChange(childItem, isChecked);
+                }
             }
         };
     }

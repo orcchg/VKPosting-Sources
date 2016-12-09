@@ -28,6 +28,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final VkontakteEndpoint vkontakteEndpoint;
 
+    private int totalSelectedGroups;
+
     @Inject
     GroupListPresenter(GetKeywordBundleById getKeywordBundleByIdUseCase, VkontakteEndpoint vkontakteEndpoint) {
         this.groupParentItems = new ArrayList<>();
@@ -39,7 +41,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     private GroupListAdapter createListAdapter() {
-        return new GroupListAdapter(groupParentItems);
+        GroupListAdapter adapter = new GroupListAdapter(groupParentItems);
+        adapter.setExternalChildItemSwitcherListener(createExternalChildItemSwitcherCallback());
+        return adapter;
     }
 
     /* Lifecycle */
@@ -114,6 +118,17 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onError(Throwable e) {
                 if (isViewAttached()) getView().showError();
+            }
+        };
+    }
+
+    // ------------------------------------------
+    private GroupListAdapter.OnCheckedChangeListener createExternalChildItemSwitcherCallback() {
+        return new GroupListAdapter.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChange(GroupChildItem data, boolean isChecked) {
+                totalSelectedGroups += isChecked ? 1 : -1;
+                if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups);
             }
         };
     }

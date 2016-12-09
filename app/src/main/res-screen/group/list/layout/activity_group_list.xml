@@ -1,10 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <include layout="@layout/activity_container" />
+    <include layout="@layout/app_bar_with_toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/group_list_info_header_height"
+            android:layout_marginLeft="@dimen/standard_side_padding"
+            android:layout_marginStart="@dimen/standard_side_padding"
+            android:layout_marginRight="@dimen/standard_side_padding"
+            android:layout_marginEnd="@dimen/standard_side_padding">
+
+            <TextView
+                android:id="@+id/tv_info_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/standard_side_padding"
+                android:textColor="@color/description_color"
+                android:textSize="@dimen/standard_description_text_size"/>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true">
+
+                <ImageView
+                    android:id="@+id/iv_post_thumb"
+                    android:layout_width="@dimen/group_list_info_post_size"
+                    android:layout_height="@dimen/group_list_info_post_size"
+                    android:layout_gravity="center"
+                    android:background="@color/accent"/>
+            </FrameLayout>
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/separator_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="4dp"
+            android:background="@color/list_line_separator"/>
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <include layout="@layout/toolbar_dropshadow" />
+    <include layout="@layout/standard_fab" />
 
 </android.support.design.widget.CoordinatorLayout>

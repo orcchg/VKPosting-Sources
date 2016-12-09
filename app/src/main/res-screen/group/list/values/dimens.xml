@@ -9,4 +9,7 @@
     <dimen name="group_list_child_item_title_size">16dp</dimen>
     <dimen name="group_list_child_item_start_margin">40dp</dimen>
     <dimen name="group_list_child_item_end_margin">12dp</dimen>
+
+    <dimen name="group_list_info_header_height">112dp</dimen>
+    <dimen name="group_list_info_post_size">80dp</dimen>
 </resources>

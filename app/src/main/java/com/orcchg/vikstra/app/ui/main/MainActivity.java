@@ -111,7 +111,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             fm.executePendingTransactions();
         }
 
-        // TODO: add fragments and change fab click listener
         fab.hide();  // hide fab at fresh start because nothing has been selected yet
         fab.setOnClickListener((view) -> presenter.onFabClick());
     }

@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseActivity;
@@ -17,10 +19,14 @@ import com.orcchg.vikstra.domain.util.Constant;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class GroupListActivity extends SimpleBaseActivity implements ShadowHolder {
+public class GroupListActivity extends SimpleBaseActivity implements GroupsCounterHolder, ShadowHolder {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
 
+    private String INFO_TITLE;
+
+    @BindView(R.id.tv_info_title) TextView selectedGroupsCountView;
+    @BindView(R.id.iv_post_thumb) ImageView postThumbnailView;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
 
@@ -40,6 +46,7 @@ public class GroupListActivity extends SimpleBaseActivity implements ShadowHolde
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_list);
         ButterKnife.bind(this);
+        initResources();
         initView();
         initToolbar();
     }
@@ -53,6 +60,8 @@ public class GroupListActivity extends SimpleBaseActivity implements ShadowHolde
     /* View */
     // ------------------------------------------
     private void initView() {
+        updateSelectedGroupsCounter(0);
+
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
             GroupListFragment fragment = GroupListFragment.newInstance(keywordBundleId);
@@ -78,5 +87,16 @@ public class GroupListActivity extends SimpleBaseActivity implements ShadowHolde
     @Override
     public void showShadow(boolean show) {
         dropshadowView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+    }
+
+    @Override
+    public void updateSelectedGroupsCounter(int count) {
+        selectedGroupsCountView.setText(String.format(INFO_TITLE, count));
+    }
+
+    /* Resources */
+    // ------------------------------------------
+    private void initResources() {
+        INFO_TITLE = getResources().getString(R.string.group_list_selected_groups_total_count);
     }
 }

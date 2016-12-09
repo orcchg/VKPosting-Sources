@@ -4,22 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?colorPrimary"
-            android:elevation="0dp"
-            android:minHeight="?attr/actionBarSize"
-            app:navigationIcon="@drawable/ic_arrow_back_white_24dp"
-            app:titleTextColor="@color/textIcons"/>
-
-    </android.support.design.widget.AppBarLayout>
+    <include layout="@layout/app_bar_with_toolbar" />
 
     <FrameLayout
         android:id="@+id/container"
@@ -27,31 +12,7 @@
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <RelativeLayout
-        android:id="@+id/rl_toolbar_dropshadow"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        app:layout_anchor="@id/app_bar_layout"
-        app:layout_anchorGravity="bottom">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="5dp"
-            android:layout_alignParentBottom="true"
-            android:background="@drawable/toolbar_dropshadow"/>
-
-    </RelativeLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="@dimen/floating_action_button_size_normal"
-        android:layout_height="@dimen/floating_action_button_size_normal"
-        android:layout_gravity="bottom|right"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:src="@drawable/ic_add_white_24dp"
-        android:elevation="6dp"
-        app:pressedTranslationZ="12dp"/>
+    <include layout="@layout/toolbar_dropshadow" />
+    <include layout="@layout/standard_fab" />
 
 </merge>
