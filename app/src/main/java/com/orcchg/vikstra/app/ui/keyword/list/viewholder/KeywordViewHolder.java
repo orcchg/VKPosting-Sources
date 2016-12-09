@@ -6,6 +6,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.base.widget.viewholder.NormalViewHolder;
 import com.orcchg.vikstra.app.ui.common.view.TitledFlowView;
+import com.orcchg.vikstra.app.ui.keyword.list.KeywordListAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 
 import butterknife.BindView;
@@ -15,13 +16,13 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
 
     @BindView(R.id.flow) TitledFlowView flowView;
 
-    private final boolean isSelectable;
+    private final @KeywordListAdapter.SelectMode int selectMode;
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener;
 
-    public KeywordViewHolder(View view, boolean isSelectable) {
+    public KeywordViewHolder(View view, @KeywordListAdapter.SelectMode int selectMode) {
         super(view);
         ButterKnife.bind(this, view);
-        this.isSelectable = isSelectable;
+        this.selectMode = selectMode;
     }
 
     public void setOnEditClickListener(BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener) {
@@ -30,6 +31,7 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
 
     @Override
     public void bind(KeywordListItemVO viewObject) {
+        boolean isSelectable = selectMode != KeywordListAdapter.SELECT_MODE_NONE;
         flowView.setKeywords(viewObject.keywords());
         flowView.setTitle(viewObject.title());
         flowView.setSelection(isSelectable ? viewObject.getSelection() : false);

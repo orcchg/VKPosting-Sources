@@ -55,7 +55,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     protected void injectDependencies() {
         keywordListComponent = DaggerKeywordListComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .keywordListModule(new KeywordListModule(false))  // items aren't selectable
+                .keywordListModule(new KeywordListModule(KeywordListAdapter.SELECT_MODE_NONE))  // items aren't selectable
                 .build();
         keywordListComponent.inject(this);
     }

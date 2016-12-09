@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordListItemMapper;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -23,28 +24,26 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private final GetKeywordBundles getKeywordBundlesUseCase;
 
     private long selectedKeywordBundleId = Constant.BAD_ID;
-    private final boolean isListItemSelectable;
-    private BaseAdapter.OnItemClickListener<KeywordListItemVO> externalItemClickListener;
+    private final @KeywordListAdapter.SelectMode int selectMode;
+    private ValueEmitter<Boolean> externalValueEmitter;
 
     @Inject
-    public KeywordListPresenter(boolean isListItemsSelectable, GetKeywordBundles getKeywordBundlesUseCase) {
-        this.isListItemSelectable = isListItemsSelectable;
+    public KeywordListPresenter(@KeywordListAdapter.SelectMode int selectMode, GetKeywordBundles getKeywordBundlesUseCase) {
+        this.selectMode = selectMode;
         this.listAdapter = createListAdapter();
         this.getKeywordBundlesUseCase = getKeywordBundlesUseCase;
         this.getKeywordBundlesUseCase.setPostExecuteCallback(createGetKeywordBundlesCallback());
     }
 
-    public void setExternalItemClickListener(BaseAdapter.OnItemClickListener<KeywordListItemVO> listener) {
-        externalItemClickListener = listener;
+    public void setExternalValueEmitter(ValueEmitter<Boolean> listener) {
+        externalValueEmitter = listener;
     }
 
     @Override
     protected BaseAdapter createListAdapter() {
-        KeywordListAdapter adapter = new KeywordListAdapter(isListItemSelectable);
+        KeywordListAdapter adapter = new KeywordListAdapter(selectMode);
         adapter.setOnItemClickListener((view, keywordListItemVO, position) -> {
-            // TODO: impl multi-selection or not?
-            selectedKeywordBundleId = keywordListItemVO.getSelection() ? keywordListItemVO.id() : Constant.BAD_ID;
-            if (externalItemClickListener != null) externalItemClickListener.onItemClick(view, keywordListItemVO, position);
+            changeSelectedKeywordBundleId(keywordListItemVO.getSelection() ? keywordListItemVO.id() : Constant.BAD_ID);
         });
         adapter.setOnItemLongClickListener((view, keywordListItemVO, position) -> {
             // TODO: impl long click
@@ -59,6 +58,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     public void retry() {
+        changeSelectedKeywordBundleId(Constant.BAD_ID);  // drop selection
         listAdapter.clear();
         dropListStat();
         freshStart();
@@ -79,6 +79,11 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @DebugLog @Override
     protected void freshStart() {
         getKeywordBundlesUseCase.execute();
+    }
+
+    protected void changeSelectedKeywordBundleId(long newId) {
+        selectedKeywordBundleId = newId;
+        if (externalValueEmitter != null) externalValueEmitter.emit(newId != Constant.BAD_ID);
     }
 
     /* Callback */

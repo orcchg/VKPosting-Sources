@@ -1,13 +1,10 @@
 package com.orcchg.vikstra.app.ui.main;
 
-import android.view.View;
-
 import com.orcchg.vikstra.app.ui.base.BaseCompositePresenter;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
-import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
+import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +28,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Inject
     MainPresenter(KeywordListPresenter keywordListPresenter, PostSingleGridPresenter postSingleGridPresenter) {
         this.keywordListPresenter = keywordListPresenter;
-        this.keywordListPresenter.setExternalItemClickListener(createExternalItemClickCallback());
+        this.keywordListPresenter.setExternalValueEmitter(createExternalValueCallback());
         this.postSingleGridPresenter = postSingleGridPresenter;
     }
 
@@ -59,13 +56,13 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     /* Callback */
     // ------------------------------------------
-    private BaseAdapter.OnItemClickListener<KeywordListItemVO> createExternalItemClickCallback() {
-        return new BaseAdapter.OnItemClickListener<KeywordListItemVO>() {
+    private ValueEmitter<Boolean> createExternalValueCallback() {
+        return new ValueEmitter<Boolean>() {
             @Override
-            public void onItemClick(View view, KeywordListItemVO keywordListItemVO, int position) {
+            public void emit(Boolean value) {
                 // TODO: use both Post and Keywords selected to show fab
                 boolean postSelected = true;
-                boolean keywordsSelected = keywordListItemVO.getSelection();
+                boolean keywordsSelected = value;
                 if (isViewAttached()) getView().showFab(postSelected && keywordsSelected);
             }
         };
