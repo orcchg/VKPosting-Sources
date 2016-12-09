@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -26,15 +25,19 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class KeywordListActivity extends BaseActivity<KeywordListContract.View, KeywordListContract.Presenter>
         implements KeywordListContract.View, IScrollList, ShadowHolder {
     public static final int REQUEST_CODE = Constant.RequestCode.KEYWORD_LIST_SCREEN;
     private static final String FRAGMENT_TAG = "keyword_list_fragment_tag";
 
-    @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
+    @OnClick(R.id.fab)
+    public void onFabClick() {
+        navigationComponent.navigator().openKeywordCreateScreen(this);
+    }
 
     private KeywordListComponent keywordListComponent;
 
@@ -88,9 +91,6 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
             fm.beginTransaction().replace(R.id.container, fragment, FRAGMENT_TAG).commit();
             fm.executePendingTransactions();
         }
-
-        fab.setImageResource(R.drawable.ic_add_white_24dp);
-        fab.setOnClickListener((view) -> navigationComponent.navigator().openKeywordCreateScreen(this));
     }
 
     private void initToolbar() {

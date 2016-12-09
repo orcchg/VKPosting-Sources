@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -18,6 +19,7 @@ import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class GroupListActivity extends SimpleBaseActivity implements GroupsCounterHolder, ShadowHolder {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
@@ -29,6 +31,10 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     @BindView(R.id.iv_post_thumb) ImageView postThumbnailView;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
+    @OnClick(R.id.fab)
+    public void onPostFabClick() {
+        // TODO: perform post via presenter, getting need data from Fragment's presenter
+    }
 
     private long keywordBundleId = Constant.BAD_ID;
 

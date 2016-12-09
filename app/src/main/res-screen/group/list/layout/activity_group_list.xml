@@ -60,6 +60,30 @@
     </LinearLayout>
 
     <include layout="@layout/toolbar_dropshadow" />
-    <include layout="@layout/standard_fab" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="@dimen/floating_action_button_size_normal"
+            android:layout_height="@dimen/floating_action_button_size_normal"
+            android:elevation="6dp"
+            app:pressedTranslationZ="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/group_list_fab_label_post"
+            android:elevation="16dp"
+            android:textColor="@android:color/white"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

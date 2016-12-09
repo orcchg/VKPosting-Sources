@@ -38,6 +38,10 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.tv_groups_selection_counter) TextView selectedGroupsTextView;
+    @OnClick(R.id.fab)
+    public void onFabClick() {
+        presenter.onFabClick();
+    }
     @OnClick(R.id.btn_add_new_groups)
     public void onAddNewGroupsClick() {
         navigationComponent.navigator().openKeywordListScreen(this);
@@ -99,6 +103,8 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     /* View */
     // ------------------------------------------
     private void initView() {
+        fab.hide();  // hide fab at fresh start because nothing has been selected yet
+
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(POST_GRID_FRAGMENT_TAG) == null) {
             PostSingleGridFragment fragment = PostSingleGridFragment.newInstance();
@@ -110,9 +116,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             fm.beginTransaction().replace(R.id.fl_bottom, fragment, KEYW_LIST_FRAGMENT_TAG).commit();
             fm.executePendingTransactions();
         }
-
-        fab.hide();  // hide fab at fresh start because nothing has been selected yet
-        fab.setOnClickListener((view) -> presenter.onFabClick());
     }
 
     /* Contract */

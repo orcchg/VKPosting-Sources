@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="group_list_fab_label_post">Post</string>
     <string name="group_list_screen_title">Choose groups</string>
     <string name="group_list_selected_groups_total_count">Selected groups: %s</string>
 </resources>
