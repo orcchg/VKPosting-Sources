@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.keyword.create;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -102,7 +103,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
 
     private void initToolbar() {
         toolbar.setTitle(R.string.keyword_create_screen_title);
-        toolbar.setNavigationOnClickListener((view) -> finish());
+        toolbar.setNavigationOnClickListener((view) -> closeView(Activity.RESULT_CANCELED));
         toolbar.inflateMenu(R.menu.edit_save);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {

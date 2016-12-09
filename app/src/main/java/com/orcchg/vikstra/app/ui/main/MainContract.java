@@ -7,6 +7,7 @@ import com.orcchg.vikstra.app.ui.post.list.PostListContract;
 public interface MainContract {
     interface View extends KeywordListContract.View, PostListContract.View {
         void openGroupListScreen(long keywordBundleId);
+        void showFab(boolean isVisible);
     }
 
     interface Presenter extends MvpPresenter<View> {

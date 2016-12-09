@@ -13,7 +13,6 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
  * @param <Result> Generic type of result on finish of execution.
  */
 public abstract class UseCase<Result> implements Runnable {
-
     /**
      * Callback to notify when execution of this {@link UseCase} finishes.
      */
@@ -25,6 +24,8 @@ public abstract class UseCase<Result> implements Runnable {
     private final ThreadExecutor threadExecutor;
     private final PostExecuteScheduler postExecuteScheduler;
     OnPostExecuteCallback<Result> postExecuteCallback;
+
+    protected int orderId;  // id used to distinguish or sort different use-cases.
 
     /**
      * Basic construction of a {@link UseCase} class instance.
@@ -44,6 +45,14 @@ public abstract class UseCase<Result> implements Runnable {
     protected UseCase() {
         this.threadExecutor = null;
         this.postExecuteScheduler = null;
+    }
+
+    protected void setOrderId(int orderId) {
+        this.orderId = orderId;
+    }
+
+    protected int getOrderId() {
+        return orderId;
     }
 
     /**
@@ -77,6 +86,9 @@ public abstract class UseCase<Result> implements Runnable {
         threadExecutor.execute(this);
     }
 
+    /**
+     * This method must not be called directly despite it's public access modifier.
+     */
     @Override
     public void run() {
         try {

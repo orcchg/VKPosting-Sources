@@ -9,12 +9,14 @@ import com.orcchg.vikstra.domain.util.ValueUtility;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCase<L> {
+    private int BASE_ORDER_ID = 0;
 
     protected int total;
     protected List<Throwable> errors = new ArrayList<>();  // occurred disallowed errors during execution
@@ -37,6 +39,9 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
     @Nullable @Override
     protected L doAction() {
         List<? extends UseCase<Result>> useCases = createUseCases();
+        for (UseCase<Result> useCase : useCases) {
+            useCase.setOrderId(BASE_ORDER_ID++);  // maintain initial order of use-cases
+        }
         return (L) performMultipleRequests(total, useCases, errors);
     }
 
@@ -49,7 +54,7 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
                                                             final List<Throwable> errors) {
         Timber.v("Performing multiple requests, total: %s, different use-cases: %s", total, useCases.size());
         Timber.v("Allowed errors total: %s", ValueUtility.sizeOf(allowedErrors));
-        final List<Result> results = new ArrayList<>();
+        final List<Ordered<Result>> results = new ArrayList<>();
         final boolean[] doneFlags = new boolean[total];
         Arrays.fill(doneFlags, false);
 
@@ -62,11 +67,12 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
                 public void run() {
                     long elapsed = start;
                     boolean finishedWithError = false;
-                    Result result = null;
+                    Ordered<Result> result = new Ordered<>();
                     REQUEST_ATTEMPT: while (elapsed - start < 30_000) {
                         try {
                             UseCase<Result> useCase = useCases.size() == 1 ? useCases.get(0) : useCases.get(index);
-                            result = useCase.doAction();  // perform use case synchronously
+                            result.orderId = useCase.getOrderId();
+                            result.data = useCase.doAction();  // perform use case synchronously
                             break REQUEST_ATTEMPT;
                         } catch (Throwable e) {
                             if (allowedErrors != null && !allowedErrors.isEmpty() && allowedErrors.contains(e)) {
@@ -114,14 +120,35 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
             }
         }
 
-        return results;
+        Collections.sort(results);  // sort results to correspond to each use-case
+        return unwrap(results);
     }
 
-    protected synchronized <Result> void addToResults(List<Result> results, @Nullable Result result) {
+    protected synchronized <Result> void addToResults(List<Ordered<Result>> results, @Nullable Ordered<Result> result) {
         if (result != null) results.add(result);
     }
 
     protected synchronized void addToErrors(List<Throwable> errors, @Nullable Throwable error) {
         if (error != null) errors.add(error);
+    }
+
+    /* Ordered result */
+    // ------------------------------------------
+    private static final class Ordered<Result> implements Comparable<Ordered<Result>> {
+        int orderId;
+        Result data;
+
+        @Override
+        public int compareTo(Ordered<Result> o) {
+            return orderId - o.orderId;
+        }
+    }
+
+    private <Result> List<Result> unwrap(List<Ordered<Result>> results) {
+        List<Result> list = new ArrayList<>();
+        for (Ordered<Result> item : results) {
+            list.add(item.data);
+        }
+        return list;
     }
 }

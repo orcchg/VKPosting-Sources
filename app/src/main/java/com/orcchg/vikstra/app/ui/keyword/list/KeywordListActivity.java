@@ -20,6 +20,7 @@ import com.orcchg.vikstra.app.ui.keyword.list.injection.DaggerKeywordListCompone
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListComponent;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.List;
 
@@ -28,6 +29,7 @@ import butterknife.ButterKnife;
 
 public class KeywordListActivity extends BaseActivity<KeywordListContract.View, KeywordListContract.Presenter>
         implements KeywordListContract.View, IScrollList, ShadowHolder {
+    public static final int REQUEST_CODE = Constant.RequestCode.KEYWORD_LIST_SCREEN;
     private static final String FRAGMENT_TAG = "keyword_list_fragment_tag";
 
     @BindView(R.id.fab) FloatingActionButton fab;
@@ -69,7 +71,10 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case KeywordCreateActivity.REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) presenter.retry();  // refresh keywords list
+                if (resultCode == Activity.RESULT_OK) {
+                    presenter.retry();  // refresh keywords list
+                    setResult(Activity.RESULT_OK);  // keywords list has changed at this screen
+                }
                 break;
         }
     }
@@ -90,7 +95,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
 
     private void initToolbar() {
         toolbar.setTitle(R.string.keyword_list_screen_title);
-        toolbar.setNavigationOnClickListener((view) -> finish());
+        toolbar.setNavigationOnClickListener((view) -> finish());  // close screen with current result
         toolbar.inflateMenu(R.menu.search);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {

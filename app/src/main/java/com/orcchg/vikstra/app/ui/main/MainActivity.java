@@ -14,6 +14,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
+import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
 import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
@@ -88,6 +89,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             super.onActivityResult(requestCode, resultCode, data);
             switch (requestCode) {
                 case KeywordCreateActivity.REQUEST_CODE:
+                case KeywordListActivity.REQUEST_CODE:
                     if (resultCode == Activity.RESULT_OK) presenter.retry();  // refresh keywords list
                     break;
             }
@@ -110,6 +112,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         }
 
         // TODO: add fragments and change fab click listener
+        fab.hide();  // hide fab at fresh start because nothing has been selected yet
         fab.setOnClickListener((view) -> presenter.onFabClick());
     }
 
@@ -130,6 +133,15 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void openGroupListScreen(long keywordBundleId) {
         navigationComponent.navigator().openGroupsListScreen(this, keywordBundleId);
+    }
+
+    @Override
+    public void showFab(boolean isVisible) {
+        if (isVisible) {
+            fab.show();
+        } else {
+            fab.hide();
+        }
     }
 
     @Override

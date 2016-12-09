@@ -1,9 +1,13 @@
 package com.orcchg.vikstra.app.ui.main;
 
+import android.view.View;
+
 import com.orcchg.vikstra.app.ui.base.BaseCompositePresenter;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
+import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +31,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Inject
     MainPresenter(KeywordListPresenter keywordListPresenter, PostSingleGridPresenter postSingleGridPresenter) {
         this.keywordListPresenter = keywordListPresenter;
+        this.keywordListPresenter.setExternalItemClickListener(createExternalItemClickCallback());
         this.postSingleGridPresenter = postSingleGridPresenter;
     }
 
@@ -50,6 +55,19 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
-    protected void freshStart() {
+    protected void freshStart() {}
+
+    /* Callback */
+    // ------------------------------------------
+    private BaseAdapter.OnItemClickListener<KeywordListItemVO> createExternalItemClickCallback() {
+        return new BaseAdapter.OnItemClickListener<KeywordListItemVO>() {
+            @Override
+            public void onItemClick(View view, KeywordListItemVO keywordListItemVO, int position) {
+                // TODO: use both Post and Keywords selected to show fab
+                boolean postSelected = true;
+                boolean keywordsSelected = keywordListItemVO.getSelection();
+                if (isViewAttached()) getView().showFab(postSelected && keywordsSelected);
+            }
+        };
     }
 }

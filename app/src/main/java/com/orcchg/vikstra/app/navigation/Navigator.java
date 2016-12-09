@@ -30,9 +30,9 @@ public class Navigator {
 
     /* Keywords */
     // ------------------------------------------
-    public void openKeywordListScreen(@NonNull Context context) {
+    public void openKeywordListScreen(@NonNull Activity context) {
         Intent intent = KeywordListActivity.getCallingIntent(context);
-        context.startActivity(intent);
+        context.startActivityForResult(intent, KeywordListActivity.REQUEST_CODE);
     }
 
     public void openKeywordCreateScreen(@NonNull Activity context) {

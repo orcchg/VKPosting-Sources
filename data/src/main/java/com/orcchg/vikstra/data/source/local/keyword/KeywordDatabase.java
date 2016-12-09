@@ -50,7 +50,8 @@ public class KeywordDatabase implements IKeywordStorage {
     @DebugLog @Override
     public long getLastId() {
         Realm realm = Realm.getDefaultInstance();
-        long lastId = realm.where(KeywordBundleDBO.class).max(KeywordBundleDBO.COLUMN_ID).longValue();
+        Number number = realm.where(KeywordBundleDBO.class).max(KeywordBundleDBO.COLUMN_ID);
+        long lastId = number != null ? number.longValue() : Constant.INIT_ID;
         realm.close();
         return lastId;
     }

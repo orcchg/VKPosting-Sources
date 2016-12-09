@@ -23,6 +23,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private final GetKeywordBundles getKeywordBundlesUseCase;
 
     private long selectedKeywordBundleId = Constant.BAD_ID;
+    private BaseAdapter.OnItemClickListener<KeywordListItemVO> externalItemClickListener;
 
     @Inject
     KeywordListPresenter(GetKeywordBundles getKeywordBundlesUseCase) {
@@ -31,13 +32,17 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         this.getKeywordBundlesUseCase.setPostExecuteCallback(createGetKeywordBundlesCallback());
     }
 
+    public void setExternalItemClickListener(BaseAdapter.OnItemClickListener<KeywordListItemVO> listener) {
+        externalItemClickListener = listener;
+    }
+
     @Override
     protected BaseAdapter createListAdapter() {
         KeywordListAdapter adapter = new KeywordListAdapter();
         adapter.setOnItemClickListener((view, keywordListItemVO, position) -> {
             // TODO: impl multi-selection or not?
-            // TODO: hide fab when nothing is selected
             selectedKeywordBundleId = keywordListItemVO.getSelection() ? keywordListItemVO.id() : Constant.BAD_ID;
+            if (externalItemClickListener != null) externalItemClickListener.onItemClick(view, keywordListItemVO, position);
         });
         adapter.setOnItemLongClickListener((view, keywordListItemVO, position) -> {
             // TODO: impl long click
