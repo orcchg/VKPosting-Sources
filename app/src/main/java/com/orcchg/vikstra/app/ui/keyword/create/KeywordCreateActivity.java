@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.widget.AutoCompleteTextView;
@@ -27,6 +26,7 @@ import java.util.Collection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.View, KeywordCreateContract.Presenter>
         implements KeywordCreateContract.View {
@@ -38,7 +38,10 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.flow) KeywordsFlowLayout keywordsFlowLayout;
     @BindView(R.id.et_keyword_input) AutoCompleteTextView inputEditText;
-    @BindView(R.id.fab) FloatingActionButton fab;
+    @OnClick(R.id.fab)
+    public void onFabClick() {
+        presenter.onAddPressed();
+    }
 
     private KeywordCreateComponent keywordCreateComponent;
     private long keywordBundleId = Constant.BAD_ID;
@@ -68,7 +71,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     }
 
     /* Lifecycle */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         initData();  // init data needed for injected dependencies
@@ -87,18 +90,17 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     }
 
     /* Data */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initData() {
         keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
     }
 
     /* View */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initView() {
         keywordsFlowLayout.enableLayoutTransition(true);  // animation
         keywordsFlowLayout.setOnKeywordItemClickListener((keyword) -> presenter.onKeywordPressed(keyword));
         keywordsFlowLayout.setKeywordDeletable(true);
-        fab.setOnClickListener((view) -> presenter.onAddPressed());
     }
 
     private void initToolbar() {
@@ -119,7 +121,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     }
 
     /* Contract */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     public void addKeyword(Keyword keyword) {
         keywordsFlowLayout.addKeyword(keyword);
@@ -172,7 +174,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     }
 
     /* Resources */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initResources() {
         DIALOG_TITLE = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_title);
         DIALOG_HINT = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_hint);

@@ -47,7 +47,7 @@ public class GroupDetailActivity extends BaseActivity<GroupDetailContract.View, 
     }
 
     /* Lifecycle */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         initData();  // init data needed for injected dependencies
@@ -59,13 +59,13 @@ public class GroupDetailActivity extends BaseActivity<GroupDetailContract.View, 
     }
 
     /* Data */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initData() {
         groupId = getIntent().getLongExtra(EXTRA_GROUP_ID, Constant.BAD_ID);
     }
 
     /* View */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initView() {
         //
     }

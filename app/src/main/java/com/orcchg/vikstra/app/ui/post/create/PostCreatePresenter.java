@@ -10,7 +10,39 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     PostCreatePresenter() {
     }
 
+    /* Contract */
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void onAttachPressed() {
+        //
+    }
+
+    @Override
+    public void onLocationPressed() {
+        //
+    }
+
+    @Override
+    public void onMediaPressed() {
+        if (isViewAttached()) getView().addMedia();
+    }
+
+    @Override
+    public void onPollPressed() {
+        //
+    }
+
+    @Override
+    public void onSavePressed() {
+        // TODO: impl
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
     }
+
+    /* Callback */
+    // --------------------------------------------------------------------------------------------
 }

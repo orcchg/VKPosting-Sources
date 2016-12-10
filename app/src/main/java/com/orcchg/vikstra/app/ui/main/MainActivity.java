@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     /* Lifecycle */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +104,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     /* View */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initView() {
         fab.hide();  // hide fab at fresh start because nothing has been selected yet
 
@@ -122,7 +122,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     /* Contract */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     public RecyclerView getListView() {
         KeywordListFragment fragment = getKeywordListFragment();
@@ -189,7 +189,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     /* Internal */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Nullable
     private KeywordListFragment getKeywordListFragment() {
         FragmentManager fm = getSupportFragmentManager();

@@ -46,7 +46,7 @@ public class PostSingleGridFragment extends BaseListFragment<PostSingleGridContr
     }
 
     /* Lifecycle */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
@@ -58,7 +58,7 @@ public class PostSingleGridFragment extends BaseListFragment<PostSingleGridContr
     }
 
     /* Contract */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void onScroll(int itemsLeftToEnd) {
         // TODO: impl

@@ -71,7 +71,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     }
 
     /* Lifecycle */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -104,7 +104,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     }
 
     /* Contract */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void onScroll(int itemsLeftToEnd) {
         // TODO: impl

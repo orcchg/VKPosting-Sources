@@ -45,7 +45,7 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
     }
 
     /* Lifecycle */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -75,7 +75,7 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
     }
 
     /* Contract */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     public void showKeywords(List<KeywordListItemVO> keywords) {
         swipeRefreshLayout.setRefreshing(false);

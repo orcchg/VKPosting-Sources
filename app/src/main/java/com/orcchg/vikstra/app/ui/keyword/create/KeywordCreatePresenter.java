@@ -42,12 +42,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     }
 
     /* Contract */
-    // ------------------------------------------
-    @Override
-    public void onKeywordPressed(Keyword keyword) {
-        keywords.remove(keyword);
-    }
-
+    // --------------------------------------------------------------------------------------------
     @Override
     public void onAddPressed() {
         if (keywords.size() < KEYWORDS_LIMIT) {
@@ -60,6 +55,11 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         } else if (isViewAttached()) {
             getView().onKeywordsLimitReached(KEYWORDS_LIMIT);
         }
+    }
+
+    @Override
+    public void onKeywordPressed(Keyword keyword) {
+        keywords.remove(keyword);
     }
 
     @Override

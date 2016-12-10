@@ -61,7 +61,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     /* Lifecycle */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +85,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     /* View */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initView() {
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
@@ -115,7 +115,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     /* Contract */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     public RecyclerView getListView() {
         KeywordListFragment fragment = getFragment();
@@ -168,7 +168,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     /* Internal */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Nullable
     private KeywordListFragment getFragment() {
         FragmentManager fm = getSupportFragmentManager();

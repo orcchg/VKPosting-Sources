@@ -7,5 +7,6 @@ public class Constant {
     public static final class RequestCode {
         public static final int KEYWORD_CREATE_SCREEN = 10000;
         public static final int KEYWORD_LIST_SCREEN = 10001;
+        public static final int POST_CREATE_SCREEN = 10002;
     }
 }

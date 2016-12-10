@@ -1,10 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
 
-    <include layout="@layout/activity_container" />
+    <include layout="@layout/app_bar_with_toolbar" />
+
+    <LinearLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <AutoCompleteTextView
+                android:id="@+id/et_post_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:hint="@string/post_create_text_description_hint"
+                android:inputType="textCapSentences|textMultiLine"
+                android:padding="@dimen/standard_side_padding_small"
+                android:scrollbars="vertical"
+                android:textSize="@dimen/standard_description_text_size"/>
+        </ScrollView>
+
+        <HorizontalScrollView
+            android:id="@+id/media_container_root"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/standard_side_padding_mini"
+            android:layout_marginBottom="@dimen/standard_side_padding_mini"
+            android:paddingLeft="@dimen/standard_side_padding_mini"
+            android:paddingStart="@dimen/standard_side_padding_mini"
+            android:paddingRight="@dimen/standard_side_padding_mini"
+            android:paddingEnd="@dimen/standard_side_padding_mini"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/media_container"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/standard_thumbnail_size"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal"/>
+        </HorizontalScrollView>
+
+        <View
+            android:id="@+id/separator_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="4dp"
+            android:background="@color/list_line_separator"/>
+
+        <LinearLayout
+            android:id="@+id/panel_container"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/standard_panel_height"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/ibtn_panel_location"
+                    android:layout_width="@dimen/standard_icon_large_size"
+                    android:layout_height="@dimen/standard_icon_large_size"
+                    android:layout_gravity="center"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_location_on_black_36dp"
+                    android:tint="@color/white_60_opacity"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/ibtn_panel_media"
+                    android:layout_width="@dimen/standard_icon_large_size"
+                    android:layout_height="@dimen/standard_icon_large_size"
+                    android:layout_gravity="center"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_photo_camera_black_36dp"
+                    android:tint="@color/white_60_opacity"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/ibtn_panel_attach"
+                    android:layout_width="@dimen/standard_icon_large_size"
+                    android:layout_height="@dimen/standard_icon_large_size"
+                    android:layout_gravity="center"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_attach_file_black_36dp"
+                    android:tint="@color/white_60_opacity"/>
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/ibtn_panel_poll"
+                    android:layout_width="@dimen/standard_icon_large_size"
+                    android:layout_height="@dimen/standard_icon_large_size"
+                    android:layout_gravity="center"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_poll_black_36dp"
+                    android:tint="@color/white_60_opacity"/>
+            </FrameLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <include layout="@layout/toolbar_dropshadow" />
 
 </android.support.design.widget.CoordinatorLayout>

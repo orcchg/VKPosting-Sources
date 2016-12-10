@@ -23,8 +23,8 @@ public interface KeywordCreateContract {
     }
 
     interface Presenter extends MvpPresenter<View> {
-        void onKeywordPressed(Keyword keyword);
         void onAddPressed();
+        void onKeywordPressed(Keyword keyword);
         void onSavePressed();
         void onTitleChanged(String text);
     }

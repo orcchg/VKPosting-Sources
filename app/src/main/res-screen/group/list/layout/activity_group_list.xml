@@ -16,7 +16,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/group_list_info_header_height"
+            android:layout_height="@dimen/standard_thumbnail_container_height"
             android:layout_marginLeft="@dimen/standard_side_padding"
             android:layout_marginStart="@dimen/standard_side_padding"
             android:layout_marginRight="@dimen/standard_side_padding"
@@ -38,8 +38,8 @@
 
                 <ImageView
                     android:id="@+id/iv_post_thumb"
-                    android:layout_width="@dimen/group_list_info_post_size"
-                    android:layout_height="@dimen/group_list_info_post_size"
+                    android:layout_width="@dimen/standard_thumbnail_size"
+                    android:layout_height="@dimen/standard_thumbnail_size"
                     android:layout_gravity="center"
                     android:background="@color/accent"/>
             </FrameLayout>

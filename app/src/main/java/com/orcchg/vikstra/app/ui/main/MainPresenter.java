@@ -33,7 +33,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     }
 
     /* Contract */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     public void retry() {
         keywordListPresenter.retry();
@@ -55,16 +55,13 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     protected void freshStart() {}
 
     /* Callback */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private ValueEmitter<Boolean> createExternalValueCallback() {
-        return new ValueEmitter<Boolean>() {
-            @Override
-            public void emit(Boolean value) {
-                // TODO: use both Post and Keywords selected to show fab
-                boolean postSelected = true;
-                boolean keywordsSelected = value;
-                if (isViewAttached()) getView().showFab(postSelected && keywordsSelected);
-            }
+        return (value) -> {
+            // TODO: use both Post and Keywords selected to show fab
+            boolean postSelected = true;
+            boolean keywordsSelected = value;
+            if (isViewAttached()) getView().showFab(postSelected && keywordsSelected);
         };
     }
 }

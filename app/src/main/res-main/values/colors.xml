@@ -11,6 +11,7 @@
     <color name="light_grey_bg">#ededed</color>
     <color name="list_line_separator">#42000000</color>
     <color name="black_40_opacity">#66000000</color>
+    <color name="white_60_opacity">#99FFFFFF</color>
 
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#757575</color>

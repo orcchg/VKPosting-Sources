@@ -13,9 +13,6 @@ import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import static com.orcchg.vikstra.app.ui.keyword.list.KeywordListAdapter.SELECT_MODE_MULTI;
-import static com.orcchg.vikstra.app.ui.keyword.list.KeywordListAdapter.SELECT_MODE_SINGLE;
-
 public class KeywordListAdapter extends BaseAdapter<KeywordViewHolder, KeywordListItemVO> {
     public static final int SELECT_MODE_NONE = 0;
     public static final int SELECT_MODE_SINGLE = 1;
@@ -50,25 +47,22 @@ public class KeywordListAdapter extends BaseAdapter<KeywordViewHolder, KeywordLi
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> createWrappedClickListener() {
-        return new OnItemClickListener<KeywordListItemVO>() {
-            @Override
-            public void onItemClick(View view, KeywordListItemVO keywordListItemVO, int position) {
-                switch (selectMode) {
-                    case SELECT_MODE_NONE:
-                    case SELECT_MODE_MULTI:
-                        // TODO: accumulate selected items
-                        break;
-                    case SELECT_MODE_SINGLE:
-                        for (KeywordListItemVO model : models) {
-                            if (model.id() != keywordListItemVO.id()) {
-                                model.setSelection(false);
-                            }
+        return (view, keywordListItemVO, position) -> {
+            switch (selectMode) {
+                case SELECT_MODE_NONE:
+                case SELECT_MODE_MULTI:
+                    // TODO: accumulate selected items
+                    break;
+                case SELECT_MODE_SINGLE:
+                    for (KeywordListItemVO model : models) {
+                        if (model.id() != keywordListItemVO.id()) {
+                            model.setSelection(false);
                         }
-                        notifyDataSetChanged();
-                        break;
-                }
-                if (onItemClickListener != null) onItemClickListener.onItemClick(view, keywordListItemVO, position);
+                    }
+                    notifyDataSetChanged();
+                    break;
             }
+            if (onItemClickListener != null) onItemClickListener.onItemClick(view, keywordListItemVO, position);
         };
     }
 }

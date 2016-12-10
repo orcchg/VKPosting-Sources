@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -45,7 +44,7 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     }
 
     /* Lifecycle */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         initData();  // init data needed for injected dependencies
@@ -58,13 +57,13 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     }
 
     /* Data */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initData() {
         keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
     }
 
     /* View */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initView() {
         updateSelectedGroupsCounter(0);
 
@@ -101,7 +100,7 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     }
 
     /* Resources */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initResources() {
         INFO_TITLE = getResources().getString(R.string.group_list_selected_groups_total_count);
     }

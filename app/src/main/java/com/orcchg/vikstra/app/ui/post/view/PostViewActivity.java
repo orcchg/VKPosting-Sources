@@ -41,7 +41,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     }
 
     /* Lifecycle */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +51,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     }
 
     /* View */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     private void initView() {
         toolbar.setTitle(R.string.post_view_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());
