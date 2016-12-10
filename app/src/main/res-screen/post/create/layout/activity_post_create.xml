@@ -29,7 +29,7 @@
                 android:inputType="textCapSentences|textMultiLine"
                 android:padding="@dimen/standard_side_padding_small"
                 android:scrollbars="vertical"
-                android:textSize="@dimen/standard_description_text_size"/>
+                android:textSize="@dimen/standard_description_text_size" />
         </ScrollView>
 
         <HorizontalScrollView
