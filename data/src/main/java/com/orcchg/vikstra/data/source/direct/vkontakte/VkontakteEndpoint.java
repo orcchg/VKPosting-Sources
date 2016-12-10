@@ -29,7 +29,7 @@ public class VkontakteEndpoint extends Endpoint {
     /**
      * Get group {@link Group} by it's string id {@param id}.
      */
-    public void getGroupById(String id, @Nullable final UseCase.OnPostExecuteCallback<Group> callback) {
+    public void getGroupById(long id, @Nullable final UseCase.OnPostExecuteCallback<Group> callback) {
         GetGroupById useCase = new GetGroupById(id, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKApiCommunityArray>() {
             @Override

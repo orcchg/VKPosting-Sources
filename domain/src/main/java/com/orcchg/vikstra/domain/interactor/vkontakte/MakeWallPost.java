@@ -1,6 +1,5 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
-import com.google.gson.Gson;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.vk.sdk.api.VKApi;

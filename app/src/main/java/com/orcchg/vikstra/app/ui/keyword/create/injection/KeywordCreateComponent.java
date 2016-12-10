@@ -8,7 +8,7 @@ import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreatePresenter;
 import dagger.Component;
 
 @PerActivity
-@Component(modules = {KeywordCreateModule.class}, dependencies = ApplicationComponent.class)
+@Component(modules = {KeywordCreateModule.class}, dependencies = {ApplicationComponent.class})
 public interface KeywordCreateComponent {
 
     void inject(KeywordCreateActivity activity);

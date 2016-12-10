@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.bignerdranch.expandablerecyclerview.ChildViewHolder;
 import com.orcchg.vikstra.R;
+import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -17,11 +18,16 @@ public class GroupChildViewHolder extends ChildViewHolder<GroupChildItem> {
     @BindView(R.id.tv_count) TextView countTextView;
     @BindView(R.id.switcher) Switch switcher;
 
+    private OnGroupClickListener onGroupClickListener;
     private CompoundButton.OnCheckedChangeListener switcherListener;
 
     public GroupChildViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
+    }
+
+    public void setOnGroupClickListener(OnGroupClickListener listener) {
+        onGroupClickListener = listener;
     }
 
     public void setSwitcherListener(CompoundButton.OnCheckedChangeListener switcherListener) {
@@ -41,6 +47,10 @@ public class GroupChildViewHolder extends ChildViewHolder<GroupChildItem> {
         switcher.setTag(data);
         setCheckedSafe(model.isSelected());
         setSwitcherListener(switcherListener);
+
+        itemView.setOnClickListener((view) -> {
+            if (onGroupClickListener != null) onGroupClickListener.onGroupClick(model.getId());
+        });
     }
 
     /* Support */

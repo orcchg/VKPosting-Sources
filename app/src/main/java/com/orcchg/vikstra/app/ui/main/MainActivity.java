@@ -137,7 +137,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     @Override
     public void openGroupListScreen(long keywordBundleId) {
-        navigationComponent.navigator().openGroupsListScreen(this, keywordBundleId);
+        navigationComponent.navigator().openGroupListScreen(this, keywordBundleId);
     }
 
     @Override

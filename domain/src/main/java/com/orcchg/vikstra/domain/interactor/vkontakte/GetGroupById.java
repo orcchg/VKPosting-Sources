@@ -1,6 +1,5 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
-import com.google.gson.Gson;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.vk.sdk.api.VKApi;
@@ -13,10 +12,10 @@ import javax.inject.Inject;
 
 public class GetGroupById extends VkUseCase<VKApiCommunityArray> {
 
-    private String vkGroupId;
+    private long vkGroupId;
 
     @Inject
-    public GetGroupById(String vkGroupId, ThreadExecutor threadExecutor,
+    public GetGroupById(long vkGroupId, ThreadExecutor threadExecutor,
                         PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
         this.vkGroupId = vkGroupId;

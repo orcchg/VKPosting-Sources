@@ -22,11 +22,14 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
         void onCheckedChange(GroupChildItem data, boolean isChecked);
     }
 
+    private OnGroupClickListener onGroupClickListener;
     private CompoundButton.OnCheckedChangeListener childItemSwitcherListener;
     private OnCheckedChangeListener externalChildItemSwitcherListener;
 
-    public GroupListAdapter(@NonNull List<GroupParentItem> parentItems) {
+    public GroupListAdapter(@NonNull List<GroupParentItem> parentItems,
+                            OnGroupClickListener onGroupClickListener) {
         super(parentItems);
+        this.onGroupClickListener = onGroupClickListener;
         this.childItemSwitcherListener = createChildItemSwitcherListener();
     }
 
@@ -46,6 +49,7 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
         Context context = childViewGroup.getContext();
         View itemView = LayoutInflater.from(context).inflate(R.layout.group_list_child_item, childViewGroup, false);
         GroupChildViewHolder viewHolder = new GroupChildViewHolder(itemView);
+        viewHolder.setOnGroupClickListener(onGroupClickListener);
         viewHolder.setSwitcherListener(childItemSwitcherListener);
         return viewHolder;
     }

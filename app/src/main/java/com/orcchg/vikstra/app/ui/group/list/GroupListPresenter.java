@@ -33,15 +33,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Inject
     GroupListPresenter(GetKeywordBundleById getKeywordBundleByIdUseCase, VkontakteEndpoint vkontakteEndpoint) {
         this.groupParentItems = new ArrayList<>();
-        this.listAdapter = createListAdapter();
+        this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback());
 
         this.getKeywordBundleByIdUseCase = getKeywordBundleByIdUseCase;
         this.getKeywordBundleByIdUseCase.setPostExecuteCallback(createGetKeywordBundleByIdCallback());
         this.vkontakteEndpoint = vkontakteEndpoint;
     }
 
-    private GroupListAdapter createListAdapter() {
-        GroupListAdapter adapter = new GroupListAdapter(groupParentItems);
+    private GroupListAdapter createListAdapter(List<GroupParentItem> items, OnGroupClickListener listener) {
+        GroupListAdapter adapter = new GroupListAdapter(items, listener);
         adapter.setExternalChildItemSwitcherListener(createExternalChildItemSwitcherCallback());
         return adapter;
     }
@@ -123,13 +123,16 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     // ------------------------------------------
+    private OnGroupClickListener createGroupClickCallback() {
+        return (groupId) -> {
+            if (isViewAttached()) getView().openGroupDetailScreen(groupId);
+        };
+    }
+
     private GroupListAdapter.OnCheckedChangeListener createExternalChildItemSwitcherCallback() {
-        return new GroupListAdapter.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChange(GroupChildItem data, boolean isChecked) {
-                totalSelectedGroups += isChecked ? 1 : -1;
-                if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups);
-            }
+        return (data, isChecked) -> {
+            totalSelectedGroups += isChecked ? 1 : -1;
+            if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups);
         };
     }
 }

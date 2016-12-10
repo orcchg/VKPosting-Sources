@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
+import com.orcchg.vikstra.app.ui.group.detail.GroupDetailActivity;
 import com.orcchg.vikstra.app.ui.legacy.details.DetailsActivity;
 import com.orcchg.vikstra.app.ui.group.list.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
@@ -46,7 +47,12 @@ public class Navigator {
 
     /* Groups */
     // ------------------------------------------
-    public void openGroupsListScreen(@NonNull Context context, long keywordBunldeId) {
+    public void openGroupDetailScreen(@NonNull Context context, long groupId) {
+        Intent intent = GroupDetailActivity.getCallingIntent(context, groupId);
+        context.startActivity(intent);
+    }
+
+    public void openGroupListScreen(@NonNull Context context, long keywordBunldeId) {
         Intent intent = GroupListActivity.getCallingIntent(context, keywordBunldeId);
         context.startActivity(intent);
     }

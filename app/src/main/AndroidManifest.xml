@@ -29,6 +29,10 @@
                   android:label="@string/keyword_create_screen_title"
                   android:windowSoftInputMode="adjustResize"/>
 
+        <activity android:name=".app.ui.group.detail.GroupDetailActivity"
+                  android:label="@string/group_detail_screen_title"
+                  android:theme="@style/AppTheme"/>
+
         <activity android:name=".app.ui.group.list.GroupListActivity"
                   android:label="@string/group_list_screen_title"
                   android:theme="@style/AppTheme"/>
