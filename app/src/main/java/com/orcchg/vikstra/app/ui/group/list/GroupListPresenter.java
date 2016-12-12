@@ -3,6 +3,7 @@ package com.orcchg.vikstra.app.ui.group.list;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
+import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
@@ -14,6 +15,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -22,26 +24,26 @@ import hugo.weaving.DebugLog;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
-    private List<GroupParentItem> groupParentItems;
-    private GroupListAdapter listAdapter;
+    List<GroupParentItem> groupParentItems = new ArrayList<>();
+//    Set<Long> selectedGroupIds = new TreeSet<>();
+    GroupListAdapter listAdapter;
 
-    private final GetKeywordBundleById getKeywordBundleByIdUseCase;
-    private final VkontakteEndpoint vkontakteEndpoint;
+    final GetKeywordBundleById getKeywordBundleByIdUseCase;
+    final VkontakteEndpoint vkontakteEndpoint;
 
-    private int totalSelectedGroups;
+//    private int totalSelectedGroups;
 
     @Inject
     GroupListPresenter(GetKeywordBundleById getKeywordBundleByIdUseCase, VkontakteEndpoint vkontakteEndpoint) {
-        this.groupParentItems = new ArrayList<>();
-        this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback());
-
+        this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
         this.getKeywordBundleByIdUseCase = getKeywordBundleByIdUseCase;
         this.getKeywordBundleByIdUseCase.setPostExecuteCallback(createGetKeywordBundleByIdCallback());
         this.vkontakteEndpoint = vkontakteEndpoint;
     }
 
-    private GroupListAdapter createListAdapter(List<GroupParentItem> items, OnGroupClickListener listener) {
-        GroupListAdapter adapter = new GroupListAdapter(items, listener);
+    private GroupListAdapter createListAdapter(List<GroupParentItem> items, OnGroupClickListener listener,
+                                               OnAllGroupsSelectedListener listener2) {
+        GroupListAdapter adapter = new GroupListAdapter(items, listener, listener2);
         adapter.setExternalChildItemSwitcherListener(createExternalChildItemSwitcherCallback());
         return adapter;
     }
@@ -61,9 +63,18 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void postToGroups() {
+        // TODO: post selected groups
+    }
+
     @DebugLog @Override
     public void retry() {
-        // TODO: re-issue groups by keywords
+        groupParentItems.clear();
+        selectedGroupIds.clear();
+        totalSelectedGroups = 0;
+        listAdapter.clear();
+        freshStart();
     }
 
     /* Internal */
@@ -102,17 +113,28 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 // TODO: only 20 groups by single keyword by default
                 int index = 0;
                 for (List<Group> groups : splitGroups) {
+                    if (AppConfig.INSTANCE.isAllGroupsSortedByMembersCount()) Collections.sort(groups);
                     List<GroupChildItem> childItems = new ArrayList<>(groups.size());
                     for (Group group : groups) {
                         GroupChildItem childItem = new GroupChildItem(group);
                         childItems.add(childItem);
+                        if (AppConfig.INSTANCE.isAllGroupsSelected()) {
+                            childItem.setSelected(true);
+                            ++totalSelectedGroups;
+                            selectedGroupIds.add(group.id());
+                        }
                     }
-                    groupParentItems.get(index).setChildList(childItems);
+                    GroupParentItem parentItem = groupParentItems.get(index);
+                    if (AppConfig.INSTANCE.isAllGroupsSelected()) parentItem.setSelectedCount(groups.size());
+                    parentItem.setChildList(childItems);
                     ++index;
                 }
 
                 listAdapter.notifyParentDataSetChanged(false);
-                if (isViewAttached()) getView().showGroups(splitGroups.isEmpty());
+                if (isViewAttached()) {
+                    getView().updateSelectedGroupsCounter(totalSelectedGroups);
+                    getView().showGroups(splitGroups.isEmpty());
+                }
             }
 
             @Override
@@ -129,9 +151,28 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         };
     }
 
+    private OnAllGroupsSelectedListener createAllGroupsSelectedCallback() {
+        return (model, position, isSelected) -> {
+//            int total = model.getChildCount();
+//            int selected = model.getSelectedCount();
+//            int unselected = total - selected;
+//            model.setSelectedCount(isSelected ? total : 0);
+//            totalSelectedGroups += isSelected ? unselected : -selected;
+//            // TODO: add ids to set
+//            // TODO: fix counter overflow
+//            listAdapter.notifyParentChanged(position);
+//            if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups);
+        };
+    }
+
     private GroupListAdapter.OnCheckedChangeListener createExternalChildItemSwitcherCallback() {
         return (data, isChecked) -> {
             totalSelectedGroups += isChecked ? 1 : -1;
+            if (isChecked) {
+                selectedGroupIds.add(data.getId());
+            } else {
+                selectedGroupIds.remove(data.getId());
+            }
             if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups);
         };
     }

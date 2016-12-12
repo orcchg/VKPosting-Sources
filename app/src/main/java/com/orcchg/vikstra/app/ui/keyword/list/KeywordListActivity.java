@@ -36,7 +36,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @OnClick(R.id.fab)
-    public void onFabClick() {
+    void onFabClick() {
         navigationComponent.navigator().openKeywordCreateScreen(this);
     }
 

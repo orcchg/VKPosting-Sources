@@ -23,13 +23,16 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
     }
 
     private OnGroupClickListener onGroupClickListener;
+    private OnAllGroupsSelectedListener onAllGroupsSelectedListener;
     private CompoundButton.OnCheckedChangeListener childItemSwitcherListener;
     private OnCheckedChangeListener externalChildItemSwitcherListener;
 
     public GroupListAdapter(@NonNull List<GroupParentItem> parentItems,
-                            OnGroupClickListener onGroupClickListener) {
+                            OnGroupClickListener onGroupClickListener,
+                            OnAllGroupsSelectedListener onAllGroupsSelectedListener) {
         super(parentItems);
         this.onGroupClickListener = onGroupClickListener;
+        this.onAllGroupsSelectedListener = onAllGroupsSelectedListener;
         this.childItemSwitcherListener = createChildItemSwitcherListener();
     }
 
@@ -41,7 +44,9 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
     public GroupParentViewHolder onCreateParentViewHolder(@NonNull ViewGroup parentViewGroup, int viewType) {
         Context context = parentViewGroup.getContext();
         View itemView = LayoutInflater.from(context).inflate(R.layout.group_list_parent_item, parentViewGroup, false);
-        return new GroupParentViewHolder(itemView);
+        GroupParentViewHolder viewHolder = new GroupParentViewHolder(itemView);
+        viewHolder.setOnAllGroupsSelectedListener(onAllGroupsSelectedListener);
+        return viewHolder;
     }
 
     @NonNull @Override
@@ -62,6 +67,13 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
     @Override
     public void onBindChildViewHolder(@NonNull GroupChildViewHolder childViewHolder, int parentPosition, int childPosition, @NonNull GroupChildItem child) {
         childViewHolder.bind(child);
+    }
+
+    /* Data access */
+    // --------------------------------------------------------------------------------------------
+    public void clear() {
+        getParentList().clear();
+        notifyParentDataSetChanged(false);
     }
 
     /* Internal */

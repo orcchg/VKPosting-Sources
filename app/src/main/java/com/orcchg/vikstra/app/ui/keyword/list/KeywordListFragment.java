@@ -29,11 +29,11 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
     @BindView(R.id.loading_view) View loadingView;
     @BindView(R.id.error_view) View errorView;
     @OnClick(R.id.btn_empty_data)
-    public void onEmptyDataClick() {
+    void onEmptyDataClick() {
         iScrollList.onEmpty();
     }
     @OnClick(R.id.btn_retry)
-    public void onRetryClick() {
+    void onRetryClick() {
         iScrollList.retry();
     }
 

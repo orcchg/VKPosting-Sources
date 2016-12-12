@@ -3,7 +3,7 @@ package com.orcchg.vikstra.domain.model;
 import com.google.auto.value.AutoValue;
 
 @AutoValue
-public abstract class Group {
+public abstract class Group implements Comparable<Group> {
 
     public static Builder builder() {
         return new AutoValue_Group.Builder();
@@ -20,4 +20,9 @@ public abstract class Group {
     public abstract long id();
     public abstract int membersCount();
     public abstract String name();
+
+    @Override
+    public int compareTo(Group o) {
+        return o.membersCount() - membersCount();
+    }
 }

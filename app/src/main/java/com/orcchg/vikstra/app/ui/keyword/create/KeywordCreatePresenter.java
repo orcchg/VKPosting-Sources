@@ -27,8 +27,8 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     private final PostKeywordBundle postKeywordBundleUseCase;
     private final PutKeywordBundle putKeywordBundleUseCase;
 
-    private String title;
-    private Set<Keyword> keywords = new TreeSet<>();
+    String title;
+    Set<Keyword> keywords = new TreeSet<>();
 
     @Inject
     KeywordCreatePresenter(GetKeywordBundleById getKeywordBundleByIdUseCase,

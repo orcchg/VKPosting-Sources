@@ -39,7 +39,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     @BindView(R.id.flow) KeywordsFlowLayout keywordsFlowLayout;
     @BindView(R.id.et_keyword_input) AutoCompleteTextView inputEditText;
     @OnClick(R.id.fab)
-    public void onFabClick() {
+    void onFabClick() {
         presenter.onAddPressed();
     }
 
@@ -98,6 +98,10 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
+        inputEditText.setOnEditorActionListener((view, actionId, keyEvent) -> {
+            presenter.onAddPressed();
+            return true;
+        });
         keywordsFlowLayout.enableLayoutTransition(true);  // animation
         keywordsFlowLayout.setOnKeywordItemClickListener((keyword) -> presenter.onKeywordPressed(keyword));
         keywordsFlowLayout.setKeywordDeletable(true);

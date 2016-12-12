@@ -31,8 +31,8 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @OnClick(R.id.fab)
-    public void onPostFabClick() {
-        // TODO: perform post via presenter, getting need data from Fragment's presenter
+    void onPostFabClick() {
+        getFragment().onFabClick();  // delegate view event to child fragment
     }
 
     private long keywordBundleId = Constant.BAD_ID;
@@ -103,5 +103,13 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     // --------------------------------------------------------------------------------------------
     private void initResources() {
         INFO_TITLE = getResources().getString(R.string.group_list_selected_groups_total_count);
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    @Nullable
+    private GroupListFragment getFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        return (GroupListFragment) fm.findFragmentByTag(FRAGMENT_TAG);
     }
 }

@@ -73,7 +73,7 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
     }
 
     /* Error state */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     public void setOnErrorClickListener(View.OnClickListener onErrorClickListener) {
         this.onErrorClickListener = onErrorClickListener;
     }
@@ -85,7 +85,7 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
     }
 
     /* Data access */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     public void setOnItemClickListener(OnItemClickListener<Model> onItemClickListener) {
         this.onItemClickListener = onItemClickListener;
     }

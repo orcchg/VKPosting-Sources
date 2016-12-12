@@ -30,19 +30,19 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     @BindView(R.id.media_container_root) ViewGroup mediaContainerRoot;
     @BindView(R.id.media_container) ViewGroup mediaContainer;
     @OnClick(R.id.ibtn_panel_location)
-    public void onLocationButtonClick() {
+    void onLocationButtonClick() {
         presenter.onLocationPressed();
     }
     @OnClick(R.id.ibtn_panel_media)
-    public void onMediaButtonClick() {
+    void onMediaButtonClick() {
         presenter.onMediaPressed();
     }
     @OnClick(R.id.ibtn_panel_attach)
-    public void onAttachButtonClick() {
+    void onAttachButtonClick() {
         presenter.onAttachPressed();
     }
     @OnClick(R.id.ibtn_panel_poll)
-    public void onPollButtonClick() {
+    void onPollButtonClick() {
         presenter.onPollPressed();
     }
 

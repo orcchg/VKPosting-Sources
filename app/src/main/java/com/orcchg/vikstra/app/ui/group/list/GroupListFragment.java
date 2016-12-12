@@ -33,8 +33,8 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     @BindView(R.id.loading_view) View loadingView;
     @BindView(R.id.error_view) View errorView;
     @OnClick(R.id.btn_retry)
-    public void onRetryClick() {
-//        iScrollList.retry();
+    void onRetryClick() {
+        presenter.retry();
     }
 
     private GroupsCounterHolder groupsCounterHolder;
@@ -98,7 +98,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_items);
 
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        swipeRefreshLayout.setOnRefreshListener(() -> /*iScrollList.retry()*/{});
+        swipeRefreshLayout.setOnRefreshListener(() -> presenter.retry());
 
         return rootView;
     }
@@ -108,6 +108,11 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     @Override
     protected void onScroll(int itemsLeftToEnd) {
         // TODO: impl
+    }
+
+    @Override
+    public void onFabClick() {
+        presenter.postToGroups();
     }
 
     @Override

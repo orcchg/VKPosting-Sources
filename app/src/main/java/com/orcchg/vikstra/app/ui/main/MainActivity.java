@@ -41,11 +41,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.tv_groups_selection_counter) TextView selectedGroupsTextView;
     @OnClick(R.id.fab)
-    public void onFabClick() {
+    void onFabClick() {
         presenter.onFabClick();
     }
     @OnClick(R.id.btn_add_new_groups)
-    public void onAddNewGroupsClick() {
+    void onAddNewGroupsClick() {
         navigationComponent.navigator().openKeywordListScreen(this);
     }
     @OnClick(R.id.btn_groups_selection_drop)
