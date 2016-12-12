@@ -22,6 +22,7 @@ public class KeywordBundleToDboPopulator implements Populator<KeywordBundle, Key
     @Override
     public void populate(KeywordBundle object, KeywordBundleDBO dbo) {
         dbo.id = object.id();
+        dbo.timestamp = object.timestamp();
         dbo.title = object.title();
         dbo.keywords = new RealmList<>();
         for (Keyword keyword : object.keywords()) {

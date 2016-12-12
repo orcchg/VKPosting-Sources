@@ -34,6 +34,7 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         long lastId = localSource.getLastId();
         KeywordBundle bundle = KeywordBundle.builder()
                 .setId(++lastId)
+                .setTimestamp(System.currentTimeMillis())
                 .setTitle(title)
                 .setKeywords(keywords)
                 .build();

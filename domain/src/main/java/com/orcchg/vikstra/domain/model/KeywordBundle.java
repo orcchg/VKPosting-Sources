@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 @AutoValue
-public abstract class KeywordBundle implements Iterable<Keyword>, Parcelable {
+public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterable<Keyword>, Parcelable {
 
     public static Builder builder() {
         return new AutoValue_KeywordBundle.Builder();
@@ -17,14 +17,21 @@ public abstract class KeywordBundle implements Iterable<Keyword>, Parcelable {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setId(long id);
+        public abstract Builder setTimestamp(long ts);
         public abstract Builder setTitle(String title);
         public abstract Builder setKeywords(Collection<Keyword> keywords);
         public abstract KeywordBundle build();
     }
 
     public abstract long id();
+    public abstract long timestamp();
     public abstract String title();
     public abstract Collection<Keyword> keywords();
+
+    @Override
+    public int compareTo(KeywordBundle o) {
+        return (int) (o.timestamp() - timestamp());
+    }
 
     @Override
     public Iterator<Keyword> iterator() {

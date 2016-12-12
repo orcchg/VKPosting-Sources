@@ -52,6 +52,7 @@ public class KeywordBundleToDboMapper implements DuplexMapper<KeywordBundle, Key
         }
         return KeywordBundle.builder()
                 .setId(object.id)
+                .setTimestamp(object.timestamp)
                 .setTitle(object.title)
                 .setKeywords(keywords)
                 .build();
