@@ -7,16 +7,19 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseListFragment;
+import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListModule;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
+import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
@@ -24,9 +27,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GroupListFragment extends BaseListFragment<GroupListContract.View, GroupListContract.Presenter>
-        implements GroupListContract.View {
-
+        implements GroupListContract.View, GroupListActivity.ViewInteraction {
     private static final String BUNDLE_KEY_KEYWORDS_BUNDLE_ID = "bundle_key_keywords_bundle_id";
+
+    private String DIALOG_TITLE, DIALOG_HINT;
 
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.empty_view) View emptyView;
@@ -85,6 +89,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        initResources();
         Bundle args = getArguments();
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
         super.onCreate(savedInstanceState);
@@ -103,16 +108,31 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         return rootView;
     }
 
+    /* Downstream access */
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void onFabClick() {
+        presenter.postToGroups();
+    }
+
+    @Override
+    public void onAddKeyword() {
+        DialogProvider.showEditTextDialog(getActivity(), DIALOG_TITLE, DIALOG_HINT, null,
+                (dialog, which, text) -> {
+                    if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text));
+                }, null);
+    }
+
+    @Override
+    public void onChangePost() {
+        // TODO:
+    }
+
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onScroll(int itemsLeftToEnd) {
         // TODO: impl
-    }
-
-    @Override
-    public void onFabClick() {
-        presenter.postToGroups();
     }
 
     @Override
@@ -149,9 +169,14 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     }
 
     @Override
-    public void updateSelectedGroupsCounter(int newCount) {
-        if (groupsCounterHolder != null) groupsCounterHolder.updateSelectedGroupsCounter(newCount);
+    public void updateSelectedGroupsCounter(int newCount, int total) {
+        if (groupsCounterHolder != null) groupsCounterHolder.updateSelectedGroupsCounter(newCount, total);
     }
 
-
+    /* Resources */
+    // --------------------------------------------------------------------------------------------
+    private void initResources() {
+        DIALOG_TITLE = getResources().getString(R.string.group_list_dialog_new_keyword_title);
+        DIALOG_HINT = getResources().getString(R.string.group_list_dialog_new_keyword_hind);
+    }
 }

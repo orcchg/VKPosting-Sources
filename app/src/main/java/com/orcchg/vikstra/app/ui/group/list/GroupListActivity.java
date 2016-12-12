@@ -30,9 +30,18 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     @BindView(R.id.iv_post_thumb) ImageView postThumbnailView;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
+    // delegate view event to child fragment
     @OnClick(R.id.fab)
     void onPostFabClick() {
-        getFragment().onFabClick();  // delegate view event to child fragment
+        getFragment().onFabClick();
+    }
+    @OnClick(R.id.btn_add_keyword)
+    void onAddKeywordClick() {
+        getFragment().onAddKeyword();
+    }
+    @OnClick(R.id.btn_change_post)
+    void onChangePost() {
+        getFragment().onChangePost();
     }
 
     private long keywordBundleId = Constant.BAD_ID;
@@ -41,6 +50,12 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
         Intent intent = new Intent(context, GroupListActivity.class);
         intent.putExtra(EXTRA_KEYWORD_BUNDLE_ID, keywordBunldeId);
         return intent;
+    }
+
+    interface ViewInteraction {
+        void onFabClick();
+        void onAddKeyword();
+        void onChangePost();
     }
 
     /* Lifecycle */
@@ -65,7 +80,7 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
-        updateSelectedGroupsCounter(0);
+        updateSelectedGroupsCounter(0, 0);
 
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
@@ -95,8 +110,9 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     }
 
     @Override
-    public void updateSelectedGroupsCounter(int count) {
-        selectedGroupsCountView.setText(String.format(INFO_TITLE, count));
+    public void updateSelectedGroupsCounter(int count, int total) {
+        String text = new StringBuilder(String.format(INFO_TITLE, count)).append('/').append(total).toString();
+        selectedGroupsCountView.setText(text);
     }
 
     /* Resources */
@@ -108,8 +124,8 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @Nullable
-    private GroupListFragment getFragment() {
+    private ViewInteraction getFragment() {
         FragmentManager fm = getSupportFragmentManager();
-        return (GroupListFragment) fm.findFragmentByTag(FRAGMENT_TAG);
+        return (ViewInteraction) fm.findFragmentByTag(FRAGMENT_TAG);
     }
 }

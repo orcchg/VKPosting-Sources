@@ -9,6 +9,7 @@ import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.Keyword;
@@ -17,6 +18,8 @@ import com.orcchg.vikstra.domain.model.KeywordBundle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -25,19 +28,22 @@ import hugo.weaving.DebugLog;
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
     List<GroupParentItem> groupParentItems = new ArrayList<>();
-//    Set<Long> selectedGroupIds = new TreeSet<>();
     GroupListAdapter listAdapter;
 
-    final GetKeywordBundleById getKeywordBundleByIdUseCase;
-    final VkontakteEndpoint vkontakteEndpoint;
+    private final GetKeywordBundleById getKeywordBundleByIdUseCase;
+    private final AddKeywordToBundle addKeywordToBundle;
+    private final VkontakteEndpoint vkontakteEndpoint;
 
-//    private int totalSelectedGroups;
+    int totalSelectedGroups, totalGroups;
 
     @Inject
-    GroupListPresenter(GetKeywordBundleById getKeywordBundleByIdUseCase, VkontakteEndpoint vkontakteEndpoint) {
+    GroupListPresenter(GetKeywordBundleById getKeywordBundleByIdUseCase, AddKeywordToBundle addKeywordToBundle,
+                       VkontakteEndpoint vkontakteEndpoint) {
         this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
         this.getKeywordBundleByIdUseCase = getKeywordBundleByIdUseCase;
         this.getKeywordBundleByIdUseCase.setPostExecuteCallback(createGetKeywordBundleByIdCallback());
+        this.addKeywordToBundle = addKeywordToBundle;
+        this.addKeywordToBundle.setPostExecuteCallback(createAddKeywordToBundleCallback());
         this.vkontakteEndpoint = vkontakteEndpoint;
     }
 
@@ -64,15 +70,27 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void addKeyword(Keyword keyword) {
+        addKeywordToBundle.setParameters(new AddKeywordToBundle.Parameters(keyword));
+        addKeywordToBundle.execute();
+    }
+
+    @Override
     public void postToGroups() {
+        Set<Long> selectedGroupIds = new TreeSet<>();
+        for (GroupParentItem parentItem : listAdapter.getParentList()) {
+            for (GroupChildItem childItem : parentItem.getChildList()) {
+                if (childItem.isSelected()) selectedGroupIds.add(childItem.getId());
+            }
+        }
         // TODO: post selected groups
     }
 
     @DebugLog @Override
     public void retry() {
         groupParentItems.clear();
-        selectedGroupIds.clear();
         totalSelectedGroups = 0;
+        totalGroups = 0;
         listAdapter.clear();
         freshStart();
     }
@@ -105,6 +123,21 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         };
     }
 
+    private UseCase.OnPostExecuteCallback<Boolean> createAddKeywordToBundleCallback() {
+        return new UseCase.OnPostExecuteCallback<Boolean>() {
+            @Override
+            public void onFinish(@Nullable Boolean result) {
+                if (result) retry();  // get newly added keyword from repository at next request
+                // TODO: else result
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO:
+            }
+        };
+    }
+
     private UseCase.OnPostExecuteCallback<List<List<Group>>> createGetGroupsByKeywordsListCallback() {
         return new UseCase.OnPostExecuteCallback<List<List<Group>>>() {
             @Override
@@ -113,6 +146,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 // TODO: only 20 groups by single keyword by default
                 int index = 0;
                 for (List<Group> groups : splitGroups) {
+                    totalGroups += groups.size();
                     if (AppConfig.INSTANCE.isAllGroupsSortedByMembersCount()) Collections.sort(groups);
                     List<GroupChildItem> childItems = new ArrayList<>(groups.size());
                     for (Group group : groups) {
@@ -121,7 +155,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                         if (AppConfig.INSTANCE.isAllGroupsSelected()) {
                             childItem.setSelected(true);
                             ++totalSelectedGroups;
-                            selectedGroupIds.add(group.id());
                         }
                     }
                     GroupParentItem parentItem = groupParentItems.get(index);
@@ -132,7 +165,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
                 listAdapter.notifyParentDataSetChanged(false);
                 if (isViewAttached()) {
-                    getView().updateSelectedGroupsCounter(totalSelectedGroups);
+                    getView().updateSelectedGroupsCounter(totalSelectedGroups, totalGroups);
                     getView().showGroups(splitGroups.isEmpty());
                 }
             }
@@ -168,12 +201,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private GroupListAdapter.OnCheckedChangeListener createExternalChildItemSwitcherCallback() {
         return (data, isChecked) -> {
             totalSelectedGroups += isChecked ? 1 : -1;
-            if (isChecked) {
-                selectedGroupIds.add(data.getId());
-            } else {
-                selectedGroupIds.remove(data.getId());
-            }
-            if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups);
+            if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups, totalGroups);
         };
     }
 }

@@ -3,6 +3,7 @@ package com.orcchg.vikstra.data.source.remote.keyword;
 import android.support.annotation.NonNull;
 
 import com.orcchg.vikstra.data.source.repository.keyword.IKeywordStorage;
+import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 
 import java.util.List;
@@ -19,6 +20,11 @@ public class KeywordCloud implements IKeywordStorage {
     // ------------------------------------------
     @Override
     public boolean addKeywords(KeywordBundle bundle) {
+        return false;
+    }
+
+    @Override
+    public boolean addKeywordToBundle(long id, Keyword keyword) {
         return false;
     }
 

@@ -4,9 +4,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.data.source.local.model.KeywordBundleDBO;
+import com.orcchg.vikstra.data.source.local.model.KeywordDBO;
 import com.orcchg.vikstra.data.source.local.model.mapper.KeywordBundleToDboMapper;
 import com.orcchg.vikstra.data.source.local.model.populator.KeywordBundleToDboPopulator;
+import com.orcchg.vikstra.data.source.local.model.populator.KeywordToDboPopulator;
 import com.orcchg.vikstra.data.source.repository.keyword.IKeywordStorage;
+import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -22,12 +25,15 @@ import timber.log.Timber;
 
 public class KeywordDatabase implements IKeywordStorage {
 
+    private final KeywordToDboPopulator keywordToDboPopulator;
     private final KeywordBundleToDboMapper keywordBundleToDboMapper;
     private final KeywordBundleToDboPopulator keywordBundleToDboPopulator;
 
     @Inject
-    KeywordDatabase(KeywordBundleToDboMapper keywordBundleToDboMapper,
+    KeywordDatabase(KeywordToDboPopulator keywordToDboPopulator,
+                    KeywordBundleToDboMapper keywordBundleToDboMapper,
                     KeywordBundleToDboPopulator keywordBundleToDboPopulator) {
+        this.keywordToDboPopulator = keywordToDboPopulator;
         this.keywordBundleToDboMapper = keywordBundleToDboMapper;
         this.keywordBundleToDboPopulator = keywordBundleToDboPopulator;
     }
@@ -43,6 +49,23 @@ public class KeywordDatabase implements IKeywordStorage {
         });
         realm.close();
         return true;
+    }
+
+    @DebugLog @Override
+    public boolean addKeywordToBundle(long id, Keyword keyword) {
+        boolean result = false;
+        Realm realm = Realm.getDefaultInstance();
+        KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
+        if (dbo != null) {
+            realm.executeTransaction((xrealm) -> {
+                KeywordDBO xdbo = xrealm.createObject(KeywordDBO.class);
+                keywordToDboPopulator.populate(keyword, xdbo);
+                dbo.keywords.add(0, xdbo);  // put new item at the top of list
+            });
+            result = true;
+        }
+        realm.close();
+        return result;
     }
 
     /* Read */
@@ -94,7 +117,7 @@ public class KeywordDatabase implements IKeywordStorage {
     public boolean updateKeywords(@NonNull KeywordBundle bundle) {
         boolean result = false;
         Realm realm = Realm.getDefaultInstance();
-        KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo("id", bundle.id()).findFirst();
+        KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, bundle.id()).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> {
                 keywordBundleToDboPopulator.populate(bundle, dbo);

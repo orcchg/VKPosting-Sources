@@ -41,6 +41,12 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         return localSource.addKeywords(bundle);
     }
 
+    @Override
+    public boolean addKeywordToBundle(long id, Keyword keyword) {
+        // TODO: impl cloudly
+        return localSource.addKeywordToBundle(id, keyword);
+    }
+
     /* Read */
     // ------------------------------------------
     @Override

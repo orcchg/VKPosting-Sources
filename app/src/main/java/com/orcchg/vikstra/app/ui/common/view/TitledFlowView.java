@@ -78,14 +78,12 @@ public class TitledFlowView extends FrameLayout {
     }
 
     /* Content */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     public void setTitle(String text) { if (titleView != null) titleView.setText(text); }
     public void setTitle(@StringRes int resId) { if (titleView != null) titleView.setText(resId); }
 
     public void setKeywords(@NonNull Collection<Keyword> keywords) {
-        if (keywordsFlowLayout != null) {
-            keywordsFlowLayout.setKeywords(keywords);
-        }
+        if (keywordsFlowLayout != null) keywordsFlowLayout.setKeywords(keywords);
     }
 
     public void setKeywords(@NonNull KeywordBundle bundle) {
@@ -94,7 +92,11 @@ public class TitledFlowView extends FrameLayout {
     }
 
     /* Listener */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
+    public void setOnKeywordItemClickListener(KeywordsFlowLayout.OnKeywordItemClickListener listener) {
+        if (keywordsFlowLayout != null) keywordsFlowLayout.setOnKeywordItemClickListener(listener);
+    }
+
     public void setOnEditClickListener(View.OnClickListener listener) {
         if (editButton != null) editButton.setOnClickListener(listener);
     }
