@@ -44,13 +44,13 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     void onFabClick() {
         presenter.onFabClick();
     }
-    @OnClick(R.id.btn_add_new_groups)
+    @OnClick(R.id.ibtn_see_all_keywords)
     void onAddNewGroupsClick() {
         navigationComponent.navigator().openKeywordListScreen(this);
     }
-    @OnClick(R.id.btn_groups_selection_drop)
-    public void onDropSelectedGroupsClick() {
-        // TODO: drop selection
+    @OnClick(R.id.btn_new_keywords)
+    public void onNewKeywordsClick() {
+        navigationComponent.navigator().openKeywordCreateScreen(this);
     }
 
     private MainComponent mainComponent;

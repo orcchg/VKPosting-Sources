@@ -34,6 +34,7 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
     @Override
     public void bind(KeywordListItemVO viewObject) {
         boolean isSelectable = selectMode != KeywordListAdapter.SELECT_MODE_NONE;
+        String label = new StringBuilder().append(29).append('/').append(60).toString();
         View.OnClickListener listener = createOnItemClickListener(viewObject, isSelectable);
         View.OnLongClickListener longListener = createOnItemLongClickListener(viewObject);
         KeywordsFlowLayout.OnKeywordItemClickListener keyListener = AppConfig.INSTANCE.shouldInterceptKeywordClickOnVH() ?
@@ -41,6 +42,7 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
 
         flowView.setKeywords(viewObject.keywords());
         flowView.setTitle(viewObject.title());
+        flowView.setLabel(label);
         flowView.setSelection(isSelectable ? viewObject.getSelection() : false);
         flowView.setEditable(editClickListener != null);
         flowView.setOnKeywordItemClickListener(keyListener);

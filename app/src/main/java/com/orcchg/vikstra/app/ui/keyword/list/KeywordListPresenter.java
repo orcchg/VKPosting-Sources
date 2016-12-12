@@ -12,6 +12,7 @@ import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -96,6 +97,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                 if (values == null || values.isEmpty()) {
                     if (isViewAttached()) getView().showEmptyList();
                 } else {
+                    Collections.sort(values);
                     memento.currentSize += values.size();
                     KeywordListItemMapper mapper = new KeywordListItemMapper();
                     List<KeywordListItemVO> vos = mapper.map(values);

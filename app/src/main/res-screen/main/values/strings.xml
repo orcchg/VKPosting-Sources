@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="main_button_label_new_keywords">New keywords</string>
     <string name="main_groups_list_title">Groups list</string>
     <string name="main_screen_title">Main</string>
 </resources>

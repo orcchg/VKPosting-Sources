@@ -26,6 +26,7 @@ public class TitledFlowView extends FrameLayout {
     @BindView(R.id.block_root_container) ViewGroup rootContainer;
     @BindView(R.id.block_icon) ImageView iconView;
     @BindView(R.id.block_title) TextView titleView;
+    @BindView(R.id.block_label) TextView labelView;
     @BindView(R.id.block_edit_button) ImageButton editButton;
     @BindView(R.id.block_container) KeywordsFlowLayout keywordsFlowLayout;
     @BindView(R.id.line_selector) View lineSelectorView;
@@ -81,6 +82,9 @@ public class TitledFlowView extends FrameLayout {
     // --------------------------------------------------------------------------------------------
     public void setTitle(String text) { if (titleView != null) titleView.setText(text); }
     public void setTitle(@StringRes int resId) { if (titleView != null) titleView.setText(resId); }
+
+    public void setLabel(String text) { if (labelView != null) labelView.setText(text); }
+    public void setLabel(@StringRes int resId) { if (labelView != null) labelView.setText(resId); }
 
     public void setKeywords(@NonNull Collection<Keyword> keywords) {
         if (keywordsFlowLayout != null) keywordsFlowLayout.setKeywords(keywords);

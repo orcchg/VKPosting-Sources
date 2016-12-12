@@ -27,6 +27,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     private final PostKeywordBundle postKeywordBundleUseCase;
     private final PutKeywordBundle putKeywordBundleUseCase;
 
+    long timestamp;
     String title;
     Set<Keyword> keywords = new TreeSet<>();
 
@@ -79,6 +80,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             // update existing keywords bundle in repository
             KeywordBundle keywordsBundle = KeywordBundle.builder()
                     .setId(keywordBundleId)
+                    .setTimestamp(timestamp)
                     .setTitle(title)
                     .setKeywords(keywords)
                     .build();
@@ -107,6 +109,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             @Override
             public void onFinish(@Nullable KeywordBundle values) {
                 if (values != null) {
+                    timestamp = values.timestamp();
                     title = values.title();
                     keywords.addAll(values.keywords());
                 }
