@@ -14,21 +14,20 @@ import butterknife.OnClick;
 
 public class GroupParentViewHolder extends ParentViewHolder<GroupParentItem, GroupChildItem> {
 
-//    boolean isAllSelected;
-
     @BindView(R.id.tv_title) TextView titleTextView;
     @BindView(R.id.tv_selected_count) TextView selectedCountTextView;
     @BindView(R.id.iv_arrow) ImageView arrowImageView;
     @OnClick(R.id.ibtn_select_all)
     void onSelectAllClick() {
-//        isAllSelected = !isAllSelected;
-//        GroupParentItem parentItem = getParent();
-//        for (GroupChildItem childItem : parentItem.getChildList()) {
-//            childItem.setSelected(isAllSelected);
-//        }
-//        if (onAllGroupsSelectedListener != null) {
-//            onAllGroupsSelectedListener.onAllGroupsSelected(parentItem, getAdapterPosition(), isAllSelected);
-//        }
+        GroupParentItem parentItem = getParent();
+        boolean isNotAllSelected = parentItem.getChildCount() != parentItem.getSelectedCount();
+
+        for (GroupChildItem childItem : parentItem.getChildList()) {
+            childItem.setSelected(isNotAllSelected);
+        }
+        if (onAllGroupsSelectedListener != null) {
+            onAllGroupsSelectedListener.onAllGroupsSelected(parentItem, getAdapterPosition(), isNotAllSelected);
+        }
     }
 
     private OnAllGroupsSelectedListener onAllGroupsSelectedListener;
@@ -43,17 +42,6 @@ public class GroupParentViewHolder extends ParentViewHolder<GroupParentItem, Gro
     }
 
     public void bind(GroupParentItem model) {
-//        /**
-//         * Here {@link isAllSelected} is dropped on each re-bind of this
-//         * {@link GroupParentViewHolder}, so this leads
-//         */
-//        isAllSelected = false;  // drop flag
-//        int selectedChilds = 0;
-//        List<GroupChildItem> childItems = getParent().getChildList();
-//        for (GroupChildItem childItem : childItems) {
-//            selectedChilds += childItem.isSelected() ? 1 : 0;
-//        }
-//        if (selectedChilds == childItems.size()) isAllSelected = true;
         titleTextView.setText(model.getName());
         updateCounter(model.getSelectedCount(), model.getChildCount());
     }

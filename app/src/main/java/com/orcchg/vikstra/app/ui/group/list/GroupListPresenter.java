@@ -186,15 +186,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private OnAllGroupsSelectedListener createAllGroupsSelectedCallback() {
         return (model, position, isSelected) -> {
-//            int total = model.getChildCount();
-//            int selected = model.getSelectedCount();
-//            int unselected = total - selected;
-//            model.setSelectedCount(isSelected ? total : 0);
-//            totalSelectedGroups += isSelected ? unselected : -selected;
-//            // TODO: add ids to set
-//            // TODO: fix counter overflow
-//            listAdapter.notifyParentChanged(position);
-//            if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups);
+            int total = model.getChildCount();
+            int selected = model.getSelectedCount();
+            int unselected = total - selected;
+            model.setSelectedCount(isSelected ? total : 0);
+            totalSelectedGroups += isSelected ? unselected : -selected;
+            listAdapter.notifyParentChanged(position);
+            if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups, totalGroups);
         };
     }
 
