@@ -35,6 +35,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private final VkontakteEndpoint vkontakteEndpoint;
 
     int totalSelectedGroups, totalGroups;
+    KeywordBundle inputKeywordBundle;
 
     @Inject
     GroupListPresenter(GetKeywordBundleById getKeywordBundleByIdUseCase, AddKeywordToBundle addKeywordToBundle,
@@ -109,6 +110,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
                 // TODO: NPE handle - crash when BAD_ID or not found keywords
+                inputKeywordBundle = bundle;
                 for (Keyword keyword : bundle) {
                     GroupParentItem item = new GroupParentItem(keyword.keyword());
                     groupParentItems.add(item);
