@@ -21,7 +21,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.legacy.tab.injection.DaggerTabComponent;
 import com.orcchg.vikstra.app.ui.legacy.tab.injection.TabComponent;
-import com.orcchg.vikstra.app.ui.util.ViewUtils;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 
 import java.util.List;
 import java.util.Random;
@@ -136,9 +136,9 @@ public class TabActivity extends BaseActivity<TabContract.View, TabContract.Pres
         }
 
         if (savedInstanceState == null) {
-          memento.colorPrimary = ViewUtils.getAttributeColor(this, R.attr.colorPrimary);
-          memento.colorPrimaryDark = ViewUtils.getAttributeColor(this, R.attr.colorPrimaryDark);
-          memento.colorAccent = ViewUtils.getAttributeColor(this, R.attr.colorAccent);
+          memento.colorPrimary = UiUtility.getAttributeColor(this, R.attr.colorPrimary);
+          memento.colorPrimaryDark = UiUtility.getAttributeColor(this, R.attr.colorPrimaryDark);
+          memento.colorAccent = UiUtility.getAttributeColor(this, R.attr.colorAccent);
         }
 
         colorsPrimary[ta1.length()] = memento.colorPrimary;

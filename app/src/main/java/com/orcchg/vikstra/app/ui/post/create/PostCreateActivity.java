@@ -22,9 +22,12 @@ import com.orcchg.vikstra.app.ui.post.create.injection.DaggerPostCreateComponent
 import com.orcchg.vikstra.app.ui.post.create.injection.PostCreateComponent;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.Arrays;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 public class PostCreateActivity extends BaseActivity<PostCreateContract.View, PostCreateContract.Presenter>
         implements PostCreateContract.View {
@@ -91,8 +94,17 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
-        if (requestCode == PermissionManager.READ_EXTERNAL_STORAGE_REQUEST_CODE && granted) {
-            navigationComponent.navigator().openGallery(this);
+        if (granted) {
+            switch (requestCode) {
+                case PermissionManager.READ_EXTERNAL_STORAGE_REQUEST_CODE:
+                    navigationComponent.navigator().openGallery(this);
+                    break;
+                case PermissionManager.WRITE_EXTERNAL_STORAGE_REQUEST_CODE:
+                    navigationComponent.navigator().openCamera(this, true);
+                    break;
+            }
+        } else {
+            Timber.w("Permissions %s were not granted !", Arrays.toString(permissions));
         }
     }
 
@@ -105,7 +117,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.save:
-                    // TODO: save post
+                    presenter.onSavePressed();
                     return true;
             }
             return false;

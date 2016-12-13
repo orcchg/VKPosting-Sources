@@ -2,12 +2,14 @@ package com.orcchg.vikstra.app.ui.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.util.TypedValue;
+import android.view.View;
 
-public class ViewUtils {
+public class UiUtility {  // TODO: rename to view utility
 
     public static int getAttributeColor(Context context, int attributeId) {
         TypedValue typedValue = new TypedValue();
@@ -26,6 +28,13 @@ public class ViewUtils {
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(attributeId, typedValue, true);
         return context.getResources().getDimension(typedValue.resourceId);
+    }
+
+    public static Bitmap getScreenshot(View view) {
+        view.setDrawingCacheEnabled(true);
+        Bitmap bmp = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+        return bmp;
     }
 
     public static void showSnackbar(Activity activity, String text) {

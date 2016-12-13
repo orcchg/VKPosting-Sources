@@ -18,7 +18,7 @@ import com.orcchg.vikstra.app.ui.common.view.KeywordsFlowLayout;
 import com.orcchg.vikstra.app.ui.keyword.create.injection.DaggerKeywordCreateComponent;
 import com.orcchg.vikstra.app.ui.keyword.create.injection.KeywordCreateComponent;
 import com.orcchg.vikstra.app.ui.keyword.create.injection.KeywordCreateModule;
-import com.orcchg.vikstra.app.ui.util.ViewUtils;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -159,7 +159,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
 
     @Override
     public void onKeywordsLimitReached(int limit) {
-        ViewUtils.showSnackbar(this, String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
+        UiUtility.showSnackbar(this, String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
     }
 
     @Override

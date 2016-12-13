@@ -17,9 +17,9 @@ public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterab
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setId(long id);
+        public abstract Builder setKeywords(Collection<Keyword> keywords);
         public abstract Builder setTimestamp(long ts);
         public abstract Builder setTitle(String title);
-        public abstract Builder setKeywords(Collection<Keyword> keywords);
         public abstract KeywordBundle build();
     }
 

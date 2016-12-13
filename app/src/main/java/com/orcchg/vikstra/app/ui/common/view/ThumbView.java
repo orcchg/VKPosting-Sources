@@ -12,9 +12,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.orcchg.vikstra.R;
 
 import java.io.File;
@@ -23,7 +20,6 @@ import java.lang.annotation.RetentionPolicy;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 public class ThumbView extends FrameLayout {
     public static final int SIZE_NORMAL = 0;
@@ -67,21 +63,7 @@ public class ThumbView extends FrameLayout {
     }
 
     public void setImageLocal(String filePath) {
-        Glide.with(getContext()).load(Uri.fromFile(new File(filePath)))
-                .listener(new RequestListener<Uri, GlideDrawable>() {
-                    @Override
-                    public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
-                        Timber.wtf(e, " WTF ");
-                        return false;
-                    }
-
-                    @Override
-                    public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                        Timber.i("OKAY");
-                        return false;
-                    }
-                })
-                .into(image);
+        Glide.with(getContext()).load(Uri.fromFile(new File(filePath))).into(image);
     }
 
     /* View */

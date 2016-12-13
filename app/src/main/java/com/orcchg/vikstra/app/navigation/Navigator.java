@@ -3,10 +3,12 @@ package com.orcchg.vikstra.app.navigation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.FileProvider;
 import android.view.View;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
@@ -19,7 +21,11 @@ import com.orcchg.vikstra.app.ui.legacy.list.ListActivity;
 import com.orcchg.vikstra.app.ui.legacy.tab.TabActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
+import com.orcchg.vikstra.app.util.ContentUtility;
 import com.orcchg.vikstra.domain.util.Constant;
+
+import java.io.File;
+import java.io.IOException;
 
 import javax.inject.Inject;
 
@@ -76,9 +82,18 @@ public class Navigator {
     public void openCamera(@NonNull Activity context, boolean fullSize) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(context.getPackageManager()) != null) {
-            int requestCode = fullSize ? Constant.RequestCode.EXTERNAL_SCREEN_CAMERA :
-                    Constant.RequestCode.EXTERNAL_SCREEN_CAMERA_THUMBNAIL;
-            context.startActivityForResult(intent, requestCode);
+            if (fullSize) {
+                try {
+                    File imageFile = ContentUtility.createInternalImageFile(context);
+                    ContentUtility.InMemoryStorage.setLastStoredInternalImageUrl(imageFile.getAbsolutePath());
+                    Uri uri = FileProvider.getUriForFile(context, ContentUtility.getFileProviderAuthority(), imageFile);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                } catch (IOException e) {
+                    Timber.e(e, "Failed to create file for internal image !");
+                    return;
+                }
+            }
+            context.startActivityForResult(intent, Constant.RequestCode.EXTERNAL_SCREEN_CAMERA);
         } else {
             Timber.e("No Activity found to open Camera !");  // TODO: exception
         }

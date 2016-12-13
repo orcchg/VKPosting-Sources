@@ -101,7 +101,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                     memento.currentSize += values.size();
                     KeywordListItemMapper mapper = new KeywordListItemMapper();
                     List<KeywordListItemVO> vos = mapper.map(values);
-                    // TODO: clear list to prevent items duplication
+                    // TODO: clearLastStoredInternalImageUrls list to prevent items duplication
                     listAdapter.populate(vos, isThereMore());
                     if (isViewAttached()) getView().showKeywords(vos);
                 }

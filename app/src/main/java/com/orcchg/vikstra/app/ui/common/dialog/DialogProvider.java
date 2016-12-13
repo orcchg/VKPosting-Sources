@@ -59,14 +59,13 @@ public class DialogProvider {
                             }
                             break;
                         case 1:
-                            activity.getNavigationComponent().navigator().openCamera(activity, false);
+                            activity.getNavigationComponent().navigator().openCamera(activity, true);
                             break;
                         case 2:
                             activity.getNavigationComponent().navigator().openSocialAlbumsScreen(activity);
                             break;
                     }
                     dialog.dismiss();
-                })
-                .show();
+                }).show();
     }
 }

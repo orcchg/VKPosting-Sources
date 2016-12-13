@@ -12,5 +12,5 @@
         android:layout_marginStart="@dimen/standard_side_padding_mini"
         android:layout_marginRight="@dimen/standard_side_padding_mini"
         android:layout_marginEnd="@dimen/standard_side_padding_mini"
-        android:background="@color/accent"/>
+        android:scaleType="centerCrop"/>
 </merge>

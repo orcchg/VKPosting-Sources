@@ -4,7 +4,8 @@ import android.content.Context;
 
 import com.orcchg.vikstra.R;
 
-public class ViewUtility {
+@Deprecated
+public class ViewUtility {  // TODO: remove
 
     private static boolean sEnabledImageTransition = false;
 
