@@ -4,23 +4,26 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.app.ui.group.detail.GroupDetailActivity;
-import com.orcchg.vikstra.app.ui.legacy.details.DetailsActivity;
 import com.orcchg.vikstra.app.ui.group.list.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
+import com.orcchg.vikstra.app.ui.legacy.details.DetailsActivity;
 import com.orcchg.vikstra.app.ui.legacy.list.ListActivity;
+import com.orcchg.vikstra.app.ui.legacy.tab.TabActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
-import com.orcchg.vikstra.app.ui.legacy.tab.TabActivity;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 @PerActivity
 public class Navigator {
@@ -57,6 +60,34 @@ public class Navigator {
         context.startActivity(intent);
     }
 
+    /* Media */
+    // ------------------------------------------
+    @ExternalScreen
+    public void openGallery(@NonNull Activity context) {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            context.startActivityForResult(intent, Constant.RequestCode.EXTERNAL_SCREEN_GALLERY);
+        } else {
+            Timber.e("No Activity found to open Gallery !");  // TODO: exception
+        }
+    }
+
+    @ExternalScreen
+    public void openCamera(@NonNull Activity context, boolean fullSize) {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (intent.resolveActivity(context.getPackageManager()) != null) {
+            int requestCode = fullSize ? Constant.RequestCode.EXTERNAL_SCREEN_CAMERA :
+                    Constant.RequestCode.EXTERNAL_SCREEN_CAMERA_THUMBNAIL;
+            context.startActivityForResult(intent, requestCode);
+        } else {
+            Timber.e("No Activity found to open Camera !");  // TODO: exception
+        }
+    }
+
+    public void openSocialAlbumsScreen(@NonNull Activity context) {
+        // TODO:
+    }
+
     /* Posts */
     // ------------------------------------------
     public void openNewPostScreen(@NonNull Context context) {
@@ -69,6 +100,7 @@ public class Navigator {
         context.startActivity(intent);
     }
 
+    // TODO remove completely
     /* Sample screens */
     // --------------------------------------------------------------------------------------------
     public void openListScreen(@NonNull Context context) {

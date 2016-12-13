@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.base;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -55,6 +56,11 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     @DebugLog @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         isStateRestored = savedInstanceState != null;
+        // to override
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // to override
     }
 

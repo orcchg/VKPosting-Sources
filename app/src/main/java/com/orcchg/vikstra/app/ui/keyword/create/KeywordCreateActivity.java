@@ -168,7 +168,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
                 (dialog, which, text) -> {
                     toolbar.setTitle(text);
                     presenter.onTitleChanged(text);
-                }, null);
+                });
     }
 
     @Override

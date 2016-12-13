@@ -1,7 +1,10 @@
 package com.orcchg.vikstra.app.ui.post.create;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +14,9 @@ import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 
 import com.orcchg.vikstra.R;
+import com.orcchg.vikstra.app.PermissionManager;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
+import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.ThumbView;
 import com.orcchg.vikstra.app.ui.post.create.injection.DaggerPostCreateComponent;
 import com.orcchg.vikstra.app.ui.post.create.injection.PostCreateComponent;
@@ -35,7 +40,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     }
     @OnClick(R.id.ibtn_panel_media)
     void onMediaButtonClick() {
-        presenter.onMediaPressed();
+        DialogProvider.showUploadPhotoDialog(this);
     }
     @OnClick(R.id.ibtn_panel_attach)
     void onAttachButtonClick() {
@@ -76,6 +81,21 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         initView();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        postDescriptionEditText.requestFocus();
+    }
+
+    @Override
+    public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+        if (requestCode == PermissionManager.READ_EXTERNAL_STORAGE_REQUEST_CODE && granted) {
+            navigationComponent.navigator().openGallery(this);
+        }
+    }
+
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
@@ -95,11 +115,17 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void addMedia() {
-        // TODO: make container visible when necessary
-        ThumbView mediaView = new ThumbView(this);
-        mediaContainerRoot.setVisibility(View.VISIBLE);
-        mediaContainer.addView(mediaView);
+    public void addMediaThumbnail(Bitmap bmp) {
+        ThumbView mediaView = new ThumbView(this, ThumbView.SIZE_SMALL);
+        mediaView.setImage(bmp);
+        addMediaThumbnail(mediaView);
+    }
+
+    @Override
+    public void addMediaThumbnail(String filePath) {
+        ThumbView mediaView = new ThumbView(this, ThumbView.SIZE_SMALL);
+        mediaView.setImageLocal(filePath);
+        addMediaThumbnail(mediaView);
     }
 
     @Override
@@ -110,5 +136,21 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     @Override
     public String getInputText() {
         return postDescriptionEditText.getText().toString();
+    }
+
+    @Override
+    public ContentResolver contentResolver() {
+        return getContentResolver();
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    private void addMediaThumbnail(ThumbView mediaView) {
+        mediaView.setOnClickListener((view) -> {
+            mediaContainer.removeView(mediaView);
+            if (mediaContainer.getChildCount() == 0) mediaContainerRoot.setVisibility(View.GONE);
+        });
+        mediaContainerRoot.setVisibility(View.VISIBLE);
+        mediaContainer.addView(mediaView);
     }
 }

@@ -47,8 +47,9 @@
             <LinearLayout
                 android:id="@+id/media_container"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/standard_thumbnail_size"
+                android:layout_height="@dimen/standard_thumbnail_size_small"
                 android:layout_gravity="center_vertical"
+                android:animateLayoutChanges="true"
                 android:orientation="horizontal"/>
         </HorizontalScrollView>
 
@@ -72,11 +73,11 @@
 
                 <ImageButton
                     android:id="@+id/ibtn_panel_location"
-                    android:layout_width="@dimen/standard_icon_large_size"
-                    android:layout_height="@dimen/standard_icon_large_size"
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_location_on_black_36dp"
+                    android:src="@drawable/ic_location_on_black_24dp"
                     android:tint="@color/white_60_opacity"/>
             </FrameLayout>
 
@@ -87,11 +88,11 @@
 
                 <ImageButton
                     android:id="@+id/ibtn_panel_media"
-                    android:layout_width="@dimen/standard_icon_large_size"
-                    android:layout_height="@dimen/standard_icon_large_size"
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_photo_camera_black_36dp"
+                    android:src="@drawable/ic_photo_camera_black_24dp"
                     android:tint="@color/white_60_opacity"/>
             </FrameLayout>
 
@@ -102,11 +103,11 @@
 
                 <ImageButton
                     android:id="@+id/ibtn_panel_attach"
-                    android:layout_width="@dimen/standard_icon_large_size"
-                    android:layout_height="@dimen/standard_icon_large_size"
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_attach_file_black_36dp"
+                    android:src="@drawable/ic_attach_file_black_24dp"
                     android:tint="@color/white_60_opacity"/>
             </FrameLayout>
 
@@ -117,11 +118,11 @@
 
                 <ImageButton
                     android:id="@+id/ibtn_panel_poll"
-                    android:layout_width="@dimen/standard_icon_large_size"
-                    android:layout_height="@dimen/standard_icon_large_size"
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
                     android:layout_gravity="center"
                     android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_poll_black_36dp"
+                    android:src="@drawable/ic_poll_black_24dp"
                     android:tint="@color/white_60_opacity"/>
             </FrameLayout>
         </LinearLayout>

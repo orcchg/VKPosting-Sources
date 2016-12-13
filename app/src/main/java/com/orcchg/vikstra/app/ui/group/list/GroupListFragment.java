@@ -118,9 +118,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     @Override
     public void onAddKeyword() {
         DialogProvider.showEditTextDialog(getActivity(), DIALOG_TITLE, DIALOG_HINT, null,
-                (dialog, which, text) -> {
-                    if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text));
-                }, null);
+                (dialog, which, text) -> { if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text)); });
     }
 
     @Override

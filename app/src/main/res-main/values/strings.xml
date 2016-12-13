@@ -15,4 +15,11 @@
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_save">Save</string>
+
+    <string name="dialog_upload_photo_title">Where to get photo</string>
+    <array name="dialog_upload_photo_variants">
+        <item name="dialog_upload_photo_variant_gallery">Gallery</item>
+        <item name="dialog_upload_photo_variant_camera">Camera</item>
+        <item name="dialog_upload_photo_variant_albums">Albums</item>
+    </array>
 </resources>

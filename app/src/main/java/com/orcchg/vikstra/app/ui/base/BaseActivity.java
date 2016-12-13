@@ -1,6 +1,6 @@
 package com.orcchg.vikstra.app.ui.base;
 
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.orcchg.vikstra.app.AndroidApplication;
-import com.orcchg.vikstra.app.PermissionManager;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.injection.component.DaggerNavigationComponent;
 import com.orcchg.vikstra.app.injection.component.DaggerPermissionManagerComponent;
@@ -34,16 +33,18 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            injectPermissionManager();
-            PermissionManager pm = getPermissionManagerComponent().permissionManager();
-            // ask for permission
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) injectPermissionManager();
         injectNavigator();
         injectDependencies();
         presenter = createPresenter();
         presenter.attachView((V) this);
         presenter.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        presenter.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -83,23 +84,22 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
         presenter.detachView();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
-        // process permission
-    }
-
-    /* Internal */
+    /* Component */
     // --------------------------------------------------------------------------------------------
     protected ApplicationComponent getApplicationComponent() {
         return ((AndroidApplication) getApplication()).getApplicationComponent();
     }
 
-    protected PermissionManagerComponent getPermissionManagerComponent() {
+    public NavigationComponent getNavigationComponent() {
+        return navigationComponent;
+    }
+
+    public PermissionManagerComponent getPermissionManagerComponent() {
         return permissionManagerComponent;
     }
 
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
     private void injectPermissionManager() {
         permissionManagerComponent = DaggerPermissionManagerComponent.builder()
             .permissionManagerModule(new PermissionManagerModule(getApplicationContext()))

@@ -5,8 +5,8 @@
 
     <ImageView
         android:id="@+id/iv_image"
-        android:layout_width="@dimen/standard_thumbnail_size"
-        android:layout_height="@dimen/standard_thumbnail_size"
+        android:layout_width="@dimen/standard_thumbnail_size_small"
+        android:layout_height="@dimen/standard_thumbnail_size_small"
         android:layout_gravity="center"
         android:layout_marginLeft="@dimen/standard_side_padding_mini"
         android:layout_marginStart="@dimen/standard_side_padding_mini"

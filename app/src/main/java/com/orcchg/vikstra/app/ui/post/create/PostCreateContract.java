@@ -1,19 +1,24 @@
 package com.orcchg.vikstra.app.ui.post.create;
 
+import android.content.ContentResolver;
+import android.graphics.Bitmap;
+
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.base.MvpView;
 
 public interface PostCreateContract {
     interface View extends MvpView {
-        void addMedia();  // TODO: specify URI
+        void addMediaThumbnail(Bitmap bmp);
+        void addMediaThumbnail(String filePath);
         void clearInputText();
         String getInputText();
+
+        ContentResolver contentResolver();
     }
 
     interface Presenter extends MvpPresenter<View> {
         void onAttachPressed();
         void onLocationPressed();
-        void onMediaPressed();
         void onPollPressed();
         void onSavePressed();
     }

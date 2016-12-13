@@ -1,10 +1,9 @@
 package com.orcchg.vikstra.app.injection;
 
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 import javax.inject.Scope;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * A scoping annotation to permit objects whose lifetime should
@@ -12,5 +11,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * correct component.
  */
 @Scope
-@Retention(RUNTIME)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface PerActivity {}
