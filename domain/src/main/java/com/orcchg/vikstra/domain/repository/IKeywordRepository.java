@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.domain.repository;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
@@ -17,7 +18,7 @@ public interface IKeywordRepository {
 
     /* Read */
     // ------------------------------------------
-    KeywordBundle keywords(long id);
+    @Nullable KeywordBundle keywords(long id);
     List<KeywordBundle> keywords();
     List<KeywordBundle> keywords(int limit, int offset);
 

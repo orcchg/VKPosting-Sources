@@ -11,22 +11,27 @@ import com.orcchg.vikstra.data.source.local.artist.ArtistLocalSourceImpl;
 import com.orcchg.vikstra.data.source.local.genre.GenreLocalSource;
 import com.orcchg.vikstra.data.source.local.genre.GenreLocalSourceImpl;
 import com.orcchg.vikstra.data.source.local.keyword.KeywordDatabase;
+import com.orcchg.vikstra.data.source.local.post.PostDatabase;
 import com.orcchg.vikstra.data.source.remote.artist.ArtistDataSource;
 import com.orcchg.vikstra.data.source.remote.artist.server.ServerArtistCloudSource;
 import com.orcchg.vikstra.data.source.remote.artist.yandex.YandexCloudSource;
 import com.orcchg.vikstra.data.source.remote.genre.GenreDataSource;
 import com.orcchg.vikstra.data.source.remote.genre.server.ServerGenreCloudSource;
 import com.orcchg.vikstra.data.source.remote.keyword.KeywordCloud;
+import com.orcchg.vikstra.data.source.remote.post.PostCloud;
 import com.orcchg.vikstra.data.source.repository.artist.ServerArtistRepositoryImpl;
 import com.orcchg.vikstra.data.source.repository.genre.ServerGenreRepositoryImpl;
 import com.orcchg.vikstra.data.source.repository.keyword.IKeywordStorage;
 import com.orcchg.vikstra.data.source.repository.keyword.KeywordRepositoryImpl;
+import com.orcchg.vikstra.data.source.repository.post.IPostStorage;
+import com.orcchg.vikstra.data.source.repository.post.PostRepositoryImpl;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.executor.UseCaseExecutor;
 import com.orcchg.vikstra.domain.repository.IArtistRepository;
 import com.orcchg.vikstra.domain.repository.IGenreRepository;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
+import com.orcchg.vikstra.domain.repository.IPostRepository;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -74,6 +79,16 @@ public class ApplicationModule {
 
     @Provides @Singleton @Named("keywordDatabase")
     IKeywordStorage provideLocalKeywordSource(KeywordDatabase source) {
+        return source;
+    }
+
+    @Provides @Singleton @Named("postCloud")
+    IPostStorage provideCloudPostSource(PostCloud source) {
+        return source;
+    }
+
+    @Provides @Singleton @Named("postDatabase")
+    IPostStorage provideLocalPostSource(PostDatabase source) {
         return source;
     }
 
@@ -128,6 +143,11 @@ public class ApplicationModule {
     // ------------------------------------------
     @Provides @Singleton
     IKeywordRepository provideKeywordRepository(KeywordRepositoryImpl repository) {
+        return repository;
+    }
+
+    @Provides @Singleton
+    IPostRepository providePostRepository(PostRepositoryImpl repository) {
         return repository;
     }
 }

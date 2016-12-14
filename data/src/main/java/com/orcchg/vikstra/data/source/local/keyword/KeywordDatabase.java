@@ -17,12 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import hugo.weaving.DebugLog;
 import io.realm.Realm;
 import io.realm.RealmResults;
-import timber.log.Timber;
 
+@Singleton
 public class KeywordDatabase implements IKeywordStorage {
 
     private final KeywordToDboPopulator keywordToDboPopulator;
@@ -89,18 +90,12 @@ public class KeywordDatabase implements IKeywordStorage {
             realm.close();
             return model;
         }
-        Timber.w("No keywords found by id %s", id);
         return null;
     }
 
     @DebugLog @Override
-    public List<KeywordBundle> keywords() {
-        return keywords(-1, 0);
-    }
-
-    @DebugLog @Override
     public List<KeywordBundle> keywords(int limit, int offset) {
-        // TODO: use limit & offset
+        // TODO: use limit & offset, care of {-1, 0}
         Realm realm = Realm.getDefaultInstance();
         RealmResults<KeywordBundleDBO> dbos = realm.where(KeywordBundleDBO.class).findAll();
         List<KeywordBundle> models = new ArrayList<>();

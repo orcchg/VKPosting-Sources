@@ -49,8 +49,8 @@ public class Navigator {
         openKeywordCreateScreen(context, Constant.BAD_ID);
     }
 
-    public void openKeywordCreateScreen(@NonNull Activity context, long keywordBunldeId) {
-        Intent intent = KeywordCreateActivity.getCallingIntent(context, keywordBunldeId);
+    public void openKeywordCreateScreen(@NonNull Activity context, long keywordBundleId) {
+        Intent intent = KeywordCreateActivity.getCallingIntent(context, keywordBundleId);
         context.startActivityForResult(intent, KeywordCreateActivity.REQUEST_CODE);
     }
 
@@ -105,8 +105,12 @@ public class Navigator {
 
     /* Posts */
     // ------------------------------------------
-    public void openNewPostScreen(@NonNull Context context) {
-        Intent intent = PostCreateActivity.getCallingIntent(context);
+    public void openPostCreateScreen(@NonNull Context context) {
+        openPostCreateScreen(context, Constant.BAD_ID);
+    }
+
+    public void openPostCreateScreen(@NonNull Context context, long postId) {
+        Intent intent = PostCreateActivity.getCallingIntent(context, postId);
         context.startActivity(intent);
     }
 

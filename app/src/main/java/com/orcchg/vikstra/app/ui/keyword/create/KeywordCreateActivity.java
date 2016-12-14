@@ -162,6 +162,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
         UiUtility.showSnackbar(this, String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
     }
 
+    // ------------------------------------------
     @Override
     public void openEditTitleDialog(@Nullable String initTitle) {
         DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, initTitle,

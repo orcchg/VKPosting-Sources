@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.domain.interactor.keyword;
+package com.orcchg.vikstra.domain.interactor.post;
 
 import android.support.annotation.Nullable;
 
@@ -6,17 +6,17 @@ import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.common.ListParameters;
-import com.orcchg.vikstra.domain.model.KeywordBundle;
-import com.orcchg.vikstra.domain.repository.IKeywordRepository;
+import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.repository.IPostRepository;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-public class GetKeywordBundles extends UseCase<List<KeywordBundle>> {
+public class GetPosts extends UseCase<List<Post>> {
 
     public static class Parameters extends ListParameters {
-        protected Parameters(Builder builder) {
+        protected Parameters(Parameters.Builder builder) {
             super(builder);
         }
 
@@ -27,14 +27,14 @@ public class GetKeywordBundles extends UseCase<List<KeywordBundle>> {
         }
     }
 
-    final IKeywordRepository keywordRepository;
+    final IPostRepository postRepository;
     Parameters parameters;
 
     @Inject
-    GetKeywordBundles(IKeywordRepository keywordRepository, ThreadExecutor threadExecutor,
-                      PostExecuteScheduler postExecuteScheduler) {
+    GetPosts(IPostRepository postRepository, ThreadExecutor threadExecutor,
+             PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
-        this.keywordRepository = keywordRepository;
+        this.postRepository = postRepository;
         this.parameters = new Parameters.Builder().build();
     }
 
@@ -43,9 +43,9 @@ public class GetKeywordBundles extends UseCase<List<KeywordBundle>> {
     }
 
     @Nullable @Override
-    protected List<KeywordBundle> doAction() {
+    protected List<Post> doAction() {
         int limit = parameters.limit();
         int offset = parameters.offset();
-        return keywordRepository.keywords(limit, offset);
+        return postRepository.posts(limit, offset);
     }
 }

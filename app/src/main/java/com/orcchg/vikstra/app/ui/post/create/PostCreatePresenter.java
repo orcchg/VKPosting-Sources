@@ -7,11 +7,18 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.util.ContentUtility;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.post.GetPostById;
+import com.orcchg.vikstra.domain.interactor.post.PostPost;
+import com.orcchg.vikstra.domain.interactor.post.PutPost;
 import com.orcchg.vikstra.domain.model.Media;
+import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.PostEssense;
+import com.orcchg.vikstra.domain.model.essense.mapper.PostEssenseMapper;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
@@ -23,10 +30,24 @@ import timber.log.Timber;
 
 public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> implements PostCreateContract.Presenter {
 
-    private List<Media> medias = new ArrayList<>();  // TODO: save instance state
+    private final GetPostById getPostByIdUseCase;
+    private final PostPost postPostUseCase;
+    private final PutPost putPostUseCase;
+
+    private List<Media> attachMedia = new ArrayList<>();  // TODO: save instance state
+
+    long timestamp;
+    String description;
+    String title;
 
     @Inject
-    PostCreatePresenter() {
+    PostCreatePresenter(GetPostById getPostByIdUseCase, PostPost postPostUseCase, PutPost putPostUseCase) {
+        this.getPostByIdUseCase = getPostByIdUseCase;
+        this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
+        this.postPostUseCase = postPostUseCase;
+        this.postPostUseCase.setPostExecuteCallback(createPostPostCallback());
+        this.putPostUseCase = putPostUseCase;
+        this.putPostUseCase.setPostExecuteCallback(createPutPostCallback());
     }
 
     /* Lifecycle */
@@ -43,19 +64,17 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
             case Constant.RequestCode.EXTERNAL_SCREEN_GALLERY:
                 Uri uri = data.getData();
                 String[] pathColums = { MediaStore.Images.Media.DATA };
-                if (isViewAttached()) {
-                    ContentResolver resolver = getView().contentResolver();
-                    Cursor cursor = resolver.query(uri, pathColums, null, null, null);
-                    if (cursor.moveToFirst()) {
-                        int columnIndex = cursor.getColumnIndex(pathColums[0]);
-                        String imagePath = cursor.getString(columnIndex);
-                        Timber.d("Selected image from Gallery, url: %s", imagePath);
-                        getView().addMediaThumbnail(imagePath);
-                        Media media = Media.builder().setId(1000).setUrl(imagePath).build();  // TODO: unique id
-                        medias.add(media);
-                    }
-                    cursor.close();
+                ContentResolver resolver = getView().contentResolver();
+                Cursor cursor = resolver.query(uri, pathColums, null, null, null);
+                if (cursor.moveToFirst()) {
+                    int columnIndex = cursor.getColumnIndex(pathColums[0]);
+                    String imagePath = cursor.getString(columnIndex);
+                    Timber.d("Selected image from Gallery, url: %s", imagePath);
+                    if (isViewAttached()) getView().addMediaThumbnail(imagePath);
+                    Media media = Media.builder().setId(1000).setUrl(imagePath).build();  // TODO: unique id
+                    attachMedia.add(media);
                 }
+                cursor.close();
                 break;
             case Constant.RequestCode.EXTERNAL_SCREEN_CAMERA:
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
@@ -63,7 +82,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 String url = ContentUtility.InMemoryStorage.getLastStoredInternalImageUrl();
                 ContentUtility.InMemoryStorage.setLastStoredInternalImageUrl(null);  // drop camera image url
                 Media media = Media.builder().setId(1000).setUrl(url).build();  // TODO: unique id
-                medias.add(media);
+                attachMedia.add(media);
                 break;
         }
     }
@@ -87,27 +106,94 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     @Override
     public void onSavePressed() {
-        if (isViewAttached()) {
-            String title = null;  // TODO: title
-            String description = getView().getInputText();
+        long postId = getPostByIdUseCase.getPostId();
+        // TODO: set location, file attach, poll
+        PostEssense essense = PostEssense.builder()
+                .setDescription(description)
+                .setMedia(attachMedia)
+                .setTitle(title)
+                .build();
+        PostEssenseMapper mapper = new PostEssenseMapper(postId, timestamp);
 
-            // TODO: set location, file attach, poll
-            PostEssense essense = PostEssense.builder()
-                    .setDescription(description)
-                    .setMedia(medias)
-                    .setTitle(title)
-                    .build();
-
-
+        if (postId == Constant.BAD_ID) {
+            // add new post to repository
+            PutPost.Parameters parameters = new PutPost.Parameters(essense);
+            putPostUseCase.setParameters(parameters);
+            putPostUseCase.execute();
+        } else {
+            // update existing post in repository
+            PostPost.Parameters parameters = new PostPost.Parameters(mapper.map(essense));
+            postPostUseCase.setParameters(parameters);
+            postPostUseCase.execute();
         }
+    }
+
+    // ------------------------------------------
+    @Override
+    public void removeAttachedMedia() {
+        // TODO: removeAttachedMedia
     }
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
+        getPostByIdUseCase.execute();
     }
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
+    private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
+        return new UseCase.OnPostExecuteCallback<Post>() {
+            @Override
+            public void onFinish(@Nullable Post values) {
+                if (values != null) {
+                    description = values.description();
+                    attachMedia.addAll(values.media());
+                    timestamp = values.timestamp();
+                    title = values.title();
+                    // TODO: other fields is needed
+                }
+                // TODO: if updating existing post - fill text field and media attachment view container
+                if (isViewAttached()) {
+                    for (Media media : attachMedia) {
+                        getView().addMediaThumbnail(media.url());
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO: impl
+            }
+        };
+    }
+
+    private UseCase.OnPostExecuteCallback<Boolean> createPostPostCallback() {
+        return new UseCase.OnPostExecuteCallback<Boolean>() {
+            @Override
+            public void onFinish(@Nullable Boolean values) {
+                if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO: impl
+            }
+        };
+    }
+
+    private UseCase.OnPostExecuteCallback<Boolean> createPutPostCallback() {
+        return new UseCase.OnPostExecuteCallback<Boolean>() {
+            @Override
+            public void onFinish(@Nullable Boolean values) {
+                if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO: impl
+            }
+        };
+    }
 }

@@ -29,6 +29,7 @@ public class ThumbView extends FrameLayout {
     public @interface Size {}
 
     protected @Size int sizeType;
+    protected int width, height;
 
     protected View rootView;
     @BindView(R.id.iv_image) ImageView image;
@@ -63,7 +64,7 @@ public class ThumbView extends FrameLayout {
     }
 
     public void setImageLocal(String filePath) {
-        Glide.with(getContext()).load(Uri.fromFile(new File(filePath))).into(image);
+        Glide.with(getContext()).load(Uri.fromFile(new File(filePath))).override(width, height).into(image);
     }
 
     /* View */
@@ -73,11 +74,14 @@ public class ThumbView extends FrameLayout {
         switch (sizeType) {
             case SIZE_NORMAL:
                 layoutRes = R.layout.thumb_view;
+                width = getResources().getDimensionPixelSize(R.dimen.standard_thumbnail_size);
                 break;
             case SIZE_SMALL:
                 layoutRes = R.layout.thumb_small_view;
+                width = getResources().getDimensionPixelSize(R.dimen.standard_thumbnail_size_small);
                 break;
         }
+        height = width;
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         rootView = inflater.inflate(layoutRes, this, true);

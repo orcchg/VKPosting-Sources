@@ -26,7 +26,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             if (isViewAttached()) getView().openPostViewScreen();
         });
         adapter.setOnNewItemClickListener((view, keywordListItemVO, position) -> {
-            if (isViewAttached()) getView().openNewPostScreen();
+            if (isViewAttached()) getView().openPostCreateScreen();
         });
         return adapter;
     }

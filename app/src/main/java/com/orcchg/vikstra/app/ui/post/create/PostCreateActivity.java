@@ -20,6 +20,7 @@ import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.ThumbView;
 import com.orcchg.vikstra.app.ui.post.create.injection.DaggerPostCreateComponent;
 import com.orcchg.vikstra.app.ui.post.create.injection.PostCreateComponent;
+import com.orcchg.vikstra.app.ui.post.create.injection.PostCreateModule;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.Arrays;
@@ -32,6 +33,7 @@ import timber.log.Timber;
 public class PostCreateActivity extends BaseActivity<PostCreateContract.View, PostCreateContract.Presenter>
         implements PostCreateContract.View {
     public static final int REQUEST_CODE = Constant.RequestCode.POST_CREATE_SCREEN;
+    private static final String EXTRA_POST_ID = "extra_post_id";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.et_post_description) AutoCompleteTextView postDescriptionEditText;
@@ -55,6 +57,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     }
 
     private PostCreateComponent postCreateComponent;
+    private long postId = Constant.BAD_ID;
 
     @NonNull @Override
     protected PostCreateContract.Presenter createPresenter() {
@@ -65,12 +68,18 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     protected void injectDependencies() {
         postCreateComponent = DaggerPostCreateComponent.builder()
                 .applicationComponent(getApplicationComponent())
+                .postCreateModule(new PostCreateModule(postId))
                 .build();
         postCreateComponent.inject(this);
     }
 
     public static Intent getCallingIntent(@NonNull Context context) {
+        return getCallingIntent(context, Constant.BAD_ID);
+    }
+
+    public static Intent getCallingIntent(@NonNull Context context, long postId) {
         Intent intent = new Intent(context, PostCreateActivity.class);
+        intent.putExtra(EXTRA_POST_ID, postId);
         return intent;
     }
 
@@ -108,6 +117,12 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         }
     }
 
+    /* Data */
+    // --------------------------------------------------------------------------------------------
+    private void initData() {
+        postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+    }
+
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
@@ -140,6 +155,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         addMediaThumbnail(mediaView);
     }
 
+    // ------------------------------------------
     @Override
     public void clearInputText() {
         postDescriptionEditText.setText("");
@@ -151,14 +167,27 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     }
 
     @Override
+    public void setInputText(String text) {
+        postDescriptionEditText.setText(text);
+    }
+
+    // ------------------------------------------
+    @Override
     public ContentResolver contentResolver() {
         return getContentResolver();
+    }
+
+    @Override
+    public void closeView(int resultCode) {
+        setResult(resultCode);
+        finish();
     }
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private void addMediaThumbnail(ThumbView mediaView) {
         mediaView.setOnClickListener((view) -> {
+            presenter.removeAttachedMedia();
             mediaContainer.removeView(mediaView);
             if (mediaContainer.getChildCount() == 0) mediaContainerRoot.setVisibility(View.GONE);
         });

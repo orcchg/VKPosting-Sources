@@ -10,10 +10,13 @@ public interface PostCreateContract {
     interface View extends MvpView {
         void addMediaThumbnail(Bitmap bmp);
         void addMediaThumbnail(String filePath);
+
         void clearInputText();
         String getInputText();
+        void setInputText(String text);
 
         ContentResolver contentResolver();
+        void closeView(int resultCode);
     }
 
     interface Presenter extends MvpPresenter<View> {
@@ -21,5 +24,7 @@ public interface PostCreateContract {
         void onLocationPressed();
         void onPollPressed();
         void onSavePressed();
+
+        void removeAttachedMedia();
     }
 }

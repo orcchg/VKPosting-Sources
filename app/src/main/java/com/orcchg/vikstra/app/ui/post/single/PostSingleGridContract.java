@@ -5,7 +5,7 @@ import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 
 public interface PostSingleGridContract {
     interface View extends MvpListView {
-        void openNewPostScreen();
+        void openPostCreateScreen();
         void openPostViewScreen();
     }
 

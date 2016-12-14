@@ -9,7 +9,9 @@ import com.orcchg.vikstra.domain.model.KeywordBundle;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class KeywordCloud implements IKeywordStorage {
 
     @Inject
@@ -37,11 +39,6 @@ public class KeywordCloud implements IKeywordStorage {
 
     @Override
     public KeywordBundle keywords(long id) {
-        return null;
-    }
-
-    @Override
-    public List<KeywordBundle> keywords() {
         return null;
     }
 

@@ -9,7 +9,7 @@ import com.orcchg.vikstra.data.entity.mapper.GenreMapper;
 import com.orcchg.vikstra.data.entity.mapper.TotalValueMapper;
 import com.orcchg.vikstra.data.source.local.genre.GenreLocalSource;
 import com.orcchg.vikstra.data.source.remote.genre.GenreDataSource;
-import com.orcchg.vikstra.data.source.repository.RepoUtils;
+import com.orcchg.vikstra.data.source.repository.RepoUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ public class ServerGenreRepositoryImpl implements IGenreRepository {
     private final GenreMapper genreMapper;
     private final TotalValueMapper totalValueMapper;
 
-    private @RepoUtils.SourceType int source;
+    private @RepoUtility.SourceType int source;
 
     @Inject
     ServerGenreRepositoryImpl(GenreDataSource cloudSource, GenreLocalSource localSource,
@@ -46,7 +46,7 @@ public class ServerGenreRepositoryImpl implements IGenreRepository {
     @DebugLog @Override
     public Genre genre(String name) {
         GenreEntity genreEntity = getDataSource(name).genre(name);
-        if (source == RepoUtils.SOURCE_REMOTE &&
+        if (source == RepoUtility.SOURCE_REMOTE &&
             (checkCacheStaled() || !localSource.hasGenre(name))) {
             List<GenreEntity> genreEntities = new ArrayList<>();
             genreEntities.add(genreEntity);
@@ -83,16 +83,16 @@ public class ServerGenreRepositoryImpl implements IGenreRepository {
     @DebugLog
     private GenreDataSource getDataSource(String name) {
         if (checkCacheStaled() || !localSource.hasGenre(name)) {
-            source = RepoUtils.SOURCE_REMOTE;
+            source = RepoUtility.SOURCE_REMOTE;
             return cloudSource;
         } else {
-            source = RepoUtils.SOURCE_LOCAL;
+            source = RepoUtility.SOURCE_LOCAL;
             return localSource;
         }
     }
 
     private List<Genre> processListOfEntities(List<GenreEntity> data) {
-        if (source == RepoUtils.SOURCE_REMOTE) {
+        if (source == RepoUtility.SOURCE_REMOTE) {
             localSource.updateGenres(data);
         }
         List<Genre> genres = new ArrayList<>();

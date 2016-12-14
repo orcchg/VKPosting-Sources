@@ -11,6 +11,7 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.repository.IArtistRepository;
 import com.orcchg.vikstra.domain.repository.IGenreRepository;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
+import com.orcchg.vikstra.domain.repository.IPostRepository;
 
 import javax.inject.Singleton;
 
@@ -41,4 +42,5 @@ public interface ApplicationComponent extends CloudComponent {
     IArtistRepository artistRepository();
     IGenreRepository genresRepository();
     IKeywordRepository keywordRepository();
+    IPostRepository postRepository();
 }

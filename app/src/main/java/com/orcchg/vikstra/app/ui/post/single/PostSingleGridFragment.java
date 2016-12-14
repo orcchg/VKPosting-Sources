@@ -65,8 +65,8 @@ public class PostSingleGridFragment extends BaseListFragment<PostSingleGridContr
     }
 
     @Override
-    public void openNewPostScreen() {
-        navigationComponent.navigator().openNewPostScreen(getActivity());
+    public void openPostCreateScreen() {
+        navigationComponent.navigator().openPostCreateScreen(getActivity());
     }
 
     @Override

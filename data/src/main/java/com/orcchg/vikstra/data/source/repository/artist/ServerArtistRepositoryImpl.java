@@ -13,7 +13,7 @@ import com.orcchg.vikstra.data.entity.mapper.SmallArtistMapper;
 import com.orcchg.vikstra.data.entity.mapper.TotalValueMapper;
 import com.orcchg.vikstra.data.source.local.artist.ArtistLocalSource;
 import com.orcchg.vikstra.data.source.remote.artist.ArtistDataSource;
-import com.orcchg.vikstra.data.source.repository.RepoUtils;
+import com.orcchg.vikstra.data.source.repository.RepoUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class ServerArtistRepositoryImpl implements IArtistRepository {
     private final ArtistMapper artistMapper;
     private final TotalValueMapper totalValueMapper;
 
-    private @RepoUtils.SourceType int source;
+    private @RepoUtility.SourceType int source;
     private boolean sequentialItems;
 
     @Inject
@@ -71,7 +71,7 @@ public class ServerArtistRepositoryImpl implements IArtistRepository {
     @DebugLog @Override
     public Artist artist(long artistId) {
         ArtistEntity artistEntity = getDataSource(artistId).artist(artistId);
-        if (source == RepoUtils.SOURCE_REMOTE &&
+        if (source == RepoUtility.SOURCE_REMOTE &&
             (checkCacheStaled() || !localSource.hasArtist(artistId))) {
             List<ArtistEntity> artistEntities = new ArrayList<>();
             artistEntities.add(artistEntity);
@@ -113,10 +113,10 @@ public class ServerArtistRepositoryImpl implements IArtistRepository {
     @DebugLog
     private ArtistDataSource getDataSource(long artistId) {
         if (checkCacheStaled() || !localSource.hasArtist(artistId)) {
-            source = RepoUtils.SOURCE_REMOTE;
+            source = RepoUtility.SOURCE_REMOTE;
             return cloudSource;
         } else {
-            source = RepoUtils.SOURCE_LOCAL;
+            source = RepoUtility.SOURCE_LOCAL;
             return localSource;
         }
     }
@@ -155,7 +155,7 @@ public class ServerArtistRepositoryImpl implements IArtistRepository {
         // case 0: total is enough - get all items from local cache.
         if (needed <= 0) {
             Timber.d("Case 1: get all from local cache");
-            source = RepoUtils.SOURCE_LOCAL;
+            source = RepoUtility.SOURCE_LOCAL;
             return localSource.artists(limit, offset, genres);
         }
 
@@ -164,7 +164,7 @@ public class ServerArtistRepositoryImpl implements IArtistRepository {
             limit -= available;
             offset += available;
             Timber.d("Case 2: get all from cloud, limit = %s, offset = %s", limit, offset);
-            source = RepoUtils.SOURCE_REMOTE;
+            source = RepoUtility.SOURCE_REMOTE;
             return cloudSource.artists(limit, offset, genres);
         }
 
@@ -172,7 +172,7 @@ public class ServerArtistRepositoryImpl implements IArtistRepository {
         // adjusting limit and offset in order to make them aligned with the initial request.
         List<SmallArtistEntity> local = new ArrayList<>();
         if (available > 0 && needed > 0) {
-            source = RepoUtils.SOURCE_REMOTE;  // force update local cache
+            source = RepoUtility.SOURCE_REMOTE;  // force update local cache
             int newOffset = offset + available;
             Timber.d("Case 3: get (%s, %s) from local cache and (%s, %s) from cloud", available, offset, needed, newOffset);
             local = localSource.artists(available, offset, genres);
@@ -183,7 +183,7 @@ public class ServerArtistRepositoryImpl implements IArtistRepository {
     }
 
     private List<Artist> processListOfEntities(List<SmallArtistEntity> data) {
-        if (source == RepoUtils.SOURCE_REMOTE && sequentialItems) {
+        if (source == RepoUtility.SOURCE_REMOTE && sequentialItems) {
             localSource.updateSmallArtists(data);
         }
         List<Artist> artists = new ArrayList<>();

@@ -1,13 +1,15 @@
 package com.orcchg.vikstra.data.source.repository.keyword;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.data.source.repository.IStorage;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 
 import java.util.List;
 
-public interface IKeywordStorage {
+public interface IKeywordStorage extends IStorage {
 
     /* Create */
     // ------------------------------------------
@@ -16,9 +18,7 @@ public interface IKeywordStorage {
 
     /* Read */
     // ------------------------------------------
-    long getLastId();
-    KeywordBundle keywords(long id);
-    List<KeywordBundle> keywords();
+    @Nullable KeywordBundle keywords(long id);
     List<KeywordBundle> keywords(int limit, int offset);
 
     /* Update */
