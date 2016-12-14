@@ -9,18 +9,18 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class KeywordListItemMapper implements Mapper<KeywordBundle, KeywordListItemVO> {
+public class KeywordBundleToVoMapper implements Mapper<KeywordBundle, KeywordListItemVO> {
 
     @Inject
-    public KeywordListItemMapper() {
+    public KeywordBundleToVoMapper() {
     }
 
     @Override
     public KeywordListItemVO map(KeywordBundle object) {
         return KeywordListItemVO.builder()
                 .setId(object.id())
-                .setTitle(object.title())
                 .setKeywords(object.keywords())
+                .setTitle(object.title())
                 .build();
     }
 

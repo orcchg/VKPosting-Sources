@@ -1,10 +1,17 @@
 package com.orcchg.vikstra.app.ui.post.single;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.viewobject.MediaVO;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.post.GetPosts;
+import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.util.Constant;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -14,18 +21,25 @@ import hugo.weaving.DebugLog;
 public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridContract.View>
         implements PostSingleGridContract.Presenter {
 
+    private final GetPosts getPostsUseCase;
+
+    final PostToSingleGridVoMapper postToSingleGridVoMapper;
+
     @Inject
-    PostSingleGridPresenter() {
+    PostSingleGridPresenter(GetPosts getPostsUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter();
+        this.getPostsUseCase = getPostsUseCase;
+        this.getPostsUseCase.setPostExecuteCallback(createGetPostsCallback());
+        this.postToSingleGridVoMapper = postToSingleGridVoMapper;
     }
 
     @Override
     protected BaseAdapter createListAdapter() {
         PostSingleGridAdapter adapter = new PostSingleGridAdapter();
-        adapter.setOnItemClickListener((view, keywordListItemVO, position) -> {
-            if (isViewAttached()) getView().openPostViewScreen();
+        adapter.setOnItemClickListener((view, viewObject, position) -> {
+            if (isViewAttached()) getView().openPostViewScreen(viewObject.id());
         });
-        adapter.setOnNewItemClickListener((view, keywordListItemVO, position) -> {
+        adapter.setOnNewItemClickListener((view, viewObject, position) -> {
             if (isViewAttached()) getView().openPostCreateScreen();
         });
         return adapter;
@@ -35,17 +49,29 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     protected void freshStart() {
-        // TODO: fill properly with posts thumbs
-        List<PostSingleGridItemVO> items = new ArrayList<>();
-        items.add(PostSingleGridItemVO.builder().build());
-        items.add(PostSingleGridItemVO.builder().build());
-        items.add(PostSingleGridItemVO.builder().build());
-        items.add(PostSingleGridItemVO.builder().build());
-        items.add(PostSingleGridItemVO.builder().build());
-        items.add(PostSingleGridItemVO.builder().build());
-        items.add(PostSingleGridItemVO.builder().build());
-        items.add(PostSingleGridItemVO.builder().build());
-        items.add(PostSingleGridItemVO.builder().build());
-        listAdapter.populate(items, false);
+        getPostsUseCase.execute();
+        listAdapter.add(PostSingleGridItemVO.builder()
+                .setId(Constant.BAD_ID)
+                .setMedia(MediaVO.builder().setUrl("").build())
+                .build());  // TODO: place ADD ITEM always
+    }
+
+    /* Callback */
+    // --------------------------------------------------------------------------------------------
+    private UseCase.OnPostExecuteCallback<List<Post>> createGetPostsCallback() {
+        return new UseCase.OnPostExecuteCallback<List<Post>>() {
+            @Override
+            public void onFinish(@Nullable List<Post> values) {
+                // TODO: NPE
+                List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(values);
+                listAdapter.populate(vos, false);
+                // TODO: view contract call
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO: impl
+            }
+        };
     }
 }

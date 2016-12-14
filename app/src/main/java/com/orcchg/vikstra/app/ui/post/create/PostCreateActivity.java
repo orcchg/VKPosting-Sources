@@ -87,6 +87,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        initData();  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_create);
         ButterKnife.bind(this);

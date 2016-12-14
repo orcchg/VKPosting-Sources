@@ -3,6 +3,7 @@ package com.orcchg.vikstra.app.ui.keyword.list.injection;
 import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListAdapter;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
+import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 
 import dagger.Module;
@@ -18,7 +19,8 @@ public class KeywordListModule {
     }
 
     @Provides @PerActivity
-    protected KeywordListPresenter provideKeywordListPresenter(GetKeywordBundles getKeywordBundlesUseCase) {
-        return new KeywordListPresenter(selectMode, getKeywordBundlesUseCase);
+    protected KeywordListPresenter provideKeywordListPresenter(GetKeywordBundles getKeywordBundlesUseCase,
+                                                               KeywordBundleToVoMapper keywordBundleToVoMapper) {
+        return new KeywordListPresenter(selectMode, getKeywordBundlesUseCase, keywordBundleToVoMapper);
     }
 }

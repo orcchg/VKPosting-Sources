@@ -6,7 +6,7 @@ import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
-import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordListItemMapper;
+import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
@@ -28,12 +28,16 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private final @KeywordListAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
 
+    final KeywordBundleToVoMapper keywordBundleToVoMapper;
+
     @Inject
-    public KeywordListPresenter(@KeywordListAdapter.SelectMode int selectMode, GetKeywordBundles getKeywordBundlesUseCase) {
+    public KeywordListPresenter(@KeywordListAdapter.SelectMode int selectMode,
+            GetKeywordBundles getKeywordBundlesUseCase, KeywordBundleToVoMapper keywordBundleToVoMapper) {
         this.selectMode = selectMode;
         this.listAdapter = createListAdapter();
         this.getKeywordBundlesUseCase = getKeywordBundlesUseCase;
         this.getKeywordBundlesUseCase.setPostExecuteCallback(createGetKeywordBundlesCallback());
+        this.keywordBundleToVoMapper = keywordBundleToVoMapper;
     }
 
     public void setExternalValueEmitter(ValueEmitter<Boolean> listener) {
@@ -93,17 +97,14 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         return new UseCase.OnPostExecuteCallback<List<KeywordBundle>>() {
             @Override
             public void onFinish(@Nullable List<KeywordBundle> values) {
-                // TODO: NPE
                 if (values == null || values.isEmpty()) {
                     if (isViewAttached()) getView().showEmptyList();
                 } else {
                     Collections.sort(values);
                     memento.currentSize += values.size();
-                    KeywordListItemMapper mapper = new KeywordListItemMapper();
-                    List<KeywordListItemVO> vos = mapper.map(values);
-                    // TODO: clearLastStoredInternalImageUrls list to prevent items duplication
+                    List<KeywordListItemVO> vos = keywordBundleToVoMapper.map(values);
                     listAdapter.populate(vos, isThereMore());
-                    if (isViewAttached()) getView().showKeywords(vos);
+                    if (isViewAttached()) getView().showKeywords(vos == null || vos.isEmpty());
                 }
             }
 

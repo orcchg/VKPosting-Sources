@@ -16,16 +16,12 @@ public class PostSingleGridViewHolder extends NormalViewHolder<PostSingleGridIte
         super(view);
         ButterKnife.bind(this, view);
         this.listener = listener;
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) listener.onItemClick(view, null, getAdapterPosition());
-            }
-        });
     }
 
     @Override
     public void bind(PostSingleGridItemVO postSingleGridItemVO) {
-        // TODO: bind
+        itemView.setOnClickListener((view) -> {
+            if (listener != null) listener.onItemClick(view, postSingleGridItemVO, getAdapterPosition());
+        });
     }
 }

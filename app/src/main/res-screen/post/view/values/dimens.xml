@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="post_view_primary_media_height">300dp</dimen>
+</resources>

@@ -11,6 +11,11 @@ public abstract class PostSingleGridItemVO {
 
     @AutoValue.Builder
     public abstract static class Builder {
+        public abstract Builder setId(long id);
+        public abstract Builder setMedia(MediaVO media);
         public abstract PostSingleGridItemVO build();
     }
+
+    public abstract long id();
+    public abstract MediaVO media();
 }

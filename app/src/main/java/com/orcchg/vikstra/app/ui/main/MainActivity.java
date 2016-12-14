@@ -21,13 +21,10 @@ import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainModule;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridFragment;
-import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
 import com.vk.sdk.api.VKError;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -150,9 +147,9 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     @Override
-    public void showKeywords(List<KeywordListItemVO> keywords) {
+    public void showKeywords(boolean isEmpty) {
         KeywordListFragment fragment = getKeywordListFragment();
-        if (fragment != null) fragment.showKeywords(keywords);
+        if (fragment != null) fragment.showKeywords(isEmpty);
     }
 
     @Override

@@ -94,6 +94,13 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
         this.onItemLongClickListener = onItemLongClickListener;
     }
 
+    public void add(Model item) {
+        if (item != null) {
+            this.models.add(item);
+            notifyItemInserted(this.models.size());
+        }
+    }
+
     public void populate(List<Model> items, boolean isThereMore) {
         isInError = false;
         if (items != null && !items.isEmpty()) {

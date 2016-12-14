@@ -15,7 +15,7 @@ public class KeywordModule {
 
     protected final long keywordBundleId;
 
-    public KeywordModule(long keywordBundleId) {
+    protected KeywordModule(long keywordBundleId) {
         this.keywordBundleId = keywordBundleId;
     }
 

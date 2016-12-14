@@ -107,6 +107,11 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     @Override
     public void onSavePressed() {
         long postId = getPostByIdUseCase.getPostId();
+        if (postId == Constant.BAD_ID) {
+            if (isViewAttached()) description = getView().getInputText();
+            title = "";  // TODO: set proper title
+        }
+
         // TODO: set location, file attach, poll
         PostEssense essense = PostEssense.builder()
                 .setDescription(description)
@@ -146,12 +151,13 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
-            public void onFinish(@Nullable Post values) {
-                if (values != null) {
-                    description = values.description();
-                    attachMedia.addAll(values.media());
-                    timestamp = values.timestamp();
-                    title = values.title();
+            public void onFinish(@Nullable Post post) {
+                // TODO: NPE
+                if (post != null) {
+                    description = post.description();
+                    attachMedia.addAll(post.media());
+                    timestamp = post.timestamp();
+                    title = post.title();
                     // TODO: other fields is needed
                 }
                 // TODO: if updating existing post - fill text field and media attachment view container

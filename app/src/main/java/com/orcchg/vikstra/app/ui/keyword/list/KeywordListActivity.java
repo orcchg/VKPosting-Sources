@@ -19,10 +19,7 @@ import com.orcchg.vikstra.app.ui.keyword.list.injection.DaggerKeywordListCompone
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListComponent;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListModule;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
-import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.domain.util.Constant;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -129,9 +126,9 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     @Override
-    public void showKeywords(List<KeywordListItemVO> keywords) {
+    public void showKeywords(boolean isEmpty) {
         KeywordListFragment fragment = getFragment();
-        if (fragment != null) fragment.showKeywords(keywords);
+        if (fragment != null) fragment.showKeywords(isEmpty);
     }
 
     @Override

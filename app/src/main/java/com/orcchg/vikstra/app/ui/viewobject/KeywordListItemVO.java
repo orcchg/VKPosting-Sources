@@ -17,14 +17,14 @@ public abstract class KeywordListItemVO {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setId(long id);
-        public abstract Builder setTitle(String title);
         public abstract Builder setKeywords(Collection<Keyword> keywords);
+        public abstract Builder setTitle(String title);
         public abstract KeywordListItemVO build();
     }
 
     public abstract long id();
-    public abstract String title();
     public abstract Collection<Keyword> keywords();
+    public abstract String title();
 
     public void setSelection(boolean isSelected) { this.isSelected = isSelected; }
     public boolean getSelection() { return isSelected; }

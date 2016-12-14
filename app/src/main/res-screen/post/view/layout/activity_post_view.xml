@@ -23,7 +23,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/standard_side_padding"
-                android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris pretium quis mauris eget dapibus. Aenean a lacus posuere, pretium sem nec, consectetur tortor. Nunc condimentum dignissim purus sit amet lacinia. Quisque ac diam odio. Nullam imperdiet, leo eu auctor posuere, turpis nisi condimentum ex, quis cursus lorem nisl vel odio. Donec tempus, ligula in vestibulum hendrerit, elit neque lobortis diam, et malesuada metus urna et tortor. Mauris libero ipsum, imperdiet at mi vitae, consectetur tincidunt sem. Nunc fermentum sagittis congue"
                 android:textColor="@color/textSecondary"
                 android:textSize="@dimen/standard_description_text_size" />
 
@@ -32,48 +31,57 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/standard_side_padding">
 
-                <View
-                    android:id="@+id/iv_1"
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
+                <LinearLayout
+                    android:id="@+id/primary_media_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="8dp"
-                    android:layout_alignParentLeft="true"
-                    android:background="@color/accent"/>
+                    android:visibility="gone">
 
-                <View
-                    android:id="@+id/iv_2"
-                    android:layout_width="160dp"
-                    android:layout_height="160dp"
-                    android:layout_margin="8dp"
-                    android:layout_alignParentRight="true"
-                    android:background="@color/accent"/>
+                    <ImageView
+                        android:id="@+id/iv_primary"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"/>
 
-                <View
-                    android:id="@+id/iv_3"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
-                    android:layout_margin="8dp"
-                    android:layout_below="@id/iv_1"
-                    android:layout_alignParentLeft="true"
-                    android:background="@color/accent"/>
+                    <android.support.v4.widget.Space
+                        android:layout_width="@dimen/standard_side_padding"
+                        android:layout_height="match_parent"/>
 
-                <View
-                    android:id="@+id/iv_4"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
-                    android:layout_margin="8dp"
-                    android:layout_below="@id/iv_1"
-                    android:layout_toRightOf="@id/iv_3"
-                    android:background="@color/accent"/>
+                    <ImageView
+                        android:id="@+id/iv_secondary"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:contentDescription="@null"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"/>
+                </LinearLayout>
 
-                <View
-                    android:id="@+id/iv_5"
-                    android:layout_width="110dp"
-                    android:layout_height="110dp"
-                    android:layout_margin="8dp"
-                    android:layout_below="@id/iv_1"
-                    android:layout_alignParentRight="true"
-                    android:background="@color/accent"/>
+                <HorizontalScrollView
+                    android:id="@+id/media_container_root"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/primary_media_container"
+                    android:layout_marginTop="@dimen/standard_side_padding_mini"
+                    android:layout_marginBottom="@dimen/standard_side_padding_mini"
+                    android:paddingLeft="@dimen/standard_side_padding_mini"
+                    android:paddingStart="@dimen/standard_side_padding_mini"
+                    android:paddingRight="@dimen/standard_side_padding_mini"
+                    android:paddingEnd="@dimen/standard_side_padding_mini"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:id="@+id/media_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/standard_thumbnail_size"
+                        android:layout_gravity="center_vertical"
+                        android:animateLayoutChanges="true"
+                        android:orientation="horizontal"/>
+                </HorizontalScrollView>
             </RelativeLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>

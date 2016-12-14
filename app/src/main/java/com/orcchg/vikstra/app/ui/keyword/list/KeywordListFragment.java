@@ -13,9 +13,6 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseListFragment;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
-import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -77,12 +74,12 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void showKeywords(List<KeywordListItemVO> keywords) {
+    public void showKeywords(boolean isEmpty) {
         swipeRefreshLayout.setRefreshing(false);
         loadingView.setVisibility(View.GONE);
         errorView.setVisibility(View.GONE);
 
-        if (keywords == null || keywords.isEmpty()) {
+        if (isEmpty) {
             recyclerView.setVisibility(View.GONE);
             emptyView.setVisibility(View.VISIBLE);
         } else {
@@ -95,7 +92,7 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
 
     @Override
     public void showEmptyList() {
-        showKeywords(null);
+        showKeywords(true);
     }
 
     @Override

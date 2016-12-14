@@ -63,6 +63,10 @@ public class ThumbView extends FrameLayout {
         image.setImageBitmap(bmp);
     }
 
+    public void setImage(String url) {
+        Glide.with(getContext()).load(url).override(width, height).into(image);
+    }
+
     public void setImageLocal(String filePath) {
         Glide.with(getContext()).load(Uri.fromFile(new File(filePath))).override(width, height).into(image);
     }

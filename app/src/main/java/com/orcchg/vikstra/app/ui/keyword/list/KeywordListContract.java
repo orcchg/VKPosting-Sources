@@ -2,9 +2,6 @@ package com.orcchg.vikstra.app.ui.keyword.list;
 
 import com.orcchg.vikstra.app.ui.base.MvpListView;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
-import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
-
-import java.util.List;
 
 public interface KeywordListContract {
     interface View extends SubView {
@@ -12,7 +9,7 @@ public interface KeywordListContract {
     }
 
     interface SubView extends MvpListView {
-        void showKeywords(List<KeywordListItemVO> keywords);
+        void showKeywords(boolean isEmpty);
         void showEmptyList();
         void showError();
         void showLoading();
