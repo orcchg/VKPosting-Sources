@@ -34,8 +34,7 @@
                 <LinearLayout
                     android:id="@+id/primary_media_container"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="8dp"
+                    android:layout_height="@dimen/post_view_primary_media_height"
                     android:visibility="gone">
 
                     <ImageView
@@ -48,6 +47,7 @@
                         android:visibility="gone"/>
 
                     <android.support.v4.widget.Space
+                        android:id="@+id/space"
                         android:layout_width="@dimen/standard_side_padding"
                         android:layout_height="match_parent"/>
 
@@ -66,12 +66,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/primary_media_container"
-                    android:layout_marginTop="@dimen/standard_side_padding_mini"
+                    android:layout_marginTop="@dimen/standard_side_padding"
                     android:layout_marginBottom="@dimen/standard_side_padding_mini"
-                    android:paddingLeft="@dimen/standard_side_padding_mini"
-                    android:paddingStart="@dimen/standard_side_padding_mini"
-                    android:paddingRight="@dimen/standard_side_padding_mini"
-                    android:paddingEnd="@dimen/standard_side_padding_mini"
                     android:visibility="gone">
 
                     <LinearLayout

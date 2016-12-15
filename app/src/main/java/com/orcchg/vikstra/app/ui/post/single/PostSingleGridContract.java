@@ -7,8 +7,10 @@ public interface PostSingleGridContract {
     interface View extends MvpListView {
         void openPostCreateScreen();
         void openPostViewScreen(long postId);
+        void showPosts(boolean isEmpty);
     }
 
     interface Presenter extends MvpPresenter<View> {
+        void retry();
     }
 }

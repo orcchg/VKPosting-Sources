@@ -17,8 +17,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import hugo.weaving.DebugLog;
-
 public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.View>
         implements KeywordListContract.Presenter {
 
@@ -61,7 +59,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
+    @Override
     public void retry() {
         changeSelectedKeywordBundleId(Constant.BAD_ID);  // drop selection
         listAdapter.clear();
@@ -76,12 +74,11 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    @DebugLog
     public long getSelectedKeywordBundleId() {
         return selectedKeywordBundleId;
     }
 
-    @DebugLog @Override
+    @Override
     protected void freshStart() {
         getKeywordBundlesUseCase.execute();
     }

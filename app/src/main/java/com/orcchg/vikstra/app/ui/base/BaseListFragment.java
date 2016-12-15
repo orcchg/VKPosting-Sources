@@ -72,7 +72,7 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
         super.onSaveInstanceState(outState);
     }
 
-    @Override
+    @DebugLog @Override
     public RecyclerView getListView() {
         return recyclerView;
     }

@@ -11,12 +11,17 @@ import com.orcchg.vikstra.app.ui.base.widget.viewholder.BaseViewHolder;
 import com.orcchg.vikstra.app.ui.post.single.viewholder.NewPostSingleGridViewHolder;
 import com.orcchg.vikstra.app.ui.post.single.viewholder.PostSingleGridViewHolder;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.util.Constant;
 
 public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder, PostSingleGridItemVO> {
 
     protected static final int VIEW_TYPE_ADD_NEW = 3;
 
     private OnItemClickListener<Object> onNewItemClickListener;
+
+    public PostSingleGridAdapter() {
+        addFirstSystemItem();
+    }
 
     public void setOnNewItemClickListener(OnItemClickListener<Object> onNewItemClickListener) {
         this.onNewItemClickListener = onNewItemClickListener;
@@ -46,5 +51,19 @@ public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder,
     public int getItemViewType(int position) {
         if (position == 0) return VIEW_TYPE_ADD_NEW;
         return super.getItemViewType(position);
+    }
+
+    /* Data access */
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void clear() {
+        super.clear();
+        addFirstSystemItem();
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    private void addFirstSystemItem() {
+        models.add(PostSingleGridItemVO.builder().setId(Constant.BAD_ID).build());
     }
 }

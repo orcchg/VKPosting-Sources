@@ -1,8 +1,14 @@
 package com.orcchg.vikstra.app.ui.main;
 
+import android.app.Activity;
+import android.content.Intent;
+
 import com.orcchg.vikstra.app.ui.base.BaseCompositePresenter;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
+import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
+import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
+import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
 import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 
@@ -32,11 +38,32 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
         this.postSingleGridPresenter = postSingleGridPresenter;
     }
 
+    /* Lifecycle */
+    // --------------------------------------------------------------------------------------------
+    @DebugLog @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case KeywordCreateActivity.REQUEST_CODE:
+            case KeywordListActivity.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) retryKeywords();  // refresh keywords list
+                break;
+            case PostCreateActivity.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) retryPosts();  // refresh posts grid
+                break;
+        }
+    }
+
     /* Contract */
     // --------------------------------------------------------------------------------------------
-    @Override
-    public void retry() {
+    @DebugLog @Override
+    public void retryKeywords() {
         keywordListPresenter.retry();
+    }
+
+    @DebugLog @Override
+    public void retryPosts() {
+        postSingleGridPresenter.retry();
     }
 
     @Override

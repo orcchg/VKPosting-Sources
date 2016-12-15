@@ -20,6 +20,7 @@ import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
 import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainModule;
+import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridFragment;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -91,12 +92,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);
-            switch (requestCode) {
-                case KeywordCreateActivity.REQUEST_CODE:
-                case KeywordListActivity.REQUEST_CODE:
-                    if (resultCode == Activity.RESULT_OK) presenter.retry();  // refresh keywords list
-                    break;
-            }
         }
     }
 
@@ -172,7 +167,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     @Override
     public void retry() {
-        presenter.retry();
+        presenter.retryKeywords();
     }
 
     @Override

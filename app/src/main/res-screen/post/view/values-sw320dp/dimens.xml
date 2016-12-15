@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="post_view_primary_media_height">136dp</dimen>
+    <dimen name="post_view_primary_media_height_double">288dp</dimen>
+</resources>

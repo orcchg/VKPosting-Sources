@@ -105,13 +105,13 @@ public class Navigator {
 
     /* Posts */
     // ------------------------------------------
-    public void openPostCreateScreen(@NonNull Context context) {
+    public void openPostCreateScreen(@NonNull Activity context) {
         openPostCreateScreen(context, Constant.BAD_ID);
     }
 
-    public void openPostCreateScreen(@NonNull Context context, long postId) {
+    public void openPostCreateScreen(@NonNull Activity context, long postId) {
         Intent intent = PostCreateActivity.getCallingIntent(context, postId);
-        context.startActivity(intent);
+        context.startActivityForResult(intent, PostCreateActivity.REQUEST_CODE);
     }
 
     public void openPostViewScreen(@NonNull Context context, long postId) {

@@ -4,13 +4,11 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
-import com.orcchg.vikstra.app.ui.viewobject.MediaVO;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPosts;
 import com.orcchg.vikstra.domain.model.Post;
-import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.List;
 
@@ -45,27 +43,31 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         return adapter;
     }
 
-    /* Internal */
+    /* Contract */
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
+    public void retry() {
+        listAdapter.clear();
+        freshStart();
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    @Override
     protected void freshStart() {
         getPostsUseCase.execute();
-        listAdapter.add(PostSingleGridItemVO.builder()
-                .setId(Constant.BAD_ID)
-                .setMedia(MediaVO.builder().setUrl("").build())
-                .build());  // TODO: place ADD ITEM always
     }
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<List<Post>> createGetPostsCallback() {
         return new UseCase.OnPostExecuteCallback<List<Post>>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable List<Post> values) {
                 // TODO: NPE
                 List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(values);
                 listAdapter.populate(vos, false);
-                // TODO: view contract call
+                if (isViewAttached()) getView().showPosts(vos == null || vos.isEmpty());
             }
 
             @Override

@@ -11,6 +11,7 @@ import java.lang.ref.WeakReference;
 import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
 
@@ -59,7 +60,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
         // to override
     }
 
-    @Override
+    @DebugLog @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         // to override
     }
@@ -67,6 +68,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     @DebugLog @Override
     public void onStart() {
         if (isFresh) {
+            Timber.v("Fresh start of %s", getClass().getSimpleName());
             isFresh = false;
             freshStart();
         }

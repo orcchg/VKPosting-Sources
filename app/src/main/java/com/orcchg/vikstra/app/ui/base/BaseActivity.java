@@ -16,6 +16,8 @@ import com.orcchg.vikstra.app.injection.component.PermissionManagerComponent;
 import com.orcchg.vikstra.app.injection.module.PermissionManagerModule;
 import com.orcchg.vikstra.app.navigation.NavigatorHolder;
 
+import hugo.weaving.DebugLog;
+
 public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
         extends AppCompatActivity implements MvpView {
 
@@ -41,7 +43,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
         presenter.onCreate(savedInstanceState);
     }
 
-    @Override
+    @DebugLog @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         presenter.onActivityResult(requestCode, resultCode, data);

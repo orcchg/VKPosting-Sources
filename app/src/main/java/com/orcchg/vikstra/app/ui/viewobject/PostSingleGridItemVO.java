@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.app.ui.viewobject;
 
+import android.support.annotation.Nullable;
+
 import com.google.auto.value.AutoValue;
 
 @AutoValue
@@ -17,5 +19,5 @@ public abstract class PostSingleGridItemVO {
     }
 
     public abstract long id();
-    public abstract MediaVO media();
+    public abstract @Nullable MediaVO media();
 }

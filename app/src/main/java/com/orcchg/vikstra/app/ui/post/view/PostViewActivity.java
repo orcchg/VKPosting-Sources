@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -35,6 +36,9 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     @BindView(R.id.iv_secondary) ImageView secondaryImage;
     @BindView(R.id.media_container_root) ViewGroup mediaContainerRoot;
     @BindView(R.id.media_container) ViewGroup mediaContainer;
+    @BindView(R.id.space) View space;
+
+    private int PRIMARY_MEDIA_DOUBLE_HEIGHT;
 
     private PostViewComponent postViewComponent;
     private long postId = Constant.BAD_ID;
@@ -67,6 +71,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_view);
         ButterKnife.bind(this);
+        initResources();
         initView();
     }
 
@@ -105,8 +110,21 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
                             mediaContainer.addView(thumbView);
                         }
                     }
+                    return;  // ignore media container resizing for more than one media
                 }
             }
         }
+
+        // resize media container height to make single media squared
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) primaryMediaContainer.getLayoutParams();
+        params.height = PRIMARY_MEDIA_DOUBLE_HEIGHT;
+        primaryMediaContainer.setLayoutParams(params);
+        space.setVisibility(View.GONE);  // remove space separator between primary and secondary medias
+    }
+
+    /* Resources */
+    // --------------------------------------------------------------------------------------------
+    private void initResources() {
+        PRIMARY_MEDIA_DOUBLE_HEIGHT = getResources().getDimensionPixelSize(R.dimen.post_view_primary_media_height_double);
     }
 }
