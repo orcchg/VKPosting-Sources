@@ -32,8 +32,8 @@ import timber.log.Timber;
 
 public class PostCreateActivity extends BaseActivity<PostCreateContract.View, PostCreateContract.Presenter>
         implements PostCreateContract.View {
-    public static final int REQUEST_CODE = Constant.RequestCode.POST_CREATE_SCREEN;
     private static final String EXTRA_POST_ID = "extra_post_id";
+    public static final int REQUEST_CODE = Constant.RequestCode.POST_CREATE_SCREEN;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.et_post_description) AutoCompleteTextView postDescriptionEditText;

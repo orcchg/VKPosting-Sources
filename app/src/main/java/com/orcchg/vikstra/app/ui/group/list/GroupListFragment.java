@@ -124,7 +124,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
 
     @Override
     public void onChangePost() {
-        // TODO:
+        navigationComponent.navigator().openPostListScreen(getActivity());
     }
 
     /* Contract */

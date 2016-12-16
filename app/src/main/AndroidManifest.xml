@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- Activity -->
+        <!-- Main -->
         <activity android:name=".app.ui.main.MainActivity"
                   android:label="@string/main_screen_title"
                   android:theme="@style/AppTheme">
@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
 
+        <!-- Keywords -->
         <activity android:name=".app.ui.keyword.list.KeywordListActivity"
                   android:label="@string/keyword_list_screen_title"
                   android:theme="@style/AppTheme"/>
@@ -32,6 +33,7 @@
                   android:label="@string/keyword_create_screen_title"
                   android:windowSoftInputMode="adjustResize"/>
 
+        <!-- Groups -->
         <activity android:name=".app.ui.group.detail.GroupDetailActivity"
                   android:label="@string/group_detail_screen_title"
                   android:theme="@style/AppTheme"/>
@@ -40,8 +42,13 @@
                   android:label="@string/group_list_screen_title"
                   android:theme="@style/AppTheme"/>
 
+        <!-- Posts -->
         <activity android:name=".app.ui.post.create.PostCreateActivity"
                   android:label="@string/post_create_screen_title"
+                  android:theme="@style/AppTheme"/>
+
+        <activity android:name=".app.ui.post.list.PostListActivity"
+                  android:label="@string/post_list_screen_title"
                   android:theme="@style/AppTheme"/>
 
         <activity android:name=".app.ui.post.view.PostViewActivity"

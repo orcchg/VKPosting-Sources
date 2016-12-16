@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.base.widget;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,10 +13,20 @@ import com.orcchg.vikstra.app.ui.base.widget.viewholder.ErrorViewHolder;
 import com.orcchg.vikstra.app.ui.base.widget.viewholder.LoadingViewHolder;
 import com.orcchg.vikstra.app.ui.base.widget.viewholder.NormalViewHolder;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model>, Model> extends RecyclerView.Adapter<BaseViewHolder> {
+    public static final int SELECT_MODE_NONE = 0;
+    public static final int SELECT_MODE_SINGLE = 1;
+    public static final int SELECT_MODE_MULTI = 2;
+    @IntDef({SELECT_MODE_NONE, SELECT_MODE_SINGLE, SELECT_MODE_MULTI})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface SelectMode {}
+
+    protected final @SelectMode int selectMode;
 
     public interface OnItemClickListener<Model> {
         void onItemClick(View view, Model model, int position);
@@ -37,7 +48,8 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
     protected OnItemLongClickListener<Model> onItemLongClickListener;
     protected View.OnClickListener onErrorClickListener;
 
-    public BaseAdapter() {
+    public BaseAdapter(@SelectMode int selectMode) {
+        this.selectMode = selectMode;
         models = new ArrayList<>();
     }
 
@@ -129,4 +141,26 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
     }
 
     protected abstract ModelViewHolder createModelViewHolder(ViewGroup parent);
+
+    /* Click item */
+    // --------------------------------------------------------------------------------------------
+//    private BaseAdapter.OnItemClickListener<Model> createWrappedClickListener() {
+//        return (view, viewObject, position) -> {
+//            switch (selectMode) {
+//                case SELECT_MODE_NONE:
+//                case SELECT_MODE_MULTI:
+//                    // TODO: accumulate selected items
+//                    break;
+//                case SELECT_MODE_SINGLE:
+//                    for (Model model : models) {
+//                        if (model.id() != viewObject.id()) {
+//                            model.setSelection(false);
+//                        }
+//                    }
+//                    notifyDataSetChanged();
+//                    break;
+//            }
+//            if (onItemClickListener != null) onItemClickListener.onItemClick(view, viewObject, position);
+//        };
+//    }
 }

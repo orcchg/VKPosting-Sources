@@ -1,6 +1,5 @@
 package com.orcchg.vikstra.app.ui.keyword.list;
 
-import android.support.annotation.IntDef;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,23 +9,13 @@ import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.keyword.list.viewholder.KeywordViewHolder;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-
 public class KeywordListAdapter extends BaseAdapter<KeywordViewHolder, KeywordListItemVO> {
-    public static final int SELECT_MODE_NONE = 0;
-    public static final int SELECT_MODE_SINGLE = 1;
-    public static final int SELECT_MODE_MULTI = 2;
-    @IntDef({SELECT_MODE_NONE, SELECT_MODE_SINGLE, SELECT_MODE_MULTI})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface SelectMode {}
 
-    private final @SelectMode int selectMode;
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> wrappedItemClickListener;
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener;
 
     public KeywordListAdapter(@SelectMode int selectMode) {
-        this.selectMode = selectMode;
+        super(selectMode);
         this.wrappedItemClickListener = createWrappedClickListener();
     }
 

@@ -14,6 +14,7 @@ class ListAdapter extends BaseAdapter<ArtistViewHolder, ArtistListItemVO> {
     private final ItemClickListener listener;
 
     ListAdapter(ItemClickListener listener) {
+        super(BaseAdapter.SELECT_MODE_NONE);
         this.listener = listener;
     }
 

@@ -24,12 +24,15 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     private final GetPosts getPostsUseCase;
 
     private long selectedPostId = Constant.BAD_ID;
+    private final @BaseAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
 
     final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
     @Inject
-    PostSingleGridPresenter(GetPosts getPostsUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+    public PostSingleGridPresenter(@BaseAdapter.SelectMode int selectMode,
+           GetPosts getPostsUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+        this.selectMode = selectMode;
         this.listAdapter = createListAdapter();
         this.getPostsUseCase = getPostsUseCase;
         this.getPostsUseCase.setPostExecuteCallback(createGetPostsCallback());
@@ -42,7 +45,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     @Override
     protected BaseAdapter createListAdapter() {
-        PostSingleGridAdapter adapter = new PostSingleGridAdapter();
+        PostSingleGridAdapter adapter = new PostSingleGridAdapter(selectMode, true);
         adapter.setOnItemClickListener((view, viewObject, position) -> {
             changeSelectedPostId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID);
         });

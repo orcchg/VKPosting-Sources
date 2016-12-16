@@ -17,12 +17,16 @@ public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder,
 
     protected static final int VIEW_TYPE_ADD_NEW = 3;
 
+    private final boolean withAddItem;
+
     private BaseAdapter.OnItemClickListener<PostSingleGridItemVO> wrappedItemClickListener;
     private OnItemClickListener<Object> onNewItemClickListener;
 
-    public PostSingleGridAdapter() {
-        addFirstSystemItem();
+    public PostSingleGridAdapter(@SelectMode int selectMode, boolean withAddItem) {
+        super(selectMode);
+        this.withAddItem = withAddItem;
         this.wrappedItemClickListener = createWrappedClickListener();
+        if (withAddItem) addFirstSystemItem();
     }
 
     public void setOnNewItemClickListener(OnItemClickListener<Object> onNewItemClickListener) {
@@ -54,7 +58,7 @@ public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder,
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) return VIEW_TYPE_ADD_NEW;
+        if (withAddItem && position == 0) return VIEW_TYPE_ADD_NEW;
         return super.getItemViewType(position);
     }
 
@@ -63,7 +67,7 @@ public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder,
     @Override
     public void clear() {
         super.clear();
-        addFirstSystemItem();
+        if (withAddItem) addFirstSystemItem();
     }
 
     /* Internal */
@@ -77,12 +81,20 @@ public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder,
 
     private BaseAdapter.OnItemClickListener<PostSingleGridItemVO> createWrappedClickListener() {
         return (view, viewObject, position) -> {
-            for (PostSingleGridItemVO model : models) {
-                if (model.id() != viewObject.id()) {
-                    model.setSelection(false);
-                }
+            switch (selectMode) {
+                case SELECT_MODE_NONE:
+                case SELECT_MODE_MULTI:
+                    // TODO: accumulate selected items
+                    break;
+                case SELECT_MODE_SINGLE:
+                    for (PostSingleGridItemVO model : models) {
+                        if (model.id() != viewObject.id()) {
+                            model.setSelection(false);
+                        }
+                    }
+                    notifyDataSetChanged();
+                    break;
             }
-            notifyDataSetChanged();
             if (onItemClickListener != null) onItemClickListener.onItemClick(view, viewObject, position);
         };
     }

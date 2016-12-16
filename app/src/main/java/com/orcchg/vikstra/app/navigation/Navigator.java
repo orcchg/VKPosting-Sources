@@ -20,6 +20,7 @@ import com.orcchg.vikstra.app.ui.legacy.details.DetailsActivity;
 import com.orcchg.vikstra.app.ui.legacy.list.ListActivity;
 import com.orcchg.vikstra.app.ui.legacy.tab.TabActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
+import com.orcchg.vikstra.app.ui.post.list.PostListActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
 import com.orcchg.vikstra.app.util.ContentUtility;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -112,6 +113,11 @@ public class Navigator {
     public void openPostCreateScreen(@NonNull Activity context, long postId) {
         Intent intent = PostCreateActivity.getCallingIntent(context, postId);
         context.startActivityForResult(intent, PostCreateActivity.REQUEST_CODE);
+    }
+
+    public void openPostListScreen(@NonNull Activity context) {
+        Intent intent = PostListActivity.getCallingIntent(context);
+        context.startActivityForResult(intent, PostListActivity.REQUEST_CODE);
     }
 
     public void openPostViewScreen(@NonNull Context context, long postId) {

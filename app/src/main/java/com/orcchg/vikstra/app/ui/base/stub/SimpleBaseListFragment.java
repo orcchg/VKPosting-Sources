@@ -6,7 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import com.orcchg.vikstra.app.ui.base.BaseListFragment;
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 
-public class SimpleBaseListFragment extends BaseListFragment<StubMvpView, BasePresenter<StubMvpView>> {
+public class SimpleBaseListFragment extends BaseListFragment<StubMvpView, BasePresenter<StubMvpView>>
+        implements PassiveView {
 
     @NonNull @Override
     protected BasePresenter<StubMvpView> createPresenter() {

@@ -5,7 +5,8 @@ import android.support.annotation.NonNull;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 
-public abstract class SimpleBaseActivity extends BaseActivity<StubMvpView, BasePresenter<StubMvpView>> {
+public abstract class SimpleBaseActivity extends BaseActivity<StubMvpView, BasePresenter<StubMvpView>>
+        implements PassiveView {
 
     @NonNull @Override
     protected BasePresenter<StubMvpView> createPresenter() {

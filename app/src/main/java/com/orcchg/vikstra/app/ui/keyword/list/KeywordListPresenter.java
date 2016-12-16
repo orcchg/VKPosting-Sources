@@ -25,13 +25,13 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private final GetKeywordBundles getKeywordBundlesUseCase;
 
     private long selectedKeywordBundleId = Constant.BAD_ID;
-    private final @KeywordListAdapter.SelectMode int selectMode;
+    private final @BaseAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
 
     final KeywordBundleToVoMapper keywordBundleToVoMapper;
 
     @Inject
-    public KeywordListPresenter(@KeywordListAdapter.SelectMode int selectMode,
+    public KeywordListPresenter(@BaseAdapter.SelectMode int selectMode,
             GetKeywordBundles getKeywordBundlesUseCase, KeywordBundleToVoMapper keywordBundleToVoMapper) {
         this.selectMode = selectMode;
         this.listAdapter = createListAdapter();
