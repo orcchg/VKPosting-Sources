@@ -47,7 +47,7 @@ public class KeywordListAdapter extends BaseAdapter<KeywordViewHolder, KeywordLi
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> createWrappedClickListener() {
-        return (view, keywordListItemVO, position) -> {
+        return (view, viewObject, position) -> {
             switch (selectMode) {
                 case SELECT_MODE_NONE:
                 case SELECT_MODE_MULTI:
@@ -55,14 +55,14 @@ public class KeywordListAdapter extends BaseAdapter<KeywordViewHolder, KeywordLi
                     break;
                 case SELECT_MODE_SINGLE:
                     for (KeywordListItemVO model : models) {
-                        if (model.id() != keywordListItemVO.id()) {
+                        if (model.id() != viewObject.id()) {
                             model.setSelection(false);
                         }
                     }
                     notifyDataSetChanged();
                     break;
             }
-            if (onItemClickListener != null) onItemClickListener.onItemClick(view, keywordListItemVO, position);
+            if (onItemClickListener != null) onItemClickListener.onItemClick(view, viewObject, position);
         };
     }
 }

@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.model;
 
+import android.support.annotation.Nullable;
+
 import com.google.auto.value.AutoValue;
 
 import java.util.List;
@@ -22,10 +24,10 @@ public abstract class Post implements Comparable<Post> {
     }
 
     public abstract long id();
-    public abstract String description();
+    public abstract @Nullable String description();
     public abstract long timestamp();
-    public abstract String title();
-    public abstract List<Media> media();
+    public abstract @Nullable String title();
+    public abstract @Nullable List<Media> media();
 
     @Override
     public int compareTo(Post o) {

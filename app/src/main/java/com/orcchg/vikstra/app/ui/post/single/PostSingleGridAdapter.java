@@ -17,10 +17,12 @@ public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder,
 
     protected static final int VIEW_TYPE_ADD_NEW = 3;
 
+    private BaseAdapter.OnItemClickListener<PostSingleGridItemVO> wrappedItemClickListener;
     private OnItemClickListener<Object> onNewItemClickListener;
 
     public PostSingleGridAdapter() {
         addFirstSystemItem();
+        this.wrappedItemClickListener = createWrappedClickListener();
     }
 
     public void setOnNewItemClickListener(OnItemClickListener<Object> onNewItemClickListener) {
@@ -30,7 +32,10 @@ public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder,
     @Override
     protected PostSingleGridViewHolder createModelViewHolder(ViewGroup parent) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_post_single_grid_item, parent, false);
-        return new PostSingleGridViewHolder(view, onItemClickListener);
+        PostSingleGridViewHolder viewHolder = new PostSingleGridViewHolder(view);
+        viewHolder.setOnItemClickListener(wrappedItemClickListener);
+        viewHolder.setOnItemLongClickListener(onItemLongClickListener);
+        return viewHolder;
     }
 
     protected NewPostSingleGridViewHolder createAddNewViewHolder(ViewGroup parent) {
@@ -64,6 +69,21 @@ public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder,
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private void addFirstSystemItem() {
-        models.add(PostSingleGridItemVO.builder().setId(Constant.BAD_ID).build());
+        models.add(PostSingleGridItemVO.builder()
+                .setId(Constant.BAD_ID)
+                .setMediaCount(0)
+                .build());
+    }
+
+    private BaseAdapter.OnItemClickListener<PostSingleGridItemVO> createWrappedClickListener() {
+        return (view, viewObject, position) -> {
+            for (PostSingleGridItemVO model : models) {
+                if (model.id() != viewObject.id()) {
+                    model.setSelection(false);
+                }
+            }
+            notifyDataSetChanged();
+            if (onItemClickListener != null) onItemClickListener.onItemClick(view, viewObject, position);
+        };
     }
 }

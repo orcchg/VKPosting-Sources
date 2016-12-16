@@ -20,7 +20,11 @@ public class PostToSingleGridVoMapper implements Mapper<Post, PostSingleGridItem
 
     @Override
     public PostSingleGridItemVO map(Post object) {
-        PostSingleGridItemVO.Builder builder = PostSingleGridItemVO.builder().setId(object.id());
+        PostSingleGridItemVO.Builder builder = PostSingleGridItemVO.builder()
+                .setId(object.id())
+                .setDescription(object.description())
+                .setMediaCount(object.media().size())
+                .setTitle(object.title());
         if (!object.media().isEmpty()) {
             builder.setMedia(mediaToVoMapper.map(object.media().get(0)));  // use first media item as primary
         }

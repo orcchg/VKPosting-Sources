@@ -109,7 +109,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         long postId = getPostByIdUseCase.getPostId();
         if (postId == Constant.BAD_ID) {
             if (isViewAttached()) description = getView().getInputText();
-            title = "";  // TODO: set proper title
+            title = "";  // TODO: set proper title; @Nullable
         }
 
         // TODO: set location, file attach, poll

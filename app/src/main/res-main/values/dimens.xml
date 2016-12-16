@@ -8,6 +8,7 @@
     <dimen name="standard_description_text_size">16dp</dimen>
     <dimen name="standard_icon_size">24dp</dimen>
     <dimen name="standard_icon_large_size">36dp</dimen>
+    <dimen name="standard_icon_small_size">18dp</dimen>
     <dimen name="standard_panel_height">36dp</dimen>
     <dimen name="standard_side_padding">16dp</dimen>
     <dimen name="standard_side_padding_mini">4dp</dimen>

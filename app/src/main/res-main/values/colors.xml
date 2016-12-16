@@ -8,6 +8,7 @@
     <color name="colorAccentOverlay">#334CAF50</color>
 
     <color name="semitransparent">#88000000</color>
+    <color name="grey_bg">#adadad</color>
     <color name="light_grey_bg">#ededed</color>
     <color name="light_line_separator">#1f000000</color>
     <color name="list_line_separator">#42000000</color>

@@ -1,6 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/post_single_grid_item_size"
     android:layout_height="@dimen/post_single_grid_item_size"
-    android:layout_margin="2dp"
-    android:background="@color/accent"/>
+    android:layout_margin="@dimen/post_single_grid_item_margin_up"
+    android:background="@color/grey_bg"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/post_single_grid_item_margin_side"
+        android:layout_marginStart="@dimen/post_single_grid_item_margin_side"
+        android:layout_marginRight="@dimen/post_single_grid_item_margin_side"
+        android:layout_marginEnd="@dimen/post_single_grid_item_margin_side"
+        android:textColor="@color/textSecondary"
+        android:textSize="@dimen/post_single_grid_item_title_text_size"
+        android:gravity="center_vertical"
+        android:visibility="gone"/>
+    
+    <TextView
+        android:id="@+id/tv_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="@dimen/post_single_grid_item_margin_side"
+        android:layout_marginStart="@dimen/post_single_grid_item_margin_side"
+        android:layout_marginRight="@dimen/post_single_grid_item_margin_side"
+        android:layout_marginEnd="@dimen/post_single_grid_item_margin_side"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="2"
+        android:textColor="@color/textSecondary"
+        android:textSize="@dimen/post_single_grid_item_description_text_size"
+        android:visibility="gone"/>
+    
+    <RelativeLayout
+        android:id="@+id/media_container_root"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginLeft="@dimen/post_single_grid_item_margin_side"
+        android:layout_marginStart="@dimen/post_single_grid_item_margin_side"
+        android:layout_marginRight="@dimen/post_single_grid_item_margin_side"
+        android:layout_marginEnd="@dimen/post_single_grid_item_margin_side"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/iv_media"
+            android:layout_width="@dimen/post_single_grid_item_image_size"
+            android:layout_height="@dimen/post_single_grid_item_image_size"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:scaleType="centerCrop"
+            android:contentDescription="@null"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/tv_media_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:drawableLeft="@drawable/ic_collections_white_18dp"
+            android:drawableStart="@drawable/ic_collections_white_18dp"
+            android:drawablePadding="4dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@color/textIcons"
+            android:textSize="@dimen/post_single_grid_item_media_count_text_size"
+            android:visibility="invisible"/>
+
+        <ImageView
+            android:id="@+id/iv_selection"
+            android:layout_width="@dimen/standard_icon_size"
+            android:layout_height="@dimen/standard_icon_size"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_check_white_24dp"
+            android:contentDescription="@null"
+            android:visibility="invisible"/>
+    </RelativeLayout>
+</LinearLayout>

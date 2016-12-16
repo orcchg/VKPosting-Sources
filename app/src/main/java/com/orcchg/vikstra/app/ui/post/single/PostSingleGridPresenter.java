@@ -4,11 +4,13 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPosts;
 import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.List;
 
@@ -21,6 +23,9 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     private final GetPosts getPostsUseCase;
 
+    private long selectedPostId = Constant.BAD_ID;
+    private ValueEmitter<Boolean> externalValueEmitter;
+
     final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
     @Inject
@@ -31,10 +36,17 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
     }
 
+    public void setExternalValueEmitter(ValueEmitter<Boolean> listener) {
+        externalValueEmitter = listener;
+    }
+
     @Override
     protected BaseAdapter createListAdapter() {
         PostSingleGridAdapter adapter = new PostSingleGridAdapter();
         adapter.setOnItemClickListener((view, viewObject, position) -> {
+            changeSelectedPostId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID);
+        });
+        adapter.setOnItemLongClickListener((view, viewObject, position) -> {
             if (isViewAttached()) getView().openPostViewScreen(viewObject.id());
         });
         adapter.setOnNewItemClickListener((view, viewObject, position) -> {
@@ -47,15 +59,30 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     public void retry() {
+        changeSelectedPostId(Constant.BAD_ID);  // drop selection
         listAdapter.clear();
         freshStart();
     }
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
+    public long getSelectedPostId() {
+        return selectedPostId;
+    }
+
     @Override
     protected void freshStart() {
         getPostsUseCase.execute();
+    }
+
+    @DebugLog
+    protected boolean changeSelectedPostId(long newId) {
+        selectedPostId = newId;
+        if (externalValueEmitter != null) {
+            externalValueEmitter.emit(newId != Constant.BAD_ID);
+            return true;
+        }
+        return false;
     }
 
     /* Callback */

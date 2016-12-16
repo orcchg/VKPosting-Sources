@@ -17,6 +17,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
+
 public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.View>
         implements KeywordListContract.Presenter {
 
@@ -45,14 +47,14 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @Override
     protected BaseAdapter createListAdapter() {
         KeywordListAdapter adapter = new KeywordListAdapter(selectMode);
-        adapter.setOnItemClickListener((view, keywordListItemVO, position) -> {
-            changeSelectedKeywordBundleId(keywordListItemVO.getSelection() ? keywordListItemVO.id() : Constant.BAD_ID);
+        adapter.setOnItemClickListener((view, viewObject, position) -> {
+            changeSelectedKeywordBundleId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID);
         });
-        adapter.setOnItemLongClickListener((view, keywordListItemVO, position) -> {
+        adapter.setOnItemLongClickListener((view, viewObject, position) -> {
             // TODO: impl long click
         });
-        adapter.setOnEditClickListener((view, keywordListItemVO, position) -> {
-            if (isViewAttached()) getView().openKeywordCreateScreen(keywordListItemVO.id());
+        adapter.setOnEditClickListener((view, viewObject, position) -> {
+            if (isViewAttached()) getView().openKeywordCreateScreen(viewObject.id());
         });
         return adapter;
     }
@@ -83,9 +85,14 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         getKeywordBundlesUseCase.execute();
     }
 
-    protected void changeSelectedKeywordBundleId(long newId) {
+    @DebugLog
+    protected boolean changeSelectedKeywordBundleId(long newId) {
         selectedKeywordBundleId = newId;
-        if (externalValueEmitter != null) externalValueEmitter.emit(newId != Constant.BAD_ID);
+        if (externalValueEmitter != null) {
+            externalValueEmitter.emit(newId != Constant.BAD_ID);
+            return true;
+        }
+        return false;
     }
 
     /* Callback */

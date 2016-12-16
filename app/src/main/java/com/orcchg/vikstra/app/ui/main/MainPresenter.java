@@ -24,6 +24,9 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     KeywordListPresenter keywordListPresenter;
     PostSingleGridPresenter postSingleGridPresenter;  // not added to list, fragment handles it automatically
 
+    boolean isKeywordBundleSelected;  // TODO: save instance state
+    boolean isPostSelected;
+
     @Override
     protected List<? extends MvpPresenter> providePresenterList() {
         List<MvpPresenter> list = new ArrayList<>();
@@ -34,8 +37,15 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Inject
     MainPresenter(KeywordListPresenter keywordListPresenter, PostSingleGridPresenter postSingleGridPresenter) {
         this.keywordListPresenter = keywordListPresenter;
-        this.keywordListPresenter.setExternalValueEmitter(createExternalValueCallback());
+        this.keywordListPresenter.setExternalValueEmitter(value -> {
+            isKeywordBundleSelected = value;
+            if (isViewAttached()) getView().showFab(isKeywordBundleSelected && isPostSelected);
+        });
         this.postSingleGridPresenter = postSingleGridPresenter;
+        this.postSingleGridPresenter.setExternalValueEmitter(value -> {
+            isPostSelected = value;
+            if (isViewAttached()) getView().showFab(isKeywordBundleSelected && isPostSelected);
+        });
     }
 
     /* Lifecycle */
@@ -68,6 +78,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     @Override
     public void onFabClick() {
+        // TODO: use selected post Id
         if (isViewAttached()) getView().openGroupListScreen(keywordListPresenter.getSelectedKeywordBundleId());
     }
 
@@ -83,12 +94,4 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
-    private ValueEmitter<Boolean> createExternalValueCallback() {
-        return (value) -> {
-            // TODO: use both Post and Keywords selected to show fab
-            boolean postSelected = true;
-            boolean keywordsSelected = value;
-            if (isViewAttached()) getView().showFab(postSelected && keywordsSelected);
-        };
-    }
 }

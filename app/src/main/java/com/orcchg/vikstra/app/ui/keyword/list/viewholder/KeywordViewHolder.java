@@ -34,7 +34,7 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
     @Override
     public void bind(KeywordListItemVO viewObject) {
         boolean isSelectable = selectMode != KeywordListAdapter.SELECT_MODE_NONE;
-        String label = new StringBuilder().append(29).append('/').append(60).toString();
+        String label = new StringBuilder().append(29).append('/').append(60).toString();  // TODO: use proper counters
         View.OnClickListener listener = createOnItemClickListener(viewObject, isSelectable);
         View.OnLongClickListener longListener = createOnItemLongClickListener(viewObject);
         KeywordsFlowLayout.OnKeywordItemClickListener keyListener = AppConfig.INSTANCE.shouldInterceptKeywordClickOnVH() ?
