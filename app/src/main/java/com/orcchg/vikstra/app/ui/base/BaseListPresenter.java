@@ -15,6 +15,7 @@ public abstract class BaseListPresenter<V extends MvpListView> extends BasePrese
     protected BaseAdapter listAdapter;
 
     protected abstract BaseAdapter createListAdapter();
+    protected abstract int getListTag();
 
     protected static class Memento {
         protected static final String BUNDLE_KEY_CURRENT_SIZE = "bundle_key_current_size";
@@ -71,7 +72,7 @@ public abstract class BaseListPresenter<V extends MvpListView> extends BasePrese
     public void onStart() {
         super.onStart();
         if (isViewAttached()) {
-            RecyclerView list = getView().getListView();
+            RecyclerView list = getView().getListView(getListTag());
             if (list.getAdapter() == null) {
                 list.setAdapter(listAdapter);
             }

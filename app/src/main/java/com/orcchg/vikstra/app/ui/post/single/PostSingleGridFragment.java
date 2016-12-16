@@ -1,7 +1,7 @@
 package com.orcchg.vikstra.app.ui.post.single;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,32 +12,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.base.BaseListFragment;
-import com.orcchg.vikstra.app.ui.post.single.injection.DaggerPostSingleGridComponent;
-import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridComponent;
+import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseListFragment;
+import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
-public class PostSingleGridFragment extends BaseListFragment<PostSingleGridContract.View, PostSingleGridContract.Presenter>
-        implements PostSingleGridContract.View {
+public class PostSingleGridFragment extends SimpleBaseListFragment implements PostSingleGridContract.SubView {
+    public static final int RV_TAG = Constant.ListTag.POST_SINGLE_GRID_SCREEN;
 
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
 
-    private PostSingleGridComponent postSingleGridComponent;
+    private IScrollGrid iScrollGrid;
 
-    @NonNull @Override
-    protected PostSingleGridContract.Presenter createPresenter() {
-        return postSingleGridComponent.presenter();
-    }
-
-    @Override
-    protected void injectDependencies() {
-        postSingleGridComponent = DaggerPostSingleGridComponent.builder()
-                .applicationComponent(getApplicationComponent())
-                .build();
-        postSingleGridComponent.inject(this);
+    public static PostSingleGridFragment newInstance() {
+        return new PostSingleGridFragment();
     }
 
     @Override
@@ -46,13 +37,21 @@ public class PostSingleGridFragment extends BaseListFragment<PostSingleGridContr
         return new GridLayoutManager(getActivity(), span, GridLayoutManager.HORIZONTAL, false);
     }
 
-    public static PostSingleGridFragment newInstance() {
-        return new PostSingleGridFragment();
-    }
-
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    @DebugLog @Nullable @Override
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (IScrollGrid.class.isInstance(activity)) {
+            iScrollGrid = (IScrollGrid) activity;
+        } else {
+            String message = "Hosting Activity must implement IScrollList interface";
+            Timber.e(message);
+            throw new RuntimeException(message);
+        }
+    }
+
+    @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.fragment_post_single_grid, container, false);
@@ -60,7 +59,7 @@ public class PostSingleGridFragment extends BaseListFragment<PostSingleGridContr
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_grid);
 
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        swipeRefreshLayout.setOnRefreshListener(() -> presenter.retry());
+        swipeRefreshLayout.setOnRefreshListener(() -> iScrollGrid.retryGrid());
 
         return rootView;
     }
@@ -70,16 +69,6 @@ public class PostSingleGridFragment extends BaseListFragment<PostSingleGridContr
     @Override
     protected void onScroll(int itemsLeftToEnd) {
         // TODO: impl
-    }
-
-    @Override
-    public void openPostCreateScreen() {
-        navigationComponent.navigator().openPostCreateScreen(getActivity());
-    }
-
-    @Override
-    public void openPostViewScreen(long postId) {
-        navigationComponent.navigator().openPostViewScreen(getActivity(), postId);
     }
 
     @Override

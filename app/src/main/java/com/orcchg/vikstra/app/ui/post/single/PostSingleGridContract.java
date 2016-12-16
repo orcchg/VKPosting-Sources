@@ -4,9 +4,12 @@ import com.orcchg.vikstra.app.ui.base.MvpListView;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 
 public interface PostSingleGridContract {
-    interface View extends MvpListView {
+    interface View extends SubView {
         void openPostCreateScreen();
         void openPostViewScreen(long postId);
+    }
+
+    interface SubView extends MvpListView {
         void showPosts(boolean isEmpty);
     }
 

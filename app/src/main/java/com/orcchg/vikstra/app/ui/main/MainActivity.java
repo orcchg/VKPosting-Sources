@@ -1,6 +1,5 @@
 package com.orcchg.vikstra.app.ui.main;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,15 +11,14 @@ import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
+import com.orcchg.vikstra.app.ui.base.MvpListView;
+import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
-import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
-import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListAdapter;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
 import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainModule;
-import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridFragment;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -32,7 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity<MainContract.View, MainContract.Presenter>
-        implements MainContract.View, IScrollList {
+        implements MainContract.View, IScrollGrid, IScrollList {
     private static final String POST_GRID_FRAGMENT_TAG = "post_grid_fragment_tag";
     private static final String KEYW_LIST_FRAGMENT_TAG = "keyw_list_fragment_tag";
 
@@ -116,9 +114,13 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public RecyclerView getListView() {
-        KeywordListFragment fragment = getKeywordListFragment();
-        if (fragment != null) return fragment.getListView();
+    public RecyclerView getListView(int tag) {
+        MvpListView fragment = null;
+        switch (tag) {
+            case KeywordListFragment.RV_TAG:     fragment = getKeywordListFragment();  break;
+            case PostSingleGridFragment.RV_TAG:  fragment = getPostGridFragment();     break;
+        }
+        if (fragment != null) return fragment.getListView(tag);
         return null;
     }
 
@@ -133,12 +135,28 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     @Override
+    public void openPostCreateScreen() {
+        navigationComponent.navigator().openPostCreateScreen(this);
+    }
+
+    @Override
+    public void openPostViewScreen(long postId) {
+        navigationComponent.navigator().openPostViewScreen(this, postId);
+    }
+
+    @Override
     public void showFab(boolean isVisible) {
         if (isVisible) {
             fab.show();
         } else {
             fab.hide();
         }
+    }
+
+    @Override
+    public void showPosts(boolean isEmpty) {
+        PostSingleGridFragment fragment = getPostGridFragment();
+        if (fragment != null) fragment.showPosts(isEmpty);
     }
 
     @Override
@@ -165,19 +183,36 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         if (fragment != null) fragment.showLoading();
     }
 
+    // ------------------------------------------
     @Override
-    public void retry() {
+    public void retryList() {
         presenter.retryKeywords();
     }
 
     @Override
-    public void onEmpty() {
+    public void onEmptyList() {
         navigationComponent.navigator().openKeywordCreateScreen(this);
     }
 
     @Override
-    public void onScroll(int itemsLeftToEnd) {
-        presenter.onScroll(itemsLeftToEnd);
+    public void onScrollList(int itemsLeftToEnd) {
+        presenter.onScrollKeywordsList(itemsLeftToEnd);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void retryGrid() {
+        presenter.retryPosts();
+    }
+
+    @Override
+    public void onEmptyGrid() {
+        // TODO: empty grid
+    }
+
+    @Override
+    public void onScrollGrid(int itemsLeftToEnd) {
+        // TODO: scroll grid
     }
 
     /* Internal */
@@ -186,5 +221,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private KeywordListFragment getKeywordListFragment() {
         FragmentManager fm = getSupportFragmentManager();
         return (KeywordListFragment) fm.findFragmentByTag(KEYW_LIST_FRAGMENT_TAG);
+    }
+
+    @Nullable
+    private PostSingleGridFragment getPostGridFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        return (PostSingleGridFragment) fm.findFragmentByTag(POST_GRID_FRAGMENT_TAG);
     }
 }

@@ -22,7 +22,7 @@ import hugo.weaving.DebugLog;
 public class MainPresenter extends BaseCompositePresenter<MainContract.View> implements MainContract.Presenter {
 
     KeywordListPresenter keywordListPresenter;
-    PostSingleGridPresenter postSingleGridPresenter;  // not added to list, fragment handles it automatically
+    PostSingleGridPresenter postSingleGridPresenter;
 
     boolean isKeywordBundleSelected;  // TODO: save instance state
     boolean isPostSelected;
@@ -31,6 +31,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     protected List<? extends MvpPresenter> providePresenterList() {
         List<MvpPresenter> list = new ArrayList<>();
         list.add(keywordListPresenter);
+        list.add(postSingleGridPresenter);
         return list;
     }
 
@@ -83,7 +84,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     }
 
     @Override
-    public void onScroll(int itemsLeftToEnd) {
+    public void onScrollKeywordsList(int itemsLeftToEnd) {
         keywordListPresenter.onScroll(itemsLeftToEnd);
     }
 

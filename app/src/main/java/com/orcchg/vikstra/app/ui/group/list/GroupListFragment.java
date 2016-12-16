@@ -29,6 +29,7 @@ import butterknife.OnClick;
 public class GroupListFragment extends BaseListFragment<GroupListContract.View, GroupListContract.Presenter>
         implements GroupListContract.View, GroupListActivity.ViewInteraction {
     private static final String BUNDLE_KEY_KEYWORDS_BUNDLE_ID = "bundle_key_keywords_bundle_id";
+    public static final int RV_TAG = Constant.ListTag.GROUP_LIST_SCREEN;
 
     private String DIALOG_TITLE, DIALOG_HINT;
 

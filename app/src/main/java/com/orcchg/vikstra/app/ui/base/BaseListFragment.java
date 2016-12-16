@@ -73,7 +73,7 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
     }
 
     @DebugLog @Override
-    public RecyclerView getListView() {
+    public RecyclerView getListView(int tag) {
         return recyclerView;
     }
 

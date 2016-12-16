@@ -60,7 +60,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @DebugLog @Override
     public void onStart() {
         if (isViewAttached()) {  // TODO: try to use BaseListPresenter
-            RecyclerView list = getView().getListView();
+            RecyclerView list = getView().getListView(GroupListFragment.RV_TAG);
             if (list.getAdapter() == null) {
                 list.setAdapter(listAdapter);
             }

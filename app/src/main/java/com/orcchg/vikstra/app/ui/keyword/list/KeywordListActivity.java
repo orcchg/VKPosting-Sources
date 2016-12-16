@@ -114,9 +114,9 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public RecyclerView getListView() {
+    public RecyclerView getListView(int tag) {
         KeywordListFragment fragment = getFragment();
-        if (fragment != null) return fragment.getListView();
+        if (fragment != null) return fragment.getListView(tag);
         return null;
     }
 
@@ -150,17 +150,17 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     @Override
-    public void retry() {
+    public void retryList() {
         presenter.retry();
     }
 
     @Override
-    public void onEmpty() {
+    public void onEmptyList() {
         navigationComponent.navigator().openKeywordCreateScreen(this);
     }
 
     @Override
-    public void onScroll(int itemsLeftToEnd) {
+    public void onScrollList(int itemsLeftToEnd) {
         presenter.onScroll(itemsLeftToEnd);
     }
 

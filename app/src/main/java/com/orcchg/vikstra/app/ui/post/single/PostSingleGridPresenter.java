@@ -55,6 +55,11 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         return adapter;
     }
 
+    @Override
+    protected int getListTag() {
+        return PostSingleGridFragment.RV_TAG;
+    }
+
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override

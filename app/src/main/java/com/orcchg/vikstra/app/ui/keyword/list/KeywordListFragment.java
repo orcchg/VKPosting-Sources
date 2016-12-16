@@ -13,6 +13,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseListFragment;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,6 +21,7 @@ import butterknife.OnClick;
 import timber.log.Timber;
 
 public class KeywordListFragment extends SimpleBaseListFragment implements KeywordListContract.SubView {
+    public static final int RV_TAG = Constant.ListTag.KEYWORD_LIST_SCREEN;
 
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.empty_view) View emptyView;
@@ -27,11 +29,11 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
     @BindView(R.id.error_view) View errorView;
     @OnClick(R.id.btn_empty_data)
     void onEmptyDataClick() {
-        iScrollList.onEmpty();
+        iScrollList.onEmptyList();
     }
     @OnClick(R.id.btn_retry)
     void onRetryClick() {
-        iScrollList.retry();
+        iScrollList.retryList();
     }
 
     private IScrollList iScrollList;
@@ -66,7 +68,7 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_items);
 
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
-        swipeRefreshLayout.setOnRefreshListener(() -> iScrollList.retry());
+        swipeRefreshLayout.setOnRefreshListener(() -> iScrollList.retryList());
 
         return rootView;
     }

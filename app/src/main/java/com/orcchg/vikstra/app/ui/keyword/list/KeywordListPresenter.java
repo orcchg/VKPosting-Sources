@@ -59,6 +59,11 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         return adapter;
     }
 
+    @Override
+    protected int getListTag() {
+        return KeywordListFragment.RV_TAG;
+    }
+
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override

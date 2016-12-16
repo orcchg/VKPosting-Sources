@@ -8,8 +8,14 @@ public class Constant {
         public static final int EXTERNAL_SCREEN_GALLERY = 9000;
         public static final int EXTERNAL_SCREEN_CAMERA = 9001;
 
-        public static final int KEYWORD_CREATE_SCREEN = 10000;
-        public static final int KEYWORD_LIST_SCREEN = 10001;
-        public static final int POST_CREATE_SCREEN = 10002;
+        public static final int KEYWORD_CREATE_SCREEN = 10010;
+        public static final int KEYWORD_LIST_SCREEN = 10011;
+        public static final int POST_CREATE_SCREEN = 10020;
+    }
+
+    public static final class ListTag {
+        public static final int GROUP_LIST_SCREEN = 1000;
+        public static final int KEYWORD_LIST_SCREEN = 1011;
+        public static final int POST_SINGLE_GRID_SCREEN = 1021;
     }
 }
