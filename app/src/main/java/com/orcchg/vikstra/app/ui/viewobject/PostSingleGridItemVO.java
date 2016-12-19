@@ -3,9 +3,10 @@ package com.orcchg.vikstra.app.ui.viewobject;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
+import com.orcchg.vikstra.app.ui.common.content.ISelectableModel;
 
 @AutoValue
-public abstract class PostSingleGridItemVO {
+public abstract class PostSingleGridItemVO implements ISelectableModel {
 
     protected boolean isSelected;
 
@@ -23,7 +24,7 @@ public abstract class PostSingleGridItemVO {
         public abstract PostSingleGridItemVO build();
     }
 
-    public abstract long id();
+    @Override public abstract long id();
     public abstract @Nullable String description();
     public abstract @Nullable MediaVO media();
     public abstract int mediaCount();
@@ -33,6 +34,6 @@ public abstract class PostSingleGridItemVO {
         return media() != null;
     }
 
-    public void setSelection(boolean isSelected) { this.isSelected = isSelected; }
-    public boolean getSelection() { return isSelected; }
+    @Override public void setSelection(boolean isSelected) { this.isSelected = isSelected; }
+    @Override public boolean getSelection() { return isSelected; }
 }

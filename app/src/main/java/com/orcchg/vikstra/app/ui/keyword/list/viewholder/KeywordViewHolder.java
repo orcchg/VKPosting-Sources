@@ -5,6 +5,7 @@ import android.view.View;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.base.widget.viewholder.NormalViewHolder;
 import com.orcchg.vikstra.app.ui.common.view.KeywordsFlowLayout;
 import com.orcchg.vikstra.app.ui.common.view.TitledFlowView;
@@ -33,7 +34,7 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
 
     @Override
     public void bind(KeywordListItemVO viewObject) {
-        boolean isSelectable = selectMode != BaseAdapter.SELECT_MODE_NONE;
+        boolean isSelectable = selectMode != BaseSelectAdapter.SELECT_MODE_NONE;
         String label = new StringBuilder().append(29).append('/').append(60).toString();  // TODO: use proper counters
         View.OnClickListener listener = createOnItemClickListener(viewObject, isSelectable);
         View.OnLongClickListener longListener = createOnItemLongClickListener(viewObject);

@@ -6,10 +6,11 @@ import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.keyword.list.viewholder.KeywordViewHolder;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 
-public class KeywordListAdapter extends BaseAdapter<KeywordViewHolder, KeywordListItemVO> {
+public class KeywordListAdapter extends BaseSelectAdapter<KeywordViewHolder, KeywordListItemVO> {
 
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> wrappedItemClickListener;
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener;
@@ -31,27 +32,5 @@ public class KeywordListAdapter extends BaseAdapter<KeywordViewHolder, KeywordLi
         viewHolder.setOnItemLongClickListener(onItemLongClickListener);
         viewHolder.setOnEditClickListener(editClickListener);
         return viewHolder;
-    }
-
-    /* Internal */
-    // --------------------------------------------------------------------------------------------
-    private BaseAdapter.OnItemClickListener<KeywordListItemVO> createWrappedClickListener() {
-        return (view, viewObject, position) -> {
-            switch (selectMode) {
-                case SELECT_MODE_NONE:
-                case SELECT_MODE_MULTI:
-                    // TODO: accumulate selected items
-                    break;
-                case SELECT_MODE_SINGLE:
-                    for (KeywordListItemVO model : models) {
-                        if (model.id() != viewObject.id()) {
-                            model.setSelection(false);
-                        }
-                    }
-                    notifyDataSetChanged();
-                    break;
-            }
-            if (onItemClickListener != null) onItemClickListener.onItemClick(view, viewObject, position);
-        };
     }
 }

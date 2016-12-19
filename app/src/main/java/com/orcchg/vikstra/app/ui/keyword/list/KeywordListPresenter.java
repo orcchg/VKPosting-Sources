@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;
@@ -25,13 +26,13 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private final GetKeywordBundles getKeywordBundlesUseCase;
 
     private long selectedKeywordBundleId = Constant.BAD_ID;
-    private final @BaseAdapter.SelectMode int selectMode;
+    private final @BaseSelectAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
 
     final KeywordBundleToVoMapper keywordBundleToVoMapper;
 
     @Inject
-    public KeywordListPresenter(@BaseAdapter.SelectMode int selectMode,
+    public KeywordListPresenter(@BaseSelectAdapter.SelectMode int selectMode,
             GetKeywordBundles getKeywordBundlesUseCase, KeywordBundleToVoMapper keywordBundleToVoMapper) {
         this.selectMode = selectMode;
         this.listAdapter = createListAdapter();

@@ -1,12 +1,13 @@
 package com.orcchg.vikstra.app.ui.viewobject;
 
 import com.google.auto.value.AutoValue;
+import com.orcchg.vikstra.app.ui.common.content.ISelectableModel;
 import com.orcchg.vikstra.domain.model.Keyword;
 
 import java.util.Collection;
 
 @AutoValue
-public abstract class KeywordListItemVO {
+public abstract class KeywordListItemVO implements ISelectableModel {
 
     protected boolean isSelected;
 
@@ -22,10 +23,10 @@ public abstract class KeywordListItemVO {
         public abstract KeywordListItemVO build();
     }
 
-    public abstract long id();
+    @Override public abstract long id();
     public abstract Collection<Keyword> keywords();
     public abstract String title();
 
-    public void setSelection(boolean isSelected) { this.isSelected = isSelected; }
-    public boolean getSelection() { return isSelected; }
+    @Override public void setSelection(boolean isSelected) { this.isSelected = isSelected; }
+    @Override public boolean getSelection() { return isSelected; }
 }

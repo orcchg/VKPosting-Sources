@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.post.single.injection.DaggerPostSingleGridComponent;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridComponent;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridModule;
@@ -25,7 +25,7 @@ public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.
     protected void injectDependencies() {
         postSingleGridComponent = DaggerPostSingleGridComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .postSingleGridModule(new PostSingleGridModule(BaseAdapter.SELECT_MODE_SINGLE))  // items are selectable
+                .postSingleGridModule(new PostSingleGridModule(BaseSelectAdapter.SELECT_MODE_SINGLE))  // items are selectable
                 .build();
         postSingleGridComponent.inject(this);
     }

@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
@@ -22,12 +23,12 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
 
     private final GetPosts getPostsUseCase;
 
-    private final @BaseAdapter.SelectMode int selectMode;
+    private final @BaseSelectAdapter.SelectMode int selectMode;
 
     final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
     @Inject
-    public PostListPresenter(@BaseAdapter.SelectMode int selectMode,
+    public PostListPresenter(@BaseSelectAdapter.SelectMode int selectMode,
              GetPosts getPostsUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.selectMode = selectMode;
         this.listAdapter = createListAdapter();

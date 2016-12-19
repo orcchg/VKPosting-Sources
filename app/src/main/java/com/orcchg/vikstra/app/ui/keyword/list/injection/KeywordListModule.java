@@ -1,7 +1,7 @@
 package com.orcchg.vikstra.app.ui.keyword.list.injection;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.injection.ListModule;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;
@@ -13,7 +13,7 @@ import dagger.Provides;
 @Module
 public class KeywordListModule extends ListModule {
 
-    public KeywordListModule(@BaseAdapter.SelectMode int selectMode) {
+    public KeywordListModule(@BaseSelectAdapter.SelectMode int selectMode) {
         super(selectMode);
     }
 

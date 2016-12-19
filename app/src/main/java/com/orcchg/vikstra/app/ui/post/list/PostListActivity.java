@@ -12,7 +12,7 @@ import android.view.View;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.post.list.injection.DaggerPostListComponent;
 import com.orcchg.vikstra.app.ui.post.list.injection.PostListComponent;
@@ -51,7 +51,7 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
     protected void injectDependencies() {
         postListComponent = DaggerPostListComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .postListModule(new PostListModule(BaseAdapter.SELECT_MODE_NONE))  // items aren't selectable
+                .postListModule(new PostListModule(BaseSelectAdapter.SELECT_MODE_NONE))  // items aren't selectable
                 .build();
         postListComponent.inject(this);
     }

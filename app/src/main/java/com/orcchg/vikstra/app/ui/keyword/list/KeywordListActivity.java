@@ -13,7 +13,7 @@ import android.view.View;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.DaggerKeywordListComponent;
@@ -53,7 +53,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     protected void injectDependencies() {
         keywordListComponent = DaggerKeywordListComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .keywordListModule(new KeywordListModule(BaseAdapter.SELECT_MODE_NONE))  // items aren't selectable
+                .keywordListModule(new KeywordListModule(BaseSelectAdapter.SELECT_MODE_NONE))  // items aren't selectable
                 .build();
         keywordListComponent.inject(this);
     }

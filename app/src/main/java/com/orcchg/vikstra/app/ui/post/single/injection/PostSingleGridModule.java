@@ -1,7 +1,7 @@
 package com.orcchg.vikstra.app.ui.post.single.injection;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.injection.ListModule;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
@@ -13,7 +13,7 @@ import dagger.Provides;
 @Module
 public class PostSingleGridModule extends ListModule {
 
-    public PostSingleGridModule(@BaseAdapter.SelectMode int selectMode) {
+    public PostSingleGridModule(@BaseSelectAdapter.SelectMode int selectMode) {
         super(selectMode);
     }
 

@@ -7,13 +7,14 @@ import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.base.widget.viewholder.BaseViewHolder;
 import com.orcchg.vikstra.app.ui.post.single.viewholder.NewPostSingleGridViewHolder;
 import com.orcchg.vikstra.app.ui.post.single.viewholder.PostSingleGridViewHolder;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.util.Constant;
 
-public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder, PostSingleGridItemVO> {
+public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewHolder, PostSingleGridItemVO> {
 
     protected static final int VIEW_TYPE_ADD_NEW = 3;
 
@@ -77,25 +78,5 @@ public class PostSingleGridAdapter extends BaseAdapter<PostSingleGridViewHolder,
                 .setId(Constant.BAD_ID)
                 .setMediaCount(0)
                 .build());
-    }
-
-    private BaseAdapter.OnItemClickListener<PostSingleGridItemVO> createWrappedClickListener() {
-        return (view, viewObject, position) -> {
-            switch (selectMode) {
-                case SELECT_MODE_NONE:
-                case SELECT_MODE_MULTI:
-                    // TODO: accumulate selected items
-                    break;
-                case SELECT_MODE_SINGLE:
-                    for (PostSingleGridItemVO model : models) {
-                        if (model.id() != viewObject.id()) {
-                            model.setSelection(false);
-                        }
-                    }
-                    notifyDataSetChanged();
-                    break;
-            }
-            if (onItemClickListener != null) onItemClickListener.onItemClick(view, viewObject, position);
-        };
     }
 }
