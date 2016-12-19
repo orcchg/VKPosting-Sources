@@ -15,7 +15,7 @@ import javax.inject.Inject;
 
 public class GetGroupsByKeywordsList extends MultiUseCase<VKApiCommunityArray, List<VKApiCommunityArray>> {
 
-    private Collection<Keyword> keywords;
+    private final Collection<Keyword> keywords;
 
     @Inject
     public GetGroupsByKeywordsList(Collection<Keyword> keywords, ThreadExecutor threadExecutor,

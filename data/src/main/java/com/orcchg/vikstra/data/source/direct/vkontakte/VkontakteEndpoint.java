@@ -8,10 +8,14 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupById;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeywordsList;
+import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost;
+import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPostToGroups;
 import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
+import com.vk.sdk.api.model.VKWallPostResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +54,7 @@ public class VkontakteEndpoint extends Endpoint {
      * Because one keyword generally corresponds to multiple groups, the resulting list is merged
      * and contains all retrieved groups.
      */
-    public void getGroupsByKeywords(final List<Keyword> keywords,
+    public void getGroupsByKeywords(List<Keyword> keywords,
                                     @Nullable final UseCase.OnPostExecuteCallback<List<Group>> callback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKApiCommunityArray>>() {
@@ -71,13 +75,48 @@ public class VkontakteEndpoint extends Endpoint {
      * Same as {@link VkontakteEndpoint#getGroupsByKeywords(List, UseCase.OnPostExecuteCallback)}, but
      * splits groups by keywords.
      */
-    public void getGroupsByKeywordsSplit(final Collection<Keyword> keywords,
+    public void getGroupsByKeywordsSplit(Collection<Keyword> keywords,
                                          @Nullable final UseCase.OnPostExecuteCallback<List<List<Group>>> callback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKApiCommunityArray>>() {
             @Override
             public void onFinish(List<VKApiCommunityArray> values) {
                 if (callback != null) callback.onFinish(convertSplit(values));
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) callback.onError(e);
+            }
+        });
+        useCase.execute();
+    }
+
+    public void makeWallPost(MakeWallPost.Parameters parameters,
+                             @Nullable final UseCase.OnPostExecuteCallback<GroupReport> callback) {
+        MakeWallPost useCase = new MakeWallPost(threadExecutor, postExecuteScheduler);
+        useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKWallPostResult>() {
+            @Override
+            public void onFinish(@Nullable VKWallPostResult values) {
+                if (callback != null) callback.onFinish(convert(values));
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) callback.onError(e);
+            }
+        });
+        useCase.execute();
+    }
+
+    public void makeWallPosts(MakeWallPostToGroups.Parameters parameters,
+                              @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
+        MakeWallPostToGroups useCase = new MakeWallPostToGroups(threadExecutor, postExecuteScheduler);
+        useCase.setParameters(parameters);
+        useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKWallPostResult>>() {
+            @Override
+            public void onFinish(@Nullable List<VKWallPostResult> values) {
+                if (callback != null) callback.onFinish(convert(values));
             }
 
             @Override
@@ -124,5 +163,19 @@ public class VkontakteEndpoint extends Endpoint {
                 .setMembersCount(vkGroup.members_count)
                 .setName(vkGroup.name)
                 .build();
+    }
+
+    private List<GroupReport> convert(List<VKWallPostResult> vkReports) {
+        List<GroupReport> reports = new ArrayList<>();
+        for (VKWallPostResult vkReport : vkReports) {
+            reports.add(convert(vkReport));
+        }
+        return reports;
+    }
+
+    private GroupReport convert(VKWallPostResult vkReport) {
+        return GroupReport.builder()
+                .setWallPostId(vkReport.post_id)
+                .build();  // TODO: impl with status data
     }
 }

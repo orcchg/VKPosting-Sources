@@ -23,7 +23,6 @@ public class GetGroupsByKeyword extends VkUseCase<VKApiCommunityArray> {
     }
 
     protected GetGroupsByKeyword(Keyword keyword) {
-        super();
         this.keyword = keyword;
     }
 

@@ -13,7 +13,9 @@ import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
+import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPostToGroups;
 import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
@@ -40,6 +42,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     int totalSelectedGroups, totalGroups;
     KeywordBundle inputKeywordBundle;
+    Post currentPost;
 
     final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
@@ -94,9 +97,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 if (childItem.isSelected()) selectedGroupIds.add(childItem.getId());
             }
         }
-        // TODO: post selected groups
+
+        MakeWallPostToGroups.Parameters parameters = new MakeWallPostToGroups.Parameters.Builder()
+                .setGroupIds(selectedGroupIds)
+                .setPost(currentPost)
+                .build();
+        vkontakteEndpoint.makeWallPosts(parameters, createMakeWallPostCallback());
         // TODO: show progress dialog
-        if (isViewAttached()) getView().openReportScreen(getPostByIdUseCase.getPostId());  // TODO: open screen at finish posing request
     }
 
     @Override
@@ -108,6 +115,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @DebugLog @Override
     public void retry() {
         groupParentItems.clear();
+        inputKeywordBundle = null;
+        currentPost = null;
         totalSelectedGroups = 0;
         totalGroups = 0;
         listAdapter.clear();
@@ -128,6 +137,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
             public void onFinish(@Nullable Post post) {
+                currentPost = post;
                 if (isViewAttached()) getView().showPost(postToSingleGridVoMapper.map(post));
             }
 
@@ -208,6 +218,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onError(Throwable e) {
                 if (isViewAttached()) getView().showError();
+            }
+        };
+    }
+
+    private UseCase.OnPostExecuteCallback<List<GroupReport>> createMakeWallPostCallback() {
+        return new UseCase.OnPostExecuteCallback<List<GroupReport>>() {
+            @Override
+            public void onFinish(@Nullable List<GroupReport> values) {
+                if (isViewAttached()) getView().openReportScreen(getPostByIdUseCase.getPostId());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO:
             }
         };
     }
