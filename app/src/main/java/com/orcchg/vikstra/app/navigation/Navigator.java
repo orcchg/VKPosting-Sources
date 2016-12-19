@@ -22,6 +22,7 @@ import com.orcchg.vikstra.app.ui.legacy.tab.TabActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.list.PostListActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
+import com.orcchg.vikstra.app.ui.report.ReportActivity;
 import com.orcchg.vikstra.app.util.ContentUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -122,6 +123,13 @@ public class Navigator {
 
     public void openPostViewScreen(@NonNull Context context, long postId) {
         Intent intent = PostViewActivity.getCallingIntent(context, postId);
+        context.startActivity(intent);
+    }
+
+    /* Report */
+    // ------------------------------------------
+    public void openReportScreen(@NonNull Context context, long postId) {
+        Intent intent = ReportActivity.getCallingIntent(context, postId);
         context.startActivity(intent);
     }
 

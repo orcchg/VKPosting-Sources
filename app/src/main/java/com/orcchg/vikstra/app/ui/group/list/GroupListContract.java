@@ -8,6 +8,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 public interface GroupListContract {
     interface View extends MvpListView {
         void openGroupDetailScreen(long groupId);
+        void openReportScreen(long postId);
         void showError();
         void showGroups(boolean isEmpty);
         void showPost(PostSingleGridItemVO viewObject);

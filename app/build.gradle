@@ -88,7 +88,8 @@ android {
                            'src/main/res-screen/post/create',
                            'src/main/res-screen/post/list',
                            'src/main/res-screen/post/single',
-                           'src/main/res-screen/post/view']
+                           'src/main/res-screen/post/view',
+                           'src/main/res-screen/report']
             file('src/main/res-screen')
                     .listFiles()
                     .each { res.srcDirs += it.path }

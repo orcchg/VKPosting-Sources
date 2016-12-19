@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/app_bar_with_toolbar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/standard_thumbnail_container_height"
+            android:layout_marginLeft="@dimen/standard_side_padding"
+            android:layout_marginStart="@dimen/standard_side_padding"
+            android:layout_marginRight="@dimen/standard_side_padding"
+            android:layout_marginEnd="@dimen/standard_side_padding">
+
+            <TextView
+                android:id="@+id/tv_info_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/standard_side_padding"
+                android:textColor="@color/description_color"
+                android:textSize="@dimen/standard_description_text_size"/>
+
+            <View
+                android:id="@+id/report_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="4dp"
+                android:layout_below="@id/tv_info_title"
+                android:layout_marginTop="@dimen/standard_side_padding"
+                android:background="@color/accent"/>
+
+            <FrameLayout
+                android:layout_width="@dimen/standard_thumbnail_size"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/grey_bg">
+
+                    <com.orcchg.vikstra.app.ui.common.view.PostThumbnail
+                        android:id="@+id/post_thumbnail"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/standard_thumbnail_size"
+                        android:layout_gravity="center"/>
+                </FrameLayout>
+            </FrameLayout>
+        </RelativeLayout>
+
+        <View
+            android:id="@+id/separator_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="4dp"
+            android:background="@color/list_line_separator"/>
+
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <include layout="@layout/toolbar_dropshadow" />
+
+</android.support.design.widget.CoordinatorLayout>

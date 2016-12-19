@@ -55,6 +55,11 @@
                   android:label="@string/post_view_screen_title"
                   android:theme="@style/AppTheme"/>
 
+        <!-- Report -->
+        <activity android:name=".app.ui.report.ReportActivity"
+                  android:label="@string/report_screen_title"
+                  android:theme="@style/AppTheme"/>
+
         <!-- Sample screens to be removed -->
         <activity android:name=".app.ui.legacy.tab.TabActivity"
                   android:label="@string/str_musicians_list"/>

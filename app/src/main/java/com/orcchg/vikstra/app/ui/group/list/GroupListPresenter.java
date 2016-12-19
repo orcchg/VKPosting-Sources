@@ -95,6 +95,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             }
         }
         // TODO: post selected groups
+        // TODO: show progress dialog
+        if (isViewAttached()) getView().openReportScreen(getPostByIdUseCase.getPostId());  // TODO: open screen at finish posing request
     }
 
     @Override

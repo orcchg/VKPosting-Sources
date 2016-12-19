@@ -155,6 +155,11 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     }
 
     @Override
+    public void openReportScreen(long postId) {
+        navigationComponent.navigator().openReportScreen(getActivity(), postId);
+    }
+
+    @Override
     public void showError() {
         swipeRefreshLayout.setRefreshing(false);
         recyclerView.setVisibility(View.GONE);
