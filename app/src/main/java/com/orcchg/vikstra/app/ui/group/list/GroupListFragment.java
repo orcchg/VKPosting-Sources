@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
 
     private String DIALOG_TITLE, DIALOG_HINT;
 
+    private ItemTouchHelper itemTouchHelper;
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.empty_view) View emptyView;
     @BindView(R.id.loading_view) View loadingView;
@@ -101,6 +103,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         initResources();
+        initItemTouchHelper();
         Bundle args = getArguments();
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
         postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
@@ -113,6 +116,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         View rootView = inflater.inflate(R.layout.fragment_group_list, container, false);
         ButterKnife.bind(this, rootView);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_items);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
         swipeRefreshLayout.setOnRefreshListener(() -> presenter.retry());
@@ -193,5 +197,19 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     private void initResources() {
         DIALOG_TITLE = getResources().getString(R.string.group_list_dialog_new_keyword_title);
         DIALOG_HINT = getResources().getString(R.string.group_list_dialog_new_keyword_hind);
+    }
+
+    private void initItemTouchHelper() {
+        itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                presenter.removeListItem(viewHolder.getAdapterPosition());
+            }
+        });
     }
 }

@@ -17,6 +17,7 @@ public interface GroupListContract {
     interface Presenter extends MvpPresenter<View> {
         void addKeyword(Keyword keyword);
         void postToGroups();
+        void removeListItem(int position);
         void retry();
     }
 }

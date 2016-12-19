@@ -97,6 +97,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // TODO: post selected groups
     }
 
+    @Override
+    public void removeListItem(int position) {
+        groupParentItems.remove(position);
+        listAdapter.notifyParentRemoved(position);
+    }
+
     @DebugLog @Override
     public void retry() {
         groupParentItems.clear();
