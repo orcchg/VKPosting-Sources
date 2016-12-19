@@ -14,7 +14,7 @@ public class PostModule {
 
     protected final long postId;
 
-    protected PostModule(long postId) {
+    public PostModule(long postId) {
         this.postId = postId;
     }
 

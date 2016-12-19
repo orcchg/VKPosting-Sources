@@ -80,7 +80,9 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Override
     public void onFabClick() {
         // TODO: use selected post Id
-        if (isViewAttached()) getView().openGroupListScreen(keywordListPresenter.getSelectedKeywordBundleId());
+        if (isViewAttached()) getView().openGroupListScreen(
+                keywordListPresenter.getSelectedKeywordBundleId(),
+                postSingleGridPresenter.getSelectedPostId());
     }
 
     @Override

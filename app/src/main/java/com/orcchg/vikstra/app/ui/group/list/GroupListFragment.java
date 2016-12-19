@@ -15,10 +15,12 @@ import android.view.ViewGroup;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseListFragment;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
+import com.orcchg.vikstra.app.ui.common.injection.KeywordModule;
+import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListComponent;
-import com.orcchg.vikstra.app.ui.group.list.injection.GroupListModule;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
+import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -29,6 +31,7 @@ import butterknife.OnClick;
 public class GroupListFragment extends BaseListFragment<GroupListContract.View, GroupListContract.Presenter>
         implements GroupListContract.View, GroupListActivity.ViewInteraction {
     private static final String BUNDLE_KEY_KEYWORDS_BUNDLE_ID = "bundle_key_keywords_bundle_id";
+    private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     public static final int RV_TAG = Constant.ListTag.GROUP_LIST_SCREEN;
 
     private String DIALOG_TITLE, DIALOG_HINT;
@@ -43,10 +46,12 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     }
 
     private GroupsCounterHolder groupsCounterHolder;
+    private PostThumbHolder postThumbHolder;
     private ShadowHolder shadowHolder;
 
     private GroupListComponent groupComponent;
     private long keywordBundleId = Constant.BAD_ID;
+    private long postId = Constant.BAD_ID;
 
     @NonNull @Override
     protected GroupListContract.Presenter createPresenter() {
@@ -57,7 +62,8 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     protected void injectDependencies() {
         groupComponent = DaggerGroupListComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .groupListModule(new GroupListModule(keywordBundleId))
+                .keywordModule(new KeywordModule(keywordBundleId))
+                .postModule(new PostModule(postId))
                 .build();
         groupComponent.inject(this);
     }
@@ -67,9 +73,10 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         return new LinearLayoutManager(getActivity());
     }
 
-    public static GroupListFragment newInstance(long keywordsBundleId) {
+    public static GroupListFragment newInstance(long keywordsBundleId, long postId) {
         Bundle args = new Bundle();
         args.putLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, keywordsBundleId);
+        args.putLong(BUNDLE_KEY_POST_ID, postId);
         GroupListFragment fragment = new GroupListFragment();
         fragment.setArguments(args);
         return fragment;
@@ -83,6 +90,9 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         if (GroupsCounterHolder.class.isInstance(activity)) {
             groupsCounterHolder = (GroupsCounterHolder) activity;
         }
+        if (PostThumbHolder.class.isInstance(activity)) {
+            postThumbHolder = (PostThumbHolder) activity;
+        }
         if (ShadowHolder.class.isInstance(activity)) {
             shadowHolder = (ShadowHolder) activity;
         }
@@ -93,6 +103,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         initResources();
         Bundle args = getArguments();
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
+        postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         super.onCreate(savedInstanceState);
     }
 
@@ -140,6 +151,17 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     }
 
     @Override
+    public void showError() {
+        swipeRefreshLayout.setRefreshing(false);
+        recyclerView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
+        loadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.VISIBLE);
+
+        if (shadowHolder != null) shadowHolder.showShadow(true);
+    }
+
+    @Override
     public void showGroups(boolean isEmpty) {
         swipeRefreshLayout.setRefreshing(false);
         loadingView.setVisibility(View.GONE);
@@ -157,14 +179,8 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     }
 
     @Override
-    public void showError() {
-        swipeRefreshLayout.setRefreshing(false);
-        recyclerView.setVisibility(View.GONE);
-        emptyView.setVisibility(View.GONE);
-        loadingView.setVisibility(View.GONE);
-        errorView.setVisibility(View.VISIBLE);
-
-        if (shadowHolder != null) shadowHolder.showShadow(true);
+    public void showPost(PostSingleGridItemVO viewObject) {
+        if (postThumbHolder != null) postThumbHolder.showPost(viewObject);
     }
 
     @Override

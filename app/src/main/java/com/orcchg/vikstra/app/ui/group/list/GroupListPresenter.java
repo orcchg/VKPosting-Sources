@@ -7,13 +7,16 @@ import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
+import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
+import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
+import com.orcchg.vikstra.domain.model.Post;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,25 +30,32 @@ import hugo.weaving.DebugLog;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
+    private final GetPostById getPostByIdUseCase;
+    private final GetKeywordBundleById getKeywordBundleByIdUseCase;
+    private final AddKeywordToBundle addKeywordToBundleUseCase;
+    private final VkontakteEndpoint vkontakteEndpoint;
+
     List<GroupParentItem> groupParentItems = new ArrayList<>();
     GroupListAdapter listAdapter;
-
-    private final GetKeywordBundleById getKeywordBundleByIdUseCase;
-    private final AddKeywordToBundle addKeywordToBundle;
-    private final VkontakteEndpoint vkontakteEndpoint;
 
     int totalSelectedGroups, totalGroups;
     KeywordBundle inputKeywordBundle;
 
+    final PostToSingleGridVoMapper postToSingleGridVoMapper;
+
     @Inject
-    GroupListPresenter(GetKeywordBundleById getKeywordBundleByIdUseCase, AddKeywordToBundle addKeywordToBundle,
-                       VkontakteEndpoint vkontakteEndpoint) {
+    GroupListPresenter(GetPostById getPostByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
+                       AddKeywordToBundle addKeywordToBundleUseCase, VkontakteEndpoint vkontakteEndpoint,
+                       PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
+        this.getPostByIdUseCase = getPostByIdUseCase;
+        this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
         this.getKeywordBundleByIdUseCase = getKeywordBundleByIdUseCase;
         this.getKeywordBundleByIdUseCase.setPostExecuteCallback(createGetKeywordBundleByIdCallback());
-        this.addKeywordToBundle = addKeywordToBundle;
-        this.addKeywordToBundle.setPostExecuteCallback(createAddKeywordToBundleCallback());
+        this.addKeywordToBundleUseCase = addKeywordToBundleUseCase;
+        this.addKeywordToBundleUseCase.setPostExecuteCallback(createAddKeywordToBundleCallback());
         this.vkontakteEndpoint = vkontakteEndpoint;
+        this.postToSingleGridVoMapper = postToSingleGridVoMapper;
     }
 
     private GroupListAdapter createListAdapter(List<GroupParentItem> items, OnGroupClickListener listener,
@@ -72,8 +82,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @Override
     public void addKeyword(Keyword keyword) {
-        addKeywordToBundle.setParameters(new AddKeywordToBundle.Parameters(keyword));
-        addKeywordToBundle.execute();
+        addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
+        addKeywordToBundleUseCase.execute();
     }
 
     @Override
@@ -100,11 +110,26 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     protected void freshStart() {
+        getPostByIdUseCase.execute();
         getKeywordBundleByIdUseCase.execute();
     }
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
+    private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
+        return new UseCase.OnPostExecuteCallback<Post>() {
+            @Override
+            public void onFinish(@Nullable Post post) {
+                if (isViewAttached()) getView().showPost(postToSingleGridVoMapper.map(post));
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO: impl
+            }
+        };
+    }
+
     private UseCase.OnPostExecuteCallback<KeywordBundle> createGetKeywordBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
             @Override

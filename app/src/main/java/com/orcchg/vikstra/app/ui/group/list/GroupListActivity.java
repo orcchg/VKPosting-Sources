@@ -8,26 +8,29 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseActivity;
+import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
+import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GroupListActivity extends SimpleBaseActivity implements GroupsCounterHolder, ShadowHolder {
+public class GroupListActivity extends SimpleBaseActivity implements GroupsCounterHolder,
+        PostThumbHolder, ShadowHolder {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
+    private static final String EXTRA_POST_ID = "extra_post_id";
 
     private String INFO_TITLE;
 
     @BindView(R.id.tv_info_title) TextView selectedGroupsCountView;
-    @BindView(R.id.iv_post_thumb) ImageView postThumbnailView;
+    @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     // delegate view event to child fragment
@@ -45,10 +48,12 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     }
 
     private long keywordBundleId = Constant.BAD_ID;
+    private long postId = Constant.BAD_ID;
 
-    public static Intent getCallingIntent(@NonNull Context context, long keywordBunldeId) {
+    public static Intent getCallingIntent(@NonNull Context context, long keywordBunldeId, long postId) {
         Intent intent = new Intent(context, GroupListActivity.class);
         intent.putExtra(EXTRA_KEYWORD_BUNDLE_ID, keywordBunldeId);
+        intent.putExtra(EXTRA_POST_ID, postId);
         return intent;
     }
 
@@ -75,16 +80,18 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     // --------------------------------------------------------------------------------------------
     private void initData() {
         keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+        postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
     }
 
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
+        postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostViewScreen(this, postId));
         updateSelectedGroupsCounter(0, 0);
 
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
-            GroupListFragment fragment = GroupListFragment.newInstance(keywordBundleId);
+            GroupListFragment fragment = GroupListFragment.newInstance(keywordBundleId, postId);
             fm.beginTransaction().replace(R.id.container, fragment, FRAGMENT_TAG).commit();
             fm.executePendingTransactions();
         }
@@ -102,6 +109,11 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
             }
             return false;
         });
+    }
+
+    @Override
+    public void showPost(PostSingleGridItemVO viewObject) {
+        postThumbnail.setPost(viewObject);
     }
 
     @Override

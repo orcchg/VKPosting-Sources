@@ -61,7 +61,7 @@ public class DialogProvider {
                         case 1:
                             activity.getNavigationComponent().navigator().openCamera(activity, true);
                             break;
-                        case 2:
+                        case 2:  // TODO: impl albums photo upload
                             activity.getNavigationComponent().navigator().openSocialAlbumsScreen(activity);
                             break;
                     }

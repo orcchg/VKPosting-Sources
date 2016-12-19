@@ -20,6 +20,6 @@
     <array name="dialog_upload_photo_variants">
         <item name="dialog_upload_photo_variant_gallery">Gallery</item>
         <item name="dialog_upload_photo_variant_camera">Camera</item>
-        <item name="dialog_upload_photo_variant_albums">Albums</item>
+        <!-- <item name="dialog_upload_photo_variant_albums">Albums</item> -->
     </array>
 </resources>

@@ -6,7 +6,7 @@ import com.orcchg.vikstra.app.ui.post.single.PostSingleGridContract;
 
 public interface MainContract {
     interface View extends KeywordListContract.View, PostSingleGridContract.View {
-        void openGroupListScreen(long keywordBundleId);
+        void openGroupListScreen(long keywordBundleId, long postId);
         void showFab(boolean isVisible);
     }
 
