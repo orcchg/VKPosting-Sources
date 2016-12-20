@@ -11,13 +11,14 @@ import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupById;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeywordsList;
 import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPostToGroups;
+import com.orcchg.vikstra.domain.interactor.vkontakte.media.UploadPhotos;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
-import com.orcchg.vikstra.domain.model.Media;
 import com.orcchg.vikstra.domain.model.Post;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
+import com.vk.sdk.api.model.VKAttachments;
 import com.vk.sdk.api.model.VKPhotoArray;
 import com.vk.sdk.api.model.VKWallPostResult;
 
@@ -107,43 +108,26 @@ public class VkontakteEndpoint extends Endpoint {
     // TODO: implement various Media types {photo, video, file, ...}
     public void makeWallPosts(Collection<Long> groupIds, Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
+        MakeWallPostToGroups.Parameters.Builder paramsBuilder = new MakeWallPostToGroups.Parameters.Builder()
+                .setGroupIds(groupIds)
+                .setMessage(post.description());
         if (post.media() != null) {
             imageLoader.loadImages(post.media(), new UseCase.OnPostExecuteCallback<List<Bitmap>>() {
                 @Override
                 public void onFinish(@Nullable List<Bitmap> bitmaps) {
-                    // TODO: impl
+                    UploadPhotos useCase = new UploadPhotos(threadExecutor, postExecuteScheduler);
+                    useCase.setParameters(new UploadPhotos.Parameters(bitmaps));
+                    useCase.setPostExecuteCallback(createUploadPhotosCallback(paramsBuilder, callback));
                 }
 
                 @Override
                 public void onError(Throwable e) {
-                    // TODO: impl
+                    if (callback != null) callback.onError(e);
                 }
             });
         } else {
-            // TODO: no media
+            makeWallPosts(paramsBuilder.build(), callback);
         }
-
-        UploadMediaToVk uploadUseCase = new UploadMediaToVk(threadExecutor, postExecuteScheduler);
-        uploadUseCase.setParameters(new UploadMediaToVk.Parameters(post));
-        uploadUseCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKPhotoArray>() {
-            @Override
-            public void onFinish(@Nullable VKPhotoArray vkMediaArray) {
-                if (vkMediaArray != null && !vkMediaArray.isEmpty()) {
-                    MakeWallPostToGroups.Parameters xparameters = new MakeWallPostToGroups.Parameters.Builder()
-                            .setGroupIds(groupIds)
-                            .setAttachments()
-                            .setMessage(post.description())
-                            .build();
-                    makeWallPosts(xparameters, callback);
-                }
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                if (callback != null) callback.onError(e);
-            }
-        });
-        uploadUseCase.execute();
     }
 
     /* Internal */
@@ -164,6 +148,33 @@ public class VkontakteEndpoint extends Endpoint {
             }
         });
         useCase.execute();
+    }
+
+    // ------------------------------------------
+    /**
+     * Creates callback on finish uploading photos to Vkontakte and then
+     * makes wall posts, as initially intented.
+     */
+    UseCase.OnPostExecuteCallback<List<VKPhotoArray>> createUploadPhotosCallback(
+            MakeWallPostToGroups.Parameters.Builder paramsBuilder,
+            @Nullable UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
+        return new UseCase.OnPostExecuteCallback<List<VKPhotoArray>>() {
+            @Override
+            public void onFinish(@Nullable List<VKPhotoArray> photos) {
+                // TODO: NPE
+                VKAttachments attachments = new VKAttachments();
+                for (VKPhotoArray photo : photos) {
+                    attachments.add(photo.get(0));
+                }
+                paramsBuilder.setAttachments(attachments);
+                makeWallPosts(paramsBuilder.build(), callback);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) callback.onError(e);
+            }
+        };
     }
 
     /* Conversion */

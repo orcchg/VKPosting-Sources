@@ -32,6 +32,10 @@ public class UploadPhoto extends VkUseCase<VKPhotoArray> {
         super(threadExecutor, postExecuteScheduler);
     }
 
+    protected UploadPhoto(Bitmap bitmap) {
+        parameters = new Parameters(bitmap);
+    }
+
     public void setParameters(Parameters parameters) {
         this.parameters = parameters;
     }
