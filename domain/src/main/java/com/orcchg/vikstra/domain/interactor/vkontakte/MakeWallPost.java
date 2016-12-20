@@ -3,7 +3,6 @@ package com.orcchg.vikstra.domain.interactor.vkontakte;
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
-import com.orcchg.vikstra.domain.model.Post;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
@@ -18,18 +17,18 @@ public class MakeWallPost extends VkUseCase<VKWallPostResult> {
     public static class Parameters {
         String ownerId;
         String message;
-        Post post;
+        VKAttachments attachments;
 
         Parameters(Builder builder) {
             this.ownerId = builder.ownerId;
             this.message = builder.message;
-            this.post = builder.post;
+            this.attachments = builder.attachments;
         }
 
         public static class Builder {
             String ownerId;
             String message;
-            Post post;
+            VKAttachments attachments;
 
             public Builder setOwnerId(String ownerId) {
                 this.ownerId = ownerId;
@@ -41,8 +40,8 @@ public class MakeWallPost extends VkUseCase<VKWallPostResult> {
                 return this;
             }
 
-            public Builder setAttachments(Post post) {
-                this.post = post;
+            public Builder setAttachments(VKAttachments attachments) {
+                this.attachments = attachments;
                 return this;
             }
 
@@ -72,7 +71,7 @@ public class MakeWallPost extends VkUseCase<VKWallPostResult> {
         VKParameters params = new VKParameters();
         params.put(VKApiConst.OWNER_ID, parameters.ownerId);  // destination user / community id
         params.put(VKApiConst.MESSAGE, parameters.message);
-        params.put(VKApiConst.ATTACHMENTS, convert(parameters.post));
+        params.put(VKApiConst.ATTACHMENTS, parameters.attachments);
         params.put(VKApiConst.EXTENDED, 1);
         return VKApi.wall().post(params);
     }
@@ -81,12 +80,5 @@ public class MakeWallPost extends VkUseCase<VKWallPostResult> {
     protected VKWallPostResult parseVkResponse() {
 //        return new Gson().fromJson(vkResponse.responseString, VKWallPostResult.class);
         return (VKWallPostResult) vkResponse.parsedModel;
-    }
-
-    /* Internal */
-    // --------------------------------------------------------------------------------------------
-    private VKAttachments convert(Post post) {
-        // TODO: convert post to attach
-        return new VKAttachments();
     }
 }

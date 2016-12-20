@@ -13,7 +13,6 @@ import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
-import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPostToGroups;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
@@ -98,11 +97,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             }
         }
 
-        MakeWallPostToGroups.Parameters parameters = new MakeWallPostToGroups.Parameters.Builder()
-                .setGroupIds(selectedGroupIds)
-                .setPost(currentPost)
-                .build();
-        vkontakteEndpoint.makeWallPosts(parameters, createMakeWallPostCallback());
+        vkontakteEndpoint.makeWallPosts(selectedGroupIds, currentPost, createMakeWallPostCallback());
         // TODO: show progress dialog
     }
 

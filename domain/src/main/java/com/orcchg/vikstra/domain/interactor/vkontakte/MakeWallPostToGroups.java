@@ -5,7 +5,7 @@ import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
-import com.orcchg.vikstra.domain.model.Post;
+import com.vk.sdk.api.model.VKAttachments;
 import com.vk.sdk.api.model.VKWallPostResult;
 
 import java.util.ArrayList;
@@ -18,24 +18,32 @@ public class MakeWallPostToGroups extends MultiUseCase<VKWallPostResult, List<VK
 
     public static class Parameters {
         Collection<Long> groupIds;
-        Post post;
+        VKAttachments attachments;
+        String message;
 
         Parameters(Builder builder) {
             this.groupIds = builder.groupIds;
-            this.post = builder.post;
+            this.attachments = builder.attachments;
+            this.message = builder.message;
         }
 
         public static class Builder {
             Collection<Long> groupIds;
-            Post post;
+            VKAttachments attachments;
+            String message;
 
             public Builder setGroupIds(Collection<Long> groupIds) {
                 this.groupIds = groupIds;
                 return this;
             }
 
-            public Builder setPost(Post post) {
-                this.post = post;
+            public Builder setAttachments(VKAttachments attachments) {
+                this.attachments = attachments;
+                return this;
+            }
+
+            public Builder setMessage(String message) {
+                this.message = message;
                 return this;
             }
 
@@ -66,8 +74,8 @@ public class MakeWallPostToGroups extends MultiUseCase<VKWallPostResult, List<VK
         for (long groupId : parameters.groupIds) {
             MakeWallPost.Parameters xparameters = new MakeWallPost.Parameters.Builder()
                     .setOwnerId(Long.toString(groupId))
-                    .setMessage(parameters.post.description())
-                    .setAttachments(parameters.post)
+                    .setAttachments(parameters.attachments)
+                    .setMessage(parameters.message)
                     .build();
             MakeWallPost useCase = new MakeWallPost();
             useCase.setParameters(xparameters);

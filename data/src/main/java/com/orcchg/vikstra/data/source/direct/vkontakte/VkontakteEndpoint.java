@@ -8,13 +8,15 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupById;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeywordsList;
-import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost;
 import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPostToGroups;
+import com.orcchg.vikstra.domain.interactor.vkontakte.UploadMediaToVk;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.model.Post;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
+import com.vk.sdk.api.model.VKPhotoArray;
 import com.vk.sdk.api.model.VKWallPostResult;
 
 import java.util.ArrayList;
@@ -30,6 +32,8 @@ public class VkontakteEndpoint extends Endpoint {
         super(threadExecutor, postExecuteScheduler);
     }
 
+    /* Group */
+    // ------------------------------------------
     /**
      * Get group {@link Group} by it's string id {@param id}.
      */
@@ -92,13 +96,23 @@ public class VkontakteEndpoint extends Endpoint {
         useCase.execute();
     }
 
-    public void makeWallPost(MakeWallPost.Parameters parameters,
-                             @Nullable final UseCase.OnPostExecuteCallback<GroupReport> callback) {
-        MakeWallPost useCase = new MakeWallPost(threadExecutor, postExecuteScheduler);
-        useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKWallPostResult>() {
+    /* Post */
+    // ------------------------------------------
+    public void makeWallPosts(Collection<Long> groupIds, Post post,
+                              @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
+        UploadMediaToVk uploadUseCase = new UploadMediaToVk(threadExecutor, postExecuteScheduler);
+        uploadUseCase.setParameters(new UploadMediaToVk.Parameters(post));
+        uploadUseCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKPhotoArray>() {
             @Override
-            public void onFinish(@Nullable VKWallPostResult values) {
-                if (callback != null) callback.onFinish(convert(values));
+            public void onFinish(@Nullable VKPhotoArray vkMediaArray) {
+                if (vkMediaArray != null && !vkMediaArray.isEmpty()) {
+                    MakeWallPostToGroups.Parameters xparameters = new MakeWallPostToGroups.Parameters.Builder()
+                            .setGroupIds(groupIds)
+                            .setAttachments()
+                            .setMessage(post.description())
+                            .build();
+                    makeWallPosts(xparameters, callback);
+                }
             }
 
             @Override
@@ -106,11 +120,13 @@ public class VkontakteEndpoint extends Endpoint {
                 if (callback != null) callback.onError(e);
             }
         });
-        useCase.execute();
+        uploadUseCase.execute();
     }
 
-    public void makeWallPosts(MakeWallPostToGroups.Parameters parameters,
-                              @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    private void makeWallPosts(MakeWallPostToGroups.Parameters parameters,
+                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
         MakeWallPostToGroups useCase = new MakeWallPostToGroups(threadExecutor, postExecuteScheduler);
         useCase.setParameters(parameters);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKWallPostResult>>() {
@@ -127,10 +143,7 @@ public class VkontakteEndpoint extends Endpoint {
         useCase.execute();
     }
 
-    /* Internal */
-    // --------------------------------------------------------------------------------------------
-
-    /* Convertion */
+    /* Conversion */
     // --------------------------------------------------------------------------------------------
     private List<Group> convertMerge(List<VKApiCommunityArray> vkModels) {
         List<Group> groups = new ArrayList<>();

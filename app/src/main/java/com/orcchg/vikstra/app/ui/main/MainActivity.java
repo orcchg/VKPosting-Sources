@@ -72,7 +72,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        VKSdk.login(this);  // TODO: scopes
+        VKSdk.login(this, "wall");  // TODO: scopes
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
