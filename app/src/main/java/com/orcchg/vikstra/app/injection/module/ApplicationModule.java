@@ -2,8 +2,11 @@ package com.orcchg.vikstra.app.injection.module;
 
 import android.content.Context;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
 import com.orcchg.vikstra.app.AndroidApplication;
 import com.orcchg.vikstra.app.executor.UIThread;
+import com.orcchg.vikstra.data.source.direct.ImageLoader;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.data.source.local.DatabaseHelper;
 import com.orcchg.vikstra.data.source.local.artist.ArtistLocalSource;
@@ -58,6 +61,11 @@ public class ApplicationModule {
         return application.getApplicationContext();
     }
 
+    @Provides @Singleton
+    RequestManager provideGlide() {
+        return Glide.with(application.getApplicationContext());
+    }
+
     /* Thread pool */
     // ------------------------------------------
     @Provides @Singleton
@@ -93,8 +101,15 @@ public class ApplicationModule {
     }
 
     @Provides @Singleton
-    VkontakteEndpoint provideVkontakteEndpoint(ThreadExecutor executor, PostExecuteScheduler scheduler) {
-        return new VkontakteEndpoint(executor, scheduler);
+    ImageLoader provideImageLoader(RequestManager glide, ThreadExecutor executor,
+                                   PostExecuteScheduler scheduler) {
+        return new ImageLoader(glide, executor, scheduler);
+    }
+
+    @Provides @Singleton
+    VkontakteEndpoint provideVkontakteEndpoint(ImageLoader imageLoader, ThreadExecutor executor,
+                                               PostExecuteScheduler scheduler) {
+        return new VkontakteEndpoint(imageLoader, executor, scheduler);
     }
 
     // TODO: remove

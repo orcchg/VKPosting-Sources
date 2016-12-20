@@ -1,18 +1,20 @@
 package com.orcchg.vikstra.data.source.direct.vkontakte;
 
+import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.data.source.direct.Endpoint;
+import com.orcchg.vikstra.data.source.direct.ImageLoader;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupById;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeywordsList;
 import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPostToGroups;
-import com.orcchg.vikstra.domain.interactor.vkontakte.UploadMediaToVk;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.model.Media;
 import com.orcchg.vikstra.domain.model.Post;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
@@ -27,9 +29,13 @@ import javax.inject.Inject;
 
 public class VkontakteEndpoint extends Endpoint {
 
+    private final ImageLoader imageLoader;
+
     @Inject
-    public VkontakteEndpoint(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
+    public VkontakteEndpoint(ImageLoader imageLoader, ThreadExecutor threadExecutor,
+                             PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
+        this.imageLoader = imageLoader;
     }
 
     /* Group */
@@ -98,8 +104,25 @@ public class VkontakteEndpoint extends Endpoint {
 
     /* Post */
     // ------------------------------------------
+    // TODO: implement various Media types {photo, video, file, ...}
     public void makeWallPosts(Collection<Long> groupIds, Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
+        if (post.media() != null) {
+            imageLoader.loadImages(post.media(), new UseCase.OnPostExecuteCallback<List<Bitmap>>() {
+                @Override
+                public void onFinish(@Nullable List<Bitmap> bitmaps) {
+                    // TODO: impl
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    // TODO: impl
+                }
+            });
+        } else {
+            // TODO: no media
+        }
+
         UploadMediaToVk uploadUseCase = new UploadMediaToVk(threadExecutor, postExecuteScheduler);
         uploadUseCase.setParameters(new UploadMediaToVk.Parameters(post));
         uploadUseCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKPhotoArray>() {

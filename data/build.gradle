@@ -63,6 +63,7 @@ dependencies {
     compile dataDependencies.androidAnnotations
     compile dataDependencies.dagger
     compile dataDependencies.eventbus
+    compile dataDependencies.glide
     compile dataDependencies.gson
     compile dataDependencies.javaxAnnotation
     compile dataDependencies.javaxInject

@@ -113,6 +113,7 @@ ext {
             dagger:               "com.google.dagger:dagger:${daggerVersion}",
             daggerCompiler:       "com.google.dagger:dagger-compiler:${daggerVersion}",
             eventbus:             "de.greenrobot:eventbus:${eventbusVersion}",
+            glide:                "com.github.bumptech.glide:glide:${glideVersion}",
             gson:                 "com.google.code.gson:gson:${gsonVersion}",
             javaxAnnotation:      "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
             javaxInject:          "javax.inject:javax.inject:${javaxInjectVersion}",

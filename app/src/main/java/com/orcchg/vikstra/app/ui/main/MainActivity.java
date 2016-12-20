@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
             @Override
-            public void onResult(VKAccessToken res) {
+            public void onResult(VKAccessToken accessToken) {
                 // TODO: User passed Authorization
             }
 

@@ -2,7 +2,9 @@ package com.orcchg.vikstra.app.injection.component;
 
 import android.content.Context;
 
+import com.bumptech.glide.RequestManager;
 import com.orcchg.vikstra.app.injection.module.ApplicationModule;
+import com.orcchg.vikstra.data.source.direct.ImageLoader;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.data.source.remote.injection.CloudComponent;
 import com.orcchg.vikstra.data.source.remote.injection.CloudModule;
@@ -27,6 +29,7 @@ public interface ApplicationComponent extends CloudComponent {
     /* Context */
     // ------------------------------------------
     Context context();
+    RequestManager glide();
 
     /* Thread pool */
     // ------------------------------------------
@@ -36,6 +39,7 @@ public interface ApplicationComponent extends CloudComponent {
     /* Remote & Local data source */
     // ------------------------------------------
     VkontakteEndpoint vkontakteEndpoint();
+    ImageLoader imageLoader();
 
     /* Repository */
     // ------------------------------------------
