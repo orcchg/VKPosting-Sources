@@ -16,7 +16,7 @@
         android:drawablePadding="8dp"
         android:gravity="center"
         android:text="@string/empty_data"
-        android:textColor="@color/description_color"
+        android:textColor="@color/textSecondary"
         android:textSize="@dimen/standard_title_text_size"/>
 
     <Button

@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:textColor="@color/title_color"
+            android:textColor="@color/textPrimary"
             android:textSize="@dimen/group_list_child_item_title_size"/>
 
         <TextView
@@ -31,7 +31,7 @@
             android:drawableRight="@drawable/ic_person_outline_black_18dp"
             android:drawableTint="@color/black_40_opacity"
             android:gravity="center"
-            android:textColor="@color/description_color"
+            android:textColor="@color/textSecondary"
             android:textSize="@dimen/group_list_child_item_title_size"/>
 
         <Switch

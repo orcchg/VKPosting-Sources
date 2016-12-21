@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <dimen name="title_size">16sp</dimen>
-
-    <dimen name="dialog_width">960dp</dimen>
-    <dimen name="dialog_height">600dp</dimen>
-    <dimen name="grid_card_size">240dp</dimen>
-    <dimen name="grid_card_spacing">8dp</dimen>
-</resources>

@@ -17,7 +17,7 @@
         android:layout_alignParentEnd="true"
         android:gravity="center"
         android:text="@string/error_btn_label"
-        android:textColor="?colorAccent"
+        android:textColor="?attr/colorAccent"
         style="@style/Widget.AppCompat.Button.Borderless"/>
 
     <TextView
@@ -27,7 +27,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:text="@string/error_text_extended"
-        android:textColor="@color/error_color"
-        android:textSize="@dimen/title_size"
+        android:textColor="@color/textError"
+        android:textSize="@dimen/standard_title_text_size"
         android:gravity="center"/>
 </RelativeLayout>

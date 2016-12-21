@@ -8,10 +8,13 @@
 
     <TextView
         android:id="@+id/tv_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:text="@string/error_text"
         android:layout_centerInParent="true"
         android:gravity="center"
-        style="@style/TextView.Error"/>
+        android:textColor="@color/textError"
+        android:textSize="@dimen/standard_title_text_size"/>
 
     <Button
         android:id="@+id/btn_retry"

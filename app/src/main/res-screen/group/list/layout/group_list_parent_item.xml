@@ -19,7 +19,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:textColor="@color/title_color"
+            android:textColor="@color/textPrimary"
             android:textSize="@dimen/group_list_parent_item_title_size"/>
 
         <TextView
@@ -29,7 +29,7 @@
             android:layout_marginLeft="@dimen/standard_side_padding"
             android:layout_marginStart="@dimen/standard_side_padding"
             android:gravity="center_vertical"
-            android:textColor="@color/description_color"
+            android:textColor="@color/textSecondary"
             android:textSize="@dimen/group_list_parent_item_title_size"/>
 
         <FrameLayout

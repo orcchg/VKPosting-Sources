@@ -19,6 +19,7 @@
     <color name="textSecondary">#757575</color>
     <color name="textDivider">#BDBDBD</color>
     <color name="textIcons">#FFFFFF</color>
+    <color name="textError">#B71C1C</color>
 
     <array name="colorsPrimary">
         <item>#D32F2F</item>
