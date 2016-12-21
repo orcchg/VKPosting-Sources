@@ -27,6 +27,10 @@ public class MakeWallPostToGroups extends MultiUseCase<VKWallPostResult, List<VK
             this.message = builder.message;
         }
 
+        public void setAttachments(VKAttachments attachments) {
+            this.attachments = attachments;
+        }
+
         public static class Builder {
             Collection<Long> groupIds;
             VKAttachments attachments;

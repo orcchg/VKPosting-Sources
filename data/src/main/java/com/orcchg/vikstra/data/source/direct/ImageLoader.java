@@ -16,6 +16,8 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class ImageLoader extends Endpoint {
 
     private final RequestManager glide;
@@ -44,9 +46,13 @@ public class ImageLoader extends Endpoint {
     }
 
     public void loadImages(List<Media> media, @Nullable UseCase.OnPostExecuteCallback<List<Bitmap>> callback) {
-        LoadPhotos useCase = new LoadPhotos(media, this, threadExecutor, postExecuteScheduler);
-        useCase.setPostExecuteCallback(callback);
-        useCase.execute();
+        if (media != null && !media.isEmpty()) {
+            LoadPhotos useCase = new LoadPhotos(media, this, threadExecutor, postExecuteScheduler);
+            useCase.setPostExecuteCallback(callback);
+            useCase.execute();
+        } else {
+            Timber.v("Nothing to be done with empty list of media");
+        }
     }
 
     /* Internal use-cases */

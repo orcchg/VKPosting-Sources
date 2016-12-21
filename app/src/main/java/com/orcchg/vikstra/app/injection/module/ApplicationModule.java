@@ -7,6 +7,7 @@ import com.bumptech.glide.RequestManager;
 import com.orcchg.vikstra.app.AndroidApplication;
 import com.orcchg.vikstra.app.executor.UIThread;
 import com.orcchg.vikstra.data.source.direct.ImageLoader;
+import com.orcchg.vikstra.data.source.direct.vkontakte.VkAttachLocalCache;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.data.source.local.DatabaseHelper;
 import com.orcchg.vikstra.data.source.local.artist.ArtistLocalSource;
@@ -107,9 +108,9 @@ public class ApplicationModule {
     }
 
     @Provides @Singleton
-    VkontakteEndpoint provideVkontakteEndpoint(ImageLoader imageLoader, ThreadExecutor executor,
-                                               PostExecuteScheduler scheduler) {
-        return new VkontakteEndpoint(imageLoader, executor, scheduler);
+    VkontakteEndpoint provideVkontakteEndpoint(ImageLoader imageLoader, VkAttachLocalCache attachLocalCache,
+                                               ThreadExecutor executor, PostExecuteScheduler scheduler) {
+        return new VkontakteEndpoint(imageLoader, attachLocalCache, executor, scheduler);
     }
 
     // TODO: remove

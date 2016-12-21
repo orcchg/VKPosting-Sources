@@ -5,6 +5,7 @@ import android.content.Context;
 import com.bumptech.glide.RequestManager;
 import com.orcchg.vikstra.app.injection.module.ApplicationModule;
 import com.orcchg.vikstra.data.source.direct.ImageLoader;
+import com.orcchg.vikstra.data.source.direct.vkontakte.VkAttachLocalCache;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.data.source.remote.injection.CloudComponent;
 import com.orcchg.vikstra.data.source.remote.injection.CloudModule;
@@ -40,6 +41,7 @@ public interface ApplicationComponent extends CloudComponent {
     // ------------------------------------------
     VkontakteEndpoint vkontakteEndpoint();
     ImageLoader imageLoader();
+    VkAttachLocalCache attachLocalCache();
 
     /* Repository */
     // ------------------------------------------

@@ -15,9 +15,11 @@ import com.orcchg.vikstra.domain.interactor.vkontakte.media.UploadPhotos;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.model.Media;
 import com.orcchg.vikstra.domain.model.Post;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
+import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKAttachments;
 import com.vk.sdk.api.model.VKPhotoArray;
 import com.vk.sdk.api.model.VKWallPostResult;
@@ -31,12 +33,14 @@ import javax.inject.Inject;
 public class VkontakteEndpoint extends Endpoint {
 
     private final ImageLoader imageLoader;
+    private final VkAttachLocalCache attachLocalCache;
 
     @Inject
-    public VkontakteEndpoint(ImageLoader imageLoader, ThreadExecutor threadExecutor,
-                             PostExecuteScheduler postExecuteScheduler) {
+    public VkontakteEndpoint(ImageLoader imageLoader, VkAttachLocalCache attachLocalCache,
+                             ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
         this.imageLoader = imageLoader;
+        this.attachLocalCache = attachLocalCache;
     }
 
     /* Group */
@@ -112,12 +116,34 @@ public class VkontakteEndpoint extends Endpoint {
                 .setGroupIds(groupIds)
                 .setMessage(post.description());
         if (post.media() != null) {
-            imageLoader.loadImages(post.media(), new UseCase.OnPostExecuteCallback<List<Bitmap>>() {
+            List<Media> cached = new ArrayList<>();
+            List<Media> retained = new ArrayList<>();
+            attachLocalCache.retain(post.media(), cached, retained);
+
+            /**
+             * For each already cached media we just make wall post with attached image ids directly.
+             */
+            if (!cached.isEmpty()) {
+                VKAttachments attachments = attachLocalCache.readPhotos(cached);
+                MakeWallPostToGroups.Parameters parameters = paramsBuilder.build();
+                parameters.setAttachments(attachments);
+                makeWallPosts(parameters, callback);
+            }
+
+            /**
+             * For each retained media we need to launch full pipeline:
+             *     1. load image bitmaps by urls into memory
+             *     2. upload image bitmaps to Vkontakte, retrieving image ids
+             *     3. make wall post with attached image ids
+             *
+             * Nothing will be done is 'retained' list is empty or NULL
+             */
+            imageLoader.loadImages(retained, new UseCase.OnPostExecuteCallback<List<Bitmap>>() {
                 @Override
                 public void onFinish(@Nullable List<Bitmap> bitmaps) {
                     UploadPhotos useCase = new UploadPhotos(threadExecutor, postExecuteScheduler);
                     useCase.setParameters(new UploadPhotos.Parameters(bitmaps));
-                    useCase.setPostExecuteCallback(createUploadPhotosCallback(paramsBuilder, callback));
+                    useCase.setPostExecuteCallback(createUploadPhotosCallback(retained, paramsBuilder, callback));
                 }
 
                 @Override
@@ -156,15 +182,18 @@ public class VkontakteEndpoint extends Endpoint {
      * makes wall posts, as initially intented.
      */
     UseCase.OnPostExecuteCallback<List<VKPhotoArray>> createUploadPhotosCallback(
-            MakeWallPostToGroups.Parameters.Builder paramsBuilder,
+            List<Media> media, MakeWallPostToGroups.Parameters.Builder paramsBuilder,
             @Nullable UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
         return new UseCase.OnPostExecuteCallback<List<VKPhotoArray>>() {
             @Override
             public void onFinish(@Nullable List<VKPhotoArray> photos) {
                 // TODO: NPE
+                int index = 0;
                 VKAttachments attachments = new VKAttachments();
-                for (VKPhotoArray photo : photos) {
-                    attachments.add(photo.get(0));
+                for (VKPhotoArray aPhoto : photos) {
+                    VKApiPhoto photo = aPhoto.get(0);
+                    attachments.add(photo);
+                    attachLocalCache.writePhoto(media.get(index++).id(), photo);
                 }
                 paramsBuilder.setAttachments(attachments);
                 makeWallPosts(paramsBuilder.build(), callback);
