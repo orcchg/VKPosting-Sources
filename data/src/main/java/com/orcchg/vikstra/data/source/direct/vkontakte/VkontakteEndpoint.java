@@ -7,6 +7,7 @@ import com.orcchg.vikstra.data.source.direct.Endpoint;
 import com.orcchg.vikstra.data.source.direct.ImageLoader;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupById;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeywordsList;
@@ -29,6 +30,8 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class VkontakteEndpoint extends Endpoint {
 
@@ -111,7 +114,8 @@ public class VkontakteEndpoint extends Endpoint {
     // ------------------------------------------
     // TODO: implement various Media types {photo, video, file, ...}
     public void makeWallPosts(Collection<Long> groupIds, Post post,
-                              @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
+                              @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback,
+                              @Nullable MultiUseCase.ProgressCallback progressCallback) {
         MakeWallPostToGroups.Parameters.Builder paramsBuilder = new MakeWallPostToGroups.Parameters.Builder()
                 .setGroupIds(groupIds)
                 .setMessage(post.description());
@@ -119,6 +123,7 @@ public class VkontakteEndpoint extends Endpoint {
             List<Media> cached = new ArrayList<>();
             List<Media> retained = new ArrayList<>();
             attachLocalCache.retain(post.media(), cached, retained);
+            Timber.v("Total media: cached: %s, retained: %s", cached.size(), retained.size());
 
             /**
              * For each already cached media we just make wall post with attached image ids directly.
@@ -127,7 +132,7 @@ public class VkontakteEndpoint extends Endpoint {
                 VKAttachments attachments = attachLocalCache.readPhotos(cached);
                 MakeWallPostToGroups.Parameters parameters = paramsBuilder.build();
                 parameters.setAttachments(attachments);
-                makeWallPosts(parameters, callback);
+                makeWallPosts(parameters, callback, progressCallback);
             }
 
             /**
@@ -143,7 +148,7 @@ public class VkontakteEndpoint extends Endpoint {
                 public void onFinish(@Nullable List<Bitmap> bitmaps) {
                     UploadPhotos useCase = new UploadPhotos(threadExecutor, postExecuteScheduler);
                     useCase.setParameters(new UploadPhotos.Parameters(bitmaps));
-                    useCase.setPostExecuteCallback(createUploadPhotosCallback(retained, paramsBuilder, callback));
+                    useCase.setPostExecuteCallback(createUploadPhotosCallback(retained, paramsBuilder, callback, progressCallback));
                 }
 
                 @Override
@@ -152,16 +157,18 @@ public class VkontakteEndpoint extends Endpoint {
                 }
             });
         } else {
-            makeWallPosts(paramsBuilder.build(), callback);
+            makeWallPosts(paramsBuilder.build(), callback, progressCallback);
         }
     }
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private void makeWallPosts(MakeWallPostToGroups.Parameters parameters,
-                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
+                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback,
+                               @Nullable MultiUseCase.ProgressCallback progressCallback) {
         MakeWallPostToGroups useCase = new MakeWallPostToGroups(threadExecutor, postExecuteScheduler);
         useCase.setParameters(parameters);
+        useCase.setProgressCallback(progressCallback);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKWallPostResult>>() {
             @Override
             public void onFinish(@Nullable List<VKWallPostResult> values) {
@@ -183,7 +190,8 @@ public class VkontakteEndpoint extends Endpoint {
      */
     UseCase.OnPostExecuteCallback<List<VKPhotoArray>> createUploadPhotosCallback(
             List<Media> media, MakeWallPostToGroups.Parameters.Builder paramsBuilder,
-            @Nullable UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
+            @Nullable UseCase.OnPostExecuteCallback<List<GroupReport>> callback,
+            @Nullable MultiUseCase.ProgressCallback progressCallback) {
         return new UseCase.OnPostExecuteCallback<List<VKPhotoArray>>() {
             @Override
             public void onFinish(@Nullable List<VKPhotoArray> photos) {
@@ -196,7 +204,7 @@ public class VkontakteEndpoint extends Endpoint {
                     attachLocalCache.writePhoto(media.get(index++).id(), photo);
                 }
                 paramsBuilder.setAttachments(attachments);
-                makeWallPosts(paramsBuilder.build(), callback);
+                makeWallPosts(paramsBuilder.build(), callback, progressCallback);
             }
 
             @Override

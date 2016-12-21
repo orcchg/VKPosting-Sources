@@ -32,6 +32,18 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
         this.allowedErrors = allowedErrors;
     }
 
+    /* Callback */
+    // ------------------------------------------
+    public interface ProgressCallback {
+        void onDone(int index, int total);
+    }
+
+    protected ProgressCallback progressCallback;
+
+    public void setProgressCallback(ProgressCallback progressCallback) {
+        this.progressCallback = progressCallback;
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     protected abstract List<? extends UseCase<Result>> createUseCases();
@@ -50,7 +62,7 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
      * then waits them to finish and accumulates results and possible errors in lists.
      */
     @DebugLog
-    protected <Result> List<Result> performMultipleRequests(int total, final List<? extends UseCase<Result>> useCases,
+    protected <Result> List<Result> performMultipleRequests(final int total, final List<? extends UseCase<Result>> useCases,
                                                             final List<Throwable> errors) {
         Timber.v("Performing multiple requests, total: %s, different use-cases: %s", total, useCases.size());
         Timber.v("Allowed errors total: %s", ValueUtility.sizeOf(allowedErrors));
@@ -73,6 +85,7 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
                             UseCase<Result> useCase = useCases.size() == 1 ? useCases.get(0) : useCases.get(index);
                             result.orderId = useCase.getOrderId();
                             result.data = useCase.doAction();  // perform use case synchronously
+                            if (progressCallback != null) progressCallback.onDone(index + 1, total);
                             break REQUEST_ATTEMPT;
                         } catch (Throwable e) {
                             if (allowedErrors != null && !allowedErrors.isEmpty() && allowedErrors.contains(e)) {

@@ -9,6 +9,7 @@ import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
+import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
@@ -28,6 +29,7 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
@@ -96,9 +98,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 if (childItem.isSelected()) selectedGroupIds.add(childItem.getId());
             }
         }
-
-        vkontakteEndpoint.makeWallPosts(selectedGroupIds, currentPost, createMakeWallPostCallback());
-        // TODO: show progress dialog
+        vkontakteEndpoint.makeWallPosts(selectedGroupIds, currentPost, createMakeWallPostCallback(),
+                                        createMakeWallPostsProgressCallback());
     }
 
     @Override
@@ -228,6 +229,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             public void onError(Throwable e) {
                 // TODO:
             }
+        };
+    }
+
+    private MultiUseCase.ProgressCallback createMakeWallPostsProgressCallback() {
+        return (index, total) -> {
+            Timber.v("Make wall posts progress: %s / %s", index, total);
+            // TODO: update notification with progress
         };
     }
 
