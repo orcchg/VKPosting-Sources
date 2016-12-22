@@ -21,6 +21,7 @@ import com.orcchg.vikstra.app.ui.common.view.ThumbView;
 import com.orcchg.vikstra.app.ui.post.create.injection.DaggerPostCreateComponent;
 import com.orcchg.vikstra.app.ui.post.create.injection.PostCreateComponent;
 import com.orcchg.vikstra.app.ui.post.create.injection.PostCreateModule;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.Arrays;
@@ -35,6 +36,8 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     private static final String EXTRA_POST_ID = "extra_post_id";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_CREATE_SCREEN;
 
+    private String SNACKBAR_MEDIA_ATTACH_LIMIT;
+
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.et_post_description) AutoCompleteTextView postDescriptionEditText;
     @BindView(R.id.media_container_root) ViewGroup mediaContainerRoot;
@@ -45,7 +48,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     }
     @OnClick(R.id.ibtn_panel_media)
     void onMediaButtonClick() {
-        DialogProvider.showUploadPhotoDialog(this);
+        presenter.onMediaPressed();
     }
     @OnClick(R.id.ibtn_panel_attach)
     void onAttachButtonClick() {
@@ -91,6 +94,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_create);
         ButterKnife.bind(this);
+        initResources();
         initView();
     }
 
@@ -156,6 +160,16 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         addMediaThumbnail(mediaView);
     }
 
+    @Override
+    public void onMediaAttachLimitReached(int limit) {
+        UiUtility.showSnackbar(this, String.format(SNACKBAR_MEDIA_ATTACH_LIMIT, limit));
+    }
+
+    @Override
+    public void showMediaLoadDialog() {
+        DialogProvider.showUploadPhotoDialog(this);
+    }
+
     // ------------------------------------------
     @Override
     public void clearInputText() {
@@ -194,5 +208,11 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         });
         mediaContainerRoot.setVisibility(View.VISIBLE);
         mediaContainer.addView(mediaView);
+    }
+
+    /* Resources */
+    // --------------------------------------------------------------------------------------------
+    private void initResources() {
+        SNACKBAR_MEDIA_ATTACH_LIMIT = getResources().getString(R.string.post_create_snackbar_media_attach_limit_message);
     }
 }

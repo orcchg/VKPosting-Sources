@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import timber.log.Timber;
 
 public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> implements PostCreateContract.Presenter {
+    private static final int MEDIA_ATTACH_LIMIT = 7;
 
     private final GetPostById getPostByIdUseCase;
     private final PostPost postPostUseCase;
@@ -97,6 +98,17 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     @Override
     public void onLocationPressed() {
         //
+    }
+
+    @Override
+    public void onMediaPressed() {
+        if (isViewAttached()) {
+            if (attachMedia.size() < MEDIA_ATTACH_LIMIT) {
+                getView().showMediaLoadDialog();
+            } else {
+                getView().onMediaAttachLimitReached(MEDIA_ATTACH_LIMIT);
+            }
+        }
     }
 
     @Override
