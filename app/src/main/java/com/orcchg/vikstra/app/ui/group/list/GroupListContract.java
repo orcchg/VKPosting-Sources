@@ -13,6 +13,14 @@ public interface GroupListContract {
         void showGroups(boolean isEmpty);
         void showPost(PostSingleGridItemVO viewObject);
         void updateSelectedGroupsCounter(int newCount, int total);
+
+        void onPostingProgress(int progress, int total);
+        void onPostingProgressInfinite();
+        void onPostingComplete();
+
+        void onPhotoUploadProgress(int progress, int total);
+        void onPhotoUploadProgressInfinite();
+        void onPhotoUploadComplete();
     }
 
     interface Presenter extends MvpPresenter<View> {

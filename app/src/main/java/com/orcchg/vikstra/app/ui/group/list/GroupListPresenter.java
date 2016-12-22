@@ -98,8 +98,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 if (childItem.isSelected()) selectedGroupIds.add(childItem.getId());
             }
         }
-        vkontakteEndpoint.makeWallPosts(selectedGroupIds, currentPost, createMakeWallPostCallback(),
-                                        createMakeWallPostsProgressCallback());
+        vkontakteEndpoint.makeWallPosts(selectedGroupIds, currentPost,
+                createMakeWallPostCallback(), createMakeWallPostsProgressCallback(),
+                createPhotoUploadProgressCallback(), createPhotoPrepareProgressCallback());
     }
 
     @Override
@@ -232,10 +233,37 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         };
     }
 
+    // ------------------------------------------
     private MultiUseCase.ProgressCallback createMakeWallPostsProgressCallback() {
         return (index, total) -> {
             Timber.v("Make wall posts progress: %s / %s", index, total);
-            // TODO: update notification with progress
+            if (isViewAttached()) {
+                if (index < total) {
+                    getView().onPostingProgress(index, total);
+                } else {
+                    getView().onPostingComplete();
+                }
+            }
+        };
+    }
+
+    private MultiUseCase.ProgressCallback createPhotoUploadProgressCallback() {
+        return (index, total) -> {
+            Timber.v("Photo uploading progress: %s / %s", index, total);
+            if (isViewAttached()) {
+                if (index < total) {
+                    getView().onPhotoUploadProgress(index, total);
+                } else {
+                    getView().onPhotoUploadComplete();
+                }
+            }
+        };
+    }
+
+    private MultiUseCase.ProgressCallback createPhotoPrepareProgressCallback() {
+        return (index, total) -> {
+            Timber.v("Photo preparing progress: %s / %s", index, total);
+            if (isViewAttached()) getView().onPhotoUploadProgressInfinite();
         };
     }
 

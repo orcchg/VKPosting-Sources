@@ -5,6 +5,12 @@
     <string name="group_list_dialog_new_keyword_title">New keyword</string>
     <string name="group_list_dialog_new_keyword_hind">Enter new keyword</string>
     <string name="group_list_fab_label_post">Post</string>
+    <string name="group_list_notification_posting_title">Wall posting</string>
+    <string name="group_list_notification_posting_description_complete">Posting completed</string>
+    <string name="group_list_notification_posting_description_progress">Posting in progress</string>
+    <string name="group_list_notification_photo_upload_title">Photo uploading</string>
+    <string name="group_list_notification_photo_upload_description_complete">All photos uploaded</string>
+    <string name="group_list_notification_photo_upload_description_progress">Photo upload in progress</string>
     <string name="group_list_screen_title">Choose groups</string>
     <string name="group_list_selected_groups_total_count">Selected groups: %s</string>
 </resources>

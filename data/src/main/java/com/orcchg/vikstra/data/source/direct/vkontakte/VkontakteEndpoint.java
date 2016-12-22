@@ -114,8 +114,28 @@ public class VkontakteEndpoint extends Endpoint {
     // ------------------------------------------
     // TODO: implement various Media types {photo, video, file, ...}
     public void makeWallPosts(Collection<Long> groupIds, Post post,
+                              @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
+        makeWallPosts(groupIds, post, callback, null);
+    }
+
+    public void makeWallPosts(Collection<Long> groupIds, Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback,
                               @Nullable MultiUseCase.ProgressCallback progressCallback) {
+        makeWallPosts(groupIds, post, callback, null, null);
+    }
+
+    public void makeWallPosts(Collection<Long> groupIds, Post post,
+                              @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback,
+                              @Nullable MultiUseCase.ProgressCallback progressCallback,
+                              @Nullable MultiUseCase.ProgressCallback photoUploadProgressCb) {
+        makeWallPosts(groupIds, post, callback, null, null, null);
+    }
+
+    public void makeWallPosts(Collection<Long> groupIds, Post post,
+                              @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback,
+                              @Nullable MultiUseCase.ProgressCallback progressCallback,
+                              @Nullable MultiUseCase.ProgressCallback photoUploadProgressCb,
+                              @Nullable MultiUseCase.ProgressCallback photoPrepareProgressCb) {
         MakeWallPostToGroups.Parameters.Builder paramsBuilder = new MakeWallPostToGroups.Parameters.Builder()
                 .setGroupIds(groupIds)
                 .setMessage(post.description());
@@ -148,6 +168,7 @@ public class VkontakteEndpoint extends Endpoint {
                 public void onFinish(@Nullable List<Bitmap> bitmaps) {
                     UploadPhotos useCase = new UploadPhotos(threadExecutor, postExecuteScheduler);
                     useCase.setParameters(new UploadPhotos.Parameters(bitmaps));
+                    useCase.setProgressCallback(photoUploadProgressCb);
                     useCase.setPostExecuteCallback(createUploadPhotosCallback(retained, paramsBuilder, callback, progressCallback));
                 }
 
@@ -155,7 +176,7 @@ public class VkontakteEndpoint extends Endpoint {
                 public void onError(Throwable e) {
                     if (callback != null) callback.onError(e);
                 }
-            });
+            }, photoPrepareProgressCb);
         } else {
             makeWallPosts(paramsBuilder.build(), callback, progressCallback);
         }

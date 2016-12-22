@@ -1,9 +1,14 @@
 package com.orcchg.vikstra.app.ui.group.list;
 
 import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +25,7 @@ import com.orcchg.vikstra.app.ui.common.injection.KeywordModule;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListComponent;
+import com.orcchg.vikstra.app.ui.report.ReportActivity;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
@@ -36,6 +42,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     public static final int RV_TAG = Constant.ListTag.GROUP_LIST_SCREEN;
 
     private String DIALOG_TITLE, DIALOG_HINT;
+    private String NOTIFICATION_POSTING_COMPLETE, NOTIFICATION_PHOTO_UPLOAD_COMPLETE;
 
     private ItemTouchHelper itemTouchHelper;
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
@@ -54,6 +61,10 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     private GroupListComponent groupComponent;
     private long keywordBundleId = Constant.BAD_ID;
     private long postId = Constant.BAD_ID;
+
+    NotificationManagerCompat notificationManager;
+    NotificationCompat.Builder notificationBuilderPosting;
+    NotificationCompat.Builder notificationBuilderPhotoUpload;
 
     @NonNull @Override
     protected GroupListContract.Presenter createPresenter() {
@@ -102,12 +113,26 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Resources resources = getResources();
         initResources();
         initItemTouchHelper();
         Bundle args = getArguments();
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
         postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         super.onCreate(savedInstanceState);
+
+        Intent intent = ReportActivity.getCallingIntent(getActivity(), postId);
+        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), GroupListActivity.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationManager = NotificationManagerCompat.from(getActivity());
+        notificationBuilderPosting = new NotificationCompat.Builder(getActivity())
+                .setSmallIcon(R.drawable.ic_cloud_upload_white_18dp)
+                .setContentTitle(resources.getString(R.string.group_list_notification_posting_title))
+                .setContentText(resources.getString(R.string.group_list_notification_posting_description_progress))
+                .setContentIntent(pendingIntent);
+        notificationBuilderPhotoUpload = new NotificationCompat.Builder(getActivity())
+                .setSmallIcon(R.drawable.ic_collections_white_18dp)
+                .setContentTitle(resources.getString(R.string.group_list_notification_photo_upload_title))
+                .setContentText(resources.getString(R.string.group_list_notification_photo_upload_description_progress));
     }
 
     @Nullable @Override
@@ -197,11 +222,52 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         if (groupsCounterHolder != null) groupsCounterHolder.updateSelectedGroupsCounter(newCount, total);
     }
 
+    // ------------------------------------------
+    @Override
+    public void onPostingProgress(int progress, int total) {
+        notificationBuilderPosting.setProgress(progress, total, false);
+        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_POSTING, notificationBuilderPosting.build());
+    }
+
+    @Override
+    public void onPostingProgressInfinite() {
+        notificationBuilderPosting.setProgress(0, 0, true);
+        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_POSTING, notificationBuilderPosting.build());
+    }
+
+    @Override
+    public void onPostingComplete() {
+        notificationBuilderPosting.setContentText(NOTIFICATION_POSTING_COMPLETE).setProgress(0, 0, false);
+        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_POSTING, notificationBuilderPosting.build());
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onPhotoUploadProgress(int progress, int total) {
+        notificationBuilderPhotoUpload.setProgress(progress, total, false);
+        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_PHOTO_UPLOAD, notificationBuilderPhotoUpload.build());
+    }
+
+    @Override
+    public void onPhotoUploadProgressInfinite() {
+        notificationBuilderPhotoUpload.setProgress(0, 0, true);
+        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_PHOTO_UPLOAD, notificationBuilderPhotoUpload.build());
+    }
+
+    @Override
+    public void onPhotoUploadComplete() {
+        notificationBuilderPhotoUpload.setContentText(NOTIFICATION_PHOTO_UPLOAD_COMPLETE).setProgress(0, 0, false);
+        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_PHOTO_UPLOAD, notificationBuilderPhotoUpload.build());
+    }
+
     /* Resources */
     // --------------------------------------------------------------------------------------------
     private void initResources() {
-        DIALOG_TITLE = getResources().getString(R.string.group_list_dialog_new_keyword_title);
-        DIALOG_HINT = getResources().getString(R.string.group_list_dialog_new_keyword_hind);
+        Resources resources = getResources();
+        DIALOG_TITLE = resources.getString(R.string.group_list_dialog_new_keyword_title);
+        DIALOG_HINT = resources.getString(R.string.group_list_dialog_new_keyword_hind);
+        NOTIFICATION_POSTING_COMPLETE = resources.getString(R.string.group_list_notification_posting_description_complete);
+        NOTIFICATION_PHOTO_UPLOAD_COMPLETE = resources.getString(R.string.group_list_notification_photo_upload_description_complete);
     }
 
     private void initItemTouchHelper() {

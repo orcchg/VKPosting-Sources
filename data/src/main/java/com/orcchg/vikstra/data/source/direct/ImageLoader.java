@@ -46,8 +46,14 @@ public class ImageLoader extends Endpoint {
     }
 
     public void loadImages(List<Media> media, @Nullable UseCase.OnPostExecuteCallback<List<Bitmap>> callback) {
+        loadImages(media, callback, null);
+    }
+
+    public void loadImages(List<Media> media, @Nullable UseCase.OnPostExecuteCallback<List<Bitmap>> callback,
+                           @Nullable MultiUseCase.ProgressCallback progressCallback) {
         if (media != null && !media.isEmpty()) {
             LoadPhotos useCase = new LoadPhotos(media, this, threadExecutor, postExecuteScheduler);
+            useCase.setProgressCallback(progressCallback);
             useCase.setPostExecuteCallback(callback);
             useCase.execute();
         } else {

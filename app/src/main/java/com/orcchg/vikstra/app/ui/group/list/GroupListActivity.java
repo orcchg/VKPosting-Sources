@@ -26,6 +26,7 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
+    public static final int REQUEST_CODE = Constant.RequestCode.GROUP_LIST_SCREEN;
 
     private String INFO_TITLE;
 
