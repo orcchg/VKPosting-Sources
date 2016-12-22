@@ -5,7 +5,6 @@ import com.orcchg.vikstra.domain.model.Group;
 public class GroupChildItem {
 
     private final Group group;
-    private boolean isSelected;
 
     public GroupChildItem(Group group) {
         this.group = group;
@@ -14,20 +13,17 @@ public class GroupChildItem {
     public long getId() {
         return group.id();
     }
-
     public String getName() {
         return group.name();
     }
-
     public int getCount() {
         return group.membersCount();
     }
 
     public boolean isSelected() {
-        return isSelected;
+        return group.isSelected();
     }
-
     public void setSelected(boolean isSelected) {
-        this.isSelected = isSelected;
+        group.setSelected(isSelected);
     }
 }

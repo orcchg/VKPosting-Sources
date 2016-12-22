@@ -12,6 +12,7 @@ public interface GroupListContract {
         void showError();
         void showGroups(boolean isEmpty);
         void showPost(PostSingleGridItemVO viewObject);
+        void showEmptyPost();
         void updateSelectedGroupsCounter(int newCount, int total);
 
         void onPostingProgress(int progress, int total);

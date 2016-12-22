@@ -26,6 +26,7 @@ import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListComponent;
 import com.orcchg.vikstra.app.ui.report.ReportActivity;
+import com.orcchg.vikstra.app.ui.util.FabHolder;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
@@ -54,6 +55,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         presenter.retry();
     }
 
+    private FabHolder fabHolder;
     private GroupsCounterHolder groupsCounterHolder;
     private PostThumbHolder postThumbHolder;
     private ShadowHolder shadowHolder;
@@ -100,15 +102,10 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (GroupsCounterHolder.class.isInstance(activity)) {
-            groupsCounterHolder = (GroupsCounterHolder) activity;
-        }
-        if (PostThumbHolder.class.isInstance(activity)) {
-            postThumbHolder = (PostThumbHolder) activity;
-        }
-        if (ShadowHolder.class.isInstance(activity)) {
-            shadowHolder = (ShadowHolder) activity;
-        }
+        if (FabHolder.class.isInstance(activity)) fabHolder = (FabHolder) activity;
+        if (GroupsCounterHolder.class.isInstance(activity)) groupsCounterHolder = (GroupsCounterHolder) activity;
+        if (PostThumbHolder.class.isInstance(activity)) postThumbHolder = (PostThumbHolder) activity;
+        if (ShadowHolder.class.isInstance(activity)) shadowHolder = (ShadowHolder) activity;
     }
 
     @Override
@@ -214,7 +211,14 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
 
     @Override
     public void showPost(PostSingleGridItemVO viewObject) {
+        if (fabHolder != null) fabHolder.showFab(true);
         if (postThumbHolder != null) postThumbHolder.showPost(viewObject);
+    }
+
+    @Override
+    public void showEmptyPost() {
+        if (fabHolder != null) fabHolder.showFab(false);
+        if (postThumbHolder != null) postThumbHolder.showPost(null);
     }
 
     @Override

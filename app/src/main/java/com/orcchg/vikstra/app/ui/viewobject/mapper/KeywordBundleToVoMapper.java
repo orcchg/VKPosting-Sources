@@ -19,6 +19,7 @@ public class KeywordBundleToVoMapper implements Mapper<KeywordBundle, KeywordLis
     public KeywordListItemVO map(KeywordBundle object) {
         return KeywordListItemVO.builder()
                 .setId(object.id())
+                .setGroupBundleId(object.getGroupBundleId())
                 .setKeywords(object.keywords())
                 .setTitle(object.title())
                 .build();

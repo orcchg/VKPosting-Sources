@@ -127,6 +127,11 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     @Override
+    public void openGroupListScreen(long keywordBundleId, long postId) {
+        navigationComponent.navigator().openGroupListScreen(this, keywordBundleId, postId);
+    }
+
+    @Override
     public void showKeywords(boolean isEmpty) {
         KeywordListFragment fragment = getFragment();
         if (fragment != null) fragment.showKeywords(isEmpty);

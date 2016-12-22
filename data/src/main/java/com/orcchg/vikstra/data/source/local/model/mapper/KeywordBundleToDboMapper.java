@@ -50,11 +50,13 @@ public class KeywordBundleToDboMapper implements DuplexMapper<KeywordBundle, Key
         for (KeywordDBO dbo : object.keywords) {
             keywords.add(keywordToDboMapper.mapBack(dbo));
         }
-        return KeywordBundle.builder()
+        KeywordBundle bundle = KeywordBundle.builder()
                 .setId(object.id)
                 .setKeywords(keywords)
                 .setTimestamp(object.timestamp)
                 .setTitle(object.title)
                 .build();
+        bundle.setGroupBundleId(object.groupBundleId);
+        return bundle;
     }
 }

@@ -1,14 +1,24 @@
 package com.orcchg.vikstra.domain.model;
 
-import android.os.Parcelable;
-
 import com.google.auto.value.AutoValue;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.Collection;
 import java.util.Iterator;
 
 @AutoValue
-public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterable<Keyword>, Parcelable {
+public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterable<Keyword> {
+
+    /**
+     * Setting of this field must not break correspondence between this object's id
+     * and id of the destination {@link GroupBundle} instance. This field is
+     * equal to {@link Constant#BAD_ID} until a new search of groups by keywords
+     * finishes - then this field is set to newly created (or updated) {@link GroupBundle}.
+     *
+     * Any attempt to reassign this field if it has already been set to some
+     * valid {@link GroupBundle}'s id will cause an {@link IllegalStateException}.
+     */
+    private long groupBundleId = Constant.BAD_ID;
 
     public static Builder builder() {
         return new AutoValue_KeywordBundle.Builder();
@@ -27,6 +37,19 @@ public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterab
     public abstract long timestamp();
     public abstract String title();
     public abstract Collection<Keyword> keywords();
+
+    public long getGroupBundleId() {
+        return groupBundleId;
+    }
+    public void setGroupBundleId(long groupBundleId) {
+        if (this.groupBundleId != Constant.BAD_ID && groupBundleId != Constant.BAD_ID) {
+            String message = "Attemp to reassign already existing group-bundle id! " +
+                    "This breaks the correspondence between this keyword-bundle and " +
+                    "some destination group-bundle, which is illegal.";
+            throw new IllegalStateException(message);
+        }
+        this.groupBundleId = groupBundleId;
+    }
 
     @Override
     public int compareTo(KeywordBundle o) {

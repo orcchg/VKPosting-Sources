@@ -5,6 +5,8 @@ import com.google.auto.value.AutoValue;
 @AutoValue
 public abstract class Group implements Comparable<Group> {
 
+    private boolean isSelected;
+
     public static Builder builder() {
         return new AutoValue_Group.Builder();
     }
@@ -20,6 +22,13 @@ public abstract class Group implements Comparable<Group> {
     public abstract long id();
     public abstract int membersCount();
     public abstract String name();
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+    public void setSelected(boolean isSelected) {
+        this.isSelected = isSelected;
+    }
 
     @Override
     public int compareTo(Group o) {

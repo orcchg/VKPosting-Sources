@@ -6,6 +6,7 @@ import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 public interface KeywordListContract {
     interface View extends SubView {
         void openKeywordCreateScreen(long keywordBundleId);
+        void openGroupListScreen(long keywordBundleId, long postId);
     }
 
     interface SubView extends MvpListView {

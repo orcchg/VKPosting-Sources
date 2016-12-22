@@ -140,10 +140,10 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         };
     }
 
-    private UseCase.OnPostExecuteCallback<Boolean> createPutKeywordBundleCallback() {
-        return new UseCase.OnPostExecuteCallback<Boolean>() {
+    private UseCase.OnPostExecuteCallback<Long> createPutKeywordBundleCallback() {
+        return new UseCase.OnPostExecuteCallback<Long>() {
             @Override
-            public void onFinish(@Nullable Boolean values) {
+            public void onFinish(@Nullable Long keywordBundleId) {
                 if (isViewAttached()) {
                     getView().notifyKeywordsAdded();
                     getView().closeView(Activity.RESULT_OK);

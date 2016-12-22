@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseActivity;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
+import com.orcchg.vikstra.app.ui.util.FabHolder;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -22,7 +24,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GroupListActivity extends SimpleBaseActivity implements GroupsCounterHolder,
-        PostThumbHolder, ShadowHolder {
+        FabHolder, PostThumbHolder, ShadowHolder {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
@@ -30,6 +32,7 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
 
     private String INFO_TITLE;
 
+    @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tv_info_title) TextView selectedGroupsCountView;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
@@ -87,6 +90,7 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
+        fab.hide();  // hide fab at fresh start before post fetched
         postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostViewScreen(this, postId));
         updateSelectedGroupsCounter(0, 0);
 
@@ -113,7 +117,16 @@ public class GroupListActivity extends SimpleBaseActivity implements GroupsCount
     }
 
     @Override
-    public void showPost(PostSingleGridItemVO viewObject) {
+    public void showFab(boolean isVisible) {
+        if (isVisible) {
+            fab.show();
+        } else {
+            fab.hide();
+        }
+    }
+
+    @Override
+    public void showPost(@Nullable PostSingleGridItemVO viewObject) {
         postThumbnail.setPost(viewObject);
     }
 

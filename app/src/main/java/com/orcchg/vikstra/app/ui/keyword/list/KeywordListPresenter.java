@@ -8,6 +8,7 @@ import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;
+import com.orcchg.vikstra.app.util.ContentUtility;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
@@ -55,7 +56,14 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             // TODO: impl long click
         });
         adapter.setOnEditClickListener((view, viewObject, position) -> {
-            if (isViewAttached()) getView().openKeywordCreateScreen(viewObject.id());
+            if (isViewAttached()) {
+                if (viewObject.groupBundleId() == Constant.BAD_ID) {
+                    getView().openKeywordCreateScreen(viewObject.id());
+                } else {
+                    long postId = ContentUtility.CurrentSession.getLastSelectedPostId();
+                    getView().openGroupListScreen(viewObject.id(), postId);
+                }
+            }
         });
         return adapter;
     }

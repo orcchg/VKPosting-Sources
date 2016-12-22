@@ -18,12 +18,14 @@ public abstract class KeywordListItemVO implements ISelectableModel {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setId(long id);
+        public abstract Builder setGroupBundleId(long groupBundleId);
         public abstract Builder setKeywords(Collection<Keyword> keywords);
         public abstract Builder setTitle(String title);
         public abstract KeywordListItemVO build();
     }
 
     @Override public abstract long id();
+    public abstract long groupBundleId();
     public abstract Collection<Keyword> keywords();
     public abstract String title();
 

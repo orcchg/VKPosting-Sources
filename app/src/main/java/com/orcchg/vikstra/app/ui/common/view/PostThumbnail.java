@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.app.ui.common.view;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -78,12 +79,16 @@ public class PostThumbnail extends FrameLayout {
         }
     }
 
-    public void setPost(PostSingleGridItemVO viewObject) {
-        setTitle(viewObject.title());
-        setDescription(viewObject.description());
-        String url = viewObject.hasMedia() ? viewObject.media().url() : "";
-        setMedia(url);
-        setMediaCount(viewObject.mediaCount());
+    public void setPost(@Nullable PostSingleGridItemVO viewObject) {
+        if (viewObject != null) {
+            setTitle(viewObject.title());
+            setDescription(viewObject.description());
+            String url = viewObject.hasMedia() ? viewObject.media().url() : "";
+            setMedia(url);
+            setMediaCount(viewObject.mediaCount());
+        } else {
+            // TODO: show empty post thumb
+        }
     }
 
     /* View */

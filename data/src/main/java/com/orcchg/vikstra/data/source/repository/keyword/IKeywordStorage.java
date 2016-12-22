@@ -13,7 +13,7 @@ public interface IKeywordStorage extends IStorage {
 
     /* Create */
     // ------------------------------------------
-    boolean addKeywords(@NonNull KeywordBundle bundle);
+    long addKeywords(@NonNull KeywordBundle bundle);
     boolean addKeywordToBundle(long id, Keyword keyword);
 
     /* Read */

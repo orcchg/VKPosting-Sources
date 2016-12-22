@@ -10,7 +10,8 @@ import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
-import com.orcchg.vikstra.app.ui.util.ValueEmitter;
+import com.orcchg.vikstra.app.util.ContentUtility;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +39,15 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Inject
     MainPresenter(KeywordListPresenter keywordListPresenter, PostSingleGridPresenter postSingleGridPresenter) {
         this.keywordListPresenter = keywordListPresenter;
-        this.keywordListPresenter.setExternalValueEmitter(value -> {
-            isKeywordBundleSelected = value;
+        this.keywordListPresenter.setExternalValueEmitter(isSelected -> {
+            isKeywordBundleSelected = isSelected;
             if (isViewAttached()) getView().showFab(isKeywordBundleSelected && isPostSelected);
         });
         this.postSingleGridPresenter = postSingleGridPresenter;
-        this.postSingleGridPresenter.setExternalValueEmitter(value -> {
-            isPostSelected = value;
+        this.postSingleGridPresenter.setExternalValueEmitter(isSelected -> {
+            isPostSelected = isSelected;
+            long postId = isSelected ? postSingleGridPresenter.getSelectedPostId() : Constant.BAD_ID;
+            ContentUtility.CurrentSession.setLastSelectedPostId(postId);
             if (isViewAttached()) getView().showFab(isKeywordBundleSelected && isPostSelected);
         });
     }
@@ -79,10 +82,11 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     @Override
     public void onFabClick() {
-        // TODO: use selected post Id
-        if (isViewAttached()) getView().openGroupListScreen(
-                keywordListPresenter.getSelectedKeywordBundleId(),
-                postSingleGridPresenter.getSelectedPostId());
+        if (isViewAttached()) {
+            long keywordBundleId = keywordListPresenter.getSelectedKeywordBundleId();
+            long postId = postSingleGridPresenter.getSelectedPostId();
+            getView().openGroupListScreen(keywordBundleId, postId);
+        }
     }
 
     @Override

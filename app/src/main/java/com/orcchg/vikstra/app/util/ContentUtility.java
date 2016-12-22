@@ -3,12 +3,26 @@ package com.orcchg.vikstra.app.util;
 import android.content.Context;
 import android.os.Environment;
 
+import com.orcchg.vikstra.domain.util.Constant;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ContentUtility {
+
+    public static class CurrentSession {
+        private static long sLastSelectedPostId = Constant.BAD_ID;
+
+        public static void setLastSelectedPostId(long postId) {
+            sLastSelectedPostId = postId;
+        }
+
+        public static long getLastSelectedPostId() {
+            return sLastSelectedPostId;
+        }
+    }
 
     public static class InMemoryStorage {
         private static String sLastStoredInternalImageUrl;

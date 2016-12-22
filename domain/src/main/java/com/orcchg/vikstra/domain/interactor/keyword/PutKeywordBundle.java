@@ -13,7 +13,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-public class PutKeywordBundle extends UseCase<Boolean> {
+public class PutKeywordBundle extends UseCase<Long> {
 
     public static class Parameters {
         String title;
@@ -59,7 +59,7 @@ public class PutKeywordBundle extends UseCase<Boolean> {
     }
 
     @Nullable @Override
-    protected Boolean doAction() {
+    protected Long doAction() {
         if (parameters == null) throw new NoParametersException();
         return keywordRepository.addKeywords(parameters.title, parameters.keywords);
     }

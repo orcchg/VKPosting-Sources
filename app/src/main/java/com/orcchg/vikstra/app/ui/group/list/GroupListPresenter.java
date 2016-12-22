@@ -11,8 +11,10 @@ import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.group.PutGroupBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
+import com.orcchg.vikstra.domain.interactor.keyword.PostKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
@@ -36,6 +38,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private final GetPostById getPostByIdUseCase;
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final AddKeywordToBundle addKeywordToBundleUseCase;
+    private final PostKeywordBundle postKeywordBundleUseCase;
+    private final PutGroupBundle putGroupBundleUseCase;
     private final VkontakteEndpoint vkontakteEndpoint;
 
     List<GroupParentItem> groupParentItems = new ArrayList<>();
@@ -49,7 +53,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @Inject
     GroupListPresenter(GetPostById getPostByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
-                       AddKeywordToBundle addKeywordToBundleUseCase, VkontakteEndpoint vkontakteEndpoint,
+                       AddKeywordToBundle addKeywordToBundleUseCase, PostKeywordBundle postKeywordBundleUseCase,
+                       PutGroupBundle putGroupBundleUseCase, VkontakteEndpoint vkontakteEndpoint,
                        PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
         this.getPostByIdUseCase = getPostByIdUseCase;
@@ -58,6 +63,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         this.getKeywordBundleByIdUseCase.setPostExecuteCallback(createGetKeywordBundleByIdCallback());
         this.addKeywordToBundleUseCase = addKeywordToBundleUseCase;
         this.addKeywordToBundleUseCase.setPostExecuteCallback(createAddKeywordToBundleCallback());
+        this.postKeywordBundleUseCase = postKeywordBundleUseCase;
+        this.postKeywordBundleUseCase.setPostExecuteCallback(createPostKeywordBundleCallback());
+        this.putGroupBundleUseCase = putGroupBundleUseCase;
+        this.putGroupBundleUseCase.setPostExecuteCallback(createPutGroupBundleCallback());
         this.vkontakteEndpoint = vkontakteEndpoint;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
     }
@@ -135,7 +144,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onFinish(@Nullable Post post) {
                 currentPost = post;
-                if (isViewAttached()) getView().showPost(postToSingleGridVoMapper.map(post));
+                if (isViewAttached()) {
+                    if (post != null) {
+                        getView().showPost(postToSingleGridVoMapper.map(post));
+                    } else {
+                        getView().showEmptyPost();
+                    }
+                }
             }
 
             @Override
@@ -180,6 +195,38 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         };
     }
 
+    private UseCase.OnPostExecuteCallback<Boolean> createPostKeywordBundleCallback() {
+        return new UseCase.OnPostExecuteCallback<Boolean>() {
+            @Override
+            public void onFinish(@Nullable Boolean result) {
+                // TODO: input keywords updated with group id in repository
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO: impl
+            }
+        };
+    }
+
+    private UseCase.OnPostExecuteCallback<Long> createPutGroupBundleCallback() {
+        return new UseCase.OnPostExecuteCallback<Long>() {
+            @Override
+            public void onFinish(@Nullable Long groupBundleId) {
+                // TODO: check for bad id ???
+                inputKeywordBundle.setGroupBundleId(groupBundleId);
+                PostKeywordBundle.Parameters parameters = new PostKeywordBundle.Parameters(inputKeywordBundle);
+                postKeywordBundleUseCase.setParameters(parameters);
+                postKeywordBundleUseCase.execute();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO: impl
+            }
+        };
+    }
+
     private UseCase.OnPostExecuteCallback<List<List<Group>>> createGetGroupsByKeywordsListCallback() {
         return new UseCase.OnPostExecuteCallback<List<List<Group>>>() {
             @Override
@@ -210,6 +257,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     getView().updateSelectedGroupsCounter(totalSelectedGroups, totalGroups);
                     getView().showGroups(splitGroups.isEmpty());
                 }
+
+                // TODO: compose GroupBundle instance and set as UseCase parameter
+                putGroupBundleUseCase.execute();
             }
 
             @Override
