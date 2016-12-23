@@ -20,6 +20,7 @@ public interface KeywordCreateContract {
 
         void openEditTitleDialog(@Nullable String initTitle);
         void closeView(int resultCode);
+        void showError();
     }
 
     interface Presenter extends MvpPresenter<View> {

@@ -12,7 +12,7 @@ public interface IPostRepository {
 
     /* Create */
     // ------------------------------------------
-    boolean addPost(PostEssense essense);
+    long addPost(PostEssense essense);
 
     /* Read */
     // ------------------------------------------
@@ -26,4 +26,5 @@ public interface IPostRepository {
 
     /* Delete */
     // ------------------------------------------
+    boolean deletePost(long id);
 }

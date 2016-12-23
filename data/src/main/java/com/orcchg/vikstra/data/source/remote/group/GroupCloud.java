@@ -1,33 +1,32 @@
-package com.orcchg.vikstra.data.source.remote.keyword;
+package com.orcchg.vikstra.data.source.remote.group;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.orcchg.vikstra.data.source.repository.keyword.IKeywordStorage;
-import com.orcchg.vikstra.domain.model.Keyword;
-import com.orcchg.vikstra.domain.model.KeywordBundle;
+import com.orcchg.vikstra.data.source.repository.group.IGroupStorage;
+import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-@Singleton
-public class KeywordCloud implements IKeywordStorage {
+public class GroupCloud implements IGroupStorage {
 
     @Inject
-    KeywordCloud() {
+    GroupCloud() {
     }
 
     /* Create */
     // ------------------------------------------
     @Override
-    public long addKeywords(KeywordBundle bundle) {
+    public long addGroups(@NonNull GroupBundle bundle) {
         return Constant.BAD_ID;
     }
 
     @Override
-    public boolean addKeywordToBundle(long id, Keyword keyword) {
+    public boolean addGroupToBundle(long id, Group group) {
         return false;
     }
 
@@ -38,27 +37,27 @@ public class KeywordCloud implements IKeywordStorage {
         return 0;
     }
 
-    @Override
-    public KeywordBundle keywords(long id) {
+    @Nullable @Override
+    public GroupBundle groups(long id) {
         return null;
     }
 
     @Override
-    public List<KeywordBundle> keywords(int limit, int offset) {
+    public List<GroupBundle> groups(int limit, int offset) {
         return null;
     }
 
     /* Update */
     // ------------------------------------------
     @Override
-    public boolean updateKeywords(@NonNull KeywordBundle bundle) {
+    public boolean updateGroups(@NonNull GroupBundle groups) {
         return false;
     }
 
     /* Delete */
     // ------------------------------------------
     @Override
-    public boolean deleteKeywords(long id) {
+    public boolean deleteGroups(long id) {
         return false;
     }
 }

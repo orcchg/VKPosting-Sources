@@ -18,6 +18,7 @@ public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<G
         public abstract Builder setGroups(Collection<Group> groups);
         public abstract Builder setKeywordBundleId(long keywordBundleId);
         public abstract Builder setTimestamp(long ts);
+        public abstract Builder setTitle(String title);
         public abstract GroupBundle build();
     }
 
@@ -25,6 +26,7 @@ public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<G
     public abstract Collection<Group> groups();
     public abstract long keywordBundleId();
     public abstract long timestamp();
+    public abstract String title();
 
     public int selectedCount() {
         int count = 0;

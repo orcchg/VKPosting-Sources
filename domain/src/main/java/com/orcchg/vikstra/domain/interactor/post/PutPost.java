@@ -11,7 +11,7 @@ import com.orcchg.vikstra.domain.repository.IPostRepository;
 
 import javax.inject.Inject;
 
-public class PutPost extends UseCase<Boolean> {
+public class PutPost extends UseCase<Long> {
 
     public static class Parameters {
         PostEssense essense;
@@ -36,7 +36,7 @@ public class PutPost extends UseCase<Boolean> {
     }
 
     @Nullable @Override
-    protected Boolean doAction() {
+    protected Long doAction() {
         if (parameters == null) throw new NoParametersException();
         return postRepository.addPost(parameters.essense);
     }

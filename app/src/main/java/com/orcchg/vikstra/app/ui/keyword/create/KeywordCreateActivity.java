@@ -178,6 +178,11 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
         finish();
     }
 
+    @Override
+    public void showError() {
+        // TODO: show error
+    }
+
     /* Resources */
     // --------------------------------------------------------------------------------------------
     private void initResources() {

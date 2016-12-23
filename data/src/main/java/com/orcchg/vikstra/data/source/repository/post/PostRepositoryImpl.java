@@ -29,7 +29,7 @@ public class PostRepositoryImpl implements IPostRepository {
     /* Create */
     // ------------------------------------------
     @Override
-    public boolean addPost(PostEssense essense) {
+    public long addPost(PostEssense essense) {
         // TODO: impl cloudly
         long lastId = localSource.getLastId();
         PostEssenseMapper mapper = new PostEssenseMapper(++lastId, System.currentTimeMillis());
@@ -65,4 +65,9 @@ public class PostRepositoryImpl implements IPostRepository {
 
     /* Delete */
     // ------------------------------------------
+    @Override
+    public boolean deletePost(long id) {
+        // TODO: impl cloudly
+        return localSource.deletePost(id);
+    }
 }

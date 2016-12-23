@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.data.source.local.model.PostDBO;
 import com.orcchg.vikstra.data.source.local.model.mapper.PostToDboMapper;
 import com.orcchg.vikstra.data.source.local.model.populator.PostToDboPopulator;
+import com.orcchg.vikstra.data.source.repository.RepoUtility;
 import com.orcchg.vikstra.data.source.repository.post.IPostStorage;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -35,14 +36,14 @@ public class PostDatabase implements IPostStorage {
     /* Create */
     // ------------------------------------------
     @DebugLog @Override
-    public boolean addPost(Post post) {
+    public long addPost(Post post) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction((xrealm) -> {
             PostDBO dbo = xrealm.createObject(PostDBO.class);
             postToDboPopulator.populate(post, dbo);
         });
         realm.close();
-        return true;
+        return post.id();
     }
 
     /* Read */
@@ -71,12 +72,14 @@ public class PostDatabase implements IPostStorage {
 
     @DebugLog @Override
     public List<Post> posts(int limit, int offset) {
-        // TODO: use limit & offset, care of {-1, 0}
+        RepoUtility.checkLimitAndOffset(limit, offset);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<PostDBO> dbos = realm.where(PostDBO.class).findAll();
         List<Post> models = new ArrayList<>();
-        for (PostDBO dbo : dbos) {
-            models.add(postToDboMapper.mapBack(dbo));
+        int size = limit < 0 ? dbos.size() : limit;
+        RepoUtility.checkListBounds(offset + size - 1, dbos.size());
+        for (int i = offset; i < offset + size; ++i) {
+            models.add(postToDboMapper.mapBack(dbos.get(i)));
         }
         realm.close();
         return models;
@@ -101,4 +104,14 @@ public class PostDatabase implements IPostStorage {
 
     /* Delete */
     // ------------------------------------------
+    @Override
+    public boolean deletePost(long id) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction((xrealm) -> {
+            PostDBO dbo = realm.where(PostDBO.class).equalTo(PostDBO.COLUMN_ID, id).findFirst();
+            dbo.deleteFromRealm();
+        });
+        realm.close();
+        return true;
+    }
 }

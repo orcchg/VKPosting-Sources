@@ -8,6 +8,7 @@ import com.orcchg.vikstra.data.source.local.model.KeywordDBO;
 import com.orcchg.vikstra.data.source.local.model.mapper.KeywordBundleToDboMapper;
 import com.orcchg.vikstra.data.source.local.model.populator.KeywordBundleToDboPopulator;
 import com.orcchg.vikstra.data.source.local.model.populator.KeywordToDboPopulator;
+import com.orcchg.vikstra.data.source.repository.RepoUtility;
 import com.orcchg.vikstra.data.source.repository.keyword.IKeywordStorage;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
@@ -95,12 +96,14 @@ public class KeywordDatabase implements IKeywordStorage {
 
     @DebugLog @Override
     public List<KeywordBundle> keywords(int limit, int offset) {
-        // TODO: use limit & offset, care of {-1, 0}
+        RepoUtility.checkLimitAndOffset(limit, offset);
         Realm realm = Realm.getDefaultInstance();
         RealmResults<KeywordBundleDBO> dbos = realm.where(KeywordBundleDBO.class).findAll();
         List<KeywordBundle> models = new ArrayList<>();
-        for (KeywordBundleDBO dbo : dbos) {
-            models.add(keywordBundleToDboMapper.mapBack(dbo));
+        int size = limit < 0 ? dbos.size() : limit;
+        RepoUtility.checkListBounds(offset + size - 1, dbos.size());
+        for (int i = offset; i < offset + size; ++i) {
+            models.add(keywordBundleToDboMapper.mapBack(dbos.get(i)));
         }
         realm.close();
         return models;
@@ -125,4 +128,14 @@ public class KeywordDatabase implements IKeywordStorage {
 
     /* Delete */
     // ------------------------------------------
+    @Override
+    public boolean deleteKeywords(long id) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction((xrealm) -> {
+            KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
+            dbo.deleteFromRealm();
+        });
+        realm.close();
+        return true;
+    }
 }

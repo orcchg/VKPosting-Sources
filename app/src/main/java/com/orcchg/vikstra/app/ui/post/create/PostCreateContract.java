@@ -19,6 +19,7 @@ public interface PostCreateContract {
 
         ContentResolver contentResolver();
         void closeView(int resultCode);
+        void showError();
     }
 
     interface Presenter extends MvpPresenter<View> {

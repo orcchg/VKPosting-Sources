@@ -34,9 +34,9 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         long lastId = localSource.getLastId();
         KeywordBundle bundle = KeywordBundle.builder()
                 .setId(++lastId)
+                .setKeywords(keywords)
                 .setTimestamp(System.currentTimeMillis())
                 .setTitle(title)
-                .setKeywords(keywords)
                 .build();
 
         return localSource.addKeywords(bundle);
@@ -77,4 +77,9 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
 
     /* Delete */
     // ------------------------------------------
+    @Override
+    public boolean deleteKeywords(long id) {
+        // TODO: impl cloudly
+        return localSource.deleteKeywords(id);
+    }
 }

@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.orcchg.vikstra.data.source.repository.post.IPostStorage;
 import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.List;
 
@@ -18,8 +19,8 @@ public class PostCloud implements IPostStorage {
     /* Create */
     // ------------------------------------------
     @Override
-    public boolean addPost(Post post) {
-        return false;
+    public long addPost(Post post) {
+        return Constant.BAD_ID;
     }
 
     /* Read */
@@ -48,4 +49,8 @@ public class PostCloud implements IPostStorage {
 
     /* Delete */
     // ------------------------------------------
+    @Override
+    public boolean deletePost(long id) {
+        return false;
+    }
 }

@@ -27,4 +27,5 @@ public interface IKeywordStorage extends IStorage {
 
     /* Delete */
     // ------------------------------------------
+    boolean deleteKeywords(long id);
 }

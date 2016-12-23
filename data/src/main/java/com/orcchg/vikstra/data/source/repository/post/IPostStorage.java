@@ -12,7 +12,7 @@ public interface IPostStorage extends IStorage {
 
     /* Create */
     // ------------------------------------------
-    boolean addPost(Post post);
+    long addPost(Post post);
 
     /* Read */
     // ------------------------------------------
@@ -25,4 +25,5 @@ public interface IPostStorage extends IStorage {
 
     /* Delete */
     // ------------------------------------------
+    boolean deletePost(long id);
 }

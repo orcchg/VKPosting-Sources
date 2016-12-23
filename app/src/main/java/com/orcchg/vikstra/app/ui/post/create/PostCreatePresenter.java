@@ -182,7 +182,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }
@@ -196,21 +196,21 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }
 
-    private UseCase.OnPostExecuteCallback<Boolean> createPutPostCallback() {
-        return new UseCase.OnPostExecuteCallback<Boolean>() {
+    private UseCase.OnPostExecuteCallback<Long> createPutPostCallback() {
+        return new UseCase.OnPostExecuteCallback<Long>() {
             @Override
-            public void onFinish(@Nullable Boolean values) {
+            public void onFinish(@Nullable Long postId) {
                 if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
             }
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }

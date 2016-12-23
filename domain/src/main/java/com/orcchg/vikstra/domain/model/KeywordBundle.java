@@ -34,9 +34,9 @@ public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterab
     }
 
     public abstract long id();
+    public abstract Collection<Keyword> keywords();
     public abstract long timestamp();
     public abstract String title();
-    public abstract Collection<Keyword> keywords();
 
     public long getGroupBundleId() {
         return groupBundleId;

@@ -118,7 +118,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }
@@ -135,7 +135,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }
@@ -152,7 +152,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }

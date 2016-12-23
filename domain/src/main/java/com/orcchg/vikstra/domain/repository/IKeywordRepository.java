@@ -28,4 +28,5 @@ public interface IKeywordRepository {
 
     /* Delete */
     // ------------------------------------------
+    boolean deleteKeywords(long id);
 }

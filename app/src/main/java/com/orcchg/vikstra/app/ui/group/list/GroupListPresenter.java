@@ -21,6 +21,7 @@ import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.util.ValueUtility;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -155,7 +156,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }
@@ -190,7 +191,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
-                // TODO:
+                if (isViewAttached()) getView().showError();
             }
         };
     }
@@ -204,7 +205,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }
@@ -222,7 +223,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }
@@ -257,8 +258,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     getView().updateSelectedGroupsCounter(totalSelectedGroups, totalGroups);
                     getView().showGroups(splitGroups.isEmpty());
                 }
-
-                // TODO: compose GroupBundle instance and set as UseCase parameter
+                
+                // compose bundle of groups and store it in repository
+                PutGroupBundle.Parameters parameters = new PutGroupBundle.Parameters.Builder()
+                        .setGroups(ValueUtility.merge(splitGroups))
+                        .setKeywordBundleId(inputKeywordBundle.id())
+                        .setTitle("title default")  // TODO: set title for groups-bundle
+                        .build();
+                putGroupBundleUseCase.setParameters(parameters);
                 putGroupBundleUseCase.execute();
             }
 
@@ -278,7 +285,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
-                // TODO:
+                if (isViewAttached()) getView().showError();
             }
         };
     }

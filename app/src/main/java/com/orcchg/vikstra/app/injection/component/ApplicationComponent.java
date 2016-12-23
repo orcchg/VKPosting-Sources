@@ -11,6 +11,7 @@ import com.orcchg.vikstra.data.source.remote.injection.CloudComponent;
 import com.orcchg.vikstra.data.source.remote.injection.CloudModule;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.repository.IGroupRepository;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 import com.orcchg.vikstra.domain.repository.IPostRepository;
 
@@ -43,6 +44,7 @@ public interface ApplicationComponent extends CloudComponent {
 
     /* Repository */
     // ------------------------------------------
+    IGroupRepository groupRepository();
     IKeywordRepository keywordRepository();
     IPostRepository postRepository();
 }

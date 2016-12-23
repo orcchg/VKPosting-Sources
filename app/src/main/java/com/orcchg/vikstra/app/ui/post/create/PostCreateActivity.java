@@ -198,6 +198,11 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         finish();
     }
 
+    @Override
+    public void showError() {
+        // TODO: show error
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private void addMediaThumbnail(ThumbView mediaView) {

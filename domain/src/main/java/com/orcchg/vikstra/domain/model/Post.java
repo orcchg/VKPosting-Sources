@@ -25,9 +25,9 @@ public abstract class Post implements Comparable<Post> {
 
     public abstract long id();
     public abstract @Nullable String description();
+    public abstract @Nullable List<Media> media();
     public abstract long timestamp();
     public abstract @Nullable String title();
-    public abstract @Nullable List<Media> media();
 
     @Override
     public int compareTo(Post o) {
