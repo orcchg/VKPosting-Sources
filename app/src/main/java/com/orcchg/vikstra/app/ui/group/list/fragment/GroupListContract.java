@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.group.list;
+package com.orcchg.vikstra.app.ui.group.list.fragment;
 
 import com.orcchg.vikstra.app.ui.base.MvpListView;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;

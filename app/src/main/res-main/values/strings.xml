@@ -14,10 +14,13 @@
 
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
+    <string name="button_dump">Dump</string>
     <string name="button_edit">Edit</string>
     <string name="button_save">Save</string>
     <string name="button_search">Search</string>
 
+    <string name="dialog_input_edit_title">Change title</string>
+    <string name="dialog_input_edit_title_hint">Enter new title</string>
     <string name="dialog_upload_photo_title">Where to get photo</string>
     <array name="dialog_upload_photo_variants">
         <item name="dialog_upload_photo_variant_gallery">Gallery</item>

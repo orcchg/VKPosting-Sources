@@ -10,7 +10,7 @@ import android.support.v4.content.FileProvider;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.app.ui.group.detail.GroupDetailActivity;
-import com.orcchg.vikstra.app.ui.group.list.GroupListActivity;
+import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;

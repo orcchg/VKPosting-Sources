@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.group.list;
+package com.orcchg.vikstra.app.ui.group.list.fragment;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -23,8 +23,11 @@ import com.orcchg.vikstra.app.ui.base.BaseListFragment;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.KeywordModule;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
-import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListComponent;
-import com.orcchg.vikstra.app.ui.group.list.injection.GroupListComponent;
+import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
+import com.orcchg.vikstra.app.ui.group.list.GroupsCounterHolder;
+import com.orcchg.vikstra.app.ui.group.list.PostThumbHolder;
+import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListComponent;
+import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
 import com.orcchg.vikstra.app.ui.report.ReportActivity;
 import com.orcchg.vikstra.app.ui.util.FabHolder;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;

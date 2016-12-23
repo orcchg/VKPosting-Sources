@@ -186,8 +186,8 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     /* Resources */
     // --------------------------------------------------------------------------------------------
     private void initResources() {
-        DIALOG_TITLE = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_title);
-        DIALOG_HINT = getResources().getString(R.string.keyword_create_dialog_input_keywords_bundle_hint);
+        DIALOG_TITLE = getResources().getString(R.string.dialog_input_edit_title);
+        DIALOG_HINT = getResources().getString(R.string.dialog_input_edit_title_hint);
         SNACKBAR_KEYWORDS_LIMIT = getResources().getString(R.string.keyword_create_snackbar_keywords_limit_message);
     }
 }

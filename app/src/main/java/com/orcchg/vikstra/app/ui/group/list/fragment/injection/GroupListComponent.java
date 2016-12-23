@@ -1,11 +1,11 @@
-package com.orcchg.vikstra.app.ui.group.list.injection;
+package com.orcchg.vikstra.app.ui.group.list.fragment.injection;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.ui.common.injection.KeywordModule;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
-import com.orcchg.vikstra.app.ui.group.list.GroupListFragment;
-import com.orcchg.vikstra.app.ui.group.list.GroupListPresenter;
+import com.orcchg.vikstra.app.ui.group.list.fragment.GroupListFragment;
+import com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter;
 
 import dagger.Component;
 

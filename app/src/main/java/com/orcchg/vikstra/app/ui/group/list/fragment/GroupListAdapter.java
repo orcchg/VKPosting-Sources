@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.group.list;
+package com.orcchg.vikstra.app.ui.group.list.fragment;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,6 +9,8 @@ import android.widget.CompoundButton;
 
 import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 import com.orcchg.vikstra.R;
+import com.orcchg.vikstra.app.ui.group.list.OnAllGroupsSelectedListener;
+import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildViewHolder;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;

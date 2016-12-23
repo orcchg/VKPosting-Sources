@@ -1,5 +1,5 @@
 package com.orcchg.vikstra.app.ui.group.list;
 
-interface GroupsCounterHolder {
+public interface GroupsCounterHolder {
     void updateSelectedGroupsCounter(int count, int total);
 }

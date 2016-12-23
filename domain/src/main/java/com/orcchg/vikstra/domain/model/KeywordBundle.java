@@ -42,7 +42,8 @@ public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterab
         return groupBundleId;
     }
     public void setGroupBundleId(long groupBundleId) {
-        if (this.groupBundleId != Constant.BAD_ID && groupBundleId != Constant.BAD_ID) {
+        if (this.groupBundleId != Constant.BAD_ID && groupBundleId != Constant.BAD_ID &&
+            this.groupBundleId != groupBundleId) {
             String message = "Attemp to reassign already existing group-bundle id! " +
                     "This breaks the correspondence between this keyword-bundle and " +
                     "some destination group-bundle, which is illegal.";

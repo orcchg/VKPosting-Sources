@@ -38,7 +38,7 @@
                   android:label="@string/group_detail_screen_title"
                   android:theme="@style/AppTheme"/>
 
-        <activity android:name=".app.ui.group.list.GroupListActivity"
+        <activity android:name=".app.ui.group.list.activity.GroupListActivity"
                   android:label="@string/group_list_screen_title"
                   android:theme="@style/AppTheme"/>
 

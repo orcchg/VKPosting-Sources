@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.group.list.injection;
+package com.orcchg.vikstra.app.ui.group.list.fragment.injection;
 
 import dagger.Module;
 

@@ -1,10 +1,12 @@
-package com.orcchg.vikstra.app.ui.group.list;
+package com.orcchg.vikstra.app.ui.group.list.fragment;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
+import com.orcchg.vikstra.app.ui.group.list.OnAllGroupsSelectedListener;
+import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
@@ -258,7 +260,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     getView().updateSelectedGroupsCounter(totalSelectedGroups, totalGroups);
                     getView().showGroups(splitGroups.isEmpty());
                 }
-                
+
                 // compose bundle of groups and store it in repository
                 PutGroupBundle.Parameters parameters = new PutGroupBundle.Parameters.Builder()
                         .setGroups(ValueUtility.merge(splitGroups))
