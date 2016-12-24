@@ -41,14 +41,14 @@ public class GroupDatabase implements IGroupStorage {
     /* Create */
     // ------------------------------------------
     @DebugLog @Override
-    public long addGroups(@NonNull GroupBundle bundle) {
+    public GroupBundle addGroups(@NonNull GroupBundle bundle) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction((xrealm) -> {
             GroupBundleDBO dbo = xrealm.createObject(GroupBundleDBO.class);
             groupBundleToDboPopulator.populate(bundle, dbo);
         });
         realm.close();
-        return bundle.id();
+        return bundle;
     }
 
     @DebugLog @Override

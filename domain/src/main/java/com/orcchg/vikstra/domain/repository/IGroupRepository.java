@@ -13,7 +13,7 @@ public interface IGroupRepository {
 
     /* Create */
     // ------------------------------------------
-    long addGroups(String title, long keywordBundleId, Collection<Group> groups);
+    GroupBundle addGroups(String title, long keywordBundleId, Collection<Group> groups);
     boolean addGroupToBundle(long id, Group group);
 
     /* Read */

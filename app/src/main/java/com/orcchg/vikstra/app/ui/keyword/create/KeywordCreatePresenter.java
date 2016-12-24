@@ -19,6 +19,7 @@ import java.util.TreeSet;
 import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.View> implements KeywordCreateContract.Presenter {
     private static final int KEYWORDS_LIMIT = 7;
@@ -69,7 +70,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         if (TextUtils.isEmpty(title)) {
             if (isViewAttached()) getView().openEditTitleDialog(title);
         } else if (keywordBundleId == Constant.BAD_ID) {
-            // add new keywords bundle to repository
+            Timber.v("add new keywords bundle to repository");
             PutKeywordBundle.Parameters parameters = new PutKeywordBundle.Parameters.Builder()
                     .setTitle(title)
                     .setKeywords(keywords)
@@ -77,12 +78,12 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             putKeywordBundleUseCase.setParameters(parameters);
             putKeywordBundleUseCase.execute();
         } else {
-            // update existing keywords bundle in repository
+            Timber.v("update existing keywords bundle in repository");
             KeywordBundle keywordsBundle = KeywordBundle.builder()
                     .setId(keywordBundleId)
+                    .setKeywords(keywords)
                     .setTimestamp(timestamp)
                     .setTitle(title)
-                    .setKeywords(keywords)
                     .build();
             PostKeywordBundle.Parameters parameters = new PostKeywordBundle.Parameters(keywordsBundle);
             postKeywordBundleUseCase.setParameters(parameters);
@@ -140,10 +141,10 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         };
     }
 
-    private UseCase.OnPostExecuteCallback<Long> createPutKeywordBundleCallback() {
-        return new UseCase.OnPostExecuteCallback<Long>() {
+    private UseCase.OnPostExecuteCallback<KeywordBundle> createPutKeywordBundleCallback() {
+        return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
             @Override
-            public void onFinish(@Nullable Long keywordBundleId) {
+            public void onFinish(@Nullable KeywordBundle bundle) {
                 if (isViewAttached()) {
                     getView().notifyKeywordsAdded();
                     getView().closeView(Activity.RESULT_OK);

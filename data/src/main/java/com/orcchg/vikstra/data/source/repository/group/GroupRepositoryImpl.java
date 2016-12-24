@@ -30,7 +30,7 @@ public class GroupRepositoryImpl implements IGroupRepository {
     /* Create */
     // ------------------------------------------
     @Override
-    public long addGroups(String title, long keywordBundleId, Collection<Group> groups) {
+    public GroupBundle addGroups(String title, long keywordBundleId, Collection<Group> groups) {
         // TODO: impl cloudly
         long lastId = localSource.getLastId();
         GroupBundle bundle = GroupBundle.builder()

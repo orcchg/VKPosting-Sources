@@ -43,14 +43,14 @@ public class KeywordDatabase implements IKeywordStorage {
     /* Create */
     // ------------------------------------------
     @DebugLog @Override
-    public long addKeywords(@NonNull KeywordBundle bundle) {
+    public KeywordBundle addKeywords(@NonNull KeywordBundle bundle) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction((xrealm) -> {
             KeywordBundleDBO dbo = xrealm.createObject(KeywordBundleDBO.class);
             keywordBundleToDboPopulator.populate(bundle, dbo);
         });
         realm.close();
-        return bundle.id();
+        return bundle;
     }
 
     @DebugLog @Override

@@ -13,7 +13,7 @@ public interface IGroupStorage extends IStorage {
 
     /* Create */
     // ------------------------------------------
-    long addGroups(@NonNull GroupBundle bundle);
+    GroupBundle addGroups(@NonNull GroupBundle bundle);
     boolean addGroupToBundle(long id, Group group);
 
     /* Read */

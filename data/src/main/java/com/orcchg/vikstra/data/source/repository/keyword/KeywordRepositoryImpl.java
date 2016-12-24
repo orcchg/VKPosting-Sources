@@ -29,7 +29,7 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
     /* Create */
     // ------------------------------------------
     @Override
-    public long addKeywords(String title, Collection<Keyword> keywords) {
+    public KeywordBundle addKeywords(String title, Collection<Keyword> keywords) {
         // TODO: impl cloudly
         long lastId = localSource.getLastId();
         KeywordBundle bundle = KeywordBundle.builder()

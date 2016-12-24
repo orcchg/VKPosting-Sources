@@ -7,13 +7,14 @@ import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.repository.IGroupRepository;
 
 import java.util.Collection;
 
 import javax.inject.Inject;
 
-public class PutGroupBundle extends UseCase<Long> {
+public class PutGroupBundle extends UseCase<GroupBundle> {
 
     public static class Parameters {
         String title;
@@ -67,7 +68,7 @@ public class PutGroupBundle extends UseCase<Long> {
     }
 
     @Nullable @Override
-    protected Long doAction() {
+    protected GroupBundle doAction() {
         if (parameters == null) throw new NoParametersException();
         return groupRepository.addGroups(parameters.title, parameters.keywordBundleId, parameters.groups);
     }

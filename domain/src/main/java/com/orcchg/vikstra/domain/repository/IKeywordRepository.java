@@ -13,7 +13,7 @@ public interface IKeywordRepository {
 
     /* Create */
     // ------------------------------------------
-    long addKeywords(String title, Collection<Keyword> keywords);
+    KeywordBundle addKeywords(String title, Collection<Keyword> keywords);
     boolean addKeywordToBundle(long id, Keyword keyword);
 
     /* Read */

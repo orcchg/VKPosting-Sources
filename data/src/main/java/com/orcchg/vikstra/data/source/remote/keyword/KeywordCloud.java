@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import com.orcchg.vikstra.data.source.repository.keyword.IKeywordStorage;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
-import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.List;
 
@@ -22,8 +21,8 @@ public class KeywordCloud implements IKeywordStorage {
     /* Create */
     // ------------------------------------------
     @Override
-    public long addKeywords(KeywordBundle bundle) {
-        return Constant.BAD_ID;
+    public KeywordBundle addKeywords(KeywordBundle bundle) {
+        return null;
     }
 
     @Override
