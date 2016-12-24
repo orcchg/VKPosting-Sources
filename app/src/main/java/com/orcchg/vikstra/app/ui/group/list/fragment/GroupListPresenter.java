@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.group.list.fragment;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
@@ -7,8 +8,12 @@ import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.group.list.OnAllGroupsSelectedListener;
 import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
+import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListMediatorComponent;
+import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorComponent;
+import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorModule;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
+import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
@@ -54,6 +59,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
+    GroupListMediatorComponent mediatorComponent;
+
     @Inject
     GroupListPresenter(GetPostById getPostByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
                        AddKeywordToBundle addKeywordToBundleUseCase, PostKeywordBundle postKeywordBundleUseCase,
@@ -83,6 +90,16 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mediatorComponent = DaggerGroupListMediatorComponent.builder()
+                .groupListMediatorModule(new GroupListMediatorModule())
+                .build();
+        mediatorComponent.inject(this);
+        mediatorComponent.mediator().attachSecond(this);
+    }
+
     @DebugLog @Override
     public void onStart() {
         if (isViewAttached()) {  // TODO: try to use BaseListPresenter
@@ -94,25 +111,18 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         super.onStart();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mediatorComponent.mediator().detachSecond();
+    }
+
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
     public void addKeyword(Keyword keyword) {
         addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
         addKeywordToBundleUseCase.execute();
-    }
-
-    @Override
-    public void postToGroups() {
-        Set<Long> selectedGroupIds = new TreeSet<>();
-        for (GroupParentItem parentItem : listAdapter.getParentList()) {
-            for (GroupChildItem childItem : parentItem.getChildList()) {
-                if (childItem.isSelected()) selectedGroupIds.add(childItem.getId());
-            }
-        }
-        vkontakteEndpoint.makeWallPosts(selectedGroupIds, currentPost,
-                createMakeWallPostCallback(), createMakeWallPostsProgressCallback(),
-                createPhotoUploadProgressCallback(), createPhotoPrepareProgressCallback());
     }
 
     @Override
@@ -132,12 +142,51 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         freshStart();
     }
 
+    /* Mediator */
+    // ------------------------------------------
+    @Override
+    public void receiveAddKeywordRequest() {
+        if (isViewAttached()) getView().openAddKeywordDialog();
+    }
+
+    @Override
+    public void receivePostToGroupsRequest() {
+        postToGroups();
+    }
+
+    @Override
+    public void sendEmptyPost() {
+        mediatorComponent.mediator().sendEmptyPost();
+    }
+
+    @Override
+    public void sendPost(@Nullable PostSingleGridItemVO viewObject) {
+        mediatorComponent.mediator().sendPost(viewObject);
+    }
+
+    @Override
+    public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
+        mediatorComponent.mediator().sendUpdatedSelectedGroupsCounter(newCount, total);
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     protected void freshStart() {
         getPostByIdUseCase.execute();
         getKeywordBundleByIdUseCase.execute();
+    }
+
+    private void postToGroups() {
+        Set<Long> selectedGroupIds = new TreeSet<>();
+        for (GroupParentItem parentItem : listAdapter.getParentList()) {
+            for (GroupChildItem childItem : parentItem.getChildList()) {
+                if (childItem.isSelected()) selectedGroupIds.add(childItem.getId());
+            }
+        }
+        vkontakteEndpoint.makeWallPosts(selectedGroupIds, currentPost,
+                createMakeWallPostCallback(), createMakeWallPostsProgressCallback(),
+                createPhotoUploadProgressCallback(), createPhotoPrepareProgressCallback());
     }
 
     /* Callback */
@@ -147,12 +196,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onFinish(@Nullable Post post) {
                 currentPost = post;
-                if (isViewAttached()) {
-                    if (post != null) {
-                        getView().showPost(postToSingleGridVoMapper.map(post));
-                    } else {
-                        getView().showEmptyPost();
-                    }
+                if (post != null) {
+                    sendPost(postToSingleGridVoMapper.map(post));
+                } else {
+                    sendEmptyPost();
                 }
             }
 
@@ -256,8 +303,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
 
                 listAdapter.notifyParentDataSetChanged(false);
+                sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
                 if (isViewAttached()) {
-                    getView().updateSelectedGroupsCounter(totalSelectedGroups, totalGroups);
                     getView().showGroups(splitGroups.isEmpty());
                 }
 
@@ -341,14 +388,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             model.setSelectedCount(isSelected ? total : 0);
             totalSelectedGroups += isSelected ? unselected : -selected;
             listAdapter.notifyParentChanged(position);
-            if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups, totalGroups);
+            sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
         };
     }
 
     private GroupListAdapter.OnCheckedChangeListener createExternalChildItemSwitcherCallback() {
         return (data, isChecked) -> {
             totalSelectedGroups += isChecked ? 1 : -1;
-            if (isViewAttached()) getView().updateSelectedGroupsCounter(totalSelectedGroups, totalGroups);
+            sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
         };
     }
 }

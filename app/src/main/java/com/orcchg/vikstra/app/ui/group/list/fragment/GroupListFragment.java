@@ -24,14 +24,10 @@ import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.KeywordModule;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
-import com.orcchg.vikstra.app.ui.group.list.GroupsCounterHolder;
-import com.orcchg.vikstra.app.ui.group.list.PostThumbHolder;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
 import com.orcchg.vikstra.app.ui.report.ReportActivity;
-import com.orcchg.vikstra.app.ui.util.FabHolder;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
-import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -40,7 +36,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GroupListFragment extends BaseListFragment<GroupListContract.View, GroupListContract.Presenter>
-        implements GroupListContract.View, GroupListActivity.ViewInteraction {
+        implements GroupListContract.View {
     private static final String BUNDLE_KEY_KEYWORDS_BUNDLE_ID = "bundle_key_keywords_bundle_id";
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     public static final int RV_TAG = Constant.ListTag.GROUP_LIST_SCREEN;
@@ -58,9 +54,9 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         presenter.retry();
     }
 
-    private FabHolder fabHolder;
-    private GroupsCounterHolder groupsCounterHolder;
-    private PostThumbHolder postThumbHolder;
+//    private FabHolder fabHolder;
+//    private GroupsCounterHolder groupsCounterHolder;
+//    private PostThumbHolder postThumbHolder;
     private ShadowHolder shadowHolder;
 
     private GroupListComponent groupComponent;
@@ -105,9 +101,6 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (FabHolder.class.isInstance(activity)) fabHolder = (FabHolder) activity;
-        if (GroupsCounterHolder.class.isInstance(activity)) groupsCounterHolder = (GroupsCounterHolder) activity;
-        if (PostThumbHolder.class.isInstance(activity)) postThumbHolder = (PostThumbHolder) activity;
         if (ShadowHolder.class.isInstance(activity)) shadowHolder = (ShadowHolder) activity;
     }
 
@@ -149,29 +142,17 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         return rootView;
     }
 
-    /* Downstream access */
-    // --------------------------------------------------------------------------------------------
-    @Override
-    public void onFabClick() {
-        presenter.postToGroups();
-    }
-
-    @Override
-    public void onAddKeyword() {
-        DialogProvider.showEditTextDialog(getActivity(), DIALOG_TITLE, DIALOG_HINT, null,
-                (dialog, which, text) -> { if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text)); });
-    }
-
-    @Override
-    public void onChangePost() {
-        navigationComponent.navigator().openPostListScreen(getActivity());
-    }
-
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onScroll(int itemsLeftToEnd) {
         // TODO: impl
+    }
+
+    @Override
+    public void openAddKeywordDialog() {
+        DialogProvider.showEditTextDialog(getActivity(), DIALOG_TITLE, DIALOG_HINT, null,
+                (dialog, which, text) -> { if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text)); });
     }
 
     @Override
@@ -210,23 +191,6 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         }
 
         if (shadowHolder != null) shadowHolder.showShadow(true);
-    }
-
-    @Override
-    public void showPost(PostSingleGridItemVO viewObject) {
-        if (fabHolder != null) fabHolder.showFab(true);
-        if (postThumbHolder != null) postThumbHolder.showPost(viewObject);
-    }
-
-    @Override
-    public void showEmptyPost() {
-        if (fabHolder != null) fabHolder.showFab(false);
-        if (postThumbHolder != null) postThumbHolder.showPost(null);
-    }
-
-    @Override
-    public void updateSelectedGroupsCounter(int newCount, int total) {
-        if (groupsCounterHolder != null) groupsCounterHolder.updateSelectedGroupsCounter(newCount, total);
     }
 
     // ------------------------------------------

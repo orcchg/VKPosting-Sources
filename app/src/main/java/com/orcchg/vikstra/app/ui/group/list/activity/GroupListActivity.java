@@ -16,12 +16,9 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
-import com.orcchg.vikstra.app.ui.group.list.GroupsCounterHolder;
-import com.orcchg.vikstra.app.ui.group.list.PostThumbHolder;
 import com.orcchg.vikstra.app.ui.group.list.activity.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.activity.injection.GroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.GroupListFragment;
-import com.orcchg.vikstra.app.ui.util.FabHolder;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -31,7 +28,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GroupListActivity extends BaseActivity<GroupListContract.View, GroupListContract.Presenter>
-        implements GroupListContract.View, GroupsCounterHolder, FabHolder, PostThumbHolder, ShadowHolder {
+        implements GroupListContract.View, ShadowHolder {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
@@ -44,18 +41,17 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     @BindView(R.id.tv_info_title) TextView selectedGroupsCountView;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
-    // delegate view event to child fragment
     @OnClick(R.id.fab)
     void onPostFabClick() {
-        getFragment().onFabClick();
+        presenter.onFabClick();
     }
     @OnClick(R.id.btn_add_keyword)
     void onAddKeywordClick() {
-        getFragment().onAddKeyword();
+        presenter.onAddKeyword();
     }
     @OnClick(R.id.btn_change_post)
     void onChangePost() {
-        getFragment().onChangePost();
+        navigationComponent.navigator().openPostListScreen(this);
     }
 
     private GroupListComponent groupComponent;
@@ -67,12 +63,6 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
         intent.putExtra(EXTRA_KEYWORD_BUNDLE_ID, keywordBunldeId);
         intent.putExtra(EXTRA_POST_ID, postId);
         return intent;
-    }
-
-    public interface ViewInteraction {
-        void onFabClick();
-        void onAddKeyword();
-        void onChangePost();
     }
 
     @NonNull @Override
@@ -141,28 +131,8 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     }
 
     @Override
-    public void showFab(boolean isVisible) {
-        if (isVisible) {
-            fab.show();
-        } else {
-            fab.hide();
-        }
-    }
-
-    @Override
-    public void showPost(@Nullable PostSingleGridItemVO viewObject) {
-        postThumbnail.setPost(viewObject);
-    }
-
-    @Override
     public void showShadow(boolean show) {
         dropshadowView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
-    }
-
-    @Override
-    public void updateSelectedGroupsCounter(int count, int total) {
-        String text = new StringBuilder(String.format(INFO_TITLE, count)).append('/').append(total).toString();
-        selectedGroupsCountView.setText(text);
     }
 
     /* Contract */
@@ -181,19 +151,31 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
         if (!TextUtils.isEmpty(title)) toolbar.setTitle(title);
     }
 
+    /* Mediator */
+    // ------------------------------------------
+    @Override
+    public void showEmptyPost() {
+        fab.hide();
+        postThumbnail.setPost(null);
+    }
+
+    @Override
+    public void showPost(@Nullable PostSingleGridItemVO viewObject) {
+        if (viewObject != null) fab.show();
+        postThumbnail.setPost(viewObject);
+    }
+
+    @Override
+    public void updateSelectedGroupsCounter(int count, int total) {
+        String text = new StringBuilder(String.format(INFO_TITLE, count)).append('/').append(total).toString();
+        selectedGroupsCountView.setText(text);
+    }
+
     /* Resources */
     // --------------------------------------------------------------------------------------------
     private void initResources() {
         DIALOG_TITLE = getResources().getString(R.string.dialog_input_edit_title);
         DIALOG_HINT = getResources().getString(R.string.dialog_input_edit_title_hint);
         INFO_TITLE = getResources().getString(R.string.group_list_selected_groups_total_count);
-    }
-
-    /* Internal */
-    // --------------------------------------------------------------------------------------------
-    @Nullable
-    private ViewInteraction getFragment() {
-        FragmentManager fm = getSupportFragmentManager();
-        return (ViewInteraction) fm.findFragmentByTag(FRAGMENT_TAG);
     }
 }
