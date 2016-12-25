@@ -22,11 +22,11 @@ import hugo.weaving.DebugLog;
 
 public class MainPresenter extends BaseCompositePresenter<MainContract.View> implements MainContract.Presenter {
 
-    KeywordListPresenter keywordListPresenter;
-    PostSingleGridPresenter postSingleGridPresenter;
+    private KeywordListPresenter keywordListPresenter;
+    private PostSingleGridPresenter postSingleGridPresenter;
 
-    boolean isKeywordBundleSelected;  // TODO: save instance state
-    boolean isPostSelected;
+    private boolean isKeywordBundleSelected;  // TODO: save instance state
+    private boolean isPostSelected;
 
     @Override
     protected List<? extends MvpPresenter> providePresenterList() {

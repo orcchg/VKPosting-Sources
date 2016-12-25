@@ -2,11 +2,11 @@ package com.orcchg.vikstra.app.ui.group.list.fragment;
 
 import com.orcchg.vikstra.app.ui.base.MvpListView;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
-import com.orcchg.vikstra.domain.model.Keyword;
 
-public interface GroupListContract {
+interface GroupListContract {
     interface View extends MvpListView {
-        void openAddKeywordDialog();
+        void onAddKeywordError();
+        void onKeywordsLimitReached(int limit);
         void openGroupDetailScreen(long groupId);
         void openReportScreen(long postId);
         void showError();
@@ -24,7 +24,6 @@ public interface GroupListContract {
     // ------------------------------------------
     interface Presenter extends MvpPresenter<View>,
             FragmentMediator.Receiver, FragmentMediator.Sender {
-        void addKeyword(Keyword keyword);
         void removeListItem(int position);
         void retry();
     }

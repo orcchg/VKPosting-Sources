@@ -30,7 +30,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private final @BaseSelectAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
 
-    final KeywordBundleToVoMapper keywordBundleToVoMapper;
+    private final KeywordBundleToVoMapper keywordBundleToVoMapper;
 
     @Inject
     public KeywordListPresenter(@BaseSelectAdapter.SelectMode int selectMode,
@@ -96,11 +96,12 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     @Override
     protected void freshStart() {
+        if (isViewAttached()) getView().showLoading();
         getKeywordBundlesUseCase.execute();
     }
 
     @DebugLog
-    protected boolean changeSelectedKeywordBundleId(long newId) {
+    private boolean changeSelectedKeywordBundleId(long newId) {
         selectedKeywordBundleId = newId;
         if (externalValueEmitter != null) {
             externalValueEmitter.emit(newId != Constant.BAD_ID);

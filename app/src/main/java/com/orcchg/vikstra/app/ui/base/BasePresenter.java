@@ -26,7 +26,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
         viewRef = new WeakReference<>(view);
     }
 
-    @Nullable
+    //@Nullable
     public V getView() {
         return viewRef == null ? null : viewRef.get();
     }

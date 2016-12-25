@@ -7,6 +7,7 @@ import com.orcchg.vikstra.app.ui.base.mediator.BaseMediator;
 import com.orcchg.vikstra.app.ui.group.list.activity.ActivityMediator;
 import com.orcchg.vikstra.app.ui.group.list.fragment.FragmentMediator;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.model.Keyword;
 
 import hugo.weaving.DebugLog;
 
@@ -19,8 +20,8 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
-    public void sendAddKeywordRequest() {
-        clientSecond.receiveAddKeywordRequest();
+    public void sendAddKeywordRequest(Keyword keyword) {
+        clientSecond.receiveAddKeywordRequest(keyword);
     }
 
     @Override

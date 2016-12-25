@@ -37,9 +37,9 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     private List<Media> attachMedia = new ArrayList<>();  // TODO: save instance state
 
-    long timestamp;
-    String description;
-    String title;
+    private long timestamp;
+    private String description;
+    private String title;
 
     @Inject
     PostCreatePresenter(GetPostById getPostByIdUseCase, PostPost postPostUseCase, PutPost putPostUseCase) {

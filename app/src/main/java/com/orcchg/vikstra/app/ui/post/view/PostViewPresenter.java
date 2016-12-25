@@ -14,8 +14,7 @@ import javax.inject.Inject;
 public class PostViewPresenter extends BasePresenter<PostViewContract.View> implements PostViewContract.Presenter {
 
     private final GetPostById getPostByIdUseCase;
-
-    final PostToVoMapper postToVoMapper;
+    private final PostToVoMapper postToVoMapper;
 
     @Inject
     PostViewPresenter(GetPostById getPostByIdUseCase, PostToVoMapper postToVoMapper) {
@@ -24,16 +23,18 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
         this.postToVoMapper = postToVoMapper;
     }
 
-    /* Lifecycle */
-    // --------------------------------------------------------------------------------------------
-
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void retry() {
+        freshStart();
+    }
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
+        if (isViewAttached()) getView().showLoading();
         getPostByIdUseCase.execute();
     }
 
@@ -53,7 +54,7 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }

@@ -4,6 +4,7 @@
     <string name="group_list_button_label_change_post">Change post</string>
     <string name="group_list_dialog_new_keyword_title">New keyword</string>
     <string name="group_list_dialog_new_keyword_hind">Enter new keyword</string>
+    <string name="group_list_error_add_keyword">Failed to add new keyword!</string>
     <string name="group_list_fab_label_post">Post</string>
     <string name="group_list_notification_posting_title">Wall posting</string>
     <string name="group_list_notification_posting_description_complete">Posting completed</string>
@@ -13,4 +14,5 @@
     <string name="group_list_notification_photo_upload_description_progress">Photo upload in progress</string>
     <string name="group_list_screen_title">Choose groups</string>
     <string name="group_list_selected_groups_total_count">Selected groups: %s</string>
+    <string name="group_list_snackbar_keywords_limit_message">You\'ve reached keywords limit: %s</string>
 </resources>

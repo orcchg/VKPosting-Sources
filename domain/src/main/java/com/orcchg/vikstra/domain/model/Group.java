@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.auto.value.AutoValue;
 
 @AutoValue
@@ -31,7 +33,7 @@ public abstract class Group implements Comparable<Group> {
     }
 
     @Override
-    public int compareTo(Group o) {
+    public int compareTo(@NonNull Group o) {
         return o.membersCount() - membersCount();
     }
 }

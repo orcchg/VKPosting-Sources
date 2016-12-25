@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.auto.value.AutoValue;
 
 import java.util.Collection;
@@ -38,7 +40,7 @@ public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<G
     }
 
     @Override
-    public int compareTo(GroupBundle o) {
+    public int compareTo(@NonNull GroupBundle o) {
         return (int) (o.timestamp() - timestamp());
     }
 

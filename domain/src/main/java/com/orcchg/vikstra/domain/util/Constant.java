@@ -4,6 +4,8 @@ public class Constant {
     public static final long BAD_ID = -1;
     public static final long INIT_ID = 0;
 
+    public static final int KEYWORDS_LIMIT = 7;
+
     public static final class RequestCode {
         public static final int EXTERNAL_SCREEN_GALLERY = 9000;
         public static final int EXTERNAL_SCREEN_CAMERA = 9001;

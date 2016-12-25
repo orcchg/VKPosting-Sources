@@ -6,9 +6,12 @@ import com.orcchg.vikstra.app.ui.viewobject.PostViewVO;
 
 public interface PostViewContract {
     interface View extends MvpView {
+        void showError();
+        void showLoading();
         void showPost(PostViewVO viewObject);
     }
 
     interface Presenter extends MvpPresenter<View> {
+        void retry();
     }
 }

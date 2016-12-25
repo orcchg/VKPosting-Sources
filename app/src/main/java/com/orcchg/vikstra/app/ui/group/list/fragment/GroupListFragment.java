@@ -1,7 +1,7 @@
 package com.orcchg.vikstra.app.ui.group.list.fragment;
 
-import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -13,14 +13,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseListFragment;
-import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.KeywordModule;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
@@ -28,7 +26,7 @@ import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListCo
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
 import com.orcchg.vikstra.app.ui.report.ReportActivity;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
-import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
@@ -41,8 +39,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     public static final int RV_TAG = Constant.ListTag.GROUP_LIST_SCREEN;
 
-    private String DIALOG_TITLE, DIALOG_HINT;
-    private String NOTIFICATION_POSTING_COMPLETE, NOTIFICATION_PHOTO_UPLOAD_COMPLETE;
+    private String NOTIFICATION_POSTING_COMPLETE, NOTIFICATION_PHOTO_UPLOAD_COMPLETE, SNACKBAR_KEYWORDS_LIMIT;
 
     private ItemTouchHelper itemTouchHelper;
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
@@ -99,9 +96,9 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (ShadowHolder.class.isInstance(activity)) shadowHolder = (ShadowHolder) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (ShadowHolder.class.isInstance(context)) shadowHolder = (ShadowHolder) context;
     }
 
     @Override
@@ -136,7 +133,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_items);
         itemTouchHelper.attachToRecyclerView(recyclerView);
 
-        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        swipeRefreshLayout.setColorSchemeColors(UiUtility.getAttributeColor(getActivity(), R.attr.colorAccent));
         swipeRefreshLayout.setOnRefreshListener(() -> presenter.retry());
 
         return rootView;
@@ -150,9 +147,13 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     }
 
     @Override
-    public void openAddKeywordDialog() {
-        DialogProvider.showEditTextDialog(getActivity(), DIALOG_TITLE, DIALOG_HINT, null,
-                (dialog, which, text) -> { if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text)); });
+    public void onAddKeywordError() {
+        UiUtility.showSnackbar(getActivity(), R.string.group_list_error_add_keyword);
+    }
+
+    @Override
+    public void onKeywordsLimitReached(int limit) {
+        UiUtility.showSnackbar(getActivity(), String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
     }
 
     @Override
@@ -235,10 +236,9 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     // --------------------------------------------------------------------------------------------
     private void initResources() {
         Resources resources = getResources();
-        DIALOG_TITLE = resources.getString(R.string.group_list_dialog_new_keyword_title);
-        DIALOG_HINT = resources.getString(R.string.group_list_dialog_new_keyword_hind);
         NOTIFICATION_POSTING_COMPLETE = resources.getString(R.string.group_list_notification_posting_description_complete);
         NOTIFICATION_PHOTO_UPLOAD_COMPLETE = resources.getString(R.string.group_list_notification_photo_upload_description_complete);
+        SNACKBAR_KEYWORDS_LIMIT = resources.getString(R.string.group_list_snackbar_keywords_limit_message);
     }
 
     private void initItemTouchHelper() {

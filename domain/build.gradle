@@ -21,11 +21,6 @@ apply plugin: 'com.jakewharton.hugo'
 apply plugin: 'com.neenbedankt.android-apt'
 //apply plugin: "net.ltgt.apt"
 
-//noinspection GroovyUnusedAssignment
-sourceCompatibility = 1.7
-//noinspection GroovyUnusedAssignment
-targetCompatibility = 1.7
-
 configurations {
     provided
 }
@@ -46,6 +41,11 @@ android {
         minSdkVersion globalConfiguration.getAt("androidMinSdkVersion")
         targetSdkVersion globalConfiguration.getAt("androidTargetSdkVersion")
     }
+
+//    compileOptions {
+//        sourceCompatibility JavaVersion.VERSION_1_8
+//        targetCompatibility JavaVersion.VERSION_1_8
+//    }
 }
 
 dependencies {

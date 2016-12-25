@@ -5,10 +5,11 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.app.ui.base.mediator.MediatorReceiver;
 import com.orcchg.vikstra.app.ui.base.mediator.MediatorSender;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.model.Keyword;
 
 public interface FragmentMediator {
     interface Receiver extends MediatorReceiver {
-        void receiveAddKeywordRequest();
+        void receiveAddKeywordRequest(Keyword keyword);
         void receivePostToGroupsRequest();
     }
 

@@ -22,15 +22,14 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.View> implements KeywordCreateContract.Presenter {
-    private static final int KEYWORDS_LIMIT = 7;
 
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final PostKeywordBundle postKeywordBundleUseCase;
     private final PutKeywordBundle putKeywordBundleUseCase;
 
-    Set<Keyword> keywords = new TreeSet<>();
-    long timestamp;
-    String title;
+    private Set<Keyword> keywords = new TreeSet<>();
+    private long timestamp;
+    private String title;
 
     @Inject
     KeywordCreatePresenter(GetKeywordBundleById getKeywordBundleByIdUseCase,
@@ -47,7 +46,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     // --------------------------------------------------------------------------------------------
     @Override
     public void onAddPressed() {
-        if (keywords.size() < KEYWORDS_LIMIT) {
+        if (keywords.size() < Constant.KEYWORDS_LIMIT) {
             Keyword keyword = Keyword.create(getView().getInputKeyword());
             keywords.add(keyword);
             if (isViewAttached()) {
@@ -55,7 +54,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
                 getView().clearInputKeyword();
             }
         } else if (isViewAttached()) {
-            getView().onKeywordsLimitReached(KEYWORDS_LIMIT);
+            getView().onKeywordsLimitReached(Constant.KEYWORDS_LIMIT);
         }
     }
 

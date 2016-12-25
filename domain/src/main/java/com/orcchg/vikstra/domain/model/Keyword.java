@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.domain.model;
 
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
 
@@ -14,7 +15,7 @@ public abstract class Keyword implements Comparable<Keyword>, Parcelable {
     public abstract String keyword();
 
     @Override
-    public int compareTo(Keyword o) {
+    public int compareTo(@NonNull Keyword o) {
         return keyword().compareTo(o.keyword());
     }
 }

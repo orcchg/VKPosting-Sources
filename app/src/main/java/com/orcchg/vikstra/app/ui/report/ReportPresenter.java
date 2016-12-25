@@ -14,7 +14,7 @@ public class ReportPresenter extends BasePresenter<ReportContract.View> implemen
 
     private final GetPostById getPostByIdUseCase;
 
-    final PostToSingleGridVoMapper postToSingleGridVoMapper;
+    private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
     @Inject
     ReportPresenter(GetPostById getPostByIdUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {

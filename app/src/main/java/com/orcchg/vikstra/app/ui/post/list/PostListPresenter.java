@@ -25,7 +25,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
 
     private final @BaseSelectAdapter.SelectMode int selectMode;
 
-    final PostToSingleGridVoMapper postToSingleGridVoMapper;
+    private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
     @Inject
     public PostListPresenter(@BaseSelectAdapter.SelectMode int selectMode,

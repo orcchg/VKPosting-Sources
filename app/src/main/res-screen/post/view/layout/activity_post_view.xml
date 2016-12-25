@@ -9,6 +9,7 @@
     <include layout="@layout/app_bar_with_toolbar" />
 
     <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scroll_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -82,6 +83,8 @@
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 
+    <include layout="@layout/loading_view"/>
+    <include layout="@layout/error_view"/>
     <include layout="@layout/toolbar_dropshadow" />
 
 </android.support.design.widget.CoordinatorLayout>

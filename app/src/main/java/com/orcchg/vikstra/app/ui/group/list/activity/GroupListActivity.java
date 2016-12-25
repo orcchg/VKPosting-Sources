@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.group.list.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import com.orcchg.vikstra.app.ui.group.list.activity.injection.GroupListComponen
 import com.orcchg.vikstra.app.ui.group.list.fragment.GroupListFragment;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
@@ -34,7 +36,8 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     private static final String EXTRA_POST_ID = "extra_post_id";
     public static final int REQUEST_CODE = Constant.RequestCode.GROUP_LIST_SCREEN;
 
-    private String DIALOG_TITLE, DIALOG_HINT, INFO_TITLE;
+    private String ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT,
+            EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, INFO_TITLE;
 
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -47,7 +50,7 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     }
     @OnClick(R.id.btn_add_keyword)
     void onAddKeywordClick() {
-        presenter.onAddKeyword();
+        openAddKeywordDialog();
     }
     @OnClick(R.id.btn_change_post)
     void onChangePost() {
@@ -138,8 +141,14 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void openAddKeywordDialog() {
+        DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
+                (dialog, which, text) -> { if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text)); });
+    }
+
+    @Override
     public void openEditTitleDialog(@Nullable String initTitle) {
-        DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, initTitle,
+        DialogProvider.showEditTextDialog(this, EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, initTitle,
                 (dialog, which, text) -> {
                     toolbar.setTitle(text);
                     presenter.onTitleChanged(text);
@@ -174,8 +183,11 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     /* Resources */
     // --------------------------------------------------------------------------------------------
     private void initResources() {
-        DIALOG_TITLE = getResources().getString(R.string.dialog_input_edit_title);
-        DIALOG_HINT = getResources().getString(R.string.dialog_input_edit_title_hint);
-        INFO_TITLE = getResources().getString(R.string.group_list_selected_groups_total_count);
+        Resources resources = getResources();
+        ADD_KEYWORD_DIALOG_TITLE = resources.getString(R.string.group_list_dialog_new_keyword_title);
+        ADD_KEYWORD_DIALOG_HINT = resources.getString(R.string.group_list_dialog_new_keyword_hind);
+        EDIT_TITLE_DIALOG_TITLE = resources.getString(R.string.dialog_input_edit_title);
+        EDIT_TITLE_DIALOG_HINT = resources.getString(R.string.dialog_input_edit_title_hint);
+        INFO_TITLE = resources.getString(R.string.group_list_selected_groups_total_count);
     }
 }

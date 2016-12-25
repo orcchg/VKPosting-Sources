@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.domain.model;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
@@ -30,7 +31,7 @@ public abstract class Post implements Comparable<Post> {
     public abstract @Nullable String title();
 
     @Override
-    public int compareTo(Post o) {
+    public int compareTo(@NonNull Post o) {
         return (int) (o.timestamp() - timestamp());
     }
 }

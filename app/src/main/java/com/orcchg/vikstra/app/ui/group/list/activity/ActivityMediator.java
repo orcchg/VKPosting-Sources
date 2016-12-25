@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.app.ui.base.mediator.MediatorReceiver;
 import com.orcchg.vikstra.app.ui.base.mediator.MediatorSender;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.model.Keyword;
 
 public interface ActivityMediator {
     interface Receiver extends MediatorReceiver {
@@ -14,7 +15,7 @@ public interface ActivityMediator {
     }
 
     interface Sender extends MediatorSender {
-        void sendAddKeywordRequest();
+        void sendAddKeywordRequest(Keyword keyword);
         void sendPostToGroupsRequest();
     }
 }

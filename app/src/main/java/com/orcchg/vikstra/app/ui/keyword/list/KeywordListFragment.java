@@ -1,6 +1,6 @@
 package com.orcchg.vikstra.app.ui.keyword.list;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,6 +13,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseListFragment;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
@@ -46,17 +47,17 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (IScrollList.class.isInstance(activity)) {
-            iScrollList = (IScrollList) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (IScrollList.class.isInstance(context)) {
+            iScrollList = (IScrollList) context;
         } else {
             String message = "Hosting Activity must implement IScrollList interface";
             Timber.e(message);
             throw new RuntimeException(message);
         }
-        if (ShadowHolder.class.isInstance(activity)) {
-            shadowHolder = (ShadowHolder) activity;
+        if (ShadowHolder.class.isInstance(context)) {
+            shadowHolder = (ShadowHolder) context;
         }
     }
 
@@ -67,7 +68,7 @@ public class KeywordListFragment extends SimpleBaseListFragment implements Keywo
         ButterKnife.bind(this, rootView);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_items);
 
-        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        swipeRefreshLayout.setColorSchemeColors(UiUtility.getAttributeColor(getActivity(), R.attr.colorAccent));
         swipeRefreshLayout.setOnRefreshListener(() -> iScrollList.retryList());
 
         return rootView;

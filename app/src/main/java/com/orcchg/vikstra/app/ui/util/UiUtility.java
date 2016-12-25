@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.util.TypedValue;
 import android.view.View;
@@ -35,6 +36,10 @@ public class UiUtility {  // TODO: rename to view utility
         Bitmap bmp = Bitmap.createBitmap(view.getDrawingCache());
         view.setDrawingCacheEnabled(false);
         return bmp;
+    }
+
+    public static void showSnackbar(Activity activity, @StringRes int resId) {
+        Snackbar.make(activity.findViewById(android.R.id.content), resId, Snackbar.LENGTH_SHORT).show();
     }
 
     public static void showSnackbar(Activity activity, String text) {

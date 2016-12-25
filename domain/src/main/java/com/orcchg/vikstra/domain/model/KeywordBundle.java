@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.model;
 
+import android.support.annotation.NonNull;
+
 import com.google.auto.value.AutoValue;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -74,7 +76,7 @@ public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterab
     }
 
     @Override
-    public int compareTo(KeywordBundle o) {
+    public int compareTo(@NonNull KeywordBundle o) {
         return (int) (o.timestamp() - timestamp());
     }
 

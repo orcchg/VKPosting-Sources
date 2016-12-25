@@ -31,6 +31,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class VkontakteEndpoint extends Endpoint {
@@ -72,7 +73,7 @@ public class VkontakteEndpoint extends Endpoint {
      * Because one keyword generally corresponds to multiple groups, the resulting list is merged
      * and contains all retrieved groups.
      */
-    public void getGroupsByKeywords(List<Keyword> keywords,
+    public void getGroupsByKeywords(Collection<Keyword> keywords,
                                     @Nullable final UseCase.OnPostExecuteCallback<List<Group>> callback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKApiCommunityArray>>() {
@@ -90,9 +91,10 @@ public class VkontakteEndpoint extends Endpoint {
     }
 
     /**
-     * Same as {@link VkontakteEndpoint#getGroupsByKeywords(List, UseCase.OnPostExecuteCallback)}, but
+     * Same as {@link VkontakteEndpoint#getGroupsByKeywords(Collection, UseCase.OnPostExecuteCallback)}, but
      * splits groups by keywords.
      */
+    @DebugLog
     public void getGroupsByKeywordsSplit(Collection<Keyword> keywords,
                                          @Nullable final UseCase.OnPostExecuteCallback<List<List<Group>>> callback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);

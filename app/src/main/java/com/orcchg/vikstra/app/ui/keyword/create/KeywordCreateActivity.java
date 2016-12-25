@@ -3,6 +3,7 @@ package com.orcchg.vikstra.app.ui.keyword.create;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -186,8 +187,9 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     /* Resources */
     // --------------------------------------------------------------------------------------------
     private void initResources() {
-        DIALOG_TITLE = getResources().getString(R.string.dialog_input_edit_title);
-        DIALOG_HINT = getResources().getString(R.string.dialog_input_edit_title_hint);
-        SNACKBAR_KEYWORDS_LIMIT = getResources().getString(R.string.keyword_create_snackbar_keywords_limit_message);
+        Resources resources = getResources();
+        DIALOG_TITLE = resources.getString(R.string.dialog_input_edit_title);
+        DIALOG_HINT = resources.getString(R.string.dialog_input_edit_title_hint);
+        SNACKBAR_KEYWORDS_LIMIT = resources.getString(R.string.keyword_create_snackbar_keywords_limit_message);
     }
 }

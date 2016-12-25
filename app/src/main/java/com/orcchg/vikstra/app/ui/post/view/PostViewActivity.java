@@ -24,12 +24,15 @@ import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class PostViewActivity extends BaseActivity<PostViewContract.View, PostViewContract.Presenter>
         implements PostViewContract.View {
     private static final String EXTRA_POST_ID = "extra_post_id";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
+    @BindView(R.id.scroll_container) ViewGroup scrollContainer;
     @BindView(R.id.tv_post_description) TextView descriptionView;
     @BindView(R.id.primary_media_container) ViewGroup primaryMediaContainer;
     @BindView(R.id.iv_primary) ImageView primaryImage;
@@ -37,6 +40,12 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     @BindView(R.id.media_container_root) ViewGroup mediaContainerRoot;
     @BindView(R.id.media_container) ViewGroup mediaContainer;
     @BindView(R.id.space) View space;
+    @BindView(R.id.loading_view) View loadingView;
+    @BindView(R.id.error_view) View errorView;
+    @OnClick(R.id.btn_retry)
+    void onRetryClick() {
+        presenter.retry();
+    }
 
     private int PRIMARY_MEDIA_DOUBLE_HEIGHT;
 
@@ -91,7 +100,28 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void showError() {
+        dropshadowView.setVisibility(View.VISIBLE);
+        scrollContainer.setVisibility(View.GONE);
+        loadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showLoading() {
+        dropshadowView.setVisibility(View.INVISIBLE);  // don't overlap with progress bar
+        scrollContainer.setVisibility(View.GONE);
+        loadingView.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
+    }
+
+    @Override
     public void showPost(PostViewVO viewObject) {
+        dropshadowView.setVisibility(View.VISIBLE);
+        scrollContainer.setVisibility(View.VISIBLE);
+        loadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
+
         descriptionView.setText(viewObject.description());
         int totalMedia = viewObject.media().size();
         if (totalMedia > 0) {

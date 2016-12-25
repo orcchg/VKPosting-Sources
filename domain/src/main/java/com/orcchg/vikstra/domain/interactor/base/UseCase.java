@@ -23,7 +23,7 @@ public abstract class UseCase<Result> implements Runnable {
 
     private final ThreadExecutor threadExecutor;
     private final PostExecuteScheduler postExecuteScheduler;
-    OnPostExecuteCallback<Result> postExecuteCallback;
+    private OnPostExecuteCallback<Result> postExecuteCallback;
 
     protected int orderId;  // id used to distinguish or sort different use-cases.
 
@@ -106,7 +106,7 @@ public abstract class UseCase<Result> implements Runnable {
         return new Runnable() {
             @Override
             public void run() {
-                postExecuteCallback.onFinish(result);
+                if (postExecuteCallback != null) postExecuteCallback.onFinish(result);
             }
         };
     }
@@ -115,7 +115,7 @@ public abstract class UseCase<Result> implements Runnable {
         return new Runnable() {
             @Override
             public void run() {
-                postExecuteCallback.onError(error);
+                if (postExecuteCallback != null) postExecuteCallback.onError(error);
             }
         };
     }

@@ -8,14 +8,15 @@ import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListMediatorCom
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorModule;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.model.Keyword;
 
 import javax.inject.Inject;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
-    String title;  // TODO: set initial title
+    private String title;  // TODO: set initial title
 
-    GroupListMediatorComponent mediatorComponent;
+    private GroupListMediatorComponent mediatorComponent;
 
     @Inject
     GroupListPresenter() {
@@ -42,8 +43,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void onAddKeyword() {
-        sendAddKeywordRequest();
+    public void addKeyword(Keyword keyword) {
+        sendAddKeywordRequest(keyword);
     }
 
     @Override
@@ -79,8 +80,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
-    public void sendAddKeywordRequest() {
-        mediatorComponent.mediator().sendAddKeywordRequest();
+    public void sendAddKeywordRequest(Keyword keyword) {
+        mediatorComponent.mediator().sendAddKeywordRequest(keyword);
     }
 
     @Override
