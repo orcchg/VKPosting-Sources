@@ -12,6 +12,7 @@ interface GroupListContract {
         void openAddKeywordDialog();
         void openEditTitleDialog(@Nullable String initTitle);
         void setInputGroupsTitle(String title);
+        void setCloseViewResult(int result);
     }
 
     interface ViewMediator {

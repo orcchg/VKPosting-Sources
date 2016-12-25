@@ -57,9 +57,9 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public void openGroupListScreen(@NonNull Context context, long keywordBunldeId, long postId) {
+    public void openGroupListScreen(@NonNull Activity context, long keywordBunldeId, long postId) {
         Intent intent = GroupListActivity.getCallingIntent(context, keywordBunldeId, postId);
-        context.startActivity(intent);
+        context.startActivityForResult(intent, GroupListActivity.REQUEST_CODE);
     }
 
     /* Media */

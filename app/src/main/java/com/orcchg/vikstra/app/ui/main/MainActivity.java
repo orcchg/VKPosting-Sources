@@ -147,6 +147,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     @Override
+    public void setCloseViewResult(int result) {
+        setResult(result);
+    }
+
+    @Override
     public void showFab(boolean isVisible) {
         if (isVisible) {
             fab.show();

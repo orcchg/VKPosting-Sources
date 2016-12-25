@@ -10,6 +10,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 public interface ActivityMediator {
     interface Receiver extends MediatorReceiver {
         void receiveEmptyPost();
+        void receiveKeywordBundleChanged();
         void receivePost(@Nullable PostSingleGridItemVO viewObject);
         void receiveUpdatedSelectedGroupsCounter(int newCount, int total);
     }

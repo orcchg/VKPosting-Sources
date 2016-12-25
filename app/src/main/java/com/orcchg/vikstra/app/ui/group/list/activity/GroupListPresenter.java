@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.group.list.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -67,6 +68,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void receiveEmptyPost() {
         if (isViewAttached()) getView().showEmptyPost();
+    }
+
+    @Override
+    public void receiveKeywordBundleChanged() {
+        if (isViewAttached()) getView().setCloseViewResult(Activity.RESULT_OK);
     }
 
     @Override

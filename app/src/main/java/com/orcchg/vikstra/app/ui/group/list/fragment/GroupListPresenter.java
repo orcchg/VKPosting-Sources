@@ -53,6 +53,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private GroupListAdapter listAdapter;
 
     private int totalSelectedGroups, totalGroups;
+    private boolean isKeywordBundleChanged;
     private Keyword newlyAddedKeyword;
     private KeywordBundle inputKeywordBundle;
     private Post currentPost;
@@ -108,9 +109,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        postKeywordBundleUpdate();  // TODO: not sync with onActivityResult()
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        postKeywordBundleUpdate();
         mediatorComponent.mediator().detachSecond();
     }
 
@@ -118,10 +124,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @Override
     public void removeListItem(int position) {
+        GroupParentItem item = groupParentItems.get(position);
+        totalSelectedGroups -= item.getSelectedCount();
+        totalGroups -= item.getChildCount();
+        sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
+        postKeywordBundleUpdate();  // refresh now, don't wait till onDestroy()
+
         Keyword keyword = groupParentItems.get(position).getKeyword();
         inputKeywordBundle.keywords().remove(keyword);
-        postKeywordBundleUpdate();
-
         groupParentItems.remove(position);
         listAdapter.notifyParentRemoved(position);
     }
@@ -130,6 +140,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     public void retry() {
         groupParentItems.clear();
         inputKeywordBundle = null;
+        isKeywordBundleChanged = false;
         currentPost = null;
         totalSelectedGroups = 0;
         totalGroups = 0;
@@ -155,6 +166,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void sendKeywordBundleChanged() {
+        mediatorComponent.mediator().sendKeywordBundleChanged();
+    }
+
+    @Override
     public void sendPost(@Nullable PostSingleGridItemVO viewObject) {
         mediatorComponent.mediator().sendPost(viewObject);
     }
@@ -163,6 +179,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
         inputKeywordBundle.setSelectedGroupsCount(newCount);
         inputKeywordBundle.setTotalGroupsCount(total);
+        isKeywordBundleChanged = true;
         mediatorComponent.mediator().sendUpdatedSelectedGroupsCounter(newCount, total);
     }
 
@@ -214,9 +231,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     private void postKeywordBundleUpdate() {
-        // silent update without callback
-        postKeywordBundleUseCase.setParameters(new PostKeywordBundle.Parameters(inputKeywordBundle));
-        postKeywordBundleUseCase.execute();
+        if (isKeywordBundleChanged) {
+            isKeywordBundleChanged = false;
+            postKeywordBundleUseCase.setParameters(new PostKeywordBundle.Parameters(inputKeywordBundle));
+            postKeywordBundleUseCase.execute();  // silent update without callback
+            sendKeywordBundleChanged();
+        }
     }
 
     /* Callback */
@@ -266,6 +286,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             public void onFinish(@Nullable Boolean result) {
                 if (result != null && result) {
                     inputKeywordBundle.keywords().add(newlyAddedKeyword);
+                    isKeywordBundleChanged = true;
                     GroupParentItem item = new GroupParentItem(newlyAddedKeyword);
                     groupParentItems.add(0, item);  // add new item on top of the list
 

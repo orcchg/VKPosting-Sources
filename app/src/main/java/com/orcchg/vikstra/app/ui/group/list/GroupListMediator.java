@@ -36,6 +36,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendKeywordBundleChanged() {
+        clientFirst.receiveKeywordBundleChanged();
+    }
+
+    @Override
     public void sendPost(@Nullable PostSingleGridItemVO viewObject) {
         clientFirst.receivePost(viewObject);
     }

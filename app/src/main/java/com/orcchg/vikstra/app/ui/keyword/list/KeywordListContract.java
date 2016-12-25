@@ -7,6 +7,7 @@ public interface KeywordListContract {
     interface View extends SubView {
         void openKeywordCreateScreen(long keywordBundleId);
         void openGroupListScreen(long keywordBundleId, long postId);
+        void setCloseViewResult(int result);
     }
 
     interface SubView extends MvpListView {
@@ -17,7 +18,7 @@ public interface KeywordListContract {
     }
 
     interface Presenter extends MvpPresenter<View> {
-        void retry();
         void onScroll(int itemsLeftToEnd);
+        void retry();
     }
 }

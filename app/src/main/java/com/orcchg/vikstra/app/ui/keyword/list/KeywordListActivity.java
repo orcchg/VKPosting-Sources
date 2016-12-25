@@ -15,7 +15,6 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
-import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.DaggerKeywordListComponent;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListComponent;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListModule;
@@ -69,19 +68,6 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
         initToolbar();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case KeywordCreateActivity.REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) {
-                    presenter.retry();  // refresh keywords list
-                    setResult(Activity.RESULT_OK);  // keywords list has changed at this screen
-                }
-                break;
-        }
-    }
-
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
@@ -129,6 +115,11 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     @Override
     public void openGroupListScreen(long keywordBundleId, long postId) {
         navigationComponent.navigator().openGroupListScreen(this, keywordBundleId, postId);
+    }
+
+    @Override
+    public void setCloseViewResult(int result) {
+        setResult(Activity.RESULT_OK);
     }
 
     @Override

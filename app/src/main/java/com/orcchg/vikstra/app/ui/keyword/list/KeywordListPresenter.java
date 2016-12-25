@@ -1,10 +1,14 @@
 package com.orcchg.vikstra.app.ui.keyword.list;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
+import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
+import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;
@@ -73,19 +77,36 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         return KeywordListFragment.RV_TAG;
     }
 
+    /* Lifecycle */
+    // --------------------------------------------------------------------------------------------
+    @DebugLog @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case GroupListActivity.REQUEST_CODE:  // keywords could change on GroupList screen
+            case KeywordCreateActivity.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    retry();  // refresh keywords list
+                    // keywords list has changed on this screen
+                    if (isViewAttached()) getView().setCloseViewResult(Activity.RESULT_OK);
+                }
+                break;
+        }
+    }
+
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void onScroll(int itemsLeftToEnd) {
+        // TODO
+    }
+
     @Override
     public void retry() {
         changeSelectedKeywordBundleId(Constant.BAD_ID);  // drop selection
         listAdapter.clear();
         dropListStat();
         freshStart();
-    }
-
-    @Override
-    public void onScroll(int itemsLeftToEnd) {
-        // TODO
     }
 
     /* Internal */

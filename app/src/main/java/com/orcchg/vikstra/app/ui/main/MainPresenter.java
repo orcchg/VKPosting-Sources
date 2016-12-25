@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.orcchg.vikstra.app.ui.base.BaseCompositePresenter;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
+import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
@@ -58,6 +59,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
+            case GroupListActivity.REQUEST_CODE:  // keywords could change on GroupList screen
             case KeywordCreateActivity.REQUEST_CODE:
             case KeywordListActivity.REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) retryKeywords();  // refresh keywords list

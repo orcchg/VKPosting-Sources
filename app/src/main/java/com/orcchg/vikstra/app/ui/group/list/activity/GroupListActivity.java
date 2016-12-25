@@ -156,6 +156,11 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     }
 
     @Override
+    public void setCloseViewResult(int result) {
+        setResult(result);
+    }
+
+    @Override
     public void setInputGroupsTitle(String title) {
         if (!TextUtils.isEmpty(title)) toolbar.setTitle(title);
     }
