@@ -22,6 +22,8 @@ public class KeywordBundleToDboPopulator implements Populator<KeywordBundle, Key
     @Override
     public void populate(KeywordBundle object, KeywordBundleDBO dbo) {
         dbo.id = object.id();
+        dbo.countSelectedGroups = object.getSelectedGroupsCount();
+        dbo.countTotalGroups = object.getTotalGroupsCount();
         dbo.groupBundleId = object.getGroupBundleId();
         dbo.keywords = new RealmList<>();
         dbo.timestamp = object.timestamp();

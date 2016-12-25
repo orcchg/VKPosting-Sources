@@ -19,6 +19,8 @@ public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterab
      * valid {@link GroupBundle}'s id will cause an {@link IllegalStateException}.
      */
     private long groupBundleId = Constant.BAD_ID;
+    private int selectedGroupsCount;
+    private int totalGroupsCount;
 
     public static Builder builder() {
         return new AutoValue_KeywordBundle.Builder();
@@ -50,6 +52,25 @@ public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterab
             throw new IllegalStateException(message);
         }
         this.groupBundleId = groupBundleId;
+    }
+
+    public void addSelectedGroupsCount(int add) {
+        selectedGroupsCount += add;
+    }
+    public void addTotalGroupsCount(int add) {
+        totalGroupsCount += add;
+    }
+    public int getSelectedGroupsCount() {
+        return selectedGroupsCount;
+    }
+    public int getTotalGroupsCount() {
+        return totalGroupsCount;
+    }
+    public void setSelectedGroupsCount(int count) {
+        selectedGroupsCount = count;
+    }
+    public void setTotalGroupsCount(int count) {
+        totalGroupsCount = count;
     }
 
     @Override

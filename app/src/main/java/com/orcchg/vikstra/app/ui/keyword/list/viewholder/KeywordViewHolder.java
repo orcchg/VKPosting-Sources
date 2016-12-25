@@ -35,7 +35,8 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
     @Override
     public void bind(KeywordListItemVO viewObject) {
         boolean isSelectable = selectMode != BaseSelectAdapter.SELECT_MODE_NONE;
-        String label = new StringBuilder().append(29).append('/').append(60).toString();  // TODO: use proper counters
+        int selectedGroupsCount = viewObject.countSelectedGroups();
+        String label = selectedGroupsCount > 0 ? new StringBuilder().append(selectedGroupsCount).append('/').append(viewObject.countTotalGroups()).toString() : "";
         View.OnClickListener listener = createOnItemClickListener(viewObject, isSelectable);
         View.OnLongClickListener longListener = createOnItemLongClickListener(viewObject);
         KeywordsFlowLayout.OnKeywordItemClickListener keyListener = AppConfig.INSTANCE.shouldInterceptKeywordClickOnVH() ?
@@ -44,7 +45,7 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
         flowView.setKeywords(viewObject.keywords());
         flowView.setTitle(viewObject.title());
         flowView.setLabel(label);
-        flowView.setSelection(isSelectable ? viewObject.getSelection() : false);
+        flowView.setSelection(isSelectable && viewObject.getSelection());
         flowView.setEditable(editClickListener != null);
         flowView.setOnKeywordItemClickListener(keyListener);
         flowView.setOnEditClickListener((view) -> {

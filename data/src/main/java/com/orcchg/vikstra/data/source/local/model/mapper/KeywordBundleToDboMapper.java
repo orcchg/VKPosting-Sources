@@ -57,6 +57,8 @@ public class KeywordBundleToDboMapper implements DuplexMapper<KeywordBundle, Key
                 .setTitle(object.title)
                 .build();
         bundle.setGroupBundleId(object.groupBundleId);
+        bundle.setSelectedGroupsCount(object.countSelectedGroups);
+        bundle.setTotalGroupsCount(object.countTotalGroups);
         return bundle;
     }
 }

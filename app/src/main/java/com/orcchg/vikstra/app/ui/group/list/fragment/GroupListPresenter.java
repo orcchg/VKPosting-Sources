@@ -18,23 +18,17 @@ import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
-import com.orcchg.vikstra.domain.interactor.group.PostGroupBundle;
-import com.orcchg.vikstra.domain.interactor.group.PutGroupBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.keyword.PostKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.model.Group;
-import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
-import com.orcchg.vikstra.domain.util.Constant;
-import com.orcchg.vikstra.domain.util.ValueUtility;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -51,15 +45,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final AddKeywordToBundle addKeywordToBundleUseCase;
     private final PostKeywordBundle postKeywordBundleUseCase;
-    private final PostGroupBundle postGroupBundleUseCase;
-    private final PutGroupBundle putGroupBundleUseCase;
     private final VkontakteEndpoint vkontakteEndpoint;
 
     List<GroupParentItem> groupParentItems = new ArrayList<>();
     GroupListAdapter listAdapter;
 
     int totalSelectedGroups, totalGroups;
-    GroupBundle currentGroupBundle;
     KeywordBundle inputKeywordBundle;
     Post currentPost;
 
@@ -70,7 +61,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Inject
     GroupListPresenter(GetPostById getPostByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
                        AddKeywordToBundle addKeywordToBundleUseCase, PostKeywordBundle postKeywordBundleUseCase,
-                       PostGroupBundle postGroupBundle, PutGroupBundle putGroupBundleUseCase,
                        VkontakteEndpoint vkontakteEndpoint, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
         this.getPostByIdUseCase = getPostByIdUseCase;
@@ -81,10 +71,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         this.addKeywordToBundleUseCase.setPostExecuteCallback(createAddKeywordToBundleCallback());
         this.postKeywordBundleUseCase = postKeywordBundleUseCase;
         this.postKeywordBundleUseCase.setPostExecuteCallback(createPostKeywordBundleCallback());
-        this.postGroupBundleUseCase = postGroupBundle;
-        this.postGroupBundleUseCase.setPostExecuteCallback(createPostGroupBundleCallback());
-        this.putGroupBundleUseCase = putGroupBundleUseCase;
-        this.putGroupBundleUseCase.setPostExecuteCallback(createPutGroupBundleCallback());
         this.vkontakteEndpoint = vkontakteEndpoint;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
     }
@@ -174,6 +160,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @Override
     public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
+        // TODO: update keywords bundle with counters in Repo
+        inputKeywordBundle.setSelectedGroupsCount(newCount);
+        inputKeywordBundle.setTotalGroupsCount(total);
         mediatorComponent.mediator().sendUpdatedSelectedGroupsCounter(newCount, total);
     }
 
@@ -267,38 +256,24 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         };
     }
 
-    private UseCase.OnPostExecuteCallback<Boolean> createPostGroupBundleCallback() {
-        return new UseCase.OnPostExecuteCallback<Boolean>() {
-            @Override
-            public void onFinish(@Nullable Boolean values) {
-                // TODO:
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
-            }
-        };
-    }
-
-    private UseCase.OnPostExecuteCallback<GroupBundle> createPutGroupBundleCallback() {
-        return new UseCase.OnPostExecuteCallback<GroupBundle>() {
-            @Override
-            public void onFinish(@Nullable GroupBundle bundle) {
-                // TODO: check for bad id ???
-                currentGroupBundle = bundle;
-                inputKeywordBundle.setGroupBundleId(bundle.id());
-                PostKeywordBundle.Parameters parameters = new PostKeywordBundle.Parameters(inputKeywordBundle);
-                postKeywordBundleUseCase.setParameters(parameters);
-                postKeywordBundleUseCase.execute();
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
-            }
-        };
-    }
+//    private UseCase.OnPostExecuteCallback<GroupBundle> createPutGroupBundleCallback() {
+//        return new UseCase.OnPostExecuteCallback<GroupBundle>() {
+//            @Override
+//            public void onFinish(@Nullable GroupBundle bundle) {
+//                // TODO: check for bad id ???
+//                currentGroupBundle = bundle;
+//                inputKeywordBundle.setGroupBundleId(bundle.id());
+//                PostKeywordBundle.Parameters parameters = new PostKeywordBundle.Parameters(inputKeywordBundle);
+//                postKeywordBundleUseCase.setParameters(parameters);
+//                postKeywordBundleUseCase.execute();
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                if (isViewAttached()) getView().showError();
+//            }
+//        };
+//    }
 
     private UseCase.OnPostExecuteCallback<List<List<Group>>> createGetGroupsByKeywordsListCallback() {
         return new UseCase.OnPostExecuteCallback<List<List<Group>>>() {
@@ -332,30 +307,30 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
 
                 // ------------------------------------------
-                long groupBundleId = inputKeywordBundle.getGroupBundleId();
-                Collection<Group> groups = ValueUtility.merge(splitGroups);
-                if (groupBundleId == Constant.BAD_ID) {
-                    Timber.v("add new groups bundle to repository");
-                    PutGroupBundle.Parameters parameters = new PutGroupBundle.Parameters.Builder()
-                            .setGroups(groups)
-                            .setKeywordBundleId(inputKeywordBundle.id())
-                            .setTitle("title default")  // TODO: set title for groups-bundle
-                            .build();
-                    putGroupBundleUseCase.setParameters(parameters);
-                    putGroupBundleUseCase.execute();
-                } else {
-                    Timber.v("update existing groups bundle in repository");
-                    GroupBundle groupsBundle = GroupBundle.builder()
-                            .setId(currentGroupBundle.id())
-                            .setGroups(groups)  // new collection of groups
-                            .setKeywordBundleId(currentGroupBundle.keywordBundleId())
-                            .setTimestamp(currentGroupBundle.timestamp())
-                            .setTitle(currentGroupBundle.title())
-                            .build();
-                    PostGroupBundle.Parameters parameters = new PostGroupBundle.Parameters(groupsBundle);
-                    postGroupBundleUseCase.setParameters(parameters);
-                    postGroupBundleUseCase.execute();
-                }
+//                long groupBundleId = inputKeywordBundle.getGroupBundleId();
+//                Collection<Group> groups = ValueUtility.merge(splitGroups);
+//                if (groupBundleId == Constant.BAD_ID) {
+//                    Timber.v("add new groups bundle to repository");
+//                    PutGroupBundle.Parameters parameters = new PutGroupBundle.Parameters.Builder()
+//                            .setGroups(groups)
+//                            .setKeywordBundleId(inputKeywordBundle.id())
+//                            .setTitle("title default")  // TODO: set title for groups-bundle
+//                            .build();
+//                    putGroupBundleUseCase.setParameters(parameters);
+//                    putGroupBundleUseCase.execute();
+//                } else {
+//                    Timber.v("update existing groups bundle in repository");
+//                    GroupBundle groupsBundle = GroupBundle.builder()
+//                            .setId(currentGroupBundle.id())
+//                            .setGroups(groups)  // new collection of groups
+//                            .setKeywordBundleId(currentGroupBundle.keywordBundleId())
+//                            .setTimestamp(currentGroupBundle.timestamp())
+//                            .setTitle(currentGroupBundle.title())
+//                            .build();
+//                    PostGroupBundle.Parameters parameters = new PostGroupBundle.Parameters(groupsBundle);
+//                    postGroupBundleUseCase.setParameters(parameters);
+//                    postGroupBundleUseCase.execute();
+//                }
             }
 
             @Override
