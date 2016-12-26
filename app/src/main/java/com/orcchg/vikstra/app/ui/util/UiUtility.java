@@ -45,4 +45,12 @@ public class UiUtility {  // TODO: rename to view utility
     public static void showSnackbar(Activity activity, String text) {
         Snackbar.make(activity.findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT).show();
     }
+
+    public static void showSnackbar(View view, @StringRes int resId) {
+        Snackbar.make(view, resId, Snackbar.LENGTH_SHORT).show();
+    }
+
+    public static void showSnackbar(View view, String text) {
+        Snackbar.make(view, text, Snackbar.LENGTH_SHORT).show();
+    }
 }

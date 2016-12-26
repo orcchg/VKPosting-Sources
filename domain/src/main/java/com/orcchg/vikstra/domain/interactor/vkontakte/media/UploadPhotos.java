@@ -14,6 +14,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<VKPhotoArray>> {
 
     public static class Parameters {
@@ -41,6 +43,7 @@ public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<VKPhotoArray>>
         if (parameters == null) throw new NoParametersException();
 
         total = parameters.bitmaps.size();  // update total count
+        Timber.d("Uploading images, total count: %s", total);
         List<UploadPhoto> useCases = new ArrayList<>();
         for (Bitmap bitmap : parameters.bitmaps) {
             UploadPhoto useCase = new UploadPhoto(bitmap);

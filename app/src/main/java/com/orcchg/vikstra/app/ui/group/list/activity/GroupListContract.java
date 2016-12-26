@@ -9,6 +9,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 
 interface GroupListContract {
     interface View extends MvpView, ViewMediator {
+        void onPostNotSelected();
         void openAddKeywordDialog();
         void openEditTitleDialog(@Nullable String initTitle);
         void setInputGroupsTitle(String title);

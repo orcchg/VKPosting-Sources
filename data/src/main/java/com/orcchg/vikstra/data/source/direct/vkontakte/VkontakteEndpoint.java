@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.data.source.direct.vkontakte;
 
 import android.graphics.Bitmap;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.data.source.direct.Endpoint;
@@ -18,6 +19,8 @@ import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.Media;
 import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
+import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
 import com.vk.sdk.api.model.VKApiPhoto;
@@ -38,6 +41,11 @@ public class VkontakteEndpoint extends Endpoint {
 
     private final ImageLoader imageLoader;
     private final VkAttachLocalCache attachLocalCache;
+
+    public static class Scope {
+        public static final String PHOTOS = "photos";
+        public static final String WALL = "wall";
+    }
 
     @Inject
     public VkontakteEndpoint(ImageLoader imageLoader, VkAttachLocalCache attachLocalCache,
@@ -115,29 +123,33 @@ public class VkontakteEndpoint extends Endpoint {
     /* Post */
     // ------------------------------------------
     // TODO: implement various Media types {photo, video, file, ...}
-    public void makeWallPosts(Collection<Long> groupIds, Post post,
+    public void makeWallPosts(Collection<Long> groupIds, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback) {
         makeWallPosts(groupIds, post, callback, null);
     }
 
-    public void makeWallPosts(Collection<Long> groupIds, Post post,
+    public void makeWallPosts(Collection<Long> groupIds, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback,
                               @Nullable MultiUseCase.ProgressCallback progressCallback) {
         makeWallPosts(groupIds, post, callback, null, null);
     }
 
-    public void makeWallPosts(Collection<Long> groupIds, Post post,
+    public void makeWallPosts(Collection<Long> groupIds, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback,
                               @Nullable MultiUseCase.ProgressCallback progressCallback,
                               @Nullable MultiUseCase.ProgressCallback photoUploadProgressCb) {
         makeWallPosts(groupIds, post, callback, null, null, null);
     }
 
-    public void makeWallPosts(Collection<Long> groupIds, Post post,
+    public void makeWallPosts(Collection<Long> groupIds, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback,
                               @Nullable MultiUseCase.ProgressCallback progressCallback,
                               @Nullable MultiUseCase.ProgressCallback photoUploadProgressCb,
                               @Nullable MultiUseCase.ProgressCallback photoPrepareProgressCb) {
+        if (post == null) {
+            Timber.e("Input post is null, nothing to be done");
+            throw new IllegalArgumentException();
+        }
         MakeWallPostToGroups.Parameters.Builder paramsBuilder = new MakeWallPostToGroups.Parameters.Builder()
                 .setGroupIds(groupIds)
                 .setMessage(post.description());
@@ -168,10 +180,12 @@ public class VkontakteEndpoint extends Endpoint {
             imageLoader.loadImages(retained, new UseCase.OnPostExecuteCallback<List<Bitmap>>() {
                 @Override
                 public void onFinish(@Nullable List<Bitmap> bitmaps) {
+                    Timber.d("Finished to load images");
                     UploadPhotos useCase = new UploadPhotos(threadExecutor, postExecuteScheduler);
                     useCase.setParameters(new UploadPhotos.Parameters(bitmaps));
                     useCase.setProgressCallback(photoUploadProgressCb);
                     useCase.setPostExecuteCallback(createUploadPhotosCallback(retained, paramsBuilder, callback, progressCallback));
+                    useCase.execute();
                 }
 
                 @Override
@@ -182,6 +196,40 @@ public class VkontakteEndpoint extends Endpoint {
         } else {
             makeWallPosts(paramsBuilder.build(), callback, progressCallback);
         }
+    }
+
+    public void makeWallPostsWithDelegate(Collection<Long> groupIds, @NonNull Post post,
+                                          @Nullable final UseCase.OnPostExecuteCallback<List<GroupReport>> callback,
+                                          @Nullable IPostingNotificationDelegate postingNotificationDelegate,
+                                          @Nullable IPhotoUploadNotificationDelegate photoUploadNotificationDelegate) {
+        MultiUseCase.ProgressCallback progressCallback = (index, total) -> {
+            Timber.v("Make wall posts progress: %s / %s", index, total);
+            if (postingNotificationDelegate == null) return;
+            if (index < total) {
+                postingNotificationDelegate.onPostingProgress(index, total);
+            } else {
+                postingNotificationDelegate.onPostingComplete();
+            }
+        };
+
+        MultiUseCase.ProgressCallback photoUploadProgressCb = (index, total) -> {
+            Timber.v("Photo uploading progress: %s / %s", index, total);
+            if (photoUploadNotificationDelegate == null) return;
+            if (index < total) {
+                photoUploadNotificationDelegate.onPhotoUploadProgress(index, total);
+            } else {
+                photoUploadNotificationDelegate.onPhotoUploadComplete();
+            }
+        };
+
+        MultiUseCase.ProgressCallback photoPrepareProgressCb = (index, total) -> {
+            Timber.v("Photo preparing progress: %s / %s", index, total);
+            if (photoUploadNotificationDelegate != null) {
+                photoUploadNotificationDelegate.onPhotoUploadProgressInfinite();
+            }
+        };
+
+        makeWallPosts(groupIds, post, callback, progressCallback, photoUploadProgressCb, photoPrepareProgressCb);
     }
 
     /* Internal */
@@ -195,6 +243,7 @@ public class VkontakteEndpoint extends Endpoint {
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<VKWallPostResult>>() {
             @Override
             public void onFinish(@Nullable List<VKWallPostResult> values) {
+                Timber.d("Finished wall posting");
                 if (callback != null) callback.onFinish(convert(values));
             }
 
@@ -219,6 +268,7 @@ public class VkontakteEndpoint extends Endpoint {
             @Override
             public void onFinish(@Nullable List<VKPhotoArray> photos) {
                 // TODO: NPE
+                Timber.d("Finished uploading images");
                 int index = 0;
                 VKAttachments attachments = new VKAttachments();
                 for (VKPhotoArray aPhoto : photos) {
@@ -239,6 +289,7 @@ public class VkontakteEndpoint extends Endpoint {
 
     /* Conversion */
     // --------------------------------------------------------------------------------------------
+    @NonNull
     private List<Group> convertMerge(List<VKApiCommunityArray> vkModels) {
         List<Group> groups = new ArrayList<>();
         for (VKApiCommunityArray vkCommunityArray : vkModels) {
@@ -247,6 +298,7 @@ public class VkontakteEndpoint extends Endpoint {
         return groups;
     }
 
+    @NonNull
     private List<List<Group>> convertSplit(List<VKApiCommunityArray> vkModels) {
         List<List<Group>> groupsSplit = new ArrayList<>();
         for (VKApiCommunityArray vkCommunityArray : vkModels) {
@@ -256,6 +308,7 @@ public class VkontakteEndpoint extends Endpoint {
         return groupsSplit;
     }
 
+    @NonNull
     private List<Group> convert(VKApiCommunityArray vkCommunityArray) {
         List<Group> groups = new ArrayList<>();
         for (VKApiCommunityFull vkGroup : vkCommunityArray) {
@@ -264,6 +317,7 @@ public class VkontakteEndpoint extends Endpoint {
         return groups;
     }
 
+    @NonNull
     private Group convert(VKApiCommunityFull vkGroup) {
         return Group.builder()
                 .setId(vkGroup.id)
@@ -272,6 +326,7 @@ public class VkontakteEndpoint extends Endpoint {
                 .build();
     }
 
+    @NonNull
     private List<GroupReport> convert(List<VKWallPostResult> vkReports) {
         List<GroupReport> reports = new ArrayList<>();
         for (VKWallPostResult vkReport : vkReports) {
@@ -280,6 +335,7 @@ public class VkontakteEndpoint extends Endpoint {
         return reports;
     }
 
+    @NonNull
     private GroupReport convert(VKWallPostResult vkReport) {
         return GroupReport.builder()
                 .setWallPostId(vkReport.post_id)

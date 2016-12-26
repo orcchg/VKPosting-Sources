@@ -1,14 +1,10 @@
 package com.orcchg.vikstra.app.ui.group.list.fragment;
 
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,10 +17,10 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseListFragment;
 import com.orcchg.vikstra.app.ui.common.injection.KeywordModule;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
-import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
+import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
+import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
-import com.orcchg.vikstra.app.ui.report.ReportActivity;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -39,7 +35,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     public static final int RV_TAG = Constant.ListTag.GROUP_LIST_SCREEN;
 
-    private String NOTIFICATION_POSTING_COMPLETE, NOTIFICATION_PHOTO_UPLOAD_COMPLETE, SNACKBAR_KEYWORDS_LIMIT;
+    private String SNACKBAR_KEYWORDS_LIMIT;
 
     private ItemTouchHelper itemTouchHelper;
     @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
@@ -51,18 +47,13 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         presenter.retry();
     }
 
-//    private FabHolder fabHolder;
-//    private GroupsCounterHolder groupsCounterHolder;
-//    private PostThumbHolder postThumbHolder;
+    private PostingNotification postingNotification;
+    private PhotoUploadNotification photoUploadNotification;
     private ShadowHolder shadowHolder;
 
     private GroupListComponent groupComponent;
     private long keywordBundleId = Constant.BAD_ID;
     private long postId = Constant.BAD_ID;
-
-    NotificationManagerCompat notificationManager;
-    NotificationCompat.Builder notificationBuilderPosting;
-    NotificationCompat.Builder notificationBuilderPhotoUpload;
 
     @NonNull @Override
     protected GroupListContract.Presenter createPresenter() {
@@ -110,19 +101,7 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
         postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         super.onCreate(savedInstanceState);
-
-        Intent intent = ReportActivity.getCallingIntent(getActivity(), postId);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getActivity(), GroupListActivity.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notificationManager = NotificationManagerCompat.from(getActivity());
-        notificationBuilderPosting = new NotificationCompat.Builder(getActivity())
-                .setSmallIcon(R.drawable.ic_cloud_upload_white_18dp)
-                .setContentTitle(resources.getString(R.string.group_list_notification_posting_title))
-                .setContentText(resources.getString(R.string.group_list_notification_posting_description_progress))
-                .setContentIntent(pendingIntent);
-        notificationBuilderPhotoUpload = new NotificationCompat.Builder(getActivity())
-                .setSmallIcon(R.drawable.ic_collections_white_18dp)
-                .setContentTitle(resources.getString(R.string.group_list_notification_photo_upload_title))
-                .setContentText(resources.getString(R.string.group_list_notification_photo_upload_description_progress));
+        initNotifications();
     }
 
     @Nullable @Override
@@ -194,50 +173,48 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
         if (shadowHolder != null) shadowHolder.showShadow(true);
     }
 
-    // ------------------------------------------
+    /* Notification delegate */
+    // --------------------------------------------------------------------------------------------
+    private void initNotifications() {
+        postingNotification = new PostingNotification(getActivity(), postId);
+        photoUploadNotification = new PhotoUploadNotification(getActivity());
+    }
+
     @Override
     public void onPostingProgress(int progress, int total) {
-        notificationBuilderPosting.setProgress(progress, total, false);
-        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_POSTING, notificationBuilderPosting.build());
+        postingNotification.onPostingProgress(progress, total);
     }
 
     @Override
     public void onPostingProgressInfinite() {
-        notificationBuilderPosting.setProgress(0, 0, true);
-        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_POSTING, notificationBuilderPosting.build());
+        postingNotification.onPostingProgressInfinite();
     }
 
     @Override
     public void onPostingComplete() {
-        notificationBuilderPosting.setContentText(NOTIFICATION_POSTING_COMPLETE).setProgress(0, 0, false);
-        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_POSTING, notificationBuilderPosting.build());
+        postingNotification.onPostingComplete();
     }
 
     // ------------------------------------------
     @Override
     public void onPhotoUploadProgress(int progress, int total) {
-        notificationBuilderPhotoUpload.setProgress(progress, total, false);
-        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_PHOTO_UPLOAD, notificationBuilderPhotoUpload.build());
+        photoUploadNotification.onPhotoUploadProgress(progress, total);
     }
 
     @Override
     public void onPhotoUploadProgressInfinite() {
-        notificationBuilderPhotoUpload.setProgress(0, 0, true);
-        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_PHOTO_UPLOAD, notificationBuilderPhotoUpload.build());
+        photoUploadNotification.onPhotoUploadProgressInfinite();
     }
 
     @Override
     public void onPhotoUploadComplete() {
-        notificationBuilderPhotoUpload.setContentText(NOTIFICATION_PHOTO_UPLOAD_COMPLETE).setProgress(0, 0, false);
-        notificationManager.notify(Constant.NotificationID.GROUP_LIST_SCREEN_PHOTO_UPLOAD, notificationBuilderPhotoUpload.build());
+        photoUploadNotification.onPhotoUploadComplete();
     }
 
     /* Resources */
     // --------------------------------------------------------------------------------------------
     private void initResources() {
         Resources resources = getResources();
-        NOTIFICATION_POSTING_COMPLETE = resources.getString(R.string.group_list_notification_posting_description_complete);
-        NOTIFICATION_PHOTO_UPLOAD_COMPLETE = resources.getString(R.string.group_list_notification_photo_upload_description_complete);
         SNACKBAR_KEYWORDS_LIMIT = resources.getString(R.string.group_list_snackbar_keywords_limit_message);
     }
 

@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.main;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseCompositePresenter;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
@@ -12,10 +13,15 @@ import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
 import com.orcchg.vikstra.app.util.ContentUtility;
+import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -25,6 +31,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     private KeywordListPresenter keywordListPresenter;
     private PostSingleGridPresenter postSingleGridPresenter;
+    private final VkontakteEndpoint vkontakteEndpoint;
 
     private boolean isKeywordBundleSelected;  // TODO: save instance state
     private boolean isPostSelected;
@@ -38,7 +45,8 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     }
 
     @Inject
-    MainPresenter(KeywordListPresenter keywordListPresenter, PostSingleGridPresenter postSingleGridPresenter) {
+    MainPresenter(KeywordListPresenter keywordListPresenter, PostSingleGridPresenter postSingleGridPresenter,
+                  VkontakteEndpoint vkontakteEndpoint) {
         this.keywordListPresenter = keywordListPresenter;
         this.keywordListPresenter.setExternalValueEmitter(isSelected -> {
             isKeywordBundleSelected = isSelected;
@@ -49,8 +57,12 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
             isPostSelected = isSelected;
             long postId = isSelected ? postSingleGridPresenter.getSelectedPostId() : Constant.BAD_ID;
             ContentUtility.CurrentSession.setLastSelectedPostId(postId);
-            if (isViewAttached()) getView().showFab(isKeywordBundleSelected && isPostSelected);
+            if (isViewAttached()) {
+                getView().showFab(isKeywordBundleSelected && isPostSelected);
+                getView().updatePostId(postId);
+            }
         });
+        this.vkontakteEndpoint = vkontakteEndpoint;
     }
 
     /* Lifecycle */
@@ -85,9 +97,14 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Override
     public void onFabClick() {
         if (isViewAttached()) {
+            long groupBundleId = Constant.BAD_ID;  // TODO: get id associated with keywords
             long keywordBundleId = keywordListPresenter.getSelectedKeywordBundleId();
             long postId = postSingleGridPresenter.getSelectedPostId();
-            getView().openGroupListScreen(keywordBundleId, postId);
+            if (groupBundleId == Constant.BAD_ID) {
+                getView().openGroupListScreen(keywordBundleId, postId);
+            } else {
+                makeWallPost();
+            }
         }
     }
 
@@ -101,6 +118,28 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @DebugLog @Override
     protected void freshStart() {}
 
+    private void makeWallPost() {
+//        Set<Long> selectedGroupIds = new TreeSet<>();  // exclude ids duplication
+        // TODO: get GroupBundle by groupBundleId
+        // TODO: get groups ids from associated GroupBundle
+        // TODO: get Post by postId from Repository
+//        vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroupIds, currentPost,
+//                createMakeWallPostCallback(), getView(), getView());
+    }
+
     /* Callback */
     // --------------------------------------------------------------------------------------------
+    private UseCase.OnPostExecuteCallback<List<GroupReport>> createMakeWallPostCallback() {
+        return new UseCase.OnPostExecuteCallback<List<GroupReport>>() {
+            @Override
+            public void onFinish(@Nullable List<GroupReport> values) {
+                if (isViewAttached()) getView().openReportScreen(postSingleGridPresenter.getSelectedPostId());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (isViewAttached()) getView().showError();
+            }
+        };
+    }
 }

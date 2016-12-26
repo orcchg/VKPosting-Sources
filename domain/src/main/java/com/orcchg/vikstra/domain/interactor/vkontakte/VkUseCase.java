@@ -2,6 +2,8 @@ package com.orcchg.vikstra.domain.interactor.vkontakte;
 
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
+import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -48,6 +50,11 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
             public void onError(VKError error) {
                 super.onError(error);
                 Timber.e("Failed to receive response: %s", error.toString());
+                if (error.apiError.errorCode == 6) {
+                    Timber.d("Throwing Vk use-case retry exception");
+                    throw new VkUseCaseRetryException();
+                }
+                throw new VkUseCaseException(error);
             }
         };
     }

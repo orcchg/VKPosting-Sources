@@ -5,6 +5,20 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/tv_empty_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/standard_side_padding"
+        android:drawableTint="@color/black_40_opacity"
+        android:drawableTop="@drawable/ic_search_white_24dp"
+        android:drawablePadding="8dp"
+        android:gravity="center"
+        android:text="@string/empty_data_short"
+        android:textColor="@color/textSecondary"
+        android:textSize="@dimen/standard_subdesc_text_size"
+        android:visibility="gone"/>
+
+    <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -16,7 +16,7 @@ import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
-import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
+import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
@@ -176,6 +176,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void sendPostNotSelected() {
+        mediatorComponent.mediator().sendPostNotSelected();
+    }
+
+    @Override
     public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
         inputKeywordBundle.setSelectedGroupsCount(newCount);
         inputKeywordBundle.setTotalGroupsCount(total);
@@ -219,15 +224,19 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     private void postToGroups() {
-        Set<Long> selectedGroupIds = new TreeSet<>();
-        for (GroupParentItem parentItem : listAdapter.getParentList()) {
-            for (GroupChildItem childItem : parentItem.getChildList()) {
-                if (childItem.isSelected()) selectedGroupIds.add(childItem.getId());
+        if (currentPost != null) {
+            Set<Long> selectedGroupIds = new TreeSet<>();  // exclude ids duplication
+            for (GroupParentItem parentItem : listAdapter.getParentList()) {
+                for (GroupChildItem childItem : parentItem.getChildList()) {
+                    if (childItem.isSelected()) selectedGroupIds.add(childItem.getId());
+                }
             }
+            vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroupIds, currentPost,
+                    createMakeWallPostCallback(), getView(), getView());
+        } else {
+            Timber.d("No post selected, nothing to be done");
+            sendPostNotSelected();
         }
-        vkontakteEndpoint.makeWallPosts(selectedGroupIds, currentPost,
-                createMakeWallPostCallback(), createMakeWallPostsProgressCallback(),
-                createPhotoUploadProgressCallback(), createPhotoPrepareProgressCallback());
     }
 
     private void postKeywordBundleUpdate() {
@@ -264,7 +273,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
             @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
-                // TODO: NPE handle - crash when BAD_ID or not found keywords
+                if (bundle == null) {
+                    Timber.e("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
+                    throw new ProgramException();
+                }
                 inputKeywordBundle = bundle;
                 for (Keyword keyword : bundle) {
                     GroupParentItem item = new GroupParentItem(keyword);
@@ -310,7 +322,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         return new UseCase.OnPostExecuteCallback<List<List<Group>>>() {
             @Override
             public void onFinish(@Nullable List<List<Group>> splitGroups) {
-                // TODO: NPE
+                if (splitGroups == null) {
+                    Timber.e("Split groups list cannot be null, but could be empty instead");
+                    throw new ProgramException();
+                }
                 // TODO: only 20 groups by single keyword by default
                 for (int i = 0; i < splitGroups.size(); ++i) {
                     addGroupsToList(splitGroups.get(i), i);
@@ -333,7 +348,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private UseCase.OnPostExecuteCallback<List<GroupReport>> createMakeWallPostCallback() {
         return new UseCase.OnPostExecuteCallback<List<GroupReport>>() {
             @Override
-            public void onFinish(@Nullable List<GroupReport> values) {
+            public void onFinish(@Nullable List<GroupReport> reports) {
+                // TODO: use reports
                 if (isViewAttached()) getView().openReportScreen(getPostByIdUseCase.getPostId());
             }
 
@@ -341,40 +357,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             public void onError(Throwable e) {
                 if (isViewAttached()) getView().showError();
             }
-        };
-    }
-
-    // ------------------------------------------
-    private MultiUseCase.ProgressCallback createMakeWallPostsProgressCallback() {
-        return (index, total) -> {
-            Timber.v("Make wall posts progress: %s / %s", index, total);
-            if (isViewAttached()) {
-                if (index < total) {
-                    getView().onPostingProgress(index, total);
-                } else {
-                    getView().onPostingComplete();
-                }
-            }
-        };
-    }
-
-    private MultiUseCase.ProgressCallback createPhotoUploadProgressCallback() {
-        return (index, total) -> {
-            Timber.v("Photo uploading progress: %s / %s", index, total);
-            if (isViewAttached()) {
-                if (index < total) {
-                    getView().onPhotoUploadProgress(index, total);
-                } else {
-                    getView().onPhotoUploadComplete();
-                }
-            }
-        };
-    }
-
-    private MultiUseCase.ProgressCallback createPhotoPrepareProgressCallback() {
-        return (index, total) -> {
-            Timber.v("Photo preparing progress: %s / %s", index, total);
-            if (isViewAttached()) getView().onPhotoUploadProgressInfinite();
         };
     }
 

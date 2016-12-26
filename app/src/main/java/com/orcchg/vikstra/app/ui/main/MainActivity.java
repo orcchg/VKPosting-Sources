@@ -15,12 +15,15 @@ import com.orcchg.vikstra.app.ui.base.MvpListView;
 import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
+import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
+import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListModule;
 import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridFragment;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridModule;
+import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -50,6 +53,9 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         navigationComponent.navigator().openKeywordCreateScreen(this);
     }
 
+    private PostingNotification postingNotification;
+    private PhotoUploadNotification photoUploadNotification;
+
     private MainComponent mainComponent;
 
     @NonNull @Override
@@ -72,10 +78,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        VKSdk.login(this, "wall");  // TODO: scopes
+        VKSdk.login(this, VkontakteEndpoint.Scope.PHOTOS, VkontakteEndpoint.Scope.WALL);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
+        initNotifications();
     }
 
     @Override
@@ -127,13 +134,13 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     @Override
-    public void openKeywordCreateScreen(long keywordBundleId) {
-        navigationComponent.navigator().openKeywordCreateScreen(this, keywordBundleId);
+    public void openGroupListScreen(long keywordBundleId, long postId) {
+        navigationComponent.navigator().openGroupListScreen(this, keywordBundleId, postId);
     }
 
     @Override
-    public void openGroupListScreen(long keywordBundleId, long postId) {
-        navigationComponent.navigator().openGroupListScreen(this, keywordBundleId, postId);
+    public void openKeywordCreateScreen(long keywordBundleId) {
+        navigationComponent.navigator().openKeywordCreateScreen(this, keywordBundleId);
     }
 
     @Override
@@ -144,6 +151,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void openPostViewScreen(long postId) {
         navigationComponent.navigator().openPostViewScreen(this, postId);
+    }
+
+    @Override
+    public void openReportScreen(long postId) {
+        navigationComponent.navigator().openReportScreen(this, postId);
     }
 
     @Override
@@ -158,18 +170,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         } else {
             fab.hide();
         }
-    }
-
-    @Override
-    public void showPosts(boolean isEmpty) {
-        PostSingleGridFragment fragment = getPostGridFragment();
-        if (fragment != null) fragment.showPosts(isEmpty);
-    }
-
-    @Override
-    public void showKeywords(boolean isEmpty) {
-        KeywordListFragment fragment = getKeywordListFragment();
-        if (fragment != null) fragment.showKeywords(isEmpty);
     }
 
     @Override
@@ -188,6 +188,23 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     public void showLoading() {
         KeywordListFragment fragment = getKeywordListFragment();
         if (fragment != null) fragment.showLoading();
+    }
+
+    @Override
+    public void showKeywords(boolean isEmpty) {
+        KeywordListFragment fragment = getKeywordListFragment();
+        if (fragment != null) fragment.showKeywords(isEmpty);
+    }
+
+    @Override
+    public void showPosts(boolean isEmpty) {
+        PostSingleGridFragment fragment = getPostGridFragment();
+        if (fragment != null) fragment.showPosts(isEmpty);
+    }
+
+    @Override
+    public void updatePostId(long postId) {
+        postingNotification.updatePostId(this, postId);
     }
 
     // ------------------------------------------
@@ -220,6 +237,44 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void onScrollGrid(int itemsLeftToEnd) {
         // TODO: scroll grid
+    }
+
+    /* Notification delegate */
+    // --------------------------------------------------------------------------------------------
+    private void initNotifications() {
+        postingNotification = new PostingNotification(this);
+        photoUploadNotification = new PhotoUploadNotification(this);
+    }
+
+    @Override
+    public void onPostingProgress(int progress, int total) {
+        postingNotification.onPostingProgress(progress, total);
+    }
+
+    @Override
+    public void onPostingProgressInfinite() {
+        postingNotification.onPostingProgressInfinite();
+    }
+
+    @Override
+    public void onPostingComplete() {
+        postingNotification.onPostingComplete();
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onPhotoUploadProgress(int progress, int total) {
+        photoUploadNotification.onPhotoUploadProgress(progress, total);
+    }
+
+    @Override
+    public void onPhotoUploadProgressInfinite() {
+        photoUploadNotification.onPhotoUploadProgressInfinite();
+    }
+
+    @Override
+    public void onPhotoUploadComplete() {
+        photoUploadNotification.onPhotoUploadComplete();
     }
 
     /* Internal */

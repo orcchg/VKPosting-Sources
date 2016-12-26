@@ -46,6 +46,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendPostNotSelected() {
+        clientFirst.receivePostNotSelected();
+    }
+
+    @Override
     public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
         clientFirst.receiveUpdatedSelectedGroupsCounter(newCount, total);
     }

@@ -36,6 +36,7 @@ public class ReportPresenter extends BasePresenter<ReportContract.View> implemen
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
             public void onFinish(@Nullable Post post) {
+                // TODO: NPE - bad id
                 if (isViewAttached()) getView().showPost(postToSingleGridVoMapper.map(post));
             }
 

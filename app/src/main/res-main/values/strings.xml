@@ -7,6 +7,7 @@
     <string name="keywords_flow_layout_more_collapse">collapse</string>
 
     <string name="empty_data">Data is empty</string>
+    <string name="empty_data_short">Empty</string>
     <string name="empty_btn_label">Create</string>
     <string name="error_btn_label">Retry</string>
     <string name="error_text">Data error</string>
@@ -27,4 +28,11 @@
         <item name="dialog_upload_photo_variant_camera">Camera</item>
         <!-- <item name="dialog_upload_photo_variant_albums">Albums</item> -->
     </array>
+
+    <string name="notification_posting_title">Wall posting</string>
+    <string name="notification_posting_description_complete">Posting completed</string>
+    <string name="notification_posting_description_progress">Posting in progress</string>
+    <string name="notification_photo_upload_title">Photo uploading</string>
+    <string name="notification_photo_upload_description_complete">All photos uploaded</string>
+    <string name="notification_photo_upload_description_progress">Photo upload in progress</string>
 </resources>

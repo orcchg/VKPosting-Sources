@@ -20,7 +20,7 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
 
     protected int total;
     protected List<Throwable> errors = new ArrayList<>();  // occurred disallowed errors during execution
-    protected List<Throwable> allowedErrors;  // list of errors the failed use case should retry on raised
+    protected Class<? extends Throwable>[] allowedErrors;  // list of errors the failed use case should retry on raised
     protected Object lock = new Object();
 
     public MultiUseCase(int total, ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
@@ -28,7 +28,7 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
         this.total = total;
     }
 
-    public void setAllowedError(List<Throwable> allowedErrors) {
+    public void setAllowedError(Class<? extends Throwable>... allowedErrors) {
         this.allowedErrors = allowedErrors;
     }
 
@@ -88,7 +88,7 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
                             if (progressCallback != null) progressCallback.onDone(index + 1, total);
                             break REQUEST_ATTEMPT;
                         } catch (Throwable e) {
-                            if (allowedErrors != null && !allowedErrors.isEmpty() && allowedErrors.contains(e)) {
+                            if (ValueUtility.containsClass(e.getClass(), allowedErrors)) {
                                 // in case of any allowed error - retry after randomized timeout
                                 try {
                                     long delta = ValueUtility.random(100, 1000);
@@ -96,6 +96,7 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
                                 } catch (InterruptedException ie) {
                                     Thread.interrupted();  // continue executing at interruption
                                 }
+                                Timber.d("Retrying request...");
                             } else {
                                 Timber.w(e, "Unhandled exception");
                                 addToErrors(errors, e);
@@ -105,6 +106,7 @@ public abstract class MultiUseCase<Result, L extends List<Result>> extends UseCa
                         }
                         elapsed = System.currentTimeMillis();
                     }
+                    Timber.d("Break loop");
                     if (!finishedWithError) {
                         addToResults(results, result);
                     }

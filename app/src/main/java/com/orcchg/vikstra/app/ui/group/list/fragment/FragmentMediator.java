@@ -17,6 +17,7 @@ public interface FragmentMediator {
         void sendEmptyPost();
         void sendKeywordBundleChanged();
         void sendPost(@Nullable PostSingleGridItemVO viewObject);
+        void sendPostNotSelected();
         void sendUpdatedSelectedGroupsCounter(int newCount, int total);
     }
 }

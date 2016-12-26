@@ -3,6 +3,7 @@ package com.orcchg.vikstra.app.ui.common.view;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.LayoutRes;
 import android.util.AttributeSet;
@@ -33,6 +34,7 @@ public class ThumbView extends FrameLayout {
 
     protected View rootView;
     @BindView(R.id.iv_image) ImageView image;
+    @BindView(R.id.iv_corner_icon) ImageView cornerIcon;
 
     public ThumbView(Context context) {
         this(context, null);
@@ -59,6 +61,15 @@ public class ThumbView extends FrameLayout {
 
     /* API */
     // --------------------------------------------------------------------------------------------
+    public void setCornerIcon(@DrawableRes int resId) {
+        if (resId > 0) {
+            cornerIcon.setImageResource(resId);
+            cornerIcon.setVisibility(VISIBLE);
+        } else {
+            cornerIcon.setVisibility(INVISIBLE);
+        }
+    }
+
     public void setImage(Bitmap bmp) {
         image.setImageBitmap(bmp);
     }

@@ -12,6 +12,7 @@ public interface ActivityMediator {
         void receiveEmptyPost();
         void receiveKeywordBundleChanged();
         void receivePost(@Nullable PostSingleGridItemVO viewObject);
+        void receivePostNotSelected();
         void receiveUpdatedSelectedGroupsCounter(int newCount, int total);
     }
 

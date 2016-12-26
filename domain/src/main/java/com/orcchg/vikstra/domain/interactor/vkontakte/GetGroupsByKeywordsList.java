@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
+import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
@@ -22,7 +23,7 @@ public class GetGroupsByKeywordsList extends MultiUseCase<VKApiCommunityArray, L
                                    PostExecuteScheduler postExecuteScheduler) {
         super(keywords.size(), threadExecutor, postExecuteScheduler);
         this.keywords = keywords;
-//        setAllowedError();  // TODO: allow VkError with code = 6
+        setAllowedError(VkUseCaseRetryException.class);
     }
 
     @Override

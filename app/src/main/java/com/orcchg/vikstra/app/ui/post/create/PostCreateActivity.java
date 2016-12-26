@@ -206,6 +206,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private void addMediaThumbnail(ThumbView mediaView) {
+        mediaView.setCornerIcon(R.drawable.ic_close_white_18dp);
         mediaView.setOnClickListener((view) -> {
             presenter.removeAttachedMedia();
             mediaContainer.removeView(mediaView);

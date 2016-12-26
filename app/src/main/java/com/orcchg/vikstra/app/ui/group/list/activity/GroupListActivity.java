@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
@@ -21,6 +22,7 @@ import com.orcchg.vikstra.app.ui.group.list.activity.injection.DaggerGroupListCo
 import com.orcchg.vikstra.app.ui.group.list.activity.injection.GroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.GroupListFragment;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -39,6 +41,7 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     private String ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT,
             EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, INFO_TITLE;
 
+    @BindView(R.id.coordinator_root) ViewGroup coordinatorRoot;
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tv_info_title) TextView selectedGroupsCountView;
@@ -140,6 +143,11 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void onPostNotSelected() {
+        UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_post_is_empty_message);
+    }
+
     @Override
     public void openAddKeywordDialog() {
         DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,

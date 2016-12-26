@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.domain.util;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
@@ -30,6 +31,33 @@ public class ValueUtility {
         }
         Random rng = new Random();
         return rng.nextLong() % (max - min) + min;
+    }
+
+    public static <T> boolean contains(@NonNull T item, T... items) {
+        if (!isEmpty(items)) {
+            for (int i = 0; i < items.length; ++i) {
+                if (item.equals(items[i])) return true;
+            }
+        }
+        return false;
+    }
+
+    public static <T> boolean containsClass(@NonNull T item, T... items) {
+        if (!isEmpty(items)) {
+            for (int i = 0; i < items.length; ++i) {
+                if (items[i].getClass().isInstance(item)) return true;
+            }
+        }
+        return false;
+    }
+
+    public static <T> boolean isEmpty(T... items) {
+        return items == null || items.length == 0;
+    }
+
+    public static <T> int sizeOf(T... items) {
+        if (items == null) return 0;
+        return items.length;
     }
 
     public static <T> int sizeOf(@Nullable List<T> items) {

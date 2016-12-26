@@ -40,6 +40,7 @@ public class ImageLoader extends Endpoint {
     }
 
     public void loadImage(Media media, @Nullable UseCase.OnPostExecuteCallback<Bitmap> callback) {
+        Timber.d("Loading single media");
         LoadPhoto useCase = new LoadPhoto(media, this, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(callback);
         useCase.execute();
@@ -52,6 +53,7 @@ public class ImageLoader extends Endpoint {
     public void loadImages(List<Media> media, @Nullable UseCase.OnPostExecuteCallback<List<Bitmap>> callback,
                            @Nullable MultiUseCase.ProgressCallback progressCallback) {
         if (media != null && !media.isEmpty()) {
+            Timber.d("Loading media, total count: %s", media.size());
             LoadPhotos useCase = new LoadPhotos(media, this, threadExecutor, postExecuteScheduler);
             useCase.setProgressCallback(progressCallback);
             useCase.setPostExecuteCallback(callback);

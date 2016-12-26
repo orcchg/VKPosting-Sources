@@ -81,6 +81,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receivePostNotSelected() {
+        if (isViewAttached()) getView().onPostNotSelected();
+    }
+
+    @Override
     public void receiveUpdatedSelectedGroupsCounter(int newCount, int total) {
         if (isViewAttached()) getView().updateSelectedGroupsCounter(newCount, total);
     }

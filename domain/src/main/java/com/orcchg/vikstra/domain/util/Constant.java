@@ -25,7 +25,7 @@ public class Constant {
     }
 
     public static final class NotificationID {
-        public static final int GROUP_LIST_SCREEN_POSTING = 101;
-        public static final int GROUP_LIST_SCREEN_PHOTO_UPLOAD = 102;
+        public static final int POSTING = 101;
+        public static final int PHOTO_UPLOAD = 102;
     }
 }
