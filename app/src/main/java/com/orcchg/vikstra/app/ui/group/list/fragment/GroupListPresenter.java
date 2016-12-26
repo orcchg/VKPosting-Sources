@@ -201,6 +201,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         if (AppConfig.INSTANCE.isAllGroupsSortedByMembersCount()) Collections.sort(groups);
         List<GroupChildItem> childItems = new ArrayList<>(groups.size());
         for (Group group : groups) {
+            if (AppConfig.INSTANCE.useOnlyGroupsWhereCanPostFreely() && !group.canPost()) {
+                continue;  // skip groups where is no access for current user to make wall post
+            }
             GroupChildItem childItem = new GroupChildItem(group);
             childItems.add(childItem);
             if (AppConfig.INSTANCE.isAllGroupsSelected()) {

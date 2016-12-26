@@ -325,6 +325,7 @@ public class VkontakteEndpoint extends Endpoint {
     Group convert(VKApiCommunityFull vkGroup) {
         return Group.builder()
                 .setId(vkGroup.id)
+                .setCanPost(vkGroup.can_post)
                 .setMembersCount(vkGroup.members_count)
                 .setName(vkGroup.name)
                 .build();

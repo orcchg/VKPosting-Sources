@@ -43,6 +43,7 @@ public class GroupToDboMapper implements DuplexMapper<Group, GroupDBO> {
     public Group mapBack(GroupDBO object) {
         return Group.builder()
                 .setId(object.id)
+                .setCanPost(object.canPost)
                 .setMembersCount(object.membersCount)
                 .setName(object.name)
                 .build();

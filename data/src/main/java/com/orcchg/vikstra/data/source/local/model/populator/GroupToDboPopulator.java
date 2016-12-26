@@ -15,6 +15,7 @@ public class GroupToDboPopulator implements Populator<Group, GroupDBO> {
     @Override
     public void populate(Group object, GroupDBO dbo) {
         dbo.id = object.id();
+        dbo.canPost = object.canPost();
         dbo.membersCount = object.membersCount();
         dbo.name = object.name();
     }

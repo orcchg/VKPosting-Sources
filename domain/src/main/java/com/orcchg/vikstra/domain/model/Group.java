@@ -16,12 +16,14 @@ public abstract class Group implements Comparable<Group> {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setId(long id);
+        public abstract Builder setCanPost(boolean canPost);
         public abstract Builder setMembersCount(int count);
         public abstract Builder setName(String name);
         public abstract Group build();
     }
 
     public abstract long id();
+    public abstract boolean canPost();
     public abstract int membersCount();
     public abstract String name();
 

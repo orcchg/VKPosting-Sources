@@ -1,13 +1,17 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
+import android.text.TextUtils;
+
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.util.Constant;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.model.VKApiCommunityArray;
+import com.vk.sdk.api.model.VKApiCommunityFull;
 
 import javax.inject.Inject;
 
@@ -28,7 +32,11 @@ public class GetGroupsByKeyword extends VkUseCase<VKApiCommunityArray> {
 
     @Override
     protected VKRequest prepareVkRequest() {
-        VKParameters params = VKParameters.from(VKApiConst.Q, keyword.keyword(), VKApiConst.FIELDS, "members_count");
+        String[] fields = new String[]{VKApiCommunityFull.CAN_POST, VKApiCommunityFull.MEMBERS_COUNT};
+        VKParameters params = VKParameters.from(
+                VKApiConst.Q, keyword.keyword(),
+                VKApiConst.COUNT, Integer.toString(Constant.GROUPS_COUNT_PER_REQUEST),
+                VKApiConst.FIELDS, TextUtils.join(",", fields));
         return VKApi.groups().search(params);
     }
 
