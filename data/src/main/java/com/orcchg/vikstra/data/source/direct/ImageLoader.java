@@ -7,6 +7,7 @@ import com.bumptech.glide.RequestManager;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
+import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.Media;
 
@@ -46,11 +47,11 @@ public class ImageLoader extends Endpoint {
         useCase.execute();
     }
 
-    public void loadImages(List<Media> media, @Nullable UseCase.OnPostExecuteCallback<List<Bitmap>> callback) {
+    public void loadImages(List<Media> media, @Nullable UseCase.OnPostExecuteCallback<List<Ordered<Bitmap>>> callback) {
         loadImages(media, callback, null);
     }
 
-    public void loadImages(List<Media> media, @Nullable UseCase.OnPostExecuteCallback<List<Bitmap>> callback,
+    public void loadImages(List<Media> media, @Nullable UseCase.OnPostExecuteCallback<List<Ordered<Bitmap>>> callback,
                            @Nullable MultiUseCase.ProgressCallback progressCallback) {
         if (media != null && !media.isEmpty()) {
             Timber.d("Loading media, total count: %s", media.size());
@@ -99,7 +100,7 @@ public class ImageLoader extends Endpoint {
         }
     }
 
-    private static class LoadPhotos extends MultiUseCase<Bitmap, List<Bitmap>> {
+    private static class LoadPhotos extends MultiUseCase<Bitmap, List<Ordered<Bitmap>>> {
         private final ImageLoader imageLoader;
         private final List<Media> media;
 

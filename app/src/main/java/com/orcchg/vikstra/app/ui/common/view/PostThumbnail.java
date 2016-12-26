@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.orcchg.vikstra.R;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 
 import butterknife.BindView;
@@ -45,32 +46,32 @@ public class PostThumbnail extends FrameLayout {
     /* API */
     // --------------------------------------------------------------------------------------------
     public void setTitle(String title) {
-        emptyDataView.setVisibility(TextUtils.isEmpty(title) ? View.VISIBLE : View.GONE);
+        if (UiUtility.isVisible(emptyDataView)) emptyDataView.setVisibility(TextUtils.isEmpty(title) ? View.VISIBLE : View.GONE);
         titleView.setVisibility(TextUtils.isEmpty(title) ? View.GONE : View.VISIBLE);
         titleView.setText(title);
     }
 
     public void setTitle(@StringRes int resId) {
-        emptyDataView.setVisibility(resId > 0 ? View.VISIBLE : View.GONE);
-        titleView.setVisibility(resId > 0 ? View.GONE : View.VISIBLE);
+        if (UiUtility.isVisible(emptyDataView)) emptyDataView.setVisibility(resId <= 0 ? View.VISIBLE : View.GONE);
+        titleView.setVisibility(resId <= 0 ? View.GONE : View.VISIBLE);
         titleView.setText(resId);
     }
 
     public void setDescription(String description) {
-        emptyDataView.setVisibility(TextUtils.isEmpty(description) ? View.VISIBLE : View.GONE);
+        if (UiUtility.isVisible(emptyDataView)) emptyDataView.setVisibility(TextUtils.isEmpty(description) ? View.VISIBLE : View.GONE);
         descriptionView.setVisibility(TextUtils.isEmpty(description) ? View.GONE : View.VISIBLE);
         descriptionView.setText(description);
     }
 
     public void setDescription(@StringRes int resId) {
-        emptyDataView.setVisibility(resId > 0 ? View.VISIBLE : View.GONE);
-        descriptionView.setVisibility(resId > 0 ? View.GONE : View.VISIBLE);
+        if (UiUtility.isVisible(emptyDataView)) emptyDataView.setVisibility(resId <= 0 ? View.VISIBLE : View.GONE);
+        descriptionView.setVisibility(resId <= 0 ? View.GONE : View.VISIBLE);
         descriptionView.setText(resId);
     }
 
     public void setMedia(String url) {
         boolean hasMedia = !TextUtils.isEmpty(url);
-        emptyDataView.setVisibility(hasMedia ? View.GONE : View.VISIBLE);
+        if (UiUtility.isVisible(emptyDataView)) emptyDataView.setVisibility(hasMedia ? View.GONE : View.VISIBLE);
         mediaContainerRoot.setVisibility(hasMedia ? View.VISIBLE : View.GONE);
         mediaView.setVisibility(hasMedia ? View.VISIBLE : View.GONE);
         if (hasMedia) Glide.with(getContext()).load(url).into(mediaView);
@@ -78,7 +79,7 @@ public class PostThumbnail extends FrameLayout {
 
     public void setMediaCount(int count) {
         if (count > 1) {
-            emptyDataView.setVisibility(View.GONE);
+            if (UiUtility.isVisible(emptyDataView)) emptyDataView.setVisibility(View.GONE);
             mediaCountView.setVisibility(View.VISIBLE);
             mediaCountView.setText(Integer.toString(count));
         } else {

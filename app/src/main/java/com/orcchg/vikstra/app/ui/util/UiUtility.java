@@ -38,6 +38,10 @@ public class UiUtility {  // TODO: rename to view utility
         return bmp;
     }
 
+    public static boolean isVisible(View view) {
+        return view.getVisibility() == View.VISIBLE;
+    }
+
     public static void showSnackbar(Activity activity, @StringRes int resId) {
         Snackbar.make(activity.findViewById(android.R.id.content), resId, Snackbar.LENGTH_SHORT).show();
     }

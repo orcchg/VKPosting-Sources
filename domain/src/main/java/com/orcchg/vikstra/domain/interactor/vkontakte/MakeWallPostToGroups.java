@@ -5,12 +5,12 @@ import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
+import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.vk.sdk.api.model.VKAttachments;
 import com.vk.sdk.api.model.VKWallPostResult;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -18,7 +18,7 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class MakeWallPostToGroups extends MultiUseCase<VKWallPostResult, List<VKWallPostResult>> {
+public class MakeWallPostToGroups extends MultiUseCase<VKWallPostResult, List<Ordered<VKWallPostResult>>> {
 
     public static class Parameters {
         Collection<Long> groupIds;

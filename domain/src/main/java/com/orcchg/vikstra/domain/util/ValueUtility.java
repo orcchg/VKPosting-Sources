@@ -3,9 +3,14 @@ package com.orcchg.vikstra.domain.util;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.domain.interactor.base.Ordered;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class ValueUtility {
 
@@ -42,10 +47,12 @@ public class ValueUtility {
         return false;
     }
 
-    public static <T> boolean containsClass(@NonNull T item, T... items) {
+    @DebugLog
+    public static boolean containsClass(@NonNull Object item, Class[] items) {
+        Timber.v("Item class: %s", item.getClass().getSimpleName());
         if (!isEmpty(items)) {
             for (int i = 0; i < items.length; ++i) {
-                if (items[i].getClass().isInstance(item)) return true;
+                if (items[i].isInstance(item)) return true;
             }
         }
         return false;
@@ -63,5 +70,15 @@ public class ValueUtility {
     public static <T> int sizeOf(@Nullable List<T> items) {
         if (items == null) return 0;
         return items.size();
+    }
+
+    /* Ordered result */
+    // ------------------------------------------
+    public static <Result> List<Result> unwrap(List<Ordered<Result>> results) {
+        List<Result> list = new ArrayList<>();
+        for (Ordered<Result> item : results) {
+            if (item.data != null) list.add(item.data);
+        }
+        return list;
     }
 }

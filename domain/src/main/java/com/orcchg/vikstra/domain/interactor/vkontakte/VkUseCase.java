@@ -16,6 +16,7 @@ import timber.log.Timber;
 public abstract class VkUseCase<Result> extends UseCase<Result> {
 
     protected VKResponse vkResponse;
+    private RuntimeException vkException;
 
     protected VkUseCase(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
@@ -34,10 +35,11 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
     @Nullable @Override
     protected Result doAction() {
         prepareVkRequest().executeSyncWithListener(createVkResponseListener());
+        if (vkException != null) throw vkException;
         return parseVkResponse();
     }
 
-    VKRequest.VKRequestListener createVkResponseListener() {
+    private VKRequest.VKRequestListener createVkResponseListener() {
         return new VKRequest.VKRequestListener() {
             @Override
             public void onComplete(VKResponse response) {
@@ -52,9 +54,10 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
                 Timber.e("Failed to receive response: %s", error.toString());
                 if (error.apiError.errorCode == 6) {
                     Timber.d("Throwing Vk use-case retry exception");
-                    throw new VkUseCaseRetryException();
+                    vkException = new VkUseCaseRetryException();
+                } else {
+                    vkException = new VkUseCaseException(error);
                 }
-                throw new VkUseCaseException(error);
             }
         };
     }

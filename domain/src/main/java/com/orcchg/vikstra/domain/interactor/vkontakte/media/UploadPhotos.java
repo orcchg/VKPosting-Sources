@@ -3,9 +3,11 @@ package com.orcchg.vikstra.domain.interactor.vkontakte.media;
 import android.graphics.Bitmap;
 
 import com.orcchg.vikstra.domain.exception.NoParametersException;
+import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
+import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.vk.sdk.api.model.VKPhotoArray;
 
@@ -16,7 +18,7 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<VKPhotoArray>> {
+public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<Ordered<VKPhotoArray>>> {
 
     public static class Parameters {
         List<Bitmap> bitmaps;
@@ -31,7 +33,7 @@ public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<VKPhotoArray>>
     @Inject
     public UploadPhotos(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(0, threadExecutor, postExecuteScheduler);  // total count will be set later
-//        setAllowedError();  // TODO: allow VkError with code = 6
+        setAllowedError(VkUseCaseRetryException.class);
     }
 
     public void setParameters(Parameters parameters) {

@@ -12,10 +12,10 @@ public class VkUseCaseException extends RuntimeException {
 
     @Override
     public String toString() {
-        return error.toString();
+        return error.apiError.toString();
     }
 
     public int getErrorCode() {
-        return error.errorCode;
+        return error.apiError.errorCode;
     }
 }

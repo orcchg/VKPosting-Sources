@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 
+import timber.log.Timber;
+
 /**
  * Abstract class for a Use Case (Interactor in terms of Clean Architecture).
  * This interface represents a execution unit for different use cases (this means any use case
@@ -95,7 +97,7 @@ public abstract class UseCase<Result> implements Runnable {
             Result result = doAction();
             postExecuteScheduler.post(wrapToRunnable(result));
         } catch (Throwable error) {
-            error.printStackTrace();
+            Timber.w(error, "An error has occurred during execution of Use-Case");
             postExecuteScheduler.post(wrapToRunnable(error));
         }
     }
