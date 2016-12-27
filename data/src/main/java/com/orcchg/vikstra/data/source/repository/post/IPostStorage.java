@@ -12,7 +12,7 @@ public interface IPostStorage extends IStorage {
 
     /* Create */
     // ------------------------------------------
-    long addPost(Post post);
+    Post addPost(Post post);
 
     /* Read */
     // ------------------------------------------

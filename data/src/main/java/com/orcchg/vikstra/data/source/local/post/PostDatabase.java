@@ -36,14 +36,14 @@ public class PostDatabase implements IPostStorage {
     /* Create */
     // ------------------------------------------
     @DebugLog @Override
-    public long addPost(Post post) {
+    public Post addPost(Post post) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction((xrealm) -> {
             PostDBO dbo = xrealm.createObject(PostDBO.class);
             postToDboPopulator.populate(post, dbo);
         });
         realm.close();
-        return post.id();
+        return post;
     }
 
     /* Read */

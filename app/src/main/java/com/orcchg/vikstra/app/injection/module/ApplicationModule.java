@@ -12,15 +12,18 @@ import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.data.source.local.group.GroupDatabase;
 import com.orcchg.vikstra.data.source.local.keyword.KeywordDatabase;
 import com.orcchg.vikstra.data.source.local.post.PostDatabase;
+import com.orcchg.vikstra.data.source.local.report.ReportDatabase;
 import com.orcchg.vikstra.data.source.remote.group.GroupCloud;
 import com.orcchg.vikstra.data.source.remote.keyword.KeywordCloud;
 import com.orcchg.vikstra.data.source.remote.post.PostCloud;
+import com.orcchg.vikstra.data.source.remote.report.ReportCloud;
 import com.orcchg.vikstra.data.source.repository.group.GroupRepositoryImpl;
 import com.orcchg.vikstra.data.source.repository.group.IGroupStorage;
 import com.orcchg.vikstra.data.source.repository.keyword.IKeywordStorage;
 import com.orcchg.vikstra.data.source.repository.keyword.KeywordRepositoryImpl;
 import com.orcchg.vikstra.data.source.repository.post.IPostStorage;
 import com.orcchg.vikstra.data.source.repository.post.PostRepositoryImpl;
+import com.orcchg.vikstra.data.source.repository.report.IReportStorage;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.executor.UseCaseExecutor;
@@ -99,6 +102,16 @@ public class ApplicationModule {
 
     @Provides @Singleton @Named("postDatabase")
     IPostStorage provideLocalPostSource(PostDatabase source) {
+        return source;
+    }
+
+    @Provides @Singleton @Named("reportCloud")
+    IReportStorage provideCloudReportSource(ReportCloud source) {
+        return source;
+    }
+
+    @Provides @Singleton @Named("reportDatabase")
+    IReportStorage provideLocalReportSource(ReportDatabase source) {
         return source;
     }
 

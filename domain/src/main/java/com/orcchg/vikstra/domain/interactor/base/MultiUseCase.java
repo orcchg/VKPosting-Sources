@@ -76,13 +76,13 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                 public void run() {
                     long elapsed = start;
                     Ordered<Result> result = new Ordered<>();
-                    REQUEST_ATTEMPT: while (elapsed - start < 30_000) {
+                    while (elapsed - start < 30_000) {
                         try {
                             UseCase<Result> useCase = useCases.size() == 1 ? useCases.get(0) : useCases.get(index);
                             result.orderId = useCase.getOrderId();
                             result.data = useCase.doAction();  // perform use case synchronously
                             if (progressCallback != null) progressCallback.onDone(index + 1, total);
-                            break REQUEST_ATTEMPT;
+                            break;
                         } catch (Throwable e) {
                             if (ValueUtility.containsClass(e, allowedErrors)) {
                                 // in case of any allowed error - retry after randomized timeout
@@ -96,7 +96,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                             } else {
                                 Timber.w("Unhandled exception: %s", e.toString());
                                 result.error = e;
-                                break REQUEST_ATTEMPT;
+                                break;
                             }
                         }
                         elapsed = System.currentTimeMillis();
@@ -105,7 +105,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                     addToResults(results, result);
                     synchronized (lock) {
                         doneFlags[index] = true;
-                        lock.notify();  // пробудить поток-обработчик ответа
+                        lock.notify();  // wake-up main thread
                     }
                 }
             }).start();

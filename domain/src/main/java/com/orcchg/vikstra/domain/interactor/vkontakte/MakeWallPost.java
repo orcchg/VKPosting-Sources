@@ -3,7 +3,7 @@ package com.orcchg.vikstra.domain.interactor.vkontakte;
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
-import com.orcchg.vikstra.domain.model.GroupReport;
+import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
@@ -13,7 +13,7 @@ import com.vk.sdk.api.model.VKWallPostResult;
 
 import javax.inject.Inject;
 
-public class MakeWallPost extends VkUseCase<GroupReport> {
+public class MakeWallPost extends VkUseCase<GroupReportEssence> {
 
     public static class Parameters {
         long ownerId;
@@ -78,10 +78,10 @@ public class MakeWallPost extends VkUseCase<GroupReport> {
     }
 
     @Override
-    protected GroupReport parseVkResponse() {
+    protected GroupReportEssence parseVkResponse() {
 //        return new Gson().fromJson(vkResponse.responseString, VKWallPostResult.class);
         VKWallPostResult data = (VKWallPostResult) vkResponse.parsedModel;
-        return GroupReport.builder()
+        return GroupReportEssence.builder()
                 .setGroupId(parameters.ownerId)
                 .setWallPostId(data.post_id)
                 .build();

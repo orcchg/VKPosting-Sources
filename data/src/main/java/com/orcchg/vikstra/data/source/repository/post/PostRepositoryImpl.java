@@ -3,8 +3,8 @@ package com.orcchg.vikstra.data.source.repository.post;
 import android.support.annotation.NonNull;
 
 import com.orcchg.vikstra.domain.model.Post;
-import com.orcchg.vikstra.domain.model.essense.PostEssense;
-import com.orcchg.vikstra.domain.model.essense.mapper.PostEssenseMapper;
+import com.orcchg.vikstra.domain.model.essense.PostEssence;
+import com.orcchg.vikstra.domain.model.essense.mapper.PostEssenceMapper;
 import com.orcchg.vikstra.domain.repository.IPostRepository;
 
 import java.util.List;
@@ -29,11 +29,11 @@ public class PostRepositoryImpl implements IPostRepository {
     /* Create */
     // ------------------------------------------
     @Override
-    public long addPost(PostEssense essense) {
+    public Post addPost(PostEssence essence) {
         // TODO: impl cloudly
         long lastId = localSource.getLastId();
-        PostEssenseMapper mapper = new PostEssenseMapper(++lastId, System.currentTimeMillis());
-        return localSource.addPost(mapper.map(essense));
+        PostEssenceMapper mapper = new PostEssenceMapper(++lastId, System.currentTimeMillis());
+        return localSource.addPost(mapper.map(essence));
     }
 
     /* Read */

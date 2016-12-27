@@ -17,8 +17,8 @@ import com.orcchg.vikstra.domain.interactor.post.PostPost;
 import com.orcchg.vikstra.domain.interactor.post.PutPost;
 import com.orcchg.vikstra.domain.model.Media;
 import com.orcchg.vikstra.domain.model.Post;
-import com.orcchg.vikstra.domain.model.essense.PostEssense;
-import com.orcchg.vikstra.domain.model.essense.mapper.PostEssenseMapper;
+import com.orcchg.vikstra.domain.model.essense.PostEssence;
+import com.orcchg.vikstra.domain.model.essense.mapper.PostEssenceMapper;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
@@ -124,21 +124,21 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         }
 
         // TODO: set location, file attach, poll
-        PostEssense essense = PostEssense.builder()
+        PostEssence essence = PostEssence.builder()
                 .setDescription(description)
                 .setMedia(attachMedia)
                 .setTitle(title)
                 .build();
-        PostEssenseMapper mapper = new PostEssenseMapper(postId, timestamp);
+        PostEssenceMapper mapper = new PostEssenceMapper(postId, timestamp);
 
         if (postId == Constant.BAD_ID) {
             // add new post to repository
-            PutPost.Parameters parameters = new PutPost.Parameters(essense);
+            PutPost.Parameters parameters = new PutPost.Parameters(essence);
             putPostUseCase.setParameters(parameters);
             putPostUseCase.execute();
         } else {
             // update existing post in repository
-            PostPost.Parameters parameters = new PostPost.Parameters(mapper.map(essense));
+            PostPost.Parameters parameters = new PostPost.Parameters(mapper.map(essence));
             postPostUseCase.setParameters(parameters);
             postPostUseCase.execute();
         }
@@ -189,7 +189,8 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     private UseCase.OnPostExecuteCallback<Boolean> createPostPostCallback() {
         return new UseCase.OnPostExecuteCallback<Boolean>() {
             @Override
-            public void onFinish(@Nullable Boolean values) {
+            public void onFinish(@Nullable Boolean result) {
+                // TODO: post not updated
                 if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
             }
 
@@ -200,10 +201,11 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         };
     }
 
-    private UseCase.OnPostExecuteCallback<Long> createPutPostCallback() {
-        return new UseCase.OnPostExecuteCallback<Long>() {
+    private UseCase.OnPostExecuteCallback<Post> createPutPostCallback() {
+        return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
-            public void onFinish(@Nullable Long postId) {
+            public void onFinish(@Nullable Post post) {
+                // TODO: NPE - post not created
                 if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
             }
 

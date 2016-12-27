@@ -14,6 +14,7 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.repository.IGroupRepository;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 import com.orcchg.vikstra.domain.repository.IPostRepository;
+import com.orcchg.vikstra.domain.repository.IReportRepository;
 
 import javax.inject.Singleton;
 
@@ -47,4 +48,5 @@ public interface ApplicationComponent extends CloudComponent {
     IGroupRepository groupRepository();
     IKeywordRepository keywordRepository();
     IPostRepository postRepository();
+    IReportRepository reportRepository();
 }

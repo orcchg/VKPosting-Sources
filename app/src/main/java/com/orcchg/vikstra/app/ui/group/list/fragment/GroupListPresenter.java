@@ -23,10 +23,10 @@ import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.keyword.PostKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.model.Group;
-import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
@@ -348,10 +348,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         };
     }
 
-    private UseCase.OnPostExecuteCallback<List<GroupReport>> createMakeWallPostCallback() {
-        return new UseCase.OnPostExecuteCallback<List<GroupReport>>() {
+    private UseCase.OnPostExecuteCallback<List<GroupReportEssence>> createMakeWallPostCallback() {
+        return new UseCase.OnPostExecuteCallback<List<GroupReportEssence>>() {
             @Override
-            public void onFinish(@Nullable List<GroupReport> reports) {
+            public void onFinish(@Nullable List<GroupReportEssence> reports) {
                 // TODO: use reports
                 if (isViewAttached()) getView().openReportScreen(getPostByIdUseCase.getPostId());
             }

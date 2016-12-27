@@ -6,18 +6,19 @@ import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
-import com.orcchg.vikstra.domain.model.essense.PostEssense;
+import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.model.essense.PostEssence;
 import com.orcchg.vikstra.domain.repository.IPostRepository;
 
 import javax.inject.Inject;
 
-public class PutPost extends UseCase<Long> {
+public class PutPost extends UseCase<Post> {
 
     public static class Parameters {
-        PostEssense essense;
+        PostEssence essence;
 
-        public Parameters(PostEssense essense) {
-            this.essense = essense;
+        public Parameters(PostEssence essence) {
+            this.essence = essence;
         }
     }
 
@@ -36,8 +37,8 @@ public class PutPost extends UseCase<Long> {
     }
 
     @Nullable @Override
-    protected Long doAction() {
+    protected Post doAction() {
         if (parameters == null) throw new NoParametersException();
-        return postRepository.addPost(parameters.essense);
+        return postRepository.addPost(parameters.essence);
     }
 }

@@ -7,21 +7,20 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
-import com.orcchg.vikstra.domain.model.GroupReport;
+import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.vk.sdk.api.model.VKAttachments;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class MakeWallPostToGroups extends MultiUseCase<GroupReport, List<Ordered<GroupReport>>> {
+public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<Ordered<GroupReportEssence>>> {
 
     public static class Parameters {
-        Collection<Long> groupIds;
+        List<Long> groupIds;
         VKAttachments attachments;
         String message;
 
@@ -35,7 +34,7 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReport, List<Ordered
             this.attachments = attachments;
         }
 
-        public Collection<Long> getGroupIds() {
+        public List<Long> getGroupIds() {
             return groupIds;
         }
         public VKAttachments getAttachments() {
@@ -46,11 +45,11 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReport, List<Ordered
         }
 
         public static class Builder {
-            Collection<Long> groupIds;
+            List<Long> groupIds;
             VKAttachments attachments;
             String message;
 
-            public Builder setGroupIds(Collection<Long> groupIds) {
+            public Builder setGroupIds(List<Long> groupIds) {
                 this.groupIds = groupIds;
                 return this;
             }
@@ -84,7 +83,7 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReport, List<Ordered
     }
 
     @Override
-    protected List<? extends UseCase<GroupReport>> createUseCases() {
+    protected List<? extends UseCase<GroupReportEssence>> createUseCases() {
         if (parameters == null) throw new NoParametersException();
 
         total = parameters.groupIds.size();  // update total count

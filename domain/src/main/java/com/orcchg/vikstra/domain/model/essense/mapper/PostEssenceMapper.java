@@ -1,7 +1,7 @@
 package com.orcchg.vikstra.domain.model.essense.mapper;
 
 import com.orcchg.vikstra.domain.model.Post;
-import com.orcchg.vikstra.domain.model.essense.PostEssense;
+import com.orcchg.vikstra.domain.model.essense.PostEssence;
 import com.orcchg.vikstra.domain.model.mapper.Mapper;
 
 import java.util.ArrayList;
@@ -9,19 +9,19 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class PostEssenseMapper implements Mapper<PostEssense, Post> {
+public class PostEssenceMapper implements Mapper<PostEssence, Post> {
 
     private final long postId;
     private final long timestamp;
 
     @Inject
-    public PostEssenseMapper(long postId, long timestamp) {
+    public PostEssenceMapper(long postId, long timestamp) {
         this.postId = postId;
         this.timestamp = timestamp;
     }
 
     @Override
-    public Post map(PostEssense object) {
+    public Post map(PostEssence object) {
         return Post.builder()
                 .setId(postId)
                 .setDescription(object.description())
@@ -32,9 +32,9 @@ public class PostEssenseMapper implements Mapper<PostEssense, Post> {
     }
 
     @Override
-    public List<Post> map(List<PostEssense> list) {
+    public List<Post> map(List<PostEssence> list) {
         List<Post> mapped = new ArrayList<>();
-        for (PostEssense item : list) {
+        for (PostEssence item : list) {
             mapped.add(map(item));
         }
         return mapped;

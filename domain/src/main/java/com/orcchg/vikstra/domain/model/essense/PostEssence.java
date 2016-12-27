@@ -6,10 +6,10 @@ import com.orcchg.vikstra.domain.model.Media;
 import java.util.List;
 
 @AutoValue
-public abstract class PostEssense implements Essense {
+public abstract class PostEssence implements Essence {
 
     public static Builder builder() {
-        return new AutoValue_PostEssense.Builder();
+        return new AutoValue_PostEssence.Builder();
     }
 
     @AutoValue.Builder
@@ -17,7 +17,7 @@ public abstract class PostEssense implements Essense {
         public abstract Builder setDescription(String description);
         public abstract Builder setMedia(List<Media> media);
         public abstract Builder setTitle(String title);
-        public abstract PostEssense build();
+        public abstract PostEssence build();
     }
 
     public abstract String description();

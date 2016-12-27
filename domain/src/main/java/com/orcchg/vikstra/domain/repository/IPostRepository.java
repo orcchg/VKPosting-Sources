@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.model.Post;
-import com.orcchg.vikstra.domain.model.essense.PostEssense;
+import com.orcchg.vikstra.domain.model.essense.PostEssence;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ public interface IPostRepository {
 
     /* Create */
     // ------------------------------------------
-    long addPost(PostEssense essense);
+    Post addPost(PostEssence essence);
 
     /* Read */
     // ------------------------------------------
