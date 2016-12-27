@@ -3,6 +3,7 @@ package com.orcchg.vikstra.domain.interactor.vkontakte;
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.model.GroupReport;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
@@ -12,10 +13,10 @@ import com.vk.sdk.api.model.VKWallPostResult;
 
 import javax.inject.Inject;
 
-public class MakeWallPost extends VkUseCase<VKWallPostResult> {
+public class MakeWallPost extends VkUseCase<GroupReport> {
 
     public static class Parameters {
-        String ownerId;
+        long ownerId;
         String message;
         VKAttachments attachments;
 
@@ -26,11 +27,11 @@ public class MakeWallPost extends VkUseCase<VKWallPostResult> {
         }
 
         public static class Builder {
-            String ownerId;
+            long ownerId;
             String message;
             VKAttachments attachments;
 
-            public Builder setOwnerId(String ownerId) {
+            public Builder setOwnerId(long ownerId) {
                 this.ownerId = ownerId;
                 return this;
             }
@@ -69,7 +70,7 @@ public class MakeWallPost extends VkUseCase<VKWallPostResult> {
     protected VKRequest prepareVkRequest() {
         if (parameters == null) throw new NoParametersException();
         VKParameters params = new VKParameters();
-        params.put(VKApiConst.OWNER_ID, parameters.ownerId);  // destination user / community id
+        params.put(VKApiConst.OWNER_ID, Long.toString(parameters.ownerId));  // destination user / community id
         params.put(VKApiConst.MESSAGE, parameters.message);
         params.put(VKApiConst.ATTACHMENTS, parameters.attachments);
         params.put(VKApiConst.EXTENDED, 1);
@@ -77,8 +78,12 @@ public class MakeWallPost extends VkUseCase<VKWallPostResult> {
     }
 
     @Override
-    protected VKWallPostResult parseVkResponse() {
+    protected GroupReport parseVkResponse() {
 //        return new Gson().fromJson(vkResponse.responseString, VKWallPostResult.class);
-        return (VKWallPostResult) vkResponse.parsedModel;
+        VKWallPostResult data = (VKWallPostResult) vkResponse.parsedModel;
+        return GroupReport.builder()
+                .setGroupId(parameters.ownerId)
+                .setWallPostId(data.post_id)
+                .build();
     }
 }

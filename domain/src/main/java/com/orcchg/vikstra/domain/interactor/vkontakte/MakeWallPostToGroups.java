@@ -7,8 +7,8 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.model.GroupReport;
 import com.vk.sdk.api.model.VKAttachments;
-import com.vk.sdk.api.model.VKWallPostResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +18,7 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
-public class MakeWallPostToGroups extends MultiUseCase<VKWallPostResult, List<Ordered<VKWallPostResult>>> {
+public class MakeWallPostToGroups extends MultiUseCase<GroupReport, List<Ordered<GroupReport>>> {
 
     public static class Parameters {
         Collection<Long> groupIds;
@@ -33,6 +33,16 @@ public class MakeWallPostToGroups extends MultiUseCase<VKWallPostResult, List<Or
 
         public void setAttachments(VKAttachments attachments) {
             this.attachments = attachments;
+        }
+
+        public Collection<Long> getGroupIds() {
+            return groupIds;
+        }
+        public VKAttachments getAttachments() {
+            return attachments;
+        }
+        public String getMessage() {
+            return message;
         }
 
         public static class Builder {
@@ -74,7 +84,7 @@ public class MakeWallPostToGroups extends MultiUseCase<VKWallPostResult, List<Or
     }
 
     @Override
-    protected List<? extends UseCase<VKWallPostResult>> createUseCases() {
+    protected List<? extends UseCase<GroupReport>> createUseCases() {
         if (parameters == null) throw new NoParametersException();
 
         total = parameters.groupIds.size();  // update total count
@@ -82,7 +92,7 @@ public class MakeWallPostToGroups extends MultiUseCase<VKWallPostResult, List<Or
         List<MakeWallPost> useCases = new ArrayList<>();
         for (long groupId : parameters.groupIds) {
             MakeWallPost.Parameters xparameters = new MakeWallPost.Parameters.Builder()
-                    .setOwnerId(Long.toString(groupId))
+                    .setOwnerId(groupId)
                     .setAttachments(parameters.attachments)
                     .setMessage(parameters.message)
                     .build();

@@ -28,7 +28,6 @@ import com.vk.sdk.api.model.VKApiCommunityFull;
 import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKAttachments;
 import com.vk.sdk.api.model.VKPhotoArray;
-import com.vk.sdk.api.model.VKWallPostResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -238,16 +237,19 @@ public class VkontakteEndpoint extends Endpoint {
         MakeWallPostToGroups useCase = new MakeWallPostToGroups(threadExecutor, postExecuteScheduler);
         useCase.setParameters(parameters);
         useCase.setProgressCallback(progressCallback);
-        useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<VKWallPostResult>>>() {
+        useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<GroupReport>>>() {
             @Override
-            public void onFinish(@Nullable List<Ordered<VKWallPostResult>> values) {
+            public void onFinish(@Nullable List<Ordered<GroupReport>> reports) {
                 Timber.d("Finished wall posting");
                 // TODO: make report from Ordered contents
-                for (Ordered<VKWallPostResult> item : values) {
-                    if (item.data != null) Timber.i("Valid data");
-                    if (item.error != null) Timber.w("Error");
+                List<GroupReport> refinedReports = new ArrayList<>();
+                for (Ordered<GroupReport> item : reports) {
+                    if (item.data != null) refinedReports.add(item.data);
+                    if (item.error != null) {
+                        refinedReports.add(report);
+                    }
                 }
-                if (callback != null) callback.onFinish(convert(ValueUtility.unwrap(values)));
+                if (callback != null) callback.onFinish(refinedReports);
             }
 
             @Override
@@ -331,19 +333,19 @@ public class VkontakteEndpoint extends Endpoint {
                 .build();
     }
 
-    @NonNull
-    List<GroupReport> convert(List<VKWallPostResult> vkReports) {
-        List<GroupReport> reports = new ArrayList<>();
-        for (VKWallPostResult vkReport : vkReports) {
-            reports.add(convert(vkReport));
-        }
-        return reports;
-    }
-
-    @NonNull
-    GroupReport convert(VKWallPostResult vkReport) {
-        return GroupReport.builder()
-                .setWallPostId(vkReport.post_id)
-                .build();  // TODO: impl with status data
-    }
+//    @NonNull
+//    List<GroupReport> convert(List<VKWallPostResult> vkReports) {
+//        List<GroupReport> reports = new ArrayList<>();
+//        for (VKWallPostResult vkReport : vkReports) {
+//            reports.add(convert(vkReport));
+//        }
+//        return reports;
+//    }
+//
+//    @NonNull
+//    GroupReport convert(VKWallPostResult vkReport) {
+//        return GroupReport.builder()
+//                .setWallPostId(vkReport.post_id)
+//                .build();  // TODO: impl with status data
+//    }
 }
