@@ -10,9 +10,10 @@ interface GroupListContract {
         void onAddKeywordError();
         void onKeywordsLimitReached(int limit);
         void openGroupDetailScreen(long groupId);
-        void openReportScreen(long postId);
+        void openReportScreen(long groupReportBundleId, long postId);
         void showError();
         void showGroups(boolean isEmpty);
+        void updateGroupReportBundleId(long groupReportBundleId);
     }
 
     // ------------------------------------------

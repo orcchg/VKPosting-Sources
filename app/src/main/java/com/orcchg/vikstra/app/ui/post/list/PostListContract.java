@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.app.ui.post.list;
 
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
+import com.orcchg.vikstra.app.ui.common.screen.ListPresenter;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridContract;
 
 public interface PostListContract {
@@ -10,7 +11,6 @@ public interface PostListContract {
     interface SubView extends PostSingleGridContract.SubView {
     }
 
-    interface Presenter extends MvpPresenter<View> {
-        void retry();
+    interface Presenter extends MvpPresenter<View>, ListPresenter {
     }
 }

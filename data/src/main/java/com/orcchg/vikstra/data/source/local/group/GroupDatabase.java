@@ -53,6 +53,7 @@ public class GroupDatabase implements IGroupStorage {
 
     @DebugLog @Override
     public boolean addGroupToBundle(long id, Group group) {
+        if (id == Constant.BAD_ID) return false;
         boolean result = false;
         Realm realm = Realm.getDefaultInstance();
         GroupBundleDBO dbo = realm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, id).findFirst();
@@ -128,9 +129,10 @@ public class GroupDatabase implements IGroupStorage {
     // ------------------------------------------
     @Override
     public boolean deleteGroups(long id) {
+        if (id == Constant.BAD_ID) return false;
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction((xrealm) -> {
-            GroupBundleDBO dbo = realm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, id).findFirst();
+            GroupBundleDBO dbo = xrealm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, id).findFirst();
             dbo.deleteFromRealm();
         });
         realm.close();

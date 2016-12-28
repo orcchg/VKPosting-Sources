@@ -53,6 +53,11 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void onScroll(int itemsLeftToEnd) {
+        // TODO: load more
+    }
+
     @DebugLog @Override
     public void retry() {
         listAdapter.clear();

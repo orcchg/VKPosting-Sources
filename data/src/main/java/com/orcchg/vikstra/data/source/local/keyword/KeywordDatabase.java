@@ -55,6 +55,7 @@ public class KeywordDatabase implements IKeywordStorage {
 
     @DebugLog @Override
     public boolean addKeywordToBundle(long id, Keyword keyword) {
+        if (id == Constant.BAD_ID) return false;
         boolean result = false;
         Realm realm = Realm.getDefaultInstance();
         KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
@@ -130,9 +131,10 @@ public class KeywordDatabase implements IKeywordStorage {
     // ------------------------------------------
     @Override
     public boolean deleteKeywords(long id) {
+        if (id == Constant.BAD_ID) return false;
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction((xrealm) -> {
-            KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
+            KeywordBundleDBO dbo = xrealm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
             dbo.deleteFromRealm();
         });
         realm.close();

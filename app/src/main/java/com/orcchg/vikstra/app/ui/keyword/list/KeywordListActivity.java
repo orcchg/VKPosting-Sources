@@ -123,9 +123,8 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     @Override
-    public void showKeywords(boolean isEmpty) {
-        KeywordListFragment fragment = getFragment();
-        if (fragment != null) fragment.showKeywords(isEmpty);
+    public void showContent(boolean isEmpty) {
+        showKeywords(isEmpty);
     }
 
     @Override
@@ -146,6 +145,13 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
         if (fragment != null) fragment.showLoading();
     }
 
+    @Override
+    public void showKeywords(boolean isEmpty) {
+        KeywordListFragment fragment = getFragment();
+        if (fragment != null) fragment.showKeywords(isEmpty);
+    }
+
+    // ------------------------------------------
     @Override
     public void retryList() {
         presenter.retry();

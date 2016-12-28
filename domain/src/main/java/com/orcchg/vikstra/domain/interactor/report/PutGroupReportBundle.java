@@ -6,19 +6,21 @@ import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
-import com.orcchg.vikstra.domain.model.GroupReport;
+import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.repository.IReportRepository;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
-public class PutGroupReport extends UseCase<GroupReport> {
+public class PutGroupReportBundle extends UseCase<GroupReportBundle> {
 
     public static class Parameters {
-        GroupReportEssence essence;
+        List<GroupReportEssence> essences;
 
-        public Parameters(GroupReportEssence essence) {
-            this.essence = essence;
+        public Parameters(List<GroupReportEssence> essences) {
+            this.essences = essences;
         }
     }
 
@@ -26,15 +28,19 @@ public class PutGroupReport extends UseCase<GroupReport> {
     Parameters parameters;
 
     @Inject
-    PutGroupReport(IReportRepository reportRepository, ThreadExecutor threadExecutor,
-                   PostExecuteScheduler postExecuteScheduler) {
+    PutGroupReportBundle(IReportRepository reportRepository, ThreadExecutor threadExecutor,
+                         PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
         this.reportRepository = reportRepository;
     }
 
+    public void setParameters(Parameters parameters) {
+        this.parameters = parameters;
+    }
+
     @Nullable @Override
-    protected GroupReport doAction() {
+    protected GroupReportBundle doAction() {
         if (parameters == null) throw new NoParametersException();
-        return reportRepository.addGroupReport(parameters.essence);
+        return reportRepository.addGroupReports(parameters.essences);
     }
 }

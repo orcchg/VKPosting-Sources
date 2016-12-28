@@ -98,7 +98,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     // --------------------------------------------------------------------------------------------
     @Override
     public void onScroll(int itemsLeftToEnd) {
-        // TODO
+        // TODO: load more
     }
 
     @Override

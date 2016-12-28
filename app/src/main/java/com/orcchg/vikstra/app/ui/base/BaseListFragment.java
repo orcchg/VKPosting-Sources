@@ -63,6 +63,13 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
             layoutManager.onRestoreInstanceState(memento.layoutManagerState);
         }
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                processListScroll(recyclerView, dx, dy);
+            }
+        });
     }
 
     @DebugLog @Override
@@ -81,7 +88,7 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
     // --------------------------------------------------------------------------------------------
     protected abstract LinearLayoutManager createLayoutManager();
 
-    private void processListScroll(RecyclerView recyclerView, int dx, int dy) {
+    void processListScroll(RecyclerView recyclerView, int dx, int dy) {
         if (dy <= 0) {
             return;  // skip scroll up
         }

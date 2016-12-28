@@ -122,8 +122,8 @@ public class Navigator {
 
     /* Report */
     // ------------------------------------------
-    public void openReportScreen(@NonNull Context context, long postId) {
-        Intent intent = ReportActivity.getCallingIntent(context, postId);
+    public void openReportScreen(@NonNull Context context, long groupReportBundleId, long postId) {
+        Intent intent = ReportActivity.getCallingIntent(context, groupReportBundleId, postId);
         context.startActivity(intent);
     }
 }

@@ -6,12 +6,13 @@ import android.support.v7.widget.RecyclerView;
 
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
+import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.post.single.injection.DaggerPostSingleGridComponent;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridComponent;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridModule;
 
 public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.View, PostSingleGridContract.Presenter>
-        implements PostSingleGridContract.View {
+        implements PostSingleGridContract.View, IScrollGrid {
     private static final String FRAGMENT_TAG = "post_single_grid_fragment_tag";
 
     private PostSingleGridComponent postSingleGridComponent;
@@ -54,9 +55,45 @@ public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.
     }
 
     @Override
+    public void showContent(boolean isEmpty) {
+        showPosts(isEmpty);
+    }
+
+    @Override
+    public void showEmptyList() {
+        // TODO:
+    }
+
+    @Override
+    public void showError() {
+        // TODO:
+    }
+
+    @Override
+    public void showLoading() {
+        // TODO:
+    }
+
+    @Override
     public void showPosts(boolean isEmpty) {
         PostSingleGridFragment fragment = getFragment();
         if (fragment != null) fragment.showPosts(isEmpty);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void retryGrid() {
+        presenter.retry();
+    }
+
+    @Override
+    public void onEmptyGrid() {
+        navigationComponent.navigator().openPostCreateScreen(this);
+    }
+
+    @Override
+    public void onScrollGrid(int itemsLeftToEnd) {
+        presenter.onScroll(itemsLeftToEnd);
     }
 
     /* Internal */

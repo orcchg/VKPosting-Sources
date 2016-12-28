@@ -1,60 +1,118 @@
 package com.orcchg.vikstra.data.source.local.report;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.data.source.local.model.GroupReportBundleDBO;
+import com.orcchg.vikstra.data.source.local.model.GroupReportDBO;
+import com.orcchg.vikstra.data.source.local.model.mapper.GroupReportBundleToDboMapper;
+import com.orcchg.vikstra.data.source.local.model.populator.GroupReportBundleToDboPopulator;
+import com.orcchg.vikstra.data.source.local.model.populator.GroupReportToDboPopulator;
 import com.orcchg.vikstra.data.source.repository.report.IReportStorage;
 import com.orcchg.vikstra.domain.model.GroupReport;
-
-import java.util.List;
+import com.orcchg.vikstra.domain.model.GroupReportBundle;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import hugo.weaving.DebugLog;
+import io.realm.Realm;
+import io.realm.RealmResults;
+
 @Singleton
 public class ReportDatabase implements IReportStorage {
 
+    private final GroupReportToDboPopulator groupReportToDboPopulator;
+    private final GroupReportBundleToDboMapper groupReportBundleToDboMapper;
+    private final GroupReportBundleToDboPopulator groupReportBundleToDboPopulator;
+
     @Inject
-    ReportDatabase() {
+    ReportDatabase(GroupReportToDboPopulator groupReportToDboPopulator,
+                   GroupReportBundleToDboMapper groupReportBundleToDboMapper,
+                   GroupReportBundleToDboPopulator groupReportBundleToDboPopulator) {
+        this.groupReportToDboPopulator = groupReportToDboPopulator;
+        this.groupReportBundleToDboMapper = groupReportBundleToDboMapper;
+        this.groupReportBundleToDboPopulator = groupReportBundleToDboPopulator;
     }
 
     /* Create */
     // ------------------------------------------
-    @Override
-    public GroupReport addGroupReport(GroupReport report) {
-        return null;
+    @DebugLog @Override
+    public GroupReportBundle addGroupReports(@NonNull GroupReportBundle bundle) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction((xrealm) -> {
+            GroupReportBundleDBO dbo = xrealm.createObject(GroupReportBundleDBO.class);
+            groupReportBundleToDboPopulator.populate(bundle, dbo);
+        });
+        realm.close();
+        return bundle;
     }
 
-    @Override
-    public List<GroupReport> addGroupReports(List<GroupReport> many) {
-        return null;
+    @DebugLog @Override
+    public boolean addGroupReportToBundle(long id, GroupReport report) {
+        if (id == Constant.BAD_ID) return false;
+        boolean result = false;
+        Realm realm = Realm.getDefaultInstance();
+        GroupReportBundleDBO dbo = realm.where(GroupReportBundleDBO.class).equalTo(GroupReportBundleDBO.COLUMN_ID, id).findFirst();
+        if (dbo != null) {
+            realm.executeTransaction((xrealm) -> {
+                GroupReportDBO xdbo = xrealm.createObject(GroupReportDBO.class);
+                groupReportToDboPopulator.populate(report, xdbo);
+                dbo.groupReports.add(0, xdbo);  // put new item at the top of list
+            });
+            result = true;
+        }
+        realm.close();
+        return result;
     }
 
     /* Read */
     // ------------------------------------------
-    @Override
+    @DebugLog @Override
     public long getLastId() {
-        return 0;
+        Realm realm = Realm.getDefaultInstance();
+        Number number = realm.where(GroupReportBundleDBO.class).max(GroupReportBundleDBO.COLUMN_ID);
+        long lastId = number != null ? number.longValue() : Constant.INIT_ID;
+        realm.close();
+        return lastId;
     }
 
-    @Nullable @Override
-    public GroupReport groupReport(long id) {
-        return null;
-    }
-
-    @Nullable @Override
-    public GroupReport pollGroupReport(long id) {
+    @DebugLog @Nullable @Override
+    public GroupReportBundle groupReports(long id) {
+        if (id != Constant.BAD_ID) {
+            Realm realm = Realm.getDefaultInstance();
+            GroupReportBundle model = null;
+            GroupReportBundleDBO dbo = realm.where(GroupReportBundleDBO.class).equalTo(GroupReportBundleDBO.COLUMN_ID, id).findFirst();
+            if (dbo != null) model = groupReportBundleToDboMapper.mapBack(dbo);
+            realm.close();
+            return model;
+        }
         return null;
     }
 
     /* Delete */
     // ------------------------------------------
-    @Override
+    @DebugLog @Override
     public boolean clear() {
-        return false;
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction((xrealm) -> {
+            RealmResults<GroupReportBundleDBO> dbos = xrealm.where(GroupReportBundleDBO.class).findAll();
+            dbos.deleteAllFromRealm();
+        });
+        realm.close();
+        return true;
     }
 
-    @Override
-    public boolean deleteGroupReport(long id) {
-        return false;
+    @DebugLog @Override
+    public boolean deleteGroupReports(long id) {
+        if (id == Constant.BAD_ID) return false;
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction((xrealm) -> {
+            GroupReportBundleDBO dbo = xrealm.where(GroupReportBundleDBO.class).equalTo(GroupReportBundleDBO.COLUMN_ID, id).findFirst();
+            dbo.deleteFromRealm();
+        });
+        realm.close();
+        return true;
     }
 }

@@ -2,7 +2,6 @@ package com.orcchg.vikstra.app.ui.main;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseCompositePresenter;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
@@ -14,14 +13,10 @@ import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
 import com.orcchg.vikstra.app.util.ContentUtility;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
-import com.orcchg.vikstra.domain.interactor.base.UseCase;
-import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.inject.Inject;
 
@@ -113,6 +108,11 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
         keywordListPresenter.onScroll(itemsLeftToEnd);
     }
 
+    @Override
+    public void onScrollPostsGrid(int itemsLeftToEnd) {
+        postSingleGridPresenter.onScroll(itemsLeftToEnd);
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
@@ -129,17 +129,18 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
-    private UseCase.OnPostExecuteCallback<List<GroupReport>> createMakeWallPostCallback() {
-        return new UseCase.OnPostExecuteCallback<List<GroupReport>>() {
-            @Override
-            public void onFinish(@Nullable List<GroupReport> values) {
-                if (isViewAttached()) getView().openReportScreen(postSingleGridPresenter.getSelectedPostId());
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
-            }
-        };
-    }
+//    private UseCase.OnPostExecuteCallback<List<GroupReport>> createMakeWallPostCallback() {
+//        return new UseCase.OnPostExecuteCallback<List<GroupReport>>() {
+//            @Override
+//            public void onFinish(@Nullable List<GroupReport> values) {
+//                if (isViewAttached()) getView().openReportScreen(  // TODO: SET PROPER GROUP-REPORT-iD
+//                        Constant.BAD_ID, postSingleGridPresenter.getSelectedPostId());
+//            }
+//
+//            @Override
+//            public void onError(Throwable e) {
+//                if (isViewAttached()) getView().showError();
+//            }
+//        };
+//    }
 }

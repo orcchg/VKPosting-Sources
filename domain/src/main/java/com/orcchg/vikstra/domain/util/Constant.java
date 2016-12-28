@@ -24,6 +24,7 @@ public class Constant {
         public static final int KEYWORD_LIST_SCREEN = 1011;
         public static final int POST_LIST_SCREEN = 1021;
         public static final int POST_SINGLE_GRID_SCREEN = 1022;
+        public static final int REPORT_SCREEN = 1030;
     }
 
     public static final class NotificationID {

@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.report;
 
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.base.MvpView;
+import com.orcchg.vikstra.app.ui.common.screen.ListPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 
 public interface ReportContract {
@@ -9,6 +10,6 @@ public interface ReportContract {
         void showPost(PostSingleGridItemVO viewObject);
     }
 
-    interface Presenter extends MvpPresenter<View> {
+    interface Presenter extends MvpPresenter<View>, ListPresenter {
     }
 }

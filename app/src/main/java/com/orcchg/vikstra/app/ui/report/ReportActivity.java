@@ -12,10 +12,12 @@ import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
+import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.report.injection.DaggerReportComponent;
 import com.orcchg.vikstra.app.ui.report.injection.ReportComponent;
+import com.orcchg.vikstra.app.ui.report.injection.ReportModule;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -23,8 +25,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ReportActivity extends BaseActivity<ReportContract.View, ReportContract.Presenter>
-        implements ReportContract.View {
+        implements ReportContract.View, IScrollList {
     private static final String FRAGMENT_TAG = "report_fragment_tag";
+    private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -33,6 +36,7 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
 
     private ReportComponent reportComponent;
+    private long groupReportBundleId = Constant.BAD_ID;
     private long postId = Constant.BAD_ID;
 
     @NonNull @Override
@@ -45,12 +49,14 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
         reportComponent = DaggerReportComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .postModule(new PostModule(postId))
+                .reportModule(new ReportModule(groupReportBundleId))
                 .build();
         reportComponent.inject(this);
     }
 
-    public static Intent getCallingIntent(@NonNull Context context, long postId) {
+    public static Intent getCallingIntent(@NonNull Context context, long groupReportBundleId, long postId) {
         Intent intent = new Intent(context, ReportActivity.class);
+        intent.putExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
         intent.putExtra(EXTRA_POST_ID, postId);
         return intent;
     }
@@ -70,6 +76,7 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     /* Data */
     // --------------------------------------------------------------------------------------------
     private void initData() {
+        groupReportBundleId = getIntent().getLongExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
         postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
     }
 
@@ -103,6 +110,22 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     @Override
     public void showPost(PostSingleGridItemVO viewObject) {
         postThumbnail.setPost(viewObject);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void retryList() {
+        presenter.retry();
+    }
+
+    @Override
+    public void onEmptyList() {
+        // TODO: empty reports
+    }
+
+    @Override
+    public void onScrollList(int itemsLeftToEnd) {
+        presenter.onScroll(itemsLeftToEnd);
     }
 
     /* Internal */

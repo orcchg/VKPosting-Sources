@@ -3,6 +3,7 @@ package com.orcchg.vikstra.domain.model;
 import android.support.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
+import com.orcchg.vikstra.domain.util.External;
 
 @AutoValue
 public abstract class Group implements Comparable<Group> {
@@ -22,7 +23,7 @@ public abstract class Group implements Comparable<Group> {
         public abstract Group build();
     }
 
-    public abstract long id();
+    public abstract @External long id();  // id of group in Social Network
     public abstract boolean canPost();
     public abstract int membersCount();
     public abstract String name();

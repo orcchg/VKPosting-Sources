@@ -1,26 +1,25 @@
 package com.orcchg.vikstra.data.source.repository.report;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.data.source.repository.IStorage;
 import com.orcchg.vikstra.domain.model.GroupReport;
-
-import java.util.List;
+import com.orcchg.vikstra.domain.model.GroupReportBundle;
 
 public interface IReportStorage extends IStorage {
 
     /* Create */
     // ------------------------------------------
-    GroupReport addGroupReport(GroupReport report);
-    List<GroupReport> addGroupReports(List<GroupReport> many);
+    GroupReportBundle addGroupReports(@NonNull GroupReportBundle bundle);
+    boolean addGroupReportToBundle(long id, GroupReport report);
 
     /* Read */
     // ------------------------------------------
-    @Nullable GroupReport groupReport(long id);
-    @Nullable GroupReport pollGroupReport(long id);
+    @Nullable GroupReportBundle groupReports(long id);
 
     /* Delete */
     // ------------------------------------------
     boolean clear();
-    boolean deleteGroupReport(long id);
+    boolean deleteGroupReports(long id);
 }

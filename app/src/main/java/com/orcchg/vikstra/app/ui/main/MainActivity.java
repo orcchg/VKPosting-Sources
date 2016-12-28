@@ -154,8 +154,8 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     @Override
-    public void openReportScreen(long postId) {
-        navigationComponent.navigator().openReportScreen(this, postId);
+    public void openReportScreen(long groupReportBundleId, long postId) {
+        navigationComponent.navigator().openReportScreen(this, groupReportBundleId, postId);
     }
 
     @Override
@@ -170,6 +170,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         } else {
             fab.hide();
         }
+    }
+
+    @Override
+    public void showContent(boolean isEmpty) {
+        // TODO: atatcjh to smth
     }
 
     @Override
@@ -193,18 +198,13 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void showKeywords(boolean isEmpty) {
         KeywordListFragment fragment = getKeywordListFragment();
-        if (fragment != null) fragment.showKeywords(isEmpty);
+        if (fragment != null) fragment.showContent(isEmpty);
     }
 
     @Override
     public void showPosts(boolean isEmpty) {
         PostSingleGridFragment fragment = getPostGridFragment();
-        if (fragment != null) fragment.showPosts(isEmpty);
-    }
-
-    @Override
-    public void updatePostId(long postId) {
-        postingNotification.updatePostId(this, postId);
+        if (fragment != null) fragment.showContent(isEmpty);
     }
 
     // ------------------------------------------
@@ -231,12 +231,12 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     @Override
     public void onEmptyGrid() {
-        // TODO: empty grid
+        navigationComponent.navigator().openPostCreateScreen(this);
     }
 
     @Override
     public void onScrollGrid(int itemsLeftToEnd) {
-        // TODO: scroll grid
+        presenter.onScrollPostsGrid(itemsLeftToEnd);
     }
 
     /* Notification delegate */
@@ -246,6 +246,17 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         photoUploadNotification = new PhotoUploadNotification(this);
     }
 
+    @Override
+    public void updateGroupReportBundleId(long groupReportBundleId) {
+        postingNotification.updateGroupReportBundleId(this, groupReportBundleId);
+    }
+
+    @Override
+    public void updatePostId(long postId) {
+        postingNotification.updatePostId(this, postId);
+    }
+
+    // ------------------------------------------
     @Override
     public void onPostingProgress(int progress, int total) {
         postingNotification.onPostingProgress(progress, total);

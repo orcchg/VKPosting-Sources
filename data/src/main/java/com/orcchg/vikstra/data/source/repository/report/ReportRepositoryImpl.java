@@ -3,6 +3,7 @@ package com.orcchg.vikstra.data.source.repository.report;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.model.GroupReport;
+import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.essense.mapper.GroupReportEssenceMapper;
 import com.orcchg.vikstra.domain.repository.IReportRepository;
@@ -30,37 +31,32 @@ public class ReportRepositoryImpl implements IReportRepository {
     /* Create */
     // ------------------------------------------
     @Override
-    public GroupReport addGroupReport(GroupReportEssence essence) {
+    public GroupReportBundle addGroupReports(List<GroupReportEssence> many) {
         // TODO: impl cloudly
         long lastId = localSource.getLastId();
-        GroupReportEssenceMapper mapper = new GroupReportEssenceMapper(++lastId, System.currentTimeMillis());
-        return localSource.addGroupReport(mapper.map(essence));
-    }
+        List<GroupReport> reports = new ArrayList<>();
+        GroupReportBundle bundle = GroupReportBundle.builder()
+                .setId(++lastId)
+                .setGroupReports(reports)
+                .setTimestamp(System.currentTimeMillis())
+                .build();
 
-    @Override
-    public List<GroupReport> addGroupReports(List<GroupReportEssence> many) {
-        // TODO: make something more efficient in Realm
-        List<GroupReport> list = new ArrayList<>();
-        long lastId = localSource.getLastId();
+        // TODO: set proper id
+        GroupReportEssenceMapper mapper = new GroupReportEssenceMapper(1000, System.currentTimeMillis());
         for (GroupReportEssence essence : many) {
-            GroupReportEssenceMapper mapper = new GroupReportEssenceMapper(++lastId, System.currentTimeMillis());
-            list.add(localSource.addGroupReport(mapper.map(essence)));
+            bundle.groupReports().add(mapper.map(essence));
+            mapper.setGroupReportId(1000);
+            mapper.setTimestamp(System.currentTimeMillis());
         }
-        return list;
+        return localSource.addGroupReports(bundle);
     }
 
     /* Read */
     // ------------------------------------------
     @Nullable @Override
-    public GroupReport groupReport(long id) {
+    public GroupReportBundle groupReports(long id) {
         // TODO: impl cloudly
-        return localSource.groupReport(id);
-    }
-
-    @Nullable @Override
-    public GroupReport pollGroupReport(long id) {
-        // TODO: impl cloudly
-        return localSource.pollGroupReport(id);
+        return localSource.groupReports(id);
     }
 
     /* Delete */
@@ -68,12 +64,12 @@ public class ReportRepositoryImpl implements IReportRepository {
     @Override
     public boolean clear() {
         // TODO: impl cloudly
-        return false;
+        return localSource.clear();
     }
 
     @Override
-    public boolean deleteGroupReport(long id) {
+    public boolean deleteGroupReports(long id) {
         // TODO: impl cloudly
-        return false;
+        return localSource.deleteGroupReports(id);
     }
 }

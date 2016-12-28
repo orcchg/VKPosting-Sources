@@ -108,11 +108,32 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
     }
 
     @Override
+    public void showContent(boolean isEmpty) {
+        showPosts(isEmpty);
+    }
+
+    @Override
+    public void showEmptyList() {
+        // TODO:
+    }
+
+    @Override
+    public void showError() {
+        // TODO:
+    }
+
+    @Override
+    public void showLoading() {
+        // TODO:
+    }
+
+    @Override
     public void showPosts(boolean isEmpty) {
         PostListFragment fragment = getFragment();
         if (fragment != null) fragment.showPosts(isEmpty);
     }
 
+    // ------------------------------------------
     @Override
     public void retryGrid() {
         presenter.retry();
@@ -120,12 +141,12 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
 
     @Override
     public void onEmptyGrid() {
-        //
+        navigationComponent.navigator().openPostCreateScreen(this);
     }
 
     @Override
     public void onScrollGrid(int itemsLeftToEnd) {
-        //
+        presenter.onScroll(itemsLeftToEnd);
     }
 
     /* Internal */

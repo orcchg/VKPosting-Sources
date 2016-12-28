@@ -141,8 +141,8 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     }
 
     @Override
-    public void openReportScreen(long postId) {
-        navigationComponent.navigator().openReportScreen(getActivity(), postId);
+    public void openReportScreen(long groupReportBundleId, long postId) {
+        navigationComponent.navigator().openReportScreen(getActivity(), groupReportBundleId, postId);
     }
 
     @Override
@@ -176,10 +176,16 @@ public class GroupListFragment extends BaseListFragment<GroupListContract.View, 
     /* Notification delegate */
     // --------------------------------------------------------------------------------------------
     private void initNotifications() {
-        postingNotification = new PostingNotification(getActivity(), postId);
+        postingNotification = new PostingNotification(getActivity(), Constant.BAD_ID, postId);
         photoUploadNotification = new PhotoUploadNotification(getActivity());
     }
 
+    @Override
+    public void updateGroupReportBundleId(long groupReportBundleId) {
+        postingNotification.updateGroupReportBundleId(getActivity(), groupReportBundleId);
+    }
+
+    // ------------------------------------------
     @Override
     public void onPostingProgress(int progress, int total) {
         postingNotification.onPostingProgress(progress, total);

@@ -2,6 +2,8 @@ package com.orcchg.vikstra.app.ui.keyword.list;
 
 import com.orcchg.vikstra.app.ui.base.MvpListView;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
+import com.orcchg.vikstra.app.ui.common.screen.LceView;
+import com.orcchg.vikstra.app.ui.common.screen.ListPresenter;
 
 public interface KeywordListContract {
     interface View extends SubView {
@@ -10,15 +12,10 @@ public interface KeywordListContract {
         void setCloseViewResult(int result);
     }
 
-    interface SubView extends MvpListView {
+    interface SubView extends LceView, MvpListView {
         void showKeywords(boolean isEmpty);
-        void showEmptyList();
-        void showError();
-        void showLoading();
     }
 
-    interface Presenter extends MvpPresenter<View> {
-        void onScroll(int itemsLeftToEnd);
-        void retry();
+    interface Presenter extends MvpPresenter<View>, ListPresenter {
     }
 }

@@ -22,7 +22,9 @@ import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.keyword.PostKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
+import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
 import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
@@ -47,12 +49,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final AddKeywordToBundle addKeywordToBundleUseCase;
     private final PostKeywordBundle postKeywordBundleUseCase;
+    private final PutGroupReportBundle putGroupReportBundle;
     private final VkontakteEndpoint vkontakteEndpoint;
 
     private List<GroupParentItem> groupParentItems = new ArrayList<>();
     private GroupListAdapter listAdapter;
 
-    private int totalSelectedGroups, totalGroups;
+    int totalSelectedGroups, totalGroups;
     private boolean isKeywordBundleChanged;
     private Keyword newlyAddedKeyword;
     private KeywordBundle inputKeywordBundle;
@@ -65,7 +68,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Inject
     GroupListPresenter(GetPostById getPostByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
                        AddKeywordToBundle addKeywordToBundleUseCase, PostKeywordBundle postKeywordBundleUseCase,
-                       VkontakteEndpoint vkontakteEndpoint, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+                       PutGroupReportBundle putGroupReportBundle, VkontakteEndpoint vkontakteEndpoint,
+                       PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
@@ -74,6 +78,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         this.addKeywordToBundleUseCase = addKeywordToBundleUseCase;
         this.addKeywordToBundleUseCase.setPostExecuteCallback(createAddKeywordToBundleCallback());
         this.postKeywordBundleUseCase = postKeywordBundleUseCase;  // no callback - background task
+        this.putGroupReportBundle = putGroupReportBundle;
+        this.putGroupReportBundle.setPostExecuteCallback(createPutGroupReportBundleCallback());
         this.vkontakteEndpoint = vkontakteEndpoint;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
     }
@@ -197,13 +203,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     void addGroupsToList(List<Group> groups, int index) {
-        totalGroups += groups.size();
         if (AppConfig.INSTANCE.isAllGroupsSortedByMembersCount()) Collections.sort(groups);
+        int xTotalGroups = 0;
         List<GroupChildItem> childItems = new ArrayList<>(groups.size());
         for (Group group : groups) {
             if (AppConfig.INSTANCE.useOnlyGroupsWhereCanPostFreely() && !group.canPost()) {
                 continue;  // skip groups where is no access for current user to make wall post
             }
+            ++xTotalGroups;
             GroupChildItem childItem = new GroupChildItem(group);
             childItems.add(childItem);
             if (AppConfig.INSTANCE.isAllGroupsSelected()) {
@@ -211,8 +218,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 ++totalSelectedGroups;
             }
         }
+        totalGroups += xTotalGroups;
         GroupParentItem parentItem = groupParentItems.get(index);
-        if (AppConfig.INSTANCE.isAllGroupsSelected()) parentItem.setSelectedCount(groups.size());
+        if (AppConfig.INSTANCE.isAllGroupsSelected()) parentItem.setSelectedCount(xTotalGroups);
         parentItem.setChildList(childItems);
     }
 
@@ -321,6 +329,23 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         };
     }
 
+    private UseCase.OnPostExecuteCallback<GroupReportBundle> createPutGroupReportBundleCallback() {
+        return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
+            @Override
+            public void onFinish(@Nullable GroupReportBundle bundle) {
+                if (isViewAttached()) {
+                    getView().updateGroupReportBundleId(bundle.id());
+                    getView().openReportScreen(bundle.id(), getPostByIdUseCase.getPostId());
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                // TODO: failed to put reports
+            }
+        };
+    }
+
     private UseCase.OnPostExecuteCallback<List<List<Group>>> createGetGroupsByKeywordsListCallback() {
         return new UseCase.OnPostExecuteCallback<List<List<Group>>>() {
             @Override
@@ -352,8 +377,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         return new UseCase.OnPostExecuteCallback<List<GroupReportEssence>>() {
             @Override
             public void onFinish(@Nullable List<GroupReportEssence> reports) {
-                // TODO: use reports
-                if (isViewAttached()) getView().openReportScreen(getPostByIdUseCase.getPostId());
+                PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(reports);
+                putGroupReportBundle.setParameters(parameters);
+                putGroupReportBundle.execute();
             }
 
             @Override

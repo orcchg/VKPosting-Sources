@@ -4,10 +4,10 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.common.screen.SimpleGridFragment;
+import com.orcchg.vikstra.app.ui.common.screen.SimpleCollectionFragment;
 import com.orcchg.vikstra.domain.util.Constant;
 
-public class PostSingleGridFragment extends SimpleGridFragment implements PostSingleGridContract.SubView {
+public class PostSingleGridFragment extends SimpleCollectionFragment implements PostSingleGridContract.SubView {
     public static final int RV_TAG = Constant.ListTag.POST_SINGLE_GRID_SCREEN;
 
     public static PostSingleGridFragment newInstance() {
@@ -20,10 +20,15 @@ public class PostSingleGridFragment extends SimpleGridFragment implements PostSi
         return new GridLayoutManager(getActivity(), span, GridLayoutManager.HORIZONTAL, false);
     }
 
+    @Override
+    protected boolean isGrid() {
+        return true;
+    }
+
     /* Contract */
-    // --------------------------------------------------------------------------------------------
+    // ------------------------------------------
     @Override
     public void showPosts(boolean isEmpty) {
-        swipeRefreshLayout.setRefreshing(false);
+        showContent(isEmpty);
     }
 }

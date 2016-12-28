@@ -35,13 +35,15 @@
                 android:layout_height="4dp"
                 android:layout_below="@id/tv_info_title"
                 android:layout_marginTop="@dimen/standard_side_padding"
-                android:background="@color/accent"/>
+                android:background="?attr/colorAccent"/>
 
             <FrameLayout
                 android:layout_width="@dimen/standard_thumbnail_size"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true">
+                android:layout_alignParentEnd="true"
+                android:layout_marginLeft="@dimen/standard_side_padding"
+                android:layout_marginStart="@dimen/standard_side_padding">
 
                 <FrameLayout
                     android:layout_width="wrap_content"

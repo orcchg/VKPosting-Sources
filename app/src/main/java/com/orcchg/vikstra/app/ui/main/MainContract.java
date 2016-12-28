@@ -10,8 +10,9 @@ public interface MainContract {
     interface View extends KeywordListContract.View, PostSingleGridContract.View,
             IPostingNotificationDelegate, IPhotoUploadNotificationDelegate {
         void openGroupListScreen(long keywordBundleId, long postId);
-        void openReportScreen(long postId);
+        void openReportScreen(long groupReportBundleId, long postId);
         void showFab(boolean isVisible);
+        void updateGroupReportBundleId(long groupReportBundleId);
         void updatePostId(long postId);
     }
 
@@ -20,5 +21,6 @@ public interface MainContract {
         void retryPosts();
         void onFabClick();
         void onScrollKeywordsList(int itemsLeftToEnd);
+        void onScrollPostsGrid(int itemsLeftToEnd);
     }
 }

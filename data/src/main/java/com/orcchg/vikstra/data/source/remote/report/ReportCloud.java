@@ -1,11 +1,11 @@
 package com.orcchg.vikstra.data.source.remote.report;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.data.source.repository.report.IReportStorage;
 import com.orcchg.vikstra.domain.model.GroupReport;
-
-import java.util.List;
+import com.orcchg.vikstra.domain.model.GroupReportBundle;
 
 import javax.inject.Inject;
 
@@ -18,13 +18,13 @@ public class ReportCloud implements IReportStorage {
     /* Create */
     // ------------------------------------------
     @Override
-    public GroupReport addGroupReport(GroupReport report) {
+    public GroupReportBundle addGroupReports(@NonNull GroupReportBundle bundle) {
         return null;
     }
 
     @Override
-    public List<GroupReport> addGroupReports(List<GroupReport> many) {
-        return null;
+    public boolean addGroupReportToBundle(long id, GroupReport report) {
+        return false;
     }
 
     /* Read */
@@ -35,12 +35,7 @@ public class ReportCloud implements IReportStorage {
     }
 
     @Nullable @Override
-    public GroupReport groupReport(long id) {
-        return null;
-    }
-
-    @Nullable @Override
-    public GroupReport pollGroupReport(long id) {
+    public GroupReportBundle groupReports(long id) {
         return null;
     }
 
@@ -52,7 +47,7 @@ public class ReportCloud implements IReportStorage {
     }
 
     @Override
-    public boolean deleteGroupReport(long id) {
+    public boolean deleteGroupReports(long id) {
         return false;
     }
 }

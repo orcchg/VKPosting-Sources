@@ -11,12 +11,19 @@ import javax.inject.Inject;
 
 public class GroupReportEssenceMapper implements Mapper<GroupReportEssence, GroupReport> {
 
-    private final long groupReportId;
-    private final long timestamp;
+    private long groupReportId;
+    private long timestamp;
 
     @Inject
     public GroupReportEssenceMapper(long groupReportId, long timestamp) {
         this.groupReportId = groupReportId;
+        this.timestamp = timestamp;
+    }
+
+    public void setGroupReportId(long groupReportId) {
+        this.groupReportId = groupReportId;
+    }
+    public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
 

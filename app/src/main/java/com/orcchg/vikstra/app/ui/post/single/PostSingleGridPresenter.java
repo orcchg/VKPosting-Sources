@@ -65,6 +65,11 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void onScroll(int itemsLeftToEnd) {
+        // TODO: load more
+    }
+
     @DebugLog @Override
     public void retry() {
         changeSelectedPostId(Constant.BAD_ID);  // drop selection
