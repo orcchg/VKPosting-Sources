@@ -7,6 +7,7 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.vk.sdk.api.model.VKAttachments;
 
@@ -20,12 +21,12 @@ import timber.log.Timber;
 public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<Ordered<GroupReportEssence>>> {
 
     public static class Parameters {
-        List<Long> groupIds;
+        List<Group> groups;
         VKAttachments attachments;
         String message;
 
         Parameters(Builder builder) {
-            this.groupIds = builder.groupIds;
+            this.groups = builder.groups;
             this.attachments = builder.attachments;
             this.message = builder.message;
         }
@@ -34,8 +35,8 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
             this.attachments = attachments;
         }
 
-        public List<Long> getGroupIds() {
-            return groupIds;
+        public List<Group> getGroups() {
+            return groups;
         }
         public VKAttachments getAttachments() {
             return attachments;
@@ -45,12 +46,12 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
         }
 
         public static class Builder {
-            List<Long> groupIds;
+            List<Group> groups;
             VKAttachments attachments;
             String message;
 
-            public Builder setGroupIds(List<Long> groupIds) {
-                this.groupIds = groupIds;
+            public Builder setGroups(List<Group> groups) {
+                this.groups = groups;
                 return this;
             }
 
@@ -86,13 +87,13 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
     protected List<? extends UseCase<GroupReportEssence>> createUseCases() {
         if (parameters == null) throw new NoParametersException();
 
-        total = parameters.groupIds.size();  // update total count
+        total = parameters.groups.size();  // update total count
         Timber.d("Wall posting, total count: %s", total);
         List<MakeWallPost> useCases = new ArrayList<>();
-        for (long groupId : parameters.groupIds) {
+        for (Group group : parameters.groups) {
             MakeWallPost.Parameters xparameters = new MakeWallPost.Parameters.Builder()
-                    .setOwnerId(groupId)
                     .setAttachments(parameters.attachments)
+                    .setDestinationGroup(group)
                     .setMessage(parameters.message)
                     .build();
             MakeWallPost useCase = new MakeWallPost();

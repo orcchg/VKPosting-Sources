@@ -20,6 +20,10 @@ public class GroupChildItem {
         return group.membersCount();
     }
 
+    public Group getGroup() {
+        return group;
+    }
+
     public boolean isSelected() {
         return group.isSelected();
     }

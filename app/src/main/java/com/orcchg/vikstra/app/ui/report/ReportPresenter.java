@@ -2,31 +2,55 @@ package com.orcchg.vikstra.app.ui.report;
 
 import android.support.annotation.Nullable;
 
-import com.orcchg.vikstra.app.ui.base.BasePresenter;
+import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
+import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
+import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportToVoMapper;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
+import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Post;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
-public class ReportPresenter extends BasePresenter<ReportContract.View> implements ReportContract.Presenter {
+import timber.log.Timber;
+
+public class ReportPresenter extends BaseListPresenter<ReportContract.View> implements ReportContract.Presenter {
 
     private final GetGroupReportBundleById getGroupReportBundleByIdUseCase;
     private final GetPostById getPostByIdUseCase;
 
+    private final GroupReportToVoMapper groupReportToVoMapper;
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
-                    PostToSingleGridVoMapper postToSingleGridVoMapper) {
+                    GroupReportToVoMapper groupReportToVoMapper, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.getGroupReportBundleByIdUseCase = getGroupReportBundleByIdUseCase;
         this.getGroupReportBundleByIdUseCase.setPostExecuteCallback(createGetGroupReportBundleByIdCallback());
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
+        this.groupReportToVoMapper = groupReportToVoMapper;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
+    }
+
+    @Override
+    protected BaseAdapter createListAdapter() {
+        ReportAdapter adapter = new ReportAdapter();
+        adapter.setOnItemClickListener((view, viewObject, position) -> {
+            // TODO: click
+        });
+        return adapter;
+    }
+
+    @Override
+    protected int getListTag() {
+        return ReportFragment.RV_TAG;
     }
 
     /* Contract */
@@ -45,6 +69,7 @@ public class ReportPresenter extends BasePresenter<ReportContract.View> implemen
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
+        if (isViewAttached()) getView().showLoading();
         getGroupReportBundleByIdUseCase.execute();
         getPostByIdUseCase.execute();
     }
@@ -55,13 +80,19 @@ public class ReportPresenter extends BasePresenter<ReportContract.View> implemen
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
             public void onFinish(@Nullable Post post) {
-                // TODO: NPE - bad id
-                if (isViewAttached()) getView().showPost(postToSingleGridVoMapper.map(post));
+                if (isViewAttached()) {
+                    if (post != null) {
+                        getView().showPost(postToSingleGridVoMapper.map(post));
+                    } else {
+                        getView().showEmptyPost();
+                    }
+                }
             }
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                // TODO: failed to load post
+                if (isViewAttached()) getView().showError();
             }
         };
     }
@@ -69,14 +100,23 @@ public class ReportPresenter extends BasePresenter<ReportContract.View> implemen
     private UseCase.OnPostExecuteCallback<GroupReportBundle> createGetGroupReportBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
             @Override
-            public void onFinish(@Nullable GroupReportBundle values) {
-                // TODO: NPE - bad id
-                // TODO: show groups report
+            public void onFinish(@Nullable GroupReportBundle bundle) {
+                if (bundle == null || bundle.groupReports() == null) {
+                    Timber.e("GroupReportBundle wasn't found by id: %s, or groupReports property is null",
+                            getGroupReportBundleByIdUseCase.getGroupReportId());
+                    throw new ProgramException();
+                } else if (bundle.groupReports().isEmpty()) {
+                    if (isViewAttached()) getView().showEmptyList();
+                } else {
+                    List<ReportListItemVO> vos = groupReportToVoMapper.map(bundle.groupReports());
+                    listAdapter.populate(vos, false);
+                    if (isViewAttached()) getView().showGroupReports(vos == null || vos.isEmpty());
+                }
             }
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }

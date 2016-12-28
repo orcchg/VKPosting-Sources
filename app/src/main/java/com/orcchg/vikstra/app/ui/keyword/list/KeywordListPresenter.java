@@ -13,6 +13,7 @@ import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;
 import com.orcchg.vikstra.app.util.ContentUtility;
+import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
@@ -24,6 +25,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.View>
         implements KeywordListContract.Presenter {
@@ -53,12 +55,8 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @Override
     protected BaseAdapter createListAdapter() {
         KeywordListAdapter adapter = new KeywordListAdapter(selectMode);
-        adapter.setOnItemClickListener((view, viewObject, position) -> {
-            changeSelectedKeywordBundleId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID);
-        });
-        adapter.setOnItemLongClickListener((view, viewObject, position) -> {
-            // TODO: impl long click
-        });
+        adapter.setOnItemClickListener((view, viewObject, position) ->
+            changeSelectedKeywordBundleId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID));
         adapter.setOnEditClickListener((view, viewObject, position) -> {
             if (isViewAttached()) {
                 if (viewObject.groupBundleId() == Constant.BAD_ID) {
@@ -136,13 +134,16 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private UseCase.OnPostExecuteCallback<List<KeywordBundle>> createGetKeywordBundlesCallback() {
         return new UseCase.OnPostExecuteCallback<List<KeywordBundle>>() {
             @Override
-            public void onFinish(@Nullable List<KeywordBundle> values) {
-                if (values == null || values.isEmpty()) {
+            public void onFinish(@Nullable List<KeywordBundle> bundles) {
+                if (bundles == null) {
+                    Timber.e("List of KeywordBundle items must not be null, it could be empty");
+                    throw new ProgramException();
+                } else if (bundles.isEmpty()) {
                     if (isViewAttached()) getView().showEmptyList();
                 } else {
-                    Collections.sort(values);
-                    memento.currentSize += values.size();
-                    List<KeywordListItemVO> vos = keywordBundleToVoMapper.map(values);
+                    Collections.sort(bundles);
+                    memento.currentSize += bundles.size();
+                    List<KeywordListItemVO> vos = keywordBundleToVoMapper.map(bundles);
                     listAdapter.populate(vos, isThereMore());
                     if (isViewAttached()) getView().showKeywords(vos == null || vos.isEmpty());
                 }

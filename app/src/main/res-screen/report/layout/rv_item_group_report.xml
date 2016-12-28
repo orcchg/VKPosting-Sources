@@ -34,11 +34,18 @@
             android:textColor="@color/textSecondary"
             android:textSize="@dimen/group_list_child_item_title_size"/>
 
-        <Switch
-            android:id="@+id/switcher"
+        <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="@dimen/standard_side_padding_small"
-            android:layout_marginStart="@dimen/standard_side_padding_small"/>
+            android:layout_marginStart="@dimen/standard_side_padding_small">
+
+            <ImageView
+                android:id="@+id/iv_status"
+                android:layout_width="@dimen/standard_icon_size"
+                android:layout_height="@dimen/standard_icon_size"
+                android:layout_gravity="center"
+                android:contentDescription="@null"/>
+        </FrameLayout>
     </LinearLayout>
 </FrameLayout>

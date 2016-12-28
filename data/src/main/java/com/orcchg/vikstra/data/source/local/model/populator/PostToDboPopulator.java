@@ -6,6 +6,8 @@ import com.orcchg.vikstra.domain.model.Media;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.mapper.Populator;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import io.realm.RealmList;
@@ -23,11 +25,14 @@ public class PostToDboPopulator implements Populator<Post, PostDBO> {
     public void populate(Post object, PostDBO dbo) {
         dbo.id = object.id();
         dbo.description = object.description();
+        dbo.media = new RealmList<>();
         dbo.timestamp = object.timestamp();
         dbo.title = object.title();
-        dbo.media = new RealmList<>();
-        for (Media media : object.media()) {
-            dbo.media.add(mediaToDboMapper.map(media));
+        List<Media> medias = object.media();
+        if (medias != null) {
+            for (Media media : medias) {
+                dbo.media.add(mediaToDboMapper.map(media));
+            }
         }
     }
 }

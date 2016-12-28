@@ -24,6 +24,7 @@ import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
+import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.ValueUtility;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
@@ -126,31 +127,31 @@ public class VkontakteEndpoint extends Endpoint {
     /* Post */
     // ------------------------------------------
     // TODO: implement various Media types {photo, video, file, ...}
-    public void makeWallPosts(Collection<Long> groupIds, @NonNull Post post,
+    public void makeWallPosts(Collection<Group> groups, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback) {
-        makeWallPosts(groupIds, post, callback, null);
+        makeWallPosts(groups, post, callback, null);
     }
 
-    public void makeWallPosts(Collection<Long> groupIds, @NonNull Post post,
+    public void makeWallPosts(Collection<Group> groups, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                               @Nullable MultiUseCase.ProgressCallback progressCallback) {
-        makeWallPosts(groupIds, post, callback, null, null);
+        makeWallPosts(groups, post, callback, null, null);
     }
 
-    public void makeWallPosts(Collection<Long> groupIds, @NonNull Post post,
+    public void makeWallPosts(Collection<Group> groups, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                               @Nullable MultiUseCase.ProgressCallback progressCallback,
                               @Nullable MultiUseCase.ProgressCallback photoUploadProgressCb) {
-        makeWallPosts(groupIds, post, callback, null, null, null);
+        makeWallPosts(groups, post, callback, null, null, null);
     }
 
-    public void makeWallPosts(Collection<Long> groupIds, @NonNull Post post,
+    public void makeWallPosts(Collection<Group> groups, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                               @Nullable MultiUseCase.ProgressCallback progressCallback,
                               @Nullable MultiUseCase.ProgressCallback photoUploadProgressCb,
                               @Nullable MultiUseCase.ProgressCallback photoPrepareProgressCb) {
         MakeWallPostToGroups.Parameters.Builder paramsBuilder = new MakeWallPostToGroups.Parameters.Builder()
-                .setGroupIds(new ArrayList<>(groupIds))
+                .setGroups(new ArrayList<>(groups))
                 .setMessage(post.description());
         if (post.media() != null && !post.media().isEmpty()) {
             List<Media> cached = new ArrayList<>();
@@ -197,7 +198,7 @@ public class VkontakteEndpoint extends Endpoint {
         }
     }
 
-    public void makeWallPostsWithDelegate(Collection<Long> groupIds, @NonNull Post post,
+    public void makeWallPostsWithDelegate(Collection<Group> groups, @NonNull Post post,
                                           @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                                           @Nullable IPostingNotificationDelegate postingNotificationDelegate,
                                           @Nullable IPhotoUploadNotificationDelegate photoUploadNotificationDelegate) {
@@ -228,7 +229,7 @@ public class VkontakteEndpoint extends Endpoint {
             }
         };
 
-        makeWallPosts(groupIds, post, callback, progressCallback, photoUploadProgressCb, photoPrepareProgressCb);
+        makeWallPosts(groups, post, callback, progressCallback, photoUploadProgressCb, photoPrepareProgressCb);
     }
 
     /* Internal */
@@ -255,7 +256,8 @@ public class VkontakteEndpoint extends Endpoint {
                         VkUseCaseException e = (VkUseCaseException) item.error;
                         GroupReportEssence report = GroupReportEssence.builder()
                                 .setErrorCode(e.getErrorCode())
-                                .setGroupId(parameters.getGroupIds().get(index))
+                                .setGroup(parameters.getGroups().get(index))
+                                .setWallPostId((int) Constant.BAD_ID)
                                 .build();
                         refinedReports.add(report);
                         ++index;

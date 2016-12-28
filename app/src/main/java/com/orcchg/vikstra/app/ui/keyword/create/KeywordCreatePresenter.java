@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
+import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.keyword.PostKeywordBundle;
@@ -99,6 +100,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     protected void freshStart() {
+        // TODO: loading
         getKeywordBundleByIdUseCase.execute();
     }
 
@@ -107,12 +109,14 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     private UseCase.OnPostExecuteCallback<KeywordBundle> createGetKeywordBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
             @Override
-            public void onFinish(@Nullable KeywordBundle values) {
-                if (values != null) {
-                    timestamp = values.timestamp();
-                    title = values.title();
-                    keywords.addAll(values.keywords());
+            public void onFinish(@Nullable KeywordBundle bundle) {
+                if (bundle == null) {
+                    Timber.e("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
+                    throw new ProgramException();
                 }
+                timestamp = bundle.timestamp();
+                title = bundle.title();
+                keywords.addAll(bundle.keywords());
                 if (isViewAttached()) getView().setInputKeywords(title, keywords);
             }
 

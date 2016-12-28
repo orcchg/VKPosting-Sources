@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.util.ContentUtility;
+import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.post.PostPost;
@@ -154,6 +155,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
+        // TODO: loading
         getPostByIdUseCase.execute();
     }
 
@@ -163,14 +165,15 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
             public void onFinish(@Nullable Post post) {
-                // TODO: NPE
-                if (post != null) {
-                    description = post.description();
-                    attachMedia.addAll(post.media());
-                    timestamp = post.timestamp();
-                    title = post.title();
-                    // TODO: other fields is needed
+                if (post == null) {
+                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
+                    throw new ProgramException();
                 }
+                description = post.description();
+                attachMedia.addAll(post.media());  // TODO: NULL media
+                timestamp = post.timestamp();
+                title = post.title();
+                // TODO: other fields is needed
                 // TODO: if updating existing post - fill text field and media attachment view container
                 if (isViewAttached()) {
                     for (Media media : attachMedia) {

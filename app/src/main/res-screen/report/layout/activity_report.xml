@@ -29,21 +29,12 @@
                 android:textColor="@color/textSecondary"
                 android:textSize="@dimen/standard_description_text_size"/>
 
-            <View
-                android:id="@+id/report_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="4dp"
-                android:layout_below="@id/tv_info_title"
-                android:layout_marginTop="@dimen/standard_side_padding"
-                android:background="?attr/colorAccent"/>
-
             <FrameLayout
+                android:id="@+id/post_thumbnail_container"
                 android:layout_width="@dimen/standard_thumbnail_size"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginLeft="@dimen/standard_side_padding"
-                android:layout_marginStart="@dimen/standard_side_padding">
+                android:layout_alignParentEnd="true">
 
                 <FrameLayout
                     android:layout_width="wrap_content"
@@ -58,6 +49,18 @@
                         android:layout_gravity="center"/>
                 </FrameLayout>
             </FrameLayout>
+
+            <View
+                android:id="@+id/report_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="4dp"
+                android:layout_below="@id/tv_info_title"
+                android:layout_toLeftOf="@id/post_thumbnail_container"
+                android:layout_toStartOf="@id/post_thumbnail_container"
+                android:layout_marginTop="@dimen/standard_side_padding"
+                android:layout_marginRight="@dimen/standard_side_padding"
+                android:layout_marginEnd="@dimen/standard_side_padding"
+                android:background="?attr/colorAccent"/>
         </RelativeLayout>
 
         <View

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
@@ -107,6 +108,47 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public RecyclerView getListView(int tag) {
+        ReportFragment fragment = getFragment();
+        if (fragment != null) return fragment.getListView(tag);
+        return null;
+    }
+
+    @Override
+    public void showContent(boolean isEmpty) {
+        showGroupReports(isEmpty);
+    }
+
+    @Override
+    public void showEmptyList() {
+        ReportFragment fragment = getFragment();
+        if (fragment != null) fragment.showEmptyList();
+    }
+
+    @Override
+    public void showError() {
+        ReportFragment fragment = getFragment();
+        if (fragment != null) fragment.showError();
+    }
+
+    @Override
+    public void showLoading() {
+        ReportFragment fragment = getFragment();
+        if (fragment != null) fragment.showLoading();
+    }
+
+    @Override
+    public void showGroupReports(boolean isEmpty) {
+        ReportFragment fragment = getFragment();
+        if (fragment != null) fragment.showGroupReports(isEmpty);
+    }
+
+    @Override
+    public void showEmptyPost() {
+        postThumbnail.setPost(null);
+    }
+
     @Override
     public void showPost(PostSingleGridItemVO viewObject) {
         postThumbnail.setPost(viewObject);

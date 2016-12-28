@@ -21,6 +21,7 @@ public class GroupDetailPresenter extends BasePresenter<GroupDetailContract.View
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
+        // TODO: loading
         vkontakteEndpoint.getGroupById(groupId, createGetGroupByIdCallback());
     }
 

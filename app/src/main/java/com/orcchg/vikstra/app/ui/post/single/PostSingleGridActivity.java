@@ -61,17 +61,20 @@ public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.
 
     @Override
     public void showEmptyList() {
-        // TODO:
+        PostSingleGridFragment fragment = getFragment();
+        if (fragment != null) fragment.showEmptyList();
     }
 
     @Override
     public void showError() {
-        // TODO:
+        PostSingleGridFragment fragment = getFragment();
+        if (fragment != null) fragment.showError();
     }
 
     @Override
     public void showLoading() {
-        // TODO:
+        PostSingleGridFragment fragment = getFragment();
+        if (fragment != null) fragment.showLoading();
     }
 
     @Override

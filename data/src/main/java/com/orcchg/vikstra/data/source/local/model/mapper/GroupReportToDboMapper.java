@@ -12,10 +12,13 @@ import javax.inject.Inject;
 
 public class GroupReportToDboMapper implements DuplexMapper<GroupReport, GroupReportDBO> {
 
+    private final GroupToDboMapper groupToDboMapper;
     private final GroupReportToDboPopulator groupReportToDboPopulator;
 
     @Inject
-    public GroupReportToDboMapper(GroupReportToDboPopulator groupReportToDboPopulator) {
+    public GroupReportToDboMapper(GroupToDboMapper groupToDboMapper,
+            GroupReportToDboPopulator groupReportToDboPopulator) {
+        this.groupToDboMapper = groupToDboMapper;
         this.groupReportToDboPopulator = groupReportToDboPopulator;
     }
 
@@ -44,7 +47,7 @@ public class GroupReportToDboMapper implements DuplexMapper<GroupReport, GroupRe
         return GroupReport.builder()
                 .setId(object.id)
                 .setErrorCode(object.errorCode)
-                .setGroupId(object.groupId)
+                .setGroup(groupToDboMapper.mapBack(object.group))
                 .setTimestamp(object.timestamp)
                 .setWallPostId(object.wallPostId)
                 .build();

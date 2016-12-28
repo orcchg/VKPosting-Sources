@@ -198,6 +198,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     protected void freshStart() {
+        // TODO: loading
         getPostByIdUseCase.execute();
         getKeywordBundleByIdUseCase.execute();
     }
@@ -236,13 +237,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private void postToGroups() {
         if (currentPost != null) {
-            Set<Long> selectedGroupIds = new TreeSet<>();  // exclude ids duplication
+            // exclude ids duplication
+            Set<Group> selectedGroups = new TreeSet<>((lhs, rhs) -> (int) (lhs.id() - rhs.id()));
             for (GroupParentItem parentItem : listAdapter.getParentList()) {
                 for (GroupChildItem childItem : parentItem.getChildList()) {
-                    if (childItem.isSelected()) selectedGroupIds.add(childItem.getId());
+                    if (childItem.isSelected()) selectedGroups.add(childItem.getGroup());
                 }
             }
-            vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroupIds, currentPost,
+            vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, currentPost,
                     createMakeWallPostCallback(), getView(), getView());
         } else {
             Timber.d("No post selected, nothing to be done");

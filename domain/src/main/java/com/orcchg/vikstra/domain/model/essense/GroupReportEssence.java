@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.domain.model.essense;
 
 import com.google.auto.value.AutoValue;
+import com.orcchg.vikstra.domain.model.Group;
 
 @AutoValue
 public abstract class GroupReportEssence implements Essence {
@@ -12,12 +13,12 @@ public abstract class GroupReportEssence implements Essence {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setErrorCode(int errorCode);
-        public abstract Builder setGroupId(long id);
-        public abstract Builder setWallPostId(int id);
+        public abstract Builder setGroup(Group group);
+        public abstract Builder setWallPostId(int wallPostId);
         public abstract GroupReportEssence build();
     }
 
     public abstract int errorCode();
-    public abstract long groupId();
+    public abstract Group group();
     public abstract int wallPostId();
 }

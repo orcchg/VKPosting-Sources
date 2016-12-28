@@ -8,6 +8,7 @@ import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
+import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPosts;
 import com.orcchg.vikstra.domain.model.Post;
@@ -17,6 +18,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class PostListPresenter extends BaseListPresenter<PostListContract.View>
         implements PostListContract.Presenter {
@@ -68,6 +70,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
+        if (isViewAttached()) getView().showLoading();
         getPostsUseCase.execute();
     }
 
@@ -76,16 +79,22 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
     private UseCase.OnPostExecuteCallback<List<Post>> createGetPostsCallback() {
         return new UseCase.OnPostExecuteCallback<List<Post>>() {
             @DebugLog @Override
-            public void onFinish(@Nullable List<Post> values) {
-                // TODO: NPE
-                List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(values);
-                listAdapter.populate(vos, false);
-                if (isViewAttached()) getView().showPosts(vos == null || vos.isEmpty());
+            public void onFinish(@Nullable List<Post> posts) {
+                if (posts == null) {
+                    Timber.e("List of Post items must not be null, it could be empty");
+                    throw new ProgramException();
+                } else if (posts.isEmpty()) {
+                    if (isViewAttached()) getView().showEmptyList();
+                } else {
+                    List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
+                    listAdapter.populate(vos, false);
+                    if (isViewAttached()) getView().showPosts(vos == null || vos.isEmpty());
+                }
             }
 
             @Override
             public void onError(Throwable e) {
-                // TODO: impl
+                if (isViewAttached()) getView().showError();
             }
         };
     }

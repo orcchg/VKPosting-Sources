@@ -32,7 +32,7 @@ public class GroupReportEssenceMapper implements Mapper<GroupReportEssence, Grou
         return GroupReport.builder()
                 .setId(groupReportId)
                 .setErrorCode(object.errorCode())
-                .setGroupId(object.groupId())
+                .setGroup(object.group())
                 .setTimestamp(timestamp)
                 .setWallPostId(object.wallPostId())
                 .build();

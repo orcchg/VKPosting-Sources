@@ -5,11 +5,14 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.viewobject.PostViewVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToVoMapper;
+import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.model.Post;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class PostViewPresenter extends BasePresenter<PostViewContract.View> implements PostViewContract.Presenter {
 
@@ -44,11 +47,12 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
             public void onFinish(@Nullable Post post) {
-                // TODO: NPE
-                if (post != null) {
-                    PostViewVO viewObject = postToVoMapper.map(post);
-                    if (isViewAttached()) getView().showPost(viewObject);
+                if (post == null) {
+                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
+                    throw new ProgramException();
                 }
+                PostViewVO viewObject = postToVoMapper.map(post);
+                if (isViewAttached()) getView().showPost(viewObject);
                 // TODO: if updating existing post - fill text field and media attachment view container
             }
 
