@@ -198,9 +198,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     protected void freshStart() {
-        // TODO: loading
-        getPostByIdUseCase.execute();
+        if (isViewAttached()) getView().showLoading();
         getKeywordBundleByIdUseCase.execute();
+        getPostByIdUseCase.execute();
     }
 
     void addGroupsToList(List<Group> groups, int index) {
