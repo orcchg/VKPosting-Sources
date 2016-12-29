@@ -10,7 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.util.TypedValue;
 import android.view.View;
 
-public class UiUtility {  // TODO: rename to view utility
+public class UiUtility {
 
     public static int getAttributeColor(Context context, int attributeId) {
         TypedValue typedValue = new TypedValue();

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,6 +17,22 @@ import com.orcchg.vikstra.app.PermissionManager;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 
 public class DialogProvider {
+
+    /* Text */
+    // --------------------------------------------------------------------------------------------
+    public static void showTextDialog(Activity activity, @StringRes int title, @StringRes int description) {
+        String xtitle = activity.getResources().getString(title);
+        String xdescription = activity.getResources().getString(description);
+        showTextDialog(activity, xtitle, xdescription);
+    }
+
+    public static void showTextDialog(Activity activity, String title, String description) {
+        new AlertDialog.Builder(activity)
+                .setTitle(title)
+                .setMessage(description)
+                .setPositiveButton(R.string.button_close, null)
+                .show();
+    }
 
     /* Edit text */
     // --------------------------------------------------------------------------------------------
@@ -61,7 +78,7 @@ public class DialogProvider {
                         case 1:
                             activity.getNavigationComponent().navigator().openCamera(activity, true);
                             break;
-                        case 2:  // TODO: impl albums photo upload
+                        case 2:
                             activity.getNavigationComponent().navigator().openSocialAlbumsScreen(activity);
                             break;
                     }

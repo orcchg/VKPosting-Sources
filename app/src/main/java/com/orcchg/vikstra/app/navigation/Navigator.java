@@ -8,7 +8,9 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 
+import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.injection.PerActivity;
+import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.group.detail.GroupDetailActivity;
 import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
@@ -70,7 +72,8 @@ public class Navigator {
         if (intent.resolveActivity(context.getPackageManager()) != null) {
             context.startActivityForResult(intent, Constant.RequestCode.EXTERNAL_SCREEN_GALLERY);
         } else {
-            Timber.e("No Activity found to open Gallery !");  // TODO: exception
+            Timber.e("No Activity was found to open Gallery !");
+            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_gallery);
         }
     }
 
@@ -91,12 +94,13 @@ public class Navigator {
             }
             context.startActivityForResult(intent, Constant.RequestCode.EXTERNAL_SCREEN_CAMERA);
         } else {
-            Timber.e("No Activity found to open Camera !");  // TODO: exception
+            Timber.e("No Activity was found to open Camera !");
+            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_camera);
         }
     }
 
     public void openSocialAlbumsScreen(@NonNull Activity context) {
-        // TODO:
+        // TODO: openSocialAlbumsScreen
     }
 
     /* Posts */

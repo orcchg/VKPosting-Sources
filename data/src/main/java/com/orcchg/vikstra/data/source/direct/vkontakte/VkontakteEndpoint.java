@@ -153,10 +153,11 @@ public class VkontakteEndpoint extends Endpoint {
         MakeWallPostToGroups.Parameters.Builder paramsBuilder = new MakeWallPostToGroups.Parameters.Builder()
                 .setGroups(new ArrayList<>(groups))
                 .setMessage(post.description());
-        if (post.media() != null && !post.media().isEmpty()) {
+        List<Media> media = post.media();
+        if (media != null && !media.isEmpty()) {
             List<Media> cached = new ArrayList<>();
             List<Media> retained = new ArrayList<>();
-            attachLocalCache.retain(post.media(), cached, retained);
+            attachLocalCache.retain(media, cached, retained);
             Timber.v("Total media: cached: %s, retained: %s", cached.size(), retained.size());
 
             /**
@@ -346,20 +347,4 @@ public class VkontakteEndpoint extends Endpoint {
                 .setName(vkGroup.name)
                 .build();
     }
-
-//    @NonNull
-//    List<GroupReport> convert(List<VKWallPostResult> vkReports) {
-//        List<GroupReport> reports = new ArrayList<>();
-//        for (VKWallPostResult vkReport : vkReports) {
-//            reports.add(convert(vkReport));
-//        }
-//        return reports;
-//    }
-//
-//    @NonNull
-//    GroupReport convert(VKWallPostResult vkReport) {
-//        return GroupReport.builder()
-//                .setWallPostId(vkReport.post_id)
-//                .build();  // TODO: impl with status data
-//    }
 }
