@@ -5,9 +5,10 @@ import android.graphics.Bitmap;
 
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.base.MvpView;
+import com.orcchg.vikstra.app.ui.common.screen.LceView;
 
 public interface PostCreateContract {
-    interface View extends MvpView {
+    interface View extends LceView, MvpView {
         void addMediaThumbnail(Bitmap bmp);
         void addMediaThumbnail(String filePath);
         void onMediaAttachLimitReached(int limit);
@@ -19,7 +20,6 @@ public interface PostCreateContract {
 
         ContentResolver contentResolver();
         void closeView(int resultCode);
-        void showError();
     }
 
     interface Presenter extends MvpPresenter<View> {
@@ -30,5 +30,6 @@ public interface PostCreateContract {
         void onSavePressed();
 
         void removeAttachedMedia();
+        void retry();
     }
 }

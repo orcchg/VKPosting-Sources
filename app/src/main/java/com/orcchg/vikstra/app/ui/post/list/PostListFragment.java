@@ -29,6 +29,6 @@ public class PostListFragment extends SimpleCollectionFragment implements PostLi
     // --------------------------------------------------------------------------------------------
     @Override
     public void showPosts(boolean isEmpty) {
-        swipeRefreshLayout.setRefreshing(false);
+        showContent(RV_TAG, isEmpty);
     }
 }

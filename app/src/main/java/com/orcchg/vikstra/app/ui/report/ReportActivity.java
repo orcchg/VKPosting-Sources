@@ -116,29 +116,6 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     }
 
     @Override
-    public void showContent(boolean isEmpty) {
-        showGroupReports(isEmpty);
-    }
-
-    @Override
-    public void showEmptyList() {
-        ReportFragment fragment = getFragment();
-        if (fragment != null) fragment.showEmptyList();
-    }
-
-    @Override
-    public void showError() {
-        ReportFragment fragment = getFragment();
-        if (fragment != null) fragment.showError();
-    }
-
-    @Override
-    public void showLoading() {
-        ReportFragment fragment = getFragment();
-        if (fragment != null) fragment.showLoading();
-    }
-
-    @Override
     public void showGroupReports(boolean isEmpty) {
         ReportFragment fragment = getFragment();
         if (fragment != null) fragment.showGroupReports(isEmpty);
@@ -152,6 +129,30 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     @Override
     public void showPost(PostSingleGridItemVO viewObject) {
         postThumbnail.setPost(viewObject);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void showContent(int tag, boolean isEmpty) {
+        showGroupReports(isEmpty);
+    }
+
+    @Override
+    public void showEmptyList(int tag) {
+        ReportFragment fragment = getFragment();
+        if (fragment != null) fragment.showEmptyList(tag);
+    }
+
+    @Override
+    public void showError(int tag) {
+        ReportFragment fragment = getFragment();
+        if (fragment != null) fragment.showError(tag);
+    }
+
+    @Override
+    public void showLoading(int tag) {
+        ReportFragment fragment = getFragment();
+        if (fragment != null) fragment.showLoading(tag);
     }
 
     // ------------------------------------------

@@ -32,6 +32,7 @@
         <item name="dialog_upload_photo_variant_camera">Camera</item>
         <!-- <item name="dialog_upload_photo_variant_albums">Albums</item> -->
     </array>
+    <string name="dialog_progress_posting">Posting&#8230;</string>
     <string name="dialog_warning_title">Warning</string>
 
     <string name="notification_posting_title">Wall posting</string>

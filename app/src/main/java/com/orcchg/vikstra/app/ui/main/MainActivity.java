@@ -38,8 +38,8 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private static final String POST_GRID_FRAGMENT_TAG = "post_grid_fragment_tag";
     private static final String KEYW_LIST_FRAGMENT_TAG = "keyw_list_fragment_tag";
 
-    @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.tv_groups_selection_counter) TextView selectedGroupsTextView;
+    @BindView(R.id.fab) FloatingActionButton fab;
     @OnClick(R.id.fab)
     void onFabClick() {
         presenter.onFabClick();
@@ -173,38 +173,72 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     @Override
-    public void showContent(boolean isEmpty) {
-        // TODO: atatcjh to smth
-    }
-
-    @Override
-    public void showEmptyList() {
-        KeywordListFragment fragment = getKeywordListFragment();
-        if (fragment != null) fragment.showEmptyList();
-    }
-
-    @Override
-    public void showError() {
-        KeywordListFragment fragment = getKeywordListFragment();
-        if (fragment != null) fragment.showError();
-    }
-
-    @Override
-    public void showLoading() {
-        KeywordListFragment fragment = getKeywordListFragment();
-        if (fragment != null) fragment.showLoading();
-    }
-
-    @Override
     public void showKeywords(boolean isEmpty) {
         KeywordListFragment fragment = getKeywordListFragment();
-        if (fragment != null) fragment.showContent(isEmpty);
+        if (fragment != null) fragment.showKeywords(isEmpty);
     }
 
     @Override
     public void showPosts(boolean isEmpty) {
         PostSingleGridFragment fragment = getPostGridFragment();
-        if (fragment != null) fragment.showContent(isEmpty);
+        if (fragment != null) fragment.showPosts(isEmpty);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void showContent(int tag, boolean isEmpty) {
+        switch (tag) {
+            case KeywordListFragment.RV_TAG:
+                KeywordListFragment fragment = getKeywordListFragment();
+                if (fragment != null) fragment.showContent(tag, isEmpty);
+                break;
+            case PostSingleGridFragment.RV_TAG:
+                PostSingleGridFragment fragment1 = getPostGridFragment();
+                if (fragment1 != null) fragment1.showContent(tag, isEmpty);
+                break;
+        }
+    }
+
+    @Override
+    public void showEmptyList(int tag) {
+        switch (tag) {
+            case KeywordListFragment.RV_TAG:
+                KeywordListFragment fragment = getKeywordListFragment();
+                if (fragment != null) fragment.showEmptyList(tag);
+                break;
+            case PostSingleGridFragment.RV_TAG:
+                PostSingleGridFragment fragment1 = getPostGridFragment();
+                if (fragment1 != null) fragment1.showEmptyList(tag);
+                break;
+        }
+    }
+
+    @Override
+    public void showError(int tag) {
+        switch (tag) {
+            case KeywordListFragment.RV_TAG:
+                KeywordListFragment fragment = getKeywordListFragment();
+                if (fragment != null) fragment.showError(tag);
+                break;
+            case PostSingleGridFragment.RV_TAG:
+                PostSingleGridFragment fragment1 = getPostGridFragment();
+                if (fragment1 != null) fragment1.showError(tag);
+                break;
+        }
+    }
+
+    @Override
+    public void showLoading(int tag) {
+        switch (tag) {
+            case KeywordListFragment.RV_TAG:
+                KeywordListFragment fragment = getKeywordListFragment();
+                if (fragment != null) fragment.showLoading(tag);
+                break;
+            case PostSingleGridFragment.RV_TAG:
+                PostSingleGridFragment fragment1 = getPostGridFragment();
+                if (fragment1 != null) fragment1.showLoading(tag);
+                break;
+        }
     }
 
     // ------------------------------------------

@@ -70,7 +70,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
-        if (isViewAttached()) getView().showLoading();
+        if (isViewAttached()) getView().showLoading(ReportFragment.RV_TAG);
         getGroupReportBundleByIdUseCase.execute();
         getPostByIdUseCase.execute();
     }
@@ -93,7 +93,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             @Override
             public void onError(Throwable e) {
                 // TODO: failed to load post
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(ReportFragment.RV_TAG);
             }
         };
     }
@@ -107,7 +107,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                             getGroupReportBundleByIdUseCase.getGroupReportId());
                     throw new ProgramException();
                 } else if (bundle.groupReports().isEmpty()) {
-                    if (isViewAttached()) getView().showEmptyList();
+                    if (isViewAttached()) getView().showEmptyList(ReportFragment.RV_TAG);
                 } else {
                     List<ReportListItemVO> vos = groupReportToVoMapper.map(bundle.groupReports());
                     listAdapter.populate(vos, false);
@@ -117,7 +117,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(ReportFragment.RV_TAG);
             }
         };
     }

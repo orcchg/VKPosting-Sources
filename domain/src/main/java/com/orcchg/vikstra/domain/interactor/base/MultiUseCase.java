@@ -20,6 +20,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     protected int total;
     protected Class<? extends Throwable>[] allowedErrors;  // list of errors the failed use case should retry on raised
     protected final Object lock = new Object();
+    protected int sleepInterval = 0;
 
     public MultiUseCase(int total, ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
@@ -97,6 +98,13 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                                 Timber.w("Unhandled exception: %s", e.toString());
                                 result.error = e;
                                 break;
+                            }
+                        }
+                        if (sleepInterval > 0) {
+                            try {
+                                Thread.sleep(sleepInterval);
+                            } catch (InterruptedException e) {
+                                Thread.interrupted();  // continue executing at interruption
                             }
                         }
                         elapsed = System.currentTimeMillis();

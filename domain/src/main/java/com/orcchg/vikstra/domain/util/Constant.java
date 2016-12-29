@@ -22,7 +22,9 @@ public class Constant {
 
     public static final class ListTag {
         public static final int GROUP_LIST_SCREEN = 1000;
+        public static final int KEYWORD_CREATE_SCREEN = 1010;
         public static final int KEYWORD_LIST_SCREEN = 1011;
+        public static final int POST_CREATE_SCREEN = 1020;
         public static final int POST_LIST_SCREEN = 1021;
         public static final int POST_SINGLE_GRID_SCREEN = 1022;
         public static final int REPORT_SCREEN = 1030;

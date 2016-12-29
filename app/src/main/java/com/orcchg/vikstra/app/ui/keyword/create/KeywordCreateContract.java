@@ -4,12 +4,13 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.base.MvpView;
+import com.orcchg.vikstra.app.ui.common.screen.LceView;
 import com.orcchg.vikstra.domain.model.Keyword;
 
 import java.util.Collection;
 
 public interface KeywordCreateContract {
-    interface View extends MvpView {
+    interface View extends LceView, MvpView {
         void addKeyword(Keyword keyword);
         void clearInputKeyword();
         String getInputKeyword();
@@ -20,7 +21,6 @@ public interface KeywordCreateContract {
 
         void openEditTitleDialog(@Nullable String initTitle);
         void closeView(int resultCode);
-        void showError();
     }
 
     interface Presenter extends MvpPresenter<View> {
@@ -28,5 +28,7 @@ public interface KeywordCreateContract {
         void onKeywordPressed(Keyword keyword);
         void onSavePressed();
         void onTitleChanged(String text);
+
+        void retry();
     }
 }

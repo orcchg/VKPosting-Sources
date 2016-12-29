@@ -70,7 +70,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
-        if (isViewAttached()) getView().showLoading();
+        if (isViewAttached()) getView().showLoading(PostListFragment.RV_TAG);
         getPostsUseCase.execute();
     }
 
@@ -84,7 +84,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
                     Timber.e("List of Post items must not be null, it could be empty");
                     throw new ProgramException();
                 } else if (posts.isEmpty()) {
-                    if (isViewAttached()) getView().showEmptyList();
+                    if (isViewAttached()) getView().showEmptyList(PostListFragment.RV_TAG);
                 } else {
                     List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
                     listAdapter.populate(vos, false);
@@ -94,7 +94,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(PostListFragment.RV_TAG);
             }
         };
     }

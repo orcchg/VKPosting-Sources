@@ -16,6 +16,7 @@ import com.orcchg.vikstra.app.ui.base.MvpView;
 import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -75,7 +76,7 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
         ButterKnife.bind(this, rootView);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_items);
 
-        swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.colorAccent));
+        swipeRefreshLayout.setColorSchemeColors(UiUtility.getAttributeColor(getActivity(), R.attr.colorAccent));
         swipeRefreshLayout.setOnRefreshListener(() -> {
             if (isGrid()) {
                 if (iScrollGrid != null) iScrollGrid.retryGrid();
@@ -99,7 +100,7 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
     }
 
     @Override
-    public void showContent(boolean isEmpty) {
+    public void showContent(int tag, boolean isEmpty) {
         swipeRefreshLayout.setRefreshing(false);
         loadingView.setVisibility(View.GONE);
         errorView.setVisibility(View.GONE);
@@ -116,12 +117,12 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
     }
 
     @Override
-    public void showEmptyList() {
-        showContent(true);
+    public void showEmptyList(int tag) {
+        showContent(tag, true);
     }
 
     @Override
-    public void showError() {
+    public void showError(int tag) {
         swipeRefreshLayout.setRefreshing(false);
         recyclerView.setVisibility(View.GONE);
         emptyView.setVisibility(View.GONE);
@@ -132,7 +133,7 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
     }
 
     @Override
-    public void showLoading() {
+    public void showLoading(int tag) {
         swipeRefreshLayout.setRefreshing(false);
         recyclerView.setVisibility(View.GONE);
         emptyView.setVisibility(View.GONE);

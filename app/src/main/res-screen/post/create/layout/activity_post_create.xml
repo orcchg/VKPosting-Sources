@@ -129,5 +129,7 @@
     </LinearLayout>
 
     <include layout="@layout/toolbar_dropshadow" />
+    <include layout="@layout/loading_circle_view" />
+    <include layout="@layout/error_view"/>
 
 </android.support.design.widget.CoordinatorLayout>

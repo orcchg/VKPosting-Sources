@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.app.ui.group.list.fragment;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -32,6 +34,7 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
 
     private String SNACKBAR_KEYWORDS_LIMIT;
 
+    private AlertDialog progressDialog;
     private ItemTouchHelper itemTouchHelper;
     @OnClick(R.id.btn_retry)
     void onRetryClick() {
@@ -83,7 +86,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     // --------------------------------------------------------------------------------------------
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Resources resources = getResources();
         initResources();
         initItemTouchHelper();
         Bundle args = getArguments();
@@ -98,6 +100,11 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         swipeRefreshLayout.setOnRefreshListener(() -> presenter.retry());  // override
         itemTouchHelper.attachToRecyclerView(recyclerView);
+
+        progressDialog = new ProgressDialog.Builder(getActivity())
+                .setTitle(R.string.dialog_progress_posting)
+                .create();
+
         return rootView;
     }
 
@@ -123,9 +130,19 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         navigationComponent.navigator().openReportScreen(getActivity(), groupReportBundleId, postId);
     }
 
+    // ------------------------------------------
     @Override
     public void showGroups(boolean isEmpty) {
-        showContent(isEmpty);
+        showContent(RV_TAG, isEmpty);
+    }
+
+    @Override
+    public void showProgressDialog(boolean isShow) {
+        if (isShow) {
+            progressDialog.show();
+        } else {
+            progressDialog.dismiss();
+        }
     }
 
     /* Notification delegate */

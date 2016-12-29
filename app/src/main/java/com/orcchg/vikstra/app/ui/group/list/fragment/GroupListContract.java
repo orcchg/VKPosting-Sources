@@ -12,7 +12,9 @@ interface GroupListContract {
         void onKeywordsLimitReached(int limit);
         void openGroupDetailScreen(long groupId);
         void openReportScreen(long groupReportBundleId, long postId);
+
         void showGroups(boolean isEmpty);
+        void showProgressDialog(boolean isShow);
         void updateGroupReportBundleId(long groupReportBundleId);
     }
 

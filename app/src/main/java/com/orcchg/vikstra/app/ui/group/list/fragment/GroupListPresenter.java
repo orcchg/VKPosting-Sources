@@ -198,7 +198,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     protected void freshStart() {
-        if (isViewAttached()) getView().showLoading();
+        if (isViewAttached()) getView().showLoading(GroupListFragment.RV_TAG);
         getKeywordBundleByIdUseCase.execute();
         getPostByIdUseCase.execute();
     }
@@ -244,6 +244,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     if (childItem.isSelected()) selectedGroups.add(childItem.getGroup());
                 }
             }
+            if (isViewAttached()) getView().showProgressDialog(true);
             vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, currentPost,
                     createMakeWallPostCallback(), getView(), getView());
         } else {
@@ -277,7 +278,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
     }
@@ -300,7 +301,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
     }
@@ -335,7 +336,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
             @Override
             public void onFinish(@Nullable GroupReportBundle bundle) {
+                if (bundle == null) {
+                    Timber.e("Failed to create new GroupReportBundle and put it to Repository");
+                    throw new ProgramException();
+                }
                 if (isViewAttached()) {
+                    getView().showProgressDialog(false);
                     getView().updateGroupReportBundleId(bundle.id());
                     getView().openReportScreen(bundle.id(), getPostByIdUseCase.getPostId());
                 }
@@ -343,7 +349,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
-                // TODO: failed to put reports
+                // TODO: failed to put reports - retry posting?
+                if (isViewAttached()) getView().showProgressDialog(false);
             }
         };
     }
@@ -356,7 +363,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     Timber.e("Split groups list cannot be null, but could be empty instead");
                     throw new ProgramException();
                 }
-                // TODO: only 20 groups by single keyword by default
+                // TODO: batch by 20 groups and load-more
                 for (int i = 0; i < splitGroups.size(); ++i) {
                     addGroupsToList(splitGroups.get(i), i);
                 }
@@ -370,7 +377,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
     }
@@ -386,7 +393,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) {
+                    getView().showProgressDialog(false);
+                    getView().showError(GroupListFragment.RV_TAG);
+                }
             }
         };
     }

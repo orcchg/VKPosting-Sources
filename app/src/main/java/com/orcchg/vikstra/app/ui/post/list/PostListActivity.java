@@ -108,32 +108,33 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
     }
 
     @Override
-    public void showContent(boolean isEmpty) {
+    public void showPosts(boolean isEmpty) {
+        PostListFragment fragment = getFragment();
+        if (fragment != null) fragment.showPosts(isEmpty);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void showContent(int tag, boolean isEmpty) {
         showPosts(isEmpty);
     }
 
     @Override
-    public void showEmptyList() {
+    public void showEmptyList(int tag) {
         PostListFragment fragment = getFragment();
-        if (fragment != null) fragment.showEmptyList();
+        if (fragment != null) fragment.showEmptyList(tag);
     }
 
     @Override
-    public void showError() {
+    public void showError(int tag) {
         PostListFragment fragment = getFragment();
-        if (fragment != null) fragment.showError();
+        if (fragment != null) fragment.showError(tag);
     }
 
     @Override
-    public void showLoading() {
+    public void showLoading(int tag) {
         PostListFragment fragment = getFragment();
-        if (fragment != null) fragment.showLoading();
-    }
-
-    @Override
-    public void showPosts(boolean isEmpty) {
-        PostListFragment fragment = getFragment();
-        if (fragment != null) fragment.showPosts(isEmpty);
+        if (fragment != null) fragment.showLoading(tag);
     }
 
     // ------------------------------------------

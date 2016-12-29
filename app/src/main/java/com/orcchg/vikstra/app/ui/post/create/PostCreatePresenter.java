@@ -57,7 +57,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_OK) {
-            Timber.d("Result from screen with request code %s is not OK: " + requestCode);
+            Timber.d("Result from screen with request code %s is not OK", requestCode);
             return;
         }
 
@@ -151,11 +151,16 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         // TODO: removeAttachedMedia
     }
 
+    @Override
+    public void retry() {
+        freshStart();
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
-        // TODO: loading
+        if (isViewAttached()) getView().showLoading(PostCreateActivity.RV_TAG);
         getPostByIdUseCase.execute();
     }
 
@@ -165,28 +170,34 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
             public void onFinish(@Nullable Post post) {
-//                if (post == null) {
-//                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
-//                    throw new ProgramException();
-//                }
+                long postId = getPostByIdUseCase.getPostId();
+                if (postId != Constant.BAD_ID && post == null) {
+                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
+                    throw new ProgramException();
+                }
                 if (post != null) {
+                    List<Media> media = post.media();
                     description = post.description();
-                    attachMedia.addAll(post.media());  // TODO: NULL media
+                    if (media != null) attachMedia.addAll(media);
                     timestamp = post.timestamp();
                     title = post.title();
                     // TODO: other fields is needed
                     // TODO: if updating existing post - fill text field and media attachment view container
                     if (isViewAttached()) {
-                        for (Media media : attachMedia) {
-                            getView().addMediaThumbnail(media.url());
+                        getView().showContent(PostCreateActivity.RV_TAG, false);
+                        for (Media item : attachMedia) {
+                            getView().addMediaThumbnail(item.url());
                         }
                     }
+                } else {
+                    Timber.d("New Post instance will be create on this screen");
+                    if (isViewAttached()) getView().showEmptyList(PostCreateActivity.RV_TAG);
                 }
             }
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(PostCreateActivity.RV_TAG);
             }
         };
     }
@@ -201,7 +212,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(PostCreateActivity.RV_TAG);
             }
         };
     }
@@ -210,13 +221,16 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
             public void onFinish(@Nullable Post post) {
-                // TODO: NPE - post not created
+                if (post == null) {
+                    Timber.e("Failed to create new Post and put it to Repository");
+                    throw new ProgramException();
+                }
                 if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
             }
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(PostCreateActivity.RV_TAG);
             }
         };
     }

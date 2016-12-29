@@ -87,7 +87,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     @Override
     protected void freshStart() {
-        if (isViewAttached()) getView().showLoading();
+        if (isViewAttached()) getView().showLoading(PostSingleGridFragment.RV_TAG);
         getPostsUseCase.execute();
     }
 
@@ -111,7 +111,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     Timber.e("List of Post items must not be null, it could be empty");
                     throw new ProgramException();
                 } else if (posts.isEmpty()) {
-                    if (isViewAttached()) getView().showEmptyList();
+                    if (isViewAttached()) getView().showEmptyList(PostSingleGridFragment.RV_TAG);
                 } else {
                     List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
                     listAdapter.populate(vos, false);
@@ -121,7 +121,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(PostSingleGridFragment.RV_TAG);
             }
         };
     }

@@ -123,32 +123,33 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     }
 
     @Override
-    public void showContent(boolean isEmpty) {
+    public void showKeywords(boolean isEmpty) {
+        KeywordListFragment fragment = getFragment();
+        if (fragment != null) fragment.showKeywords(isEmpty);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void showContent(int tag, boolean isEmpty) {
         showKeywords(isEmpty);
     }
 
     @Override
-    public void showEmptyList() {
+    public void showEmptyList(int tag) {
         KeywordListFragment fragment = getFragment();
-        if (fragment != null) fragment.showEmptyList();
+        if (fragment != null) fragment.showEmptyList(tag);
     }
 
     @Override
-    public void showError() {
+    public void showError(int tag) {
         KeywordListFragment fragment = getFragment();
-        if (fragment != null) fragment.showError();
+        if (fragment != null) fragment.showError(tag);
     }
 
     @Override
-    public void showLoading() {
+    public void showLoading(int tag) {
         KeywordListFragment fragment = getFragment();
-        if (fragment != null) fragment.showLoading();
-    }
-
-    @Override
-    public void showKeywords(boolean isEmpty) {
-        KeywordListFragment fragment = getFragment();
-        if (fragment != null) fragment.showKeywords(isEmpty);
+        if (fragment != null) fragment.showLoading(tag);
     }
 
     // ------------------------------------------

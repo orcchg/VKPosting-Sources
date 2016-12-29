@@ -42,11 +42,11 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
             EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, INFO_TITLE;
 
     @BindView(R.id.coordinator_root) ViewGroup coordinatorRoot;
-    @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @BindView(R.id.tv_info_title) TextView selectedGroupsCountView;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
-    @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
+    @BindView(R.id.fab) FloatingActionButton fab;
     @OnClick(R.id.fab)
     void onPostFabClick() {
         presenter.onFabClick();

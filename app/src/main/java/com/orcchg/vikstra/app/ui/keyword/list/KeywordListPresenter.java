@@ -115,7 +115,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     @Override
     protected void freshStart() {
-        if (isViewAttached()) getView().showLoading();
+        if (isViewAttached()) getView().showLoading(KeywordListFragment.RV_TAG);
         getKeywordBundlesUseCase.execute();
     }
 
@@ -139,7 +139,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                     Timber.e("List of KeywordBundle items must not be null, it could be empty");
                     throw new ProgramException();
                 } else if (bundles.isEmpty()) {
-                    if (isViewAttached()) getView().showEmptyList();
+                    if (isViewAttached()) getView().showEmptyList(KeywordListFragment.RV_TAG);
                 } else {
                     Collections.sort(bundles);
                     memento.currentSize += bundles.size();
@@ -152,7 +152,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             @Override
             public void onError(Throwable e) {
                 if (memento.currentSize <= 0) {
-                    if (isViewAttached()) getView().showError();
+                    if (isViewAttached()) getView().showError(KeywordListFragment.RV_TAG);
                 } else {
                     listAdapter.onError(true);
                 }

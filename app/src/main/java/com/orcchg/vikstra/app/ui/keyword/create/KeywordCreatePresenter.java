@@ -96,11 +96,17 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         title = text;
     }
 
+    // ------------------------------------------
+    @Override
+    public void retry() {
+        freshStart();
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     protected void freshStart() {
-        // TODO: loading
+        if (isViewAttached()) getView().showLoading(KeywordCreateActivity.RV_TAG);
         getKeywordBundleByIdUseCase.execute();
     }
 
@@ -110,21 +116,28 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
             @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
-//                if (bundle == null) {
-//                    Timber.e("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
-//                    throw new ProgramException();
-//                }
+                long keywordBundleId = getKeywordBundleByIdUseCase.getKeywordBundleId();
+                if (keywordBundleId != Constant.BAD_ID && bundle == null) {
+                    Timber.e("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
+                    throw new ProgramException();
+                }
                 if (bundle != null) {
                     timestamp = bundle.timestamp();
                     title = bundle.title();
                     keywords.addAll(bundle.keywords());
-                    if (isViewAttached()) getView().setInputKeywords(title, keywords);
+                    if (isViewAttached()) {
+                        getView().showContent(KeywordCreateActivity.RV_TAG, false);
+                        getView().setInputKeywords(title, keywords);
+                    }
+                } else {
+                    Timber.d("New KeywordBundle instance will be created on this screen");
+                    if (isViewAttached()) getView().showEmptyList(KeywordCreateActivity.RV_TAG);
                 }
             }
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(KeywordCreateActivity.RV_TAG);
             }
         };
     }
@@ -141,7 +154,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(KeywordCreateActivity.RV_TAG);
             }
         };
     }
@@ -150,6 +163,10 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
             @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
+                if (bundle == null) {
+                    Timber.e("Failed to create new KeywordBundle and put it to Repository");
+                    throw new ProgramException();
+                }
                 if (isViewAttached()) {
                     getView().notifyKeywordsAdded();
                     getView().closeView(Activity.RESULT_OK);
@@ -158,7 +175,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().showError();
+                if (isViewAttached()) getView().showError(KeywordCreateActivity.RV_TAG);
             }
         };
     }

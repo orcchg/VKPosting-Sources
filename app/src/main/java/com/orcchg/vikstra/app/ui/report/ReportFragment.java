@@ -19,6 +19,6 @@ public class ReportFragment extends SimpleCollectionFragment implements ReportCo
     // ------------------------------------------
     @Override
     public void showGroupReports(boolean isEmpty) {
-        showContent(isEmpty);
+        showContent(RV_TAG, isEmpty);
     }
 }

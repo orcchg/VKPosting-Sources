@@ -35,13 +35,17 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         implements PostCreateContract.View {
     private static final String EXTRA_POST_ID = "extra_post_id";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_CREATE_SCREEN;
+    public static final int RV_TAG = Constant.ListTag.POST_CREATE_SCREEN;
 
     private String SNACKBAR_MEDIA_ATTACH_LIMIT;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.container) ViewGroup container;
     @BindView(R.id.et_post_description) AutoCompleteTextView postDescriptionEditText;
     @BindView(R.id.media_container_root) ViewGroup mediaContainerRoot;
     @BindView(R.id.media_container) ViewGroup mediaContainer;
+    @BindView(R.id.loading_view) View loadingView;
+    @BindView(R.id.error_view) View errorView;
     @OnClick(R.id.ibtn_panel_location)
     void onLocationButtonClick() {
         presenter.onLocationPressed();
@@ -57,6 +61,10 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     @OnClick(R.id.ibtn_panel_poll)
     void onPollButtonClick() {
         presenter.onPollPressed();
+    }
+    @OnClick(R.id.btn_retry)
+    void onRetryClick() {
+        presenter.retry();
     }
 
     private PostCreateComponent postCreateComponent;
@@ -198,9 +206,31 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         finish();
     }
 
+    // ------------------------------------------
     @Override
-    public void showError() {
-        // TODO: show error
+    public void showContent(int tag, boolean isEmpty) {
+        container.setVisibility(View.VISIBLE);
+        loadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showEmptyList(int tag) {
+        showContent(tag, true);
+    }
+
+    @Override
+    public void showError(int tag) {
+        container.setVisibility(View.GONE);
+        loadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showLoading(int tag) {
+        container.setVisibility(View.GONE);
+        loadingView.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
     }
 
     /* Internal */

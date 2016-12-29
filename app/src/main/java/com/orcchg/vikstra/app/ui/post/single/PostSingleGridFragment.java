@@ -29,6 +29,6 @@ public class PostSingleGridFragment extends SimpleCollectionFragment implements 
     // ------------------------------------------
     @Override
     public void showPosts(boolean isEmpty) {
-        showContent(isEmpty);
+        showContent(RV_TAG, isEmpty);
     }
 }

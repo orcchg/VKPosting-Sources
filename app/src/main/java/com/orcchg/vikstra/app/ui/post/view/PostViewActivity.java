@@ -31,7 +31,6 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     private static final String EXTRA_POST_ID = "extra_post_id";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @BindView(R.id.scroll_container) ViewGroup scrollContainer;
     @BindView(R.id.tv_post_description) TextView descriptionView;
     @BindView(R.id.primary_media_container) ViewGroup primaryMediaContainer;
@@ -42,6 +41,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     @BindView(R.id.space) View space;
     @BindView(R.id.loading_view) View loadingView;
     @BindView(R.id.error_view) View errorView;
+    @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @OnClick(R.id.btn_retry)
     void onRetryClick() {
         presenter.retry();

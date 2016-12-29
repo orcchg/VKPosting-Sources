@@ -55,32 +55,33 @@ public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.
     }
 
     @Override
-    public void showContent(boolean isEmpty) {
+    public void showPosts(boolean isEmpty) {
+        PostSingleGridFragment fragment = getFragment();
+        if (fragment != null) fragment.showPosts(isEmpty);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void showContent(int tag, boolean isEmpty) {
         showPosts(isEmpty);
     }
 
     @Override
-    public void showEmptyList() {
+    public void showEmptyList(int tag) {
         PostSingleGridFragment fragment = getFragment();
-        if (fragment != null) fragment.showEmptyList();
+        if (fragment != null) fragment.showEmptyList(tag);
     }
 
     @Override
-    public void showError() {
+    public void showError(int tag) {
         PostSingleGridFragment fragment = getFragment();
-        if (fragment != null) fragment.showError();
+        if (fragment != null) fragment.showError(tag);
     }
 
     @Override
-    public void showLoading() {
+    public void showLoading(int tag) {
         PostSingleGridFragment fragment = getFragment();
-        if (fragment != null) fragment.showLoading();
-    }
-
-    @Override
-    public void showPosts(boolean isEmpty) {
-        PostSingleGridFragment fragment = getFragment();
-        if (fragment != null) fragment.showPosts(isEmpty);
+        if (fragment != null) fragment.showLoading(tag);
     }
 
     // ------------------------------------------

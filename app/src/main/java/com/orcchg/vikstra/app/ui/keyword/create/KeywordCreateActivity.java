@@ -9,6 +9,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
@@ -31,17 +33,25 @@ import butterknife.OnClick;
 
 public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.View, KeywordCreateContract.Presenter>
         implements KeywordCreateContract.View {
-    public static final int REQUEST_CODE = Constant.RequestCode.KEYWORD_CREATE_SCREEN;
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
+    public static final int REQUEST_CODE = Constant.RequestCode.KEYWORD_CREATE_SCREEN;
+    public static final int RV_TAG = Constant.ListTag.KEYWORD_CREATE_SCREEN;
 
     private String DIALOG_TITLE, DIALOG_HINT, SNACKBAR_KEYWORDS_LIMIT;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.container) ViewGroup container;
     @BindView(R.id.flow) KeywordsFlowLayout keywordsFlowLayout;
     @BindView(R.id.et_keyword_input) AutoCompleteTextView inputEditText;
+    @BindView(R.id.loading_view) View loadingView;
+    @BindView(R.id.error_view) View errorView;
     @OnClick(R.id.fab)
     void onFabClick() {
         presenter.onAddPressed();
+    }
+    @OnClick(R.id.btn_retry)
+    void onRetryClick() {
+        presenter.retry();
     }
 
     private KeywordCreateComponent keywordCreateComponent;
@@ -179,9 +189,31 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
         finish();
     }
 
+    // ------------------------------------------
     @Override
-    public void showError() {
-        // TODO: show error
+    public void showContent(int tag, boolean isEmpty) {
+        container.setVisibility(View.VISIBLE);
+        loadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void showEmptyList(int tag) {
+        showContent(tag, true);
+    }
+
+    @Override
+    public void showError(int tag) {
+        container.setVisibility(View.GONE);
+        loadingView.setVisibility(View.GONE);
+        errorView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showLoading(int tag) {
+        container.setVisibility(View.GONE);
+        loadingView.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
     }
 
     /* Resources */

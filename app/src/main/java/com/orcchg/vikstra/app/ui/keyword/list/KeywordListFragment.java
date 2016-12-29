@@ -19,6 +19,6 @@ public class KeywordListFragment extends SimpleCollectionFragment implements Key
     // ------------------------------------------
     @Override
     public void showKeywords(boolean isEmpty) {
-        showContent(isEmpty);
+        showContent(RV_TAG, isEmpty);
     }
 }
