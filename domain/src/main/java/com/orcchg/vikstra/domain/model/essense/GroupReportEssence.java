@@ -14,11 +14,11 @@ public abstract class GroupReportEssence implements Essence {
     public abstract static class Builder {
         public abstract Builder setErrorCode(int errorCode);
         public abstract Builder setGroup(Group group);
-        public abstract Builder setWallPostId(int wallPostId);
+        public abstract Builder setWallPostId(long wallPostId);
         public abstract GroupReportEssence build();
     }
 
     public abstract int errorCode();
     public abstract Group group();
-    public abstract int wallPostId();
+    public abstract long wallPostId();
 }

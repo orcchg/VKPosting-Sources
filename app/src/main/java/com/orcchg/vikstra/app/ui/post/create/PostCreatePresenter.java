@@ -165,19 +165,21 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
             public void onFinish(@Nullable Post post) {
-                if (post == null) {
-                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
-                    throw new ProgramException();
-                }
-                description = post.description();
-                attachMedia.addAll(post.media());  // TODO: NULL media
-                timestamp = post.timestamp();
-                title = post.title();
-                // TODO: other fields is needed
-                // TODO: if updating existing post - fill text field and media attachment view container
-                if (isViewAttached()) {
-                    for (Media media : attachMedia) {
-                        getView().addMediaThumbnail(media.url());
+//                if (post == null) {
+//                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
+//                    throw new ProgramException();
+//                }
+                if (post != null) {
+                    description = post.description();
+                    attachMedia.addAll(post.media());  // TODO: NULL media
+                    timestamp = post.timestamp();
+                    title = post.title();
+                    // TODO: other fields is needed
+                    // TODO: if updating existing post - fill text field and media attachment view container
+                    if (isViewAttached()) {
+                        for (Media media : attachMedia) {
+                            getView().addMediaThumbnail(media.url());
+                        }
                     }
                 }
             }

@@ -110,14 +110,16 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
             @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
-                if (bundle == null) {
-                    Timber.e("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
-                    throw new ProgramException();
+//                if (bundle == null) {
+//                    Timber.e("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
+//                    throw new ProgramException();
+//                }
+                if (bundle != null) {
+                    timestamp = bundle.timestamp();
+                    title = bundle.title();
+                    keywords.addAll(bundle.keywords());
+                    if (isViewAttached()) getView().setInputKeywords(title, keywords);
                 }
-                timestamp = bundle.timestamp();
-                title = bundle.title();
-                keywords.addAll(bundle.keywords());
-                if (isViewAttached()) getView().setInputKeywords(title, keywords);
             }
 
             @Override

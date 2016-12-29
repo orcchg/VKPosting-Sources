@@ -13,5 +13,5 @@ public class GroupReportDBO extends RealmObject {
     public int errorCode;
     public GroupDBO group;
     public long timestamp;
-    public int wallPostId;
+    public long wallPostId;
 }

@@ -26,7 +26,7 @@ public abstract class GroupReport implements Comparable<GroupReport> {
         public abstract Builder setErrorCode(int errorCode);
         public abstract Builder setGroup(Group group);
         public abstract Builder setTimestamp(long ts);
-        public abstract Builder setWallPostId(int id);
+        public abstract Builder setWallPostId(long wallPostId);
         public abstract GroupReport build();
     }
 
@@ -34,7 +34,7 @@ public abstract class GroupReport implements Comparable<GroupReport> {
     public abstract int errorCode();
     public abstract Group group();
     public abstract long timestamp();
-    public abstract int wallPostId();
+    public abstract long wallPostId();
 
     @Status
     public int status() {

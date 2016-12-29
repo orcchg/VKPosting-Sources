@@ -258,7 +258,7 @@ public class VkontakteEndpoint extends Endpoint {
                         GroupReportEssence report = GroupReportEssence.builder()
                                 .setErrorCode(e.getErrorCode())
                                 .setGroup(parameters.getGroups().get(index))
-                                .setWallPostId((int) Constant.BAD_ID)
+                                .setWallPostId(Constant.BAD_ID)
                                 .build();
                         refinedReports.add(report);
                         ++index;

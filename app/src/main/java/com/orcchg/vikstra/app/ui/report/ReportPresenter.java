@@ -31,6 +31,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
                     GroupReportToVoMapper groupReportToVoMapper, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+        this.listAdapter = createListAdapter();
         this.getGroupReportBundleByIdUseCase = getGroupReportBundleByIdUseCase;
         this.getGroupReportBundleByIdUseCase.setPostExecuteCallback(createGetGroupReportBundleByIdCallback());
         this.getPostByIdUseCase = getPostByIdUseCase;
