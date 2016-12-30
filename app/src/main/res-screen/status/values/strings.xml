@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="status_button_report">Report</string>
     <string name="status_screen_title">Progress</string>
 
     <string name="status_default_svg_path">

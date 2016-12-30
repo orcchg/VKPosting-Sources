@@ -262,6 +262,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             sendPostingStartedMessage(true);
             vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, currentPost,
                     createMakeWallPostCallback(), getView(), getView());
+            if (isViewAttached()) getView().openStatusScreen();
         } else {
             Timber.d("No post selected, nothing to be done");
             sendPostNotSelected();
@@ -358,8 +359,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 sendPostingStartedMessage(false);
                 if (isViewAttached()) {
                     getView().updateGroupReportBundleId(bundle.id());
-                    getView().openReportScreen(bundle.id(), getPostByIdUseCase.getPostId());
-//                    getView().openStatusScreen();  // TODO: report screen
+                    getView().onReportReady(bundle.id(), getPostByIdUseCase.getPostId());
                 }
             }
 

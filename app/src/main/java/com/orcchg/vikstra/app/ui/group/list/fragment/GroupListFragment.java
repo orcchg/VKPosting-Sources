@@ -3,6 +3,7 @@ package com.orcchg.vikstra.app.ui.group.list.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -18,6 +19,7 @@ import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
 import com.orcchg.vikstra.app.ui.common.screen.CollectionFragment;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
+import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.OnClick;
@@ -98,18 +100,21 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void onReportReady(long groupReportBundleId, long postId) {
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
+        if (dialog != null) dialog.onReportReady(groupReportBundleId, postId);
+    }
+
+    @Override
     public void openGroupDetailScreen(long groupId) {
         navigationComponent.navigator().openGroupDetailScreen(getActivity(), groupId);
     }
 
     @Override
-    public void openReportScreen(long groupReportBundleId, long postId) {
-        navigationComponent.navigator().openReportScreen(getActivity(), groupReportBundleId, postId);
-    }
-
-    @Override
     public void openStatusScreen() {
-        navigationComponent.navigator().openStatusScreen(getActivity());
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        navigationComponent.navigator().openStatusDialog(fm, StatusDialogFragment.DIALOG_TAG);
     }
 
     // ------------------------------------------
@@ -134,6 +139,10 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     @Override
     public void onPostingProgress(int progress, int total) {
         postingNotification.onPostingProgress(progress, total);
+
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
+        if (dialog != null) dialog.updatePostingProgress(progress, total);
     }
 
     @Override
@@ -144,6 +153,10 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     @Override
     public void onPostingComplete() {
         postingNotification.onPostingComplete();
+
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
+        if (dialog != null) dialog.onPostingComplete();
     }
 
     // ------------------------------------------

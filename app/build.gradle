@@ -118,6 +118,7 @@ dependencies {
     compile presentationDependencies.butterKnife
     compile presentationDependencies.cardView
     compile presentationDependencies.circleImageView
+    compile presentationDependencies.circleLoadingView
     compile presentationDependencies.dagger
     compile presentationDependencies.eventbus
     compile presentationDependencies.expandRecyclerView

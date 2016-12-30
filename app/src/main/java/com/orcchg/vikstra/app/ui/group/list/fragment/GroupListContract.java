@@ -8,8 +8,8 @@ import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 
 interface GroupListContract {
     interface View extends LceView, MvpListView, IPostingNotificationDelegate, IPhotoUploadNotificationDelegate {
+        void onReportReady(long groupReportBundleId, long postId);
         void openGroupDetailScreen(long groupId);
-        void openReportScreen(long groupReportBundleId, long postId);
         void openStatusScreen();
 
         void showGroups(boolean isEmpty);

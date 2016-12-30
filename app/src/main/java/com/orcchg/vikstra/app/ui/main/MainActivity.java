@@ -83,6 +83,8 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         ButterKnife.bind(this);
         initView();
         initNotifications();
+
+        navigationComponent.navigator().openStatusDialog(getSupportFragmentManager(), "tag");
     }
 
     @Override

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 
 import com.orcchg.vikstra.R;
@@ -20,6 +21,7 @@ import com.orcchg.vikstra.app.ui.post.list.PostListActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
 import com.orcchg.vikstra.app.ui.report.ReportActivity;
 import com.orcchg.vikstra.app.ui.status.StatusActivity;
+import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.app.util.ContentUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -134,6 +136,11 @@ public class Navigator {
 
     /* Status */
     // ------------------------------------------
+    public void openStatusDialog(FragmentManager fm, String tag) {
+        StatusDialogFragment dialog = StatusDialogFragment.newInstance();
+        dialog.show(fm, tag);
+    }
+
     public void openStatusScreen(@NonNull Context context) {
         Intent intent = StatusActivity.getCallingIntent(context);
         context.startActivity(intent);

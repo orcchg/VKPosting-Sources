@@ -97,14 +97,8 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                             } else {
                                 Timber.w("Unhandled exception: %s", e.toString());
                                 result.error = e;
+                                if (progressCallback != null) progressCallback.onDone(index + 1, total);
                                 break;
-                            }
-                        }
-                        if (sleepInterval > 0) {
-                            try {
-                                Thread.sleep(sleepInterval);
-                            } catch (InterruptedException e) {
-                                Thread.interrupted();  // continue executing at interruption
                             }
                         }
                         elapsed = System.currentTimeMillis();
@@ -117,6 +111,15 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                     }
                 }
             }).start();
+
+            // optional pause before starting next use-case execution
+            if (sleepInterval > 0) {
+                try {
+                    Thread.sleep(sleepInterval);
+                } catch (InterruptedException e) {
+                    Thread.interrupted();  // continue executing at interruption
+                }
+            }
         }
 
         synchronized (lock) {

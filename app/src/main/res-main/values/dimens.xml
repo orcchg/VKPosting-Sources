@@ -11,6 +11,7 @@
     <dimen name="standard_icon_micro_size">8dp</dimen>
     <dimen name="standard_icon_small_size">18dp</dimen>
     <dimen name="standard_panel_height">36dp</dimen>
+    <dimen name="standard_side_padding_dialog">20dp</dimen>
     <dimen name="standard_side_padding">16dp</dimen>
     <dimen name="standard_side_padding_mini">4dp</dimen>
     <dimen name="standard_side_padding_plus_small">24dp</dimen>

@@ -3,6 +3,6 @@
     <integer name="status_original_svg_width">200</integer>
     <integer name="status_original_svg_height">100</integer>
     <integer name="status_fill_duration">5</integer>
-    <integer name="status_fill_percentage">100</integer>
+    <integer name="status_fill_percentage">0</integer>
     <integer name="status_stroke_drawing_duration">0</integer>
 </resources>
