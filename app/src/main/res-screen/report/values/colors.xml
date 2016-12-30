@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="report_progressbar_background_color">#ff9d9e9d</color>
+    <color name="report_progressbar_background_center_color">#ff5a5d5a</color>
+    <color name="report_progressbar_background_end_color">#ff747674</color>
+    <color name="report_progressbar_primary_color">@color/colorAccent</color>
+    <color name="report_progressbar_primary_end_color">#008000</color>
+    <color name="report_progressbar_secondary_color">#80ffd300</color>
+    <color name="report_progressbar_secondary_center_color">#80ffb600</color>
+    <color name="report_progressbar_secondary_end_color">#a0ffcb00</color>
     <color name="report_screen_status_failure">#B71C1C</color>
     <color name="report_screen_status_success">#388E3C</color>
 </resources>

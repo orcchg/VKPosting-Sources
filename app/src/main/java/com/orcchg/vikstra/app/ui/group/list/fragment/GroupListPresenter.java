@@ -167,6 +167,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void sendAddKeywordError() {
+        mediatorComponent.mediator().sendAddKeywordError();
+    }
+
+    @Override
     public void sendEmptyPost() {
         mediatorComponent.mediator().sendEmptyPost();
     }
@@ -177,6 +182,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void sendKeywordsLimitReached(int limit) {
+        mediatorComponent.mediator().sendKeywordsLimitReached(limit);
+    }
+
+    @Override
     public void sendPost(@Nullable PostSingleGridItemVO viewObject) {
         mediatorComponent.mediator().sendPost(viewObject);
     }
@@ -184,6 +194,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void sendPostNotSelected() {
         mediatorComponent.mediator().sendPostNotSelected();
+    }
+
+    @Override
+    public void sendPostingStartedMessage(boolean isStarted) {
+        mediatorComponent.mediator().sendPostingStartedMessage(isStarted);
     }
 
     @Override
@@ -230,8 +245,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             newlyAddedKeyword = keyword;
             addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
             addKeywordToBundleUseCase.execute();
-        } else if (isViewAttached()) {
-            getView().onKeywordsLimitReached(Constant.KEYWORDS_LIMIT);
+        } else {
+            sendKeywordsLimitReached(Constant.KEYWORDS_LIMIT);
         }
     }
 
@@ -244,7 +259,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     if (childItem.isSelected()) selectedGroups.add(childItem.getGroup());
                 }
             }
-            if (isViewAttached()) getView().showProgressDialog(true);
+            sendPostingStartedMessage(true);
             vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, currentPost,
                     createMakeWallPostCallback(), getView(), getView());
         } else {
@@ -320,14 +335,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     keywords.add(newlyAddedKeyword);
                     newlyAddedKeyword = null;  // drop temporary keyword
                     vkontakteEndpoint.getGroupsByKeywordsSplit(keywords, createGetGroupsByKeywordsListCallback());
-                } else if (isViewAttached()) {
-                    getView().onAddKeywordError();
+                } else {
+                    sendAddKeywordError();
                 }
             }
 
             @Override
             public void onError(Throwable e) {
-                if (isViewAttached()) getView().onAddKeywordError();
+                sendAddKeywordError();
             }
         };
     }
@@ -340,17 +355,18 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     Timber.e("Failed to create new GroupReportBundle and put it to Repository");
                     throw new ProgramException();
                 }
+                sendPostingStartedMessage(false);
                 if (isViewAttached()) {
-                    getView().showProgressDialog(false);
                     getView().updateGroupReportBundleId(bundle.id());
                     getView().openReportScreen(bundle.id(), getPostByIdUseCase.getPostId());
+//                    getView().openStatusScreen();  // TODO: report screen
                 }
             }
 
             @Override
             public void onError(Throwable e) {
                 // TODO: failed to put reports - retry posting?
-                if (isViewAttached()) getView().showProgressDialog(false);
+                sendPostingStartedMessage(false);
             }
         };
     }
@@ -393,8 +409,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             @Override
             public void onError(Throwable e) {
+                sendPostingStartedMessage(false);
                 if (isViewAttached()) {
-                    getView().showProgressDialog(false);
                     getView().showError(GroupListFragment.RV_TAG);
                 }
             }

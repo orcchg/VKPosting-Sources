@@ -41,12 +41,12 @@ public class ReportViewHolder extends NormalViewHolder<ReportListItemVO> {
         @GroupReport.Status int status = viewObject.reportStatus();
         switch (status) {
             case GroupReport.STATUS_SUCCESS:
-                statusView.setImageResource(R.drawable.ic_clear_white_24dp);
-                statusView.setColorFilter(sFailureColor);
-                break;
-            case GroupReport.STATUS_FAILURE:
                 statusView.setImageResource(R.drawable.ic_check_white_24dp);
                 statusView.setColorFilter(sSuccessColor);
+                break;
+            case GroupReport.STATUS_FAILURE:
+                statusView.setImageResource(R.drawable.ic_clear_white_24dp);
+                statusView.setColorFilter(sFailureColor);
                 break;
         }
     }

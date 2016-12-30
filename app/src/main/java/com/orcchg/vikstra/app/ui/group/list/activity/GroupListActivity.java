@@ -39,7 +39,8 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     public static final int REQUEST_CODE = Constant.RequestCode.GROUP_LIST_SCREEN;
 
     private String ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT,
-            EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, INFO_TITLE;
+            EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, INFO_TITLE,
+            SNACKBAR_KEYWORDS_LIMIT;
 
     @BindView(R.id.coordinator_root) ViewGroup coordinatorRoot;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -144,10 +145,21 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void onAddKeywordError() {
+        UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_error_add_keyword);
+    }
+
+    @Override
+    public void onKeywordsLimitReached(int limit) {
+        UiUtility.showSnackbar(coordinatorRoot, String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
+    }
+
+    @Override
     public void onPostNotSelected() {
         UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_post_is_empty_message);
     }
 
+    // ------------------------------------------
     @Override
     public void openAddKeywordDialog() {
         DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
@@ -163,6 +175,7 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
                 });
     }
 
+    // ------------------------------------------
     @Override
     public void setCloseViewResult(int result) {
         setResult(result);
@@ -173,7 +186,6 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
         if (!TextUtils.isEmpty(title)) toolbar.setTitle(title);
     }
 
-    /* Mediator */
     // ------------------------------------------
     @Override
     public void showEmptyPost() {
@@ -188,9 +200,17 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     }
 
     @Override
+    public void showPostingStartedMessage(boolean isStarted) {
+        if (isStarted) {
+            UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_posting_started);
+        } else {
+            UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_posting_finished);
+        }
+    }
+
+    @Override
     public void updateSelectedGroupsCounter(int count, int total) {
-        String text = new StringBuilder(String.format(INFO_TITLE, count)).append('/').append(total).toString();
-        selectedGroupsCountView.setText(text);
+        selectedGroupsCountView.setText(String.format(INFO_TITLE, count, total));
     }
 
     /* Resources */
@@ -202,5 +222,6 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
         EDIT_TITLE_DIALOG_TITLE = resources.getString(R.string.dialog_input_edit_title);
         EDIT_TITLE_DIALOG_HINT = resources.getString(R.string.dialog_input_edit_title_hint);
         INFO_TITLE = resources.getString(R.string.group_list_selected_groups_total_count);
+        SNACKBAR_KEYWORDS_LIMIT = resources.getString(R.string.group_list_snackbar_keywords_limit_message);
     }
 }

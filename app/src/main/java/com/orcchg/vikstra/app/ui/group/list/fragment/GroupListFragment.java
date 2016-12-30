@@ -1,8 +1,5 @@
 package com.orcchg.vikstra.app.ui.group.list.fragment;
 
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,7 +18,6 @@ import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
 import com.orcchg.vikstra.app.ui.common.screen.CollectionFragment;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
-import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.OnClick;
@@ -32,9 +28,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     public static final int RV_TAG = Constant.ListTag.GROUP_LIST_SCREEN;
 
-    private String SNACKBAR_KEYWORDS_LIMIT;
-
-    private AlertDialog progressDialog;
     private ItemTouchHelper itemTouchHelper;
     @OnClick(R.id.btn_retry)
     void onRetryClick() {
@@ -86,7 +79,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     // --------------------------------------------------------------------------------------------
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        initResources();
         initItemTouchHelper();
         Bundle args = getArguments();
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
@@ -100,26 +92,11 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         swipeRefreshLayout.setOnRefreshListener(() -> presenter.retry());  // override
         itemTouchHelper.attachToRecyclerView(recyclerView);
-
-        progressDialog = new ProgressDialog.Builder(getActivity())
-                .setTitle(R.string.dialog_progress_posting)
-                .create();
-
         return rootView;
     }
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
-    @Override
-    public void onAddKeywordError() {
-        UiUtility.showSnackbar(getActivity(), R.string.group_list_error_add_keyword);
-    }
-
-    @Override
-    public void onKeywordsLimitReached(int limit) {
-        UiUtility.showSnackbar(getActivity(), String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
-    }
-
     @Override
     public void openGroupDetailScreen(long groupId) {
         navigationComponent.navigator().openGroupDetailScreen(getActivity(), groupId);
@@ -130,6 +107,11 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         navigationComponent.navigator().openReportScreen(getActivity(), groupReportBundleId, postId);
     }
 
+    @Override
+    public void openStatusScreen() {
+        navigationComponent.navigator().openStatusScreen(getActivity());
+    }
+
     // ------------------------------------------
     @Override
     public void showGroups(boolean isEmpty) {
@@ -137,12 +119,8 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     }
 
     @Override
-    public void showProgressDialog(boolean isShow) {
-        if (isShow) {
-            progressDialog.show();
-        } else {
-            progressDialog.dismiss();
-        }
+    public void updateGroupReportBundleId(long groupReportBundleId) {
+        postingNotification.updateGroupReportBundleId(getActivity(), groupReportBundleId);
     }
 
     /* Notification delegate */
@@ -150,11 +128,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     private void initNotifications() {
         postingNotification = new PostingNotification(getActivity(), Constant.BAD_ID, postId);
         photoUploadNotification = new PhotoUploadNotification(getActivity());
-    }
-
-    @Override
-    public void updateGroupReportBundleId(long groupReportBundleId) {
-        postingNotification.updateGroupReportBundleId(getActivity(), groupReportBundleId);
     }
 
     // ------------------------------------------
@@ -191,11 +164,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
 
     /* Resources */
     // --------------------------------------------------------------------------------------------
-    private void initResources() {
-        Resources resources = getResources();
-        SNACKBAR_KEYWORDS_LIMIT = resources.getString(R.string.group_list_snackbar_keywords_limit_message);
-    }
-
     private void initItemTouchHelper() {
         itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override

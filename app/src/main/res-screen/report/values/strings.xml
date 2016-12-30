@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="report_screen_title">Report</string>
+    <string name="report_posted_counters">Posted to %1$s of %2$s groups</string>
 </resources>

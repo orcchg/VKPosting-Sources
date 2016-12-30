@@ -8,17 +8,20 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
 
 interface GroupListContract {
-    interface View extends MvpView, ViewMediator {
+    interface View extends MvpView {
+        void onAddKeywordError();
+        void onKeywordsLimitReached(int limit);
         void onPostNotSelected();
+
         void openAddKeywordDialog();
         void openEditTitleDialog(@Nullable String initTitle);
+
         void setInputGroupsTitle(String title);
         void setCloseViewResult(int result);
-    }
 
-    interface ViewMediator {
         void showEmptyPost();
         void showPost(@Nullable PostSingleGridItemVO viewObject);
+        void showPostingStartedMessage(boolean isStarted);
         void updateSelectedGroupsCounter(int newCount, int total);
     }
 

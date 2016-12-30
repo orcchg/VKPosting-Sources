@@ -50,17 +50,21 @@
                 </FrameLayout>
             </FrameLayout>
 
-            <View
+            <ProgressBar
                 android:id="@+id/report_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/report_progress_height"
                 android:layout_below="@id/tv_info_title"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
                 android:layout_toLeftOf="@id/post_thumbnail_container"
                 android:layout_toStartOf="@id/post_thumbnail_container"
                 android:layout_marginTop="@dimen/standard_side_padding"
                 android:layout_marginRight="@dimen/standard_side_padding"
                 android:layout_marginEnd="@dimen/standard_side_padding"
-                android:background="?attr/colorAccent"/>
+                android:indeterminate="false"
+                android:progressDrawable="@drawable/progress_bar_drawable"
+                style="?android:attr/progressBarStyleHorizontal"/>
         </RelativeLayout>
 
         <View

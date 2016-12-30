@@ -25,6 +25,7 @@ ext {
     daggerVersion = '2.6.1'
     eventbusVersion = '2.4.0'
     expandRecyclerViewVersion = '3.0.0-RC1'
+    fillableProgressVersion = '1.03@aar'
     glideVersion = '3.7.0'
     gsonVersion = '2.4'
     javaxAnnotationVersion = '1.0'
@@ -67,6 +68,7 @@ ext {
             daggerCompiler:       "com.google.dagger:dagger-compiler:${daggerVersion}",
             eventbus:             "de.greenrobot:eventbus:${eventbusVersion}",
             expandRecyclerView:   "com.bignerdranch.android:expandablerecyclerview:${expandRecyclerViewVersion}",
+            fillableProgress:     "com.github.jorgecastilloprz:fillableloaders:${fillableProgressVersion}",
             glide:                "com.github.bumptech.glide:glide:${glideVersion}",
             javaxAnnotation:      "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
             javaxInject:          "javax.inject:javax.inject:${javaxInjectVersion}",

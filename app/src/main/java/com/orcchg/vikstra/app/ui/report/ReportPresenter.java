@@ -11,6 +11,7 @@ import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
+import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Post;
 
@@ -63,6 +64,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     @Override
     public void retry() {
+        listAdapter.clear();
+        dropListStat();
         freshStart();
     }
 
@@ -109,9 +112,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 } else if (bundle.groupReports().isEmpty()) {
                     if (isViewAttached()) getView().showEmptyList(ReportFragment.RV_TAG);
                 } else {
+                    int[] counters = bundle.statusCount();
                     List<ReportListItemVO> vos = groupReportToVoMapper.map(bundle.groupReports());
                     listAdapter.populate(vos, false);
-                    if (isViewAttached()) getView().showGroupReports(vos == null || vos.isEmpty());
+                    if (isViewAttached()) {
+                        getView().showGroupReports(vos == null || vos.isEmpty());
+                        getView().updatePostedCounters(counters[GroupReport.STATUS_SUCCESS], bundle.groupReports().size());
+                    }
                 }
             }
 

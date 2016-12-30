@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.report;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
@@ -31,8 +33,11 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
 
+    private String INFO_TITLE;
+
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tv_info_title) TextView reportTextView;
+    @BindView(R.id.report_indicator) ProgressBar reportIndicatorView;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
 
@@ -70,6 +75,7 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
         ButterKnife.bind(this);
+        initResources();
         initView();
         initToolbar();
     }
@@ -84,6 +90,9 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
+        postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostViewScreen(this, postId));
+        updatePostedCounters(0, 0);
+
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
             ReportFragment fragment = ReportFragment.newInstance();
@@ -129,6 +138,13 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     @Override
     public void showPost(PostSingleGridItemVO viewObject) {
         postThumbnail.setPost(viewObject);
+    }
+
+    @Override
+    public void updatePostedCounters(int posted, int total) {
+        reportTextView.setText(String.format(INFO_TITLE, posted, total));
+        reportIndicatorView.setMax(total);
+        reportIndicatorView.setProgress(posted);
     }
 
     // ------------------------------------------
@@ -177,5 +193,12 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     private ReportFragment getFragment() {
         FragmentManager fm = getSupportFragmentManager();
         return (ReportFragment) fm.findFragmentByTag(FRAGMENT_TAG);
+    }
+
+    /* Resources */
+    // --------------------------------------------------------------------------------------------
+    private void initResources() {
+        Resources resources = getResources();
+        INFO_TITLE = resources.getString(R.string.report_posted_counters);
     }
 }

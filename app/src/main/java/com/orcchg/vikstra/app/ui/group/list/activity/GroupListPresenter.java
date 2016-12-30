@@ -66,6 +66,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     /* Mediator */
     // ------------------------------------------
     @Override
+    public void receiveAddKeywordError() {
+        if (isViewAttached()) getView().onAddKeywordError();
+    }
+
+    @Override
     public void receiveEmptyPost() {
         if (isViewAttached()) getView().showEmptyPost();
     }
@@ -76,6 +81,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receiveKeywordsLimitReached(int limit) {
+        if (isViewAttached()) getView().onKeywordsLimitReached(limit);
+    }
+
+    @Override
     public void receivePost(@Nullable PostSingleGridItemVO viewObject) {
         if (isViewAttached()) getView().showPost(viewObject);
     }
@@ -83,6 +93,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void receivePostNotSelected() {
         if (isViewAttached()) getView().onPostNotSelected();
+    }
+
+    @Override
+    public void receivePostingStartedMessage(boolean isStarted) {
+        if (isViewAttached()) getView().showPostingStartedMessage(isStarted);
     }
 
     @Override

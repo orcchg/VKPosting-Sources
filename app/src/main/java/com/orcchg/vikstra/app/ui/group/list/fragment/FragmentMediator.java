@@ -14,10 +14,13 @@ public interface FragmentMediator {
     }
 
     interface Sender extends MediatorSender {
+        void sendAddKeywordError();
         void sendEmptyPost();
         void sendKeywordBundleChanged();
+        void sendKeywordsLimitReached(int limit);
         void sendPost(@Nullable PostSingleGridItemVO viewObject);
         void sendPostNotSelected();
+        void sendPostingStartedMessage(boolean isStarted);
         void sendUpdatedSelectedGroupsCounter(int newCount, int total);
     }
 }

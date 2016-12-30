@@ -10,6 +10,7 @@ public interface ReportContract {
     interface View extends SubView {
         void showEmptyPost();
         void showPost(PostSingleGridItemVO viewObject);
+        void updatePostedCounters(int posted, int total);
     }
 
     interface SubView extends LceView, MvpListView {

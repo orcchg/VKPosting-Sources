@@ -89,7 +89,8 @@ android {
                            'src/main/res-screen/post/list',
                            'src/main/res-screen/post/single',
                            'src/main/res-screen/post/view',
-                           'src/main/res-screen/report']
+                           'src/main/res-screen/report',
+                           'src/main/res-screen/status']
             file('src/main/res-screen')
                     .listFiles()
                     .each { res.srcDirs += it.path }
@@ -118,8 +119,9 @@ dependencies {
     compile presentationDependencies.cardView
     compile presentationDependencies.circleImageView
     compile presentationDependencies.dagger
-    compile presentationDependencies.expandRecyclerView
     compile presentationDependencies.eventbus
+    compile presentationDependencies.expandRecyclerView
+    compile presentationDependencies.fillableProgress
     compile presentationDependencies.glide
     compile presentationDependencies.javaxAnnotation
     compile presentationDependencies.javaxInject

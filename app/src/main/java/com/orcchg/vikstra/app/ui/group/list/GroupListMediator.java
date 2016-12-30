@@ -31,6 +31,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
 
     // ------------------------------------------
     @Override
+    public void sendAddKeywordError() {
+        clientFirst.receiveAddKeywordError();
+    }
+
+    @Override
     public void sendEmptyPost() {
         clientFirst.receiveEmptyPost();
     }
@@ -41,6 +46,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendKeywordsLimitReached(int limit) {
+        clientFirst.receiveKeywordsLimitReached(limit);
+    }
+
+    @Override
     public void sendPost(@Nullable PostSingleGridItemVO viewObject) {
         clientFirst.receivePost(viewObject);
     }
@@ -48,6 +58,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     @Override
     public void sendPostNotSelected() {
         clientFirst.receivePostNotSelected();
+    }
+
+    @Override
+    public void sendPostingStartedMessage(boolean isStarted) {
+        clientFirst.receivePostingStartedMessage(isStarted);
     }
 
     @Override

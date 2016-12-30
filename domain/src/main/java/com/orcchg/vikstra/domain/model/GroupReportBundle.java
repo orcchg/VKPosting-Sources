@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +26,16 @@ public abstract class GroupReportBundle implements Comparable<GroupReportBundle>
     public abstract long id();
     public abstract List<GroupReport> groupReports();
     public abstract long timestamp();
+
+    public int[] statusCount() {
+        int[] counters = new int[GroupReport.STATUSES_COUNT];
+        Arrays.fill(counters, 0);
+        List<GroupReport> reports = groupReports();
+        for (GroupReport report : reports) {
+            counters[report.status()] += 1;
+        }
+        return counters;
+    }
 
     @Override
     public int compareTo(@NonNull GroupReportBundle o) {
