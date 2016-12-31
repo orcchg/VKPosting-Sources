@@ -13,8 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- Main -->
-        <activity android:name=".app.ui.main.MainActivity"
+        <!-- Start -->
+        <activity android:name=".app.ui.main.StartActivity"
                   android:label="@string/main_screen_title"
                   android:theme="@style/AppTheme">
             <intent-filter>
@@ -23,6 +23,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Groups -->
+        <activity android:name=".app.ui.group.detail.GroupDetailActivity"
+                  android:label="@string/group_detail_screen_title"
+                  android:theme="@style/AppTheme"/>
+
+        <activity android:name=".app.ui.group.list.activity.GroupListActivity"
+                  android:label="@string/group_list_screen_title"
+                  android:theme="@style/AppTheme"/>
 
         <!-- Keywords -->
         <activity android:name=".app.ui.keyword.list.KeywordListActivity"
@@ -33,13 +42,9 @@
                   android:label="@string/keyword_create_screen_title"
                   android:windowSoftInputMode="adjustResize"/>
 
-        <!-- Groups -->
-        <activity android:name=".app.ui.group.detail.GroupDetailActivity"
-                  android:label="@string/group_detail_screen_title"
-                  android:theme="@style/AppTheme"/>
-
-        <activity android:name=".app.ui.group.list.activity.GroupListActivity"
-                  android:label="@string/group_list_screen_title"
+        <!-- Main -->
+        <activity android:name=".app.ui.main.MainActivity"
+                  android:label="@string/main_screen_title"
                   android:theme="@style/AppTheme"/>
 
         <!-- Posts -->

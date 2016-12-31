@@ -72,6 +72,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
             Timber.v("Request [%s / %s]", i + 1, total);
             final int index = i;
             final long start = System.currentTimeMillis();
+            // TODO: use ThreadPoolExecutor to enqueue use-cases
             new Thread(new Runnable() {
                 @Override
                 public void run() {

@@ -20,18 +20,28 @@ public class DialogProvider {
 
     /* Text */
     // --------------------------------------------------------------------------------------------
-    public static void showTextDialog(Activity activity, @StringRes int title, @StringRes int description) {
-        String xtitle = activity.getResources().getString(title);
-        String xdescription = activity.getResources().getString(description);
-        showTextDialog(activity, xtitle, xdescription);
+    public static AlertDialog showTextDialog(Activity activity, @StringRes int title, @StringRes int description) {
+        return showTextDialog(activity, title, description, null);
     }
 
-    public static void showTextDialog(Activity activity, String title, String description) {
-        new AlertDialog.Builder(activity)
+    public static AlertDialog showTextDialog(Activity activity, @StringRes int title, @StringRes int description,
+                                             DialogInterface.OnClickListener listener) {
+        String xtitle = activity.getResources().getString(title);
+        String xdescription = activity.getResources().getString(description);
+        return showTextDialog(activity, xtitle, xdescription, listener);
+    }
+
+    public static AlertDialog showTextDialog(Activity activity, String title, String description) {
+        return showTextDialog(activity, title, description, null);
+    }
+
+    public static AlertDialog showTextDialog(Activity activity, String title, String description,
+                                             DialogInterface.OnClickListener listener) {
+        return new AlertDialog.Builder(activity)
                 .setTitle(title)
                 .setMessage(description)
-                .setPositiveButton(R.string.button_close, null)
-                .show();
+                .setPositiveButton(R.string.button_close, listener)
+                .create();
     }
 
     /* Edit text */
@@ -40,8 +50,8 @@ public class DialogProvider {
         void onClick(DialogInterface dialog, int which, String text);
     }
 
-    public static void showEditTextDialog(Activity activity, String title, String hint,
-                                          @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
+    public static AlertDialog showEditTextDialog(Activity activity, String title, String hint,
+                                                 @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
         View view = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null, false);
         EditText input = (EditText) view.findViewById(R.id.et_input);
         init = TextUtils.isEmpty(init) ? "" : init;
@@ -57,13 +67,13 @@ public class DialogProvider {
                 .create();
 
         alertDialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        alertDialog.show();
+        return alertDialog;
     }
 
     /* Photo */
     // --------------------------------------------------------------------------------------------
-    public static void showUploadPhotoDialog(BaseActivity activity) {
-        AlertDialog alertDialog = new AlertDialog.Builder(activity)
+    public static AlertDialog showUploadPhotoDialog(BaseActivity activity) {
+        return new AlertDialog.Builder(activity)
                 .setTitle(R.string.dialog_upload_photo_title)
                 .setSingleChoiceItems(R.array.dialog_upload_photo_variants, -1, (dialog, which) -> {
                     switch (which) {
@@ -83,6 +93,6 @@ public class DialogProvider {
                             break;
                     }
                     dialog.dismiss();
-                }).show();
+                }).create();
     }
 }

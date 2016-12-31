@@ -16,6 +16,7 @@ import com.orcchg.vikstra.app.ui.group.detail.GroupDetailActivity;
 import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
+import com.orcchg.vikstra.app.ui.main.MainActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.list.PostListActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
@@ -39,6 +40,18 @@ public class Navigator {
     public Navigator() {
     }
 
+    /* Groups */
+    // ------------------------------------------
+    public void openGroupDetailScreen(@NonNull Context context, long groupId) {
+        Intent intent = GroupDetailActivity.getCallingIntent(context, groupId);
+        context.startActivity(intent);
+    }
+
+    public void openGroupListScreen(@NonNull Activity context, long keywordBunldeId, long postId) {
+        Intent intent = GroupListActivity.getCallingIntent(context, keywordBunldeId, postId);
+        context.startActivityForResult(intent, GroupListActivity.REQUEST_CODE);
+    }
+
     /* Keywords */
     // ------------------------------------------
     public void openKeywordListScreen(@NonNull Activity context) {
@@ -55,16 +68,11 @@ public class Navigator {
         context.startActivityForResult(intent, KeywordCreateActivity.REQUEST_CODE);
     }
 
-    /* Groups */
+    /* Main */
     // ------------------------------------------
-    public void openGroupDetailScreen(@NonNull Context context, long groupId) {
-        Intent intent = GroupDetailActivity.getCallingIntent(context, groupId);
+    public void openMainScreen(@NonNull Context context) {
+        Intent intent = MainActivity.getCallingIntent(context);
         context.startActivity(intent);
-    }
-
-    public void openGroupListScreen(@NonNull Activity context, long keywordBunldeId, long postId) {
-        Intent intent = GroupListActivity.getCallingIntent(context, keywordBunldeId, postId);
-        context.startActivityForResult(intent, GroupListActivity.REQUEST_CODE);
     }
 
     /* Media */

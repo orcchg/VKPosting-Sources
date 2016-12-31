@@ -175,7 +175,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
 
     @Override
     public void showMediaLoadDialog() {
-        DialogProvider.showUploadPhotoDialog(this);
+        DialogProvider.showUploadPhotoDialog(this).show();
     }
 
     // ------------------------------------------

@@ -163,7 +163,8 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     @Override
     public void openAddKeywordDialog() {
         DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
-                (dialog, which, text) -> { if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text)); });
+                (dialog, which, text) -> { if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text)); })
+        .show();
     }
 
     @Override
@@ -172,7 +173,7 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
                 (dialog, which, text) -> {
                     toolbar.setTitle(text);
                     presenter.onTitleChanged(text);
-                });
+                }).show();
     }
 
     // ------------------------------------------

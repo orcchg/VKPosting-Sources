@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,11 +24,6 @@ import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridFragment;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridModule;
-import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKCallback;
-import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKError;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +54,10 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     private MainComponent mainComponent;
 
+    public static Intent getCallingIntent(@NonNull Context context) {
+        return new Intent(context, MainActivity.class);
+    }
+
     @NonNull @Override
     protected MainContract.Presenter createPresenter() {
         return mainComponent.presenter();
@@ -78,30 +78,12 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        VKSdk.login(this, VkontakteEndpoint.Scope.PHOTOS, VkontakteEndpoint.Scope.WALL);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
         initNotifications();
-
-        navigationComponent.navigator().openStatusDialog(getSupportFragmentManager(), "tag");
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!VKSdk.onActivityResult(requestCode, resultCode, data, new VKCallback<VKAccessToken>() {
-            @Override
-            public void onResult(VKAccessToken accessToken) {
-                // TODO: User passed Authorization
-            }
-
-            @Override
-            public void onError(VKError error) {
-                // TODO: User didn't pass Authorization
-            }
-        })) {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+// TODO: page-proofs for loader dialog
+//        navigationComponent.navigator().openStatusDialog(getSupportFragmentManager(), "tag");
     }
 
     /* View */
