@@ -30,10 +30,20 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
             this.message = builder.message;
         }
 
+        public VKAttachments getAttachments() {
+            return attachments;
+        }
+        public Group getGroup() {
+            return group;
+        }
+        public String getMessage() {
+            return message;
+        }
+
         public static class Builder {
+            VKAttachments attachments;
             Group group;
             String message;
-            VKAttachments attachments;
 
             public Builder setAttachments(VKAttachments attachments) {
                 this.attachments = attachments;
@@ -96,7 +106,7 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
         VKWallPostResult data = (VKWallPostResult) vkResponse.parsedModel;
         return GroupReportEssence.builder()
                 .setErrorCode(Constant.NO_ERROR)
-                .setGroup(parameters.group)
+                .setGroup(parameters.getGroup())
                 .setWallPostId(data.post_id)
                 .build();
     }

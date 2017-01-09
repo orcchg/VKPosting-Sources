@@ -21,13 +21,13 @@ import timber.log.Timber;
 public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<Ordered<GroupReportEssence>>> {
 
     public static class Parameters {
-        List<Group> groups;
         VKAttachments attachments;
+        List<Group> groups;
         String message;
 
         Parameters(Builder builder) {
-            this.groups = builder.groups;
             this.attachments = builder.attachments;
+            this.groups = builder.groups;
             this.message = builder.message;
         }
 
@@ -35,28 +35,28 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
             this.attachments = attachments;
         }
 
-        public List<Group> getGroups() {
-            return groups;
-        }
         public VKAttachments getAttachments() {
             return attachments;
+        }
+        public List<Group> getGroups() {
+            return groups;
         }
         public String getMessage() {
             return message;
         }
 
         public static class Builder {
-            List<Group> groups;
             VKAttachments attachments;
+            List<Group> groups;
             String message;
-
-            public Builder setGroups(List<Group> groups) {
-                this.groups = groups;
-                return this;
-            }
 
             public Builder setAttachments(VKAttachments attachments) {
                 this.attachments = attachments;
+                return this;
+            }
+
+            public Builder setGroups(List<Group> groups) {
+                this.groups = groups;
                 return this;
             }
 

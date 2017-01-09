@@ -26,6 +26,10 @@ public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<Ordered<VKPhot
         public Parameters(List<Bitmap> bitmaps) {
             this.bitmaps = bitmaps;
         }
+
+        public List<Bitmap> getBitmaps() {
+            return bitmaps;
+        }
     }
 
     Parameters parameters;
@@ -44,7 +48,7 @@ public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<Ordered<VKPhot
     protected List<? extends UseCase<VKPhotoArray>> createUseCases() {
         if (parameters == null) throw new NoParametersException();
 
-        total = parameters.bitmaps.size();  // update total count
+        total = parameters.getBitmaps().size();  // update total count
         Timber.d("Uploading images, total count: %s", total);
         List<UploadPhoto> useCases = new ArrayList<>();
         for (Bitmap bitmap : parameters.bitmaps) {
