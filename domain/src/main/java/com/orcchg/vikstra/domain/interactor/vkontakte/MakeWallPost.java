@@ -15,6 +15,8 @@ import com.vk.sdk.api.model.VKWallPostResult;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class MakeWallPost extends VkUseCase<GroupReportEssence> {
 
     public static class Parameters {
@@ -52,6 +54,14 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
                 return new Parameters(this);
             }
         }
+
+        @Override
+        public String toString() {
+            return new StringBuilder("MakeWallPost.Parameters {group=").append(group.toString())
+                    .append(", message=").append(message)
+                    .append(", attach=").append(attachments.toAttachmentsString())
+                    .append("}").toString();
+        }
     }
 
     Parameters parameters;
@@ -71,6 +81,7 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
     @Override
     protected VKRequest prepareVkRequest() {
         if (parameters == null) throw new NoParametersException();
+        Timber.d(parameters.toString());
         VKParameters params = new VKParameters();
         params.put(VKApiConst.OWNER_ID, Long.toString(parameters.group.id()));  // destination user / community id
         params.put(VKApiConst.MESSAGE, parameters.message);

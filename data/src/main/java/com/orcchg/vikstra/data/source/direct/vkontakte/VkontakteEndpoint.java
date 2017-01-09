@@ -341,7 +341,7 @@ public class VkontakteEndpoint extends Endpoint {
     @NonNull
     Group convert(VKApiCommunityFull vkGroup) {
         return Group.builder()
-                .setId(vkGroup.id)
+                .setId(-vkGroup.id)  // negative id is for Vk Community, positive - for Vk User
                 .setCanPost(vkGroup.can_post)
                 .setMembersCount(vkGroup.members_count)
                 .setName(vkGroup.name)
