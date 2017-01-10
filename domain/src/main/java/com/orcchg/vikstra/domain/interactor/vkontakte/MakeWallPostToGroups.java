@@ -77,7 +77,7 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
     public MakeWallPostToGroups(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(0, threadExecutor, postExecuteScheduler);  // total count will be set later
         setAllowedError(VkUseCaseRetryException.class);
-        sleepInterval = 1000;  // to avoid Captcha error
+        sleepInterval = 333;  // to avoid Captcha error
     }
 
     public void setParameters(Parameters parameters) {

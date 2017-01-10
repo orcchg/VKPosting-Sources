@@ -8,6 +8,7 @@ import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
@@ -25,6 +26,23 @@ public class ValueUtility {
             list.addAll(models);
         }
         return list;
+    }
+
+    public static String time() {
+        return time(System.currentTimeMillis());
+    }
+
+    public static String time(long millis) {
+        long xdays    = TimeUnit.MILLISECONDS.toDays(millis);
+        long xhours   = TimeUnit.MILLISECONDS.toHours(millis);
+        long xminutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        long xseconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+
+        long days = xdays;
+        long hours = xhours - TimeUnit.DAYS.toHours(xdays);
+        long minutes = xminutes - TimeUnit.HOURS.toMinutes(xhours);
+        long seconds = xseconds - TimeUnit.MINUTES.toSeconds(xminutes);
+        return String.format("%02d %02d:%02d:%02d", days, hours, minutes, seconds);
     }
 
     public static long random(long min, long max) {

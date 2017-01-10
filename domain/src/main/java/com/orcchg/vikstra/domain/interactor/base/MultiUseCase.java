@@ -80,6 +80,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                     Ordered<Result> result = new Ordered<>();
                     while (elapsed - start < 30_000) {
                         try {
+                            Timber.d("Performing request [%s] at time %s", index, ValueUtility.time());
                             UseCase<Result> useCase = useCases.size() == 1 ? useCases.get(0) : useCases.get(index);
                             result.orderId = useCase.getOrderId();
                             result.data = useCase.doAction();  // perform use case synchronously
@@ -94,7 +95,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                                 } catch (InterruptedException ie) {
                                     Thread.interrupted();  // continue executing at interruption
                                 }
-                                Timber.d("Retrying request...");
+                                Timber.d("Retrying request [%s]...", index);
                             } else {
                                 Timber.w("Unhandled exception: %s", e.toString());
                                 result.error = e;
