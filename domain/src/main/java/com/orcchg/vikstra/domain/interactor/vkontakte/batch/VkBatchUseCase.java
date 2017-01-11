@@ -19,7 +19,7 @@ import timber.log.Timber;
 public abstract class VkBatchUseCase<Result, L extends List<Result>> extends UseCase<L> {
 
     protected final Object mLock = new Object();
-    protected boolean mDoneCondition;
+    protected volatile boolean mDoneCondition;
     protected VKResponse[] vkBatchResponse;
     private RuntimeException vkException;
 

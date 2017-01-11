@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
@@ -20,7 +25,9 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     protected int total;
     protected Class<? extends Throwable>[] allowedErrors;  // list of errors the failed use case should retry on raised
     protected final Object lock = new Object();
-    protected int sleepInterval = 0;
+    protected int sleepInterval = 333;  // to avoid Captcha error, interval in ms
+
+    private ThreadPoolExecutor threadExecutor;  // local pool designed to handle highload multi-use-case
 
     public MultiUseCase(int total, ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
@@ -68,12 +75,13 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         final boolean[] doneFlags = new boolean[total];
         Arrays.fill(doneFlags, false);
 
+        this.threadExecutor = createHighloadThreadPoolExecutor();  // could be overriden in sub-classes
+
         for (int i = 0; i < total; ++i) {
             Timber.v("Request [%s / %s]", i + 1, total);
             final int index = i;
             final long start = System.currentTimeMillis();
-            // TODO: use ThreadPoolExecutor to enqueue use-cases
-            new Thread(new Runnable() {
+            threadExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
                     long elapsed = start;
@@ -112,10 +120,10 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                         lock.notify();  // wake-up main thread
                     }
                 }
-            }).start();
+            });
 
             // optional pause before starting next use-case execution
-            if (sleepInterval > 0) {
+            if (total > 1 && sleepInterval > 0) {
                 try {
                     Thread.sleep(sleepInterval);
                 } catch (InterruptedException e) {
@@ -140,5 +148,14 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
 
     protected synchronized <Result> void addToResults(List<Ordered<Result>> results, @Nullable Ordered<Result> result) {
         if (result != null) results.add(result);
+    }
+
+    /* Thread pool */
+    // --------------------------------------------------------------------------------------------
+    protected ThreadPoolExecutor createHighloadThreadPoolExecutor() {
+        BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>();
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(3, 3, 10, TimeUnit.SECONDS, queue);
+        pool.allowCoreThreadTimeOut(true);
+        return pool;
     }
 }

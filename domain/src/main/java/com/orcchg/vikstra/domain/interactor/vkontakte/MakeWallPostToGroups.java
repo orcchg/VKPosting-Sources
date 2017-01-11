@@ -13,6 +13,10 @@ import com.vk.sdk.api.model.VKAttachments;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
@@ -77,7 +81,6 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
     public MakeWallPostToGroups(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(0, threadExecutor, postExecuteScheduler);  // total count will be set later
         setAllowedError(VkUseCaseRetryException.class);
-        sleepInterval = 333;  // to avoid Captcha error
     }
 
     public void setParameters(Parameters parameters) {
@@ -102,5 +105,16 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
             useCases.add(useCase);
         }
         return useCases;
+    }
+
+    /* Thread pool */
+    // ------------------------------------------
+    @Override
+    protected ThreadPoolExecutor createHighloadThreadPoolExecutor() {
+        // completely overriden method
+        BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>();
+        ThreadPoolExecutor pool = new ThreadPoolExecutor(10, 10, 3, TimeUnit.SECONDS, queue);
+        pool.allowCoreThreadTimeOut(true);
+        return pool;
     }
 }

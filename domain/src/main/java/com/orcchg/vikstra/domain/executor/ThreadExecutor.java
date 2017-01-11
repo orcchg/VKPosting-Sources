@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 
 public class ThreadExecutor {
-    protected static final int INITIAL_POOL_SIZE = 3;
-    protected static final int MAX_POOL_SIZE = 5;
+    protected static final int INITIAL_POOL_SIZE = 5;
+    protected static final int MAX_POOL_SIZE = 8;
     protected static final int KEEP_ALIVE_TIME = 10;
     protected static final TimeUnit KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS;
 

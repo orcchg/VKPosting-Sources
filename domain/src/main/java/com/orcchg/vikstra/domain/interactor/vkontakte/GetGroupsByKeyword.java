@@ -35,7 +35,7 @@ public class GetGroupsByKeyword extends VkUseCase<VKApiCommunityArray> {
         String[] fields = new String[]{VKApiCommunityFull.CAN_POST, VKApiCommunityFull.MEMBERS_COUNT};
         VKParameters params = VKParameters.from(
                 VKApiConst.Q, keyword.keyword(),
-                VKApiConst.COUNT, Integer.toString(Constant.GROUPS_COUNT_PER_REQUEST),
+                VKApiConst.COUNT, Integer.toString(Constant.GROUPS_COUNT_PER_GET_REQUEST),
                 VKApiConst.FIELDS, TextUtils.join(",", fields));
         return VKApi.groups().search(params);
     }

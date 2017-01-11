@@ -19,6 +19,7 @@ import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
 import com.orcchg.vikstra.app.ui.common.screen.CollectionFragment;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
+import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListModule;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -52,6 +53,7 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     protected void injectDependencies() {
         groupComponent = DaggerGroupListComponent.builder()
                 .applicationComponent(getApplicationComponent())
+                .groupListModule(new GroupListModule(Constant.BAD_ID))  // proper id will be set later
                 .keywordModule(new KeywordModule(keywordBundleId))
                 .postModule(new PostModule(postId))
                 .build();

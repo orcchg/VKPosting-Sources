@@ -7,7 +7,8 @@ public class Constant {
 
     public static final int KEYWORDS_LIMIT = 7;
     public static final int MEDIA_ATTACH_LIMIT = 7;
-    public static final int GROUPS_COUNT_PER_REQUEST = 1000;
+    public static final int GROUPS_COUNT_PER_GET_REQUEST = 1000;
+    public static final int GROUPS_LIMIT_FOR_POSTING = 100;
 
     public static final class RequestCode {
         public static final int EXTERNAL_SCREEN_GALLERY = 9000;

@@ -18,12 +18,14 @@ import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.group.GetGroupBundleById;
 import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.keyword.PostKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
 import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
@@ -45,6 +47,7 @@ import timber.log.Timber;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
+    private final GetGroupBundleById getGroupBundleByIdUseCase;
     private final GetPostById getPostByIdUseCase;
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final AddKeywordToBundle addKeywordToBundleUseCase;
@@ -66,11 +69,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private GroupListMediatorComponent mediatorComponent;
 
     @Inject
-    GroupListPresenter(GetPostById getPostByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
+    GroupListPresenter(GetGroupBundleById getGroupBundleByIdUseCase,
+                       GetPostById getPostByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
                        AddKeywordToBundle addKeywordToBundleUseCase, PostKeywordBundle postKeywordBundleUseCase,
                        PutGroupReportBundle putGroupReportBundle, VkontakteEndpoint vkontakteEndpoint,
                        PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
+        this.getGroupBundleByIdUseCase = getGroupBundleByIdUseCase;
+        this.getGroupBundleByIdUseCase.setPostExecuteCallback(createGetGroupBundleByIdCallback());
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
         this.getKeywordBundleByIdUseCase = getKeywordBundleByIdUseCase;
@@ -280,6 +286,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
+    private UseCase.OnPostExecuteCallback<GroupBundle> createGetGroupBundleByIdCallback() {
+        return new UseCase.OnPostExecuteCallback<GroupBundle>() {
+            @Override
+            public void onFinish(@Nullable GroupBundle bundle) {
+                // TODO: impl
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
+            }
+        };
+    }
+
     private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
@@ -312,7 +332,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     GroupParentItem item = new GroupParentItem(keyword);
                     groupParentItems.add(item);
                 }
-                vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback());
+                long groupBundleId = inputKeywordBundle.getGroupBundleId();
+                if (groupBundleId == Constant.BAD_ID) {
+                    // there is not GroupBundle associated with input KeywordBundle, perform network request
+                    vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback());
+                } else {
+                    // loading GroupBundle associated with input KeywordBundle from repository
+                    getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
+                    getGroupBundleByIdUseCase.execute();
+                }
             }
 
             @Override
@@ -389,6 +417,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 if (isViewAttached()) {
                     getView().showGroups(splitGroups.isEmpty());
                 }
+
+                // TODO: put new 'groups-bundle' if no one associated with input 'keywords-bundle'
+                // TODO:                         or update existing one
+                // TODO: update input 'keywords-bundle' with newly create 'groups-bundle' id
             }
 
             @Override

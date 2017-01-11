@@ -68,8 +68,11 @@ public class VkontakteEndpoint extends Endpoint {
         GetGroupById useCase = new GetGroupById(id, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKApiCommunityArray>() {
             @Override
-            public void onFinish(VKApiCommunityArray values) {
-                if (callback != null) callback.onFinish(convert(values.get(0)));
+            public void onFinish(@Nullable VKApiCommunityArray values) {
+                if (callback != null) {
+                    Group group = values != null ? convert(values.get(0)) : null;  // null means no such group found by id
+                    callback.onFinish(group);  // pass found group further: in case of null value destination screen will handle it
+                }
             }
 
             @Override
@@ -90,7 +93,11 @@ public class VkontakteEndpoint extends Endpoint {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<VKApiCommunityArray>>>() {
             @Override
-            public void onFinish(List<Ordered<VKApiCommunityArray>> values) {
+            public void onFinish(@Nullable List<Ordered<VKApiCommunityArray>> values) {
+                if (values == null) {
+                    Timber.e("List of VKApiCommunityArray instances cannot be null, but could be empty instead");
+                    throw new ProgramException();
+                }
                 if (callback != null) callback.onFinish(convertMerge(ValueUtility.unwrap(values)));
             }
 
@@ -112,7 +119,11 @@ public class VkontakteEndpoint extends Endpoint {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<VKApiCommunityArray>>>() {
             @Override
-            public void onFinish(List<Ordered<VKApiCommunityArray>> values) {
+            public void onFinish(@Nullable List<Ordered<VKApiCommunityArray>> values) {
+                if (values == null) {
+                    Timber.e("List of VKApiCommunityArray instances cannot be null, but could be empty instead");
+                    throw new ProgramException();
+                }
                 if (callback != null) callback.onFinish(convertSplit(ValueUtility.unwrap(values)));
             }
 

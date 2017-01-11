@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 public class GetGroupBundleById extends UseCase<GroupBundle> {
 
-    final long id;
+    long id;
     final IGroupRepository groupRepository;
 
     @Inject
@@ -21,6 +21,10 @@ public class GetGroupBundleById extends UseCase<GroupBundle> {
         super(threadExecutor, postExecuteScheduler);
         this.id = id;
         this.groupRepository = groupRepository;
+    }
+
+    public void setGroupBundleId(long id) {
+        this.id = id;
     }
 
     public long getGroupBundleId() {
