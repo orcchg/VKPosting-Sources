@@ -6,6 +6,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         long lastId = localSource.getLastId();
         KeywordBundle bundle = KeywordBundle.builder()
                 .setId(++lastId)
-                .setKeywords(keywords)
+                .setKeywords(new ArrayList<>(keywords))  // turn collection into ordered list
                 .setTimestamp(System.currentTimeMillis())
                 .setTitle(title)
                 .build();

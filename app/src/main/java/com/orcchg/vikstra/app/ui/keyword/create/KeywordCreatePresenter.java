@@ -14,6 +14,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -73,7 +74,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             Timber.v("add new keywords bundle to repository");
             PutKeywordBundle.Parameters parameters = new PutKeywordBundle.Parameters.Builder()
                     .setTitle(title)
-                    .setKeywords(keywords)
+                    .setKeywords(keywords)  // use unordered collection
                     .build();
             putKeywordBundleUseCase.setParameters(parameters);
             putKeywordBundleUseCase.execute();
@@ -81,7 +82,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             Timber.v("update existing keywords bundle in repository");
             KeywordBundle keywordsBundle = KeywordBundle.builder()
                     .setId(keywordBundleId)
-                    .setKeywords(keywords)
+                    .setKeywords(new ArrayList<>(keywords))  // turn collection into ordered list
                     .setTimestamp(timestamp)
                     .setTitle(title)
                     .build();

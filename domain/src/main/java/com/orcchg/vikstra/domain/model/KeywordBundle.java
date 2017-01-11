@@ -5,8 +5,8 @@ import android.support.annotation.NonNull;
 import com.google.auto.value.AutoValue;
 import com.orcchg.vikstra.domain.util.Constant;
 
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 @AutoValue
 public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterable<Keyword> {
@@ -31,14 +31,14 @@ public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterab
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setId(long id);
-        public abstract Builder setKeywords(Collection<Keyword> keywords);
+        public abstract Builder setKeywords(List<Keyword> keywords);
         public abstract Builder setTimestamp(long ts);
         public abstract Builder setTitle(String title);
         public abstract KeywordBundle build();
     }
 
     public abstract long id();
-    public abstract Collection<Keyword> keywords();
+    public abstract List<Keyword> keywords();
     public abstract long timestamp();
     public abstract String title();
 
