@@ -7,12 +7,13 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.repository.IPostRepository;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
 
 public class GetPostById extends UseCase<Post> {
 
-    final long id;
+    long id = Constant.BAD_ID;
     final IPostRepository postRepository;
 
     @Inject
@@ -21,6 +22,10 @@ public class GetPostById extends UseCase<Post> {
         super(threadExecutor, postExecuteScheduler);
         this.id = id;
         this.postRepository = postRepository;
+    }
+
+    public void setPostId(long id) {
+        this.id = id;
     }
 
     public long getPostId() {

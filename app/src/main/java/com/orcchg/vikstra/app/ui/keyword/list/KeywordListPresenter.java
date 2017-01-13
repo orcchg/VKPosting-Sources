@@ -27,11 +27,14 @@ import javax.inject.Inject;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
+import static android.R.attr.data;
+
 public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.View>
         implements KeywordListContract.Presenter {
 
     private final GetKeywordBundles getKeywordBundlesUseCase;
 
+    private long selectedGroupBundleId = Constant.BAD_ID;
     private long selectedKeywordBundleId = Constant.BAD_ID;
     private final @BaseSelectAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
@@ -55,8 +58,11 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @Override
     protected BaseAdapter createListAdapter() {
         KeywordListAdapter adapter = new KeywordListAdapter(selectMode);
-        adapter.setOnItemClickListener((view, viewObject, position) ->
-            changeSelectedKeywordBundleId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID));
+        adapter.setOnItemClickListener((view, viewObject, position) -> {
+            long groupBundleId = viewObject.getSelection() ? viewObject.groupBundleId() : Constant.BAD_ID;
+            long keywordBundleId = viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID;
+            changeSelectedGroupAndKeywordBundleId(groupBundleId, keywordBundleId);
+        });
         adapter.setOnEditClickListener((view, viewObject, position) -> {
             if (isViewAttached()) {
                 if (viewObject.groupBundleId() == Constant.BAD_ID) {
@@ -101,7 +107,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     @Override
     public void retry() {
-        changeSelectedKeywordBundleId(Constant.BAD_ID);  // drop selection
+        changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
         listAdapter.clear();
         dropListStat();
         freshStart();
@@ -109,6 +115,10 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
+    public long getSelectedGroupBundleId() {
+        return selectedGroupBundleId;
+    }
+
     public long getSelectedKeywordBundleId() {
         return selectedKeywordBundleId;
     }
@@ -120,10 +130,19 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     }
 
     @DebugLog
-    private boolean changeSelectedKeywordBundleId(long newId) {
-        selectedKeywordBundleId = newId;
+    private boolean changeSelectedGroupAndKeywordBundleId(long groupBundleId, long keywordBundleId) {
+        selectedGroupBundleId = groupBundleId;
+        selectedKeywordBundleId = keywordBundleId;
         if (externalValueEmitter != null) {
-            externalValueEmitter.emit(newId != Constant.BAD_ID);
+            /**
+             * keywordBundleId always differs from {@link Constant.BAD_ID} for valid {@link KeywordBundle}
+             * instance - the only kind of instances allowed to populate the list.
+             *
+             * groupBundleId could be {@link Constant.BAD_ID}, which just means that no
+             * {@link com.orcchg.vikstra.domain.model.GroupBundle} instance is associated with
+             * selected {@link KeywordBundle} instance.
+             */
+            externalValueEmitter.emit(keywordBundleId != Constant.BAD_ID);
             return true;
         }
         return false;

@@ -370,10 +370,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
                 long groupBundleId = inputKeywordBundle.getGroupBundleId();
                 if (groupBundleId == Constant.BAD_ID) {
-                    // there is not GroupBundle associated with input KeywordBundle, perform network request
+                    Timber.v("there is not GroupBundle associated with input KeywordBundle, perform network request");
                     vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback());
                 } else {
-                    // loading GroupBundle associated with input KeywordBundle from repository
+                    Timber.v("loading GroupBundle associated with input KeywordBundle from repository");
                     getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
                     getGroupBundleByIdUseCase.execute();
                 }
