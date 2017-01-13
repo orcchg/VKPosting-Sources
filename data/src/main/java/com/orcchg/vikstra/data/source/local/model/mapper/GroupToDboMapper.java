@@ -12,10 +12,12 @@ import javax.inject.Inject;
 
 public class GroupToDboMapper implements DuplexMapper<Group, GroupDBO> {
 
+    private final KeywordToDboMapper keywordToDboMapper;
     private final GroupToDboPopulator groupToDboPopulator;
 
     @Inject
-    public GroupToDboMapper(GroupToDboPopulator groupToDboPopulator) {
+    public GroupToDboMapper(KeywordToDboMapper keywordToDboMapper, GroupToDboPopulator groupToDboPopulator) {
+        this.keywordToDboMapper = keywordToDboMapper;
         this.groupToDboPopulator = groupToDboPopulator;
     }
 
@@ -44,6 +46,7 @@ public class GroupToDboMapper implements DuplexMapper<Group, GroupDBO> {
         return Group.builder()
                 .setId(object.id)
                 .setCanPost(object.canPost)
+                .setKeyword(keywordToDboMapper.mapBack(object.keyword))
                 .setMembersCount(object.membersCount)
                 .setName(object.name)
                 .build();

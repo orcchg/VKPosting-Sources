@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.domain.model;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.auto.value.AutoValue;
 import com.orcchg.vikstra.domain.util.External;
@@ -18,6 +19,7 @@ public abstract class Group implements Comparable<Group> {
     public abstract static class Builder {
         public abstract Builder setId(long id);
         public abstract Builder setCanPost(boolean canPost);
+        public abstract Builder setKeyword(Keyword keyword);
         public abstract Builder setMembersCount(int count);
         public abstract Builder setName(String name);
         public abstract Group build();
@@ -25,6 +27,7 @@ public abstract class Group implements Comparable<Group> {
 
     public abstract @External long id();  // id of group in Social Network
     public abstract boolean canPost();
+    public abstract @Nullable Keyword keyword();
     public abstract int membersCount();
     public abstract String name();
 

@@ -70,7 +70,7 @@ public class VkontakteEndpoint extends Endpoint {
             @Override
             public void onFinish(@Nullable VKApiCommunityArray values) {
                 if (callback != null) {
-                    Group group = values != null ? convert(values.get(0)) : null;  // null means no such group found by id
+                    Group group = values != null ? convert(null, values.get(0)) : null;  // null means no such group found by id
                     callback.onFinish(group);  // pass found group further: in case of null value destination screen will handle it
                 }
             }
@@ -88,7 +88,7 @@ public class VkontakteEndpoint extends Endpoint {
      * Because one keyword generally corresponds to multiple groups, the resulting list is merged
      * and contains all retrieved groups.
      */
-    public void getGroupsByKeywords(Collection<Keyword> keywords,
+    public void getGroupsByKeywords(final List<Keyword> keywords,
                                     @Nullable final UseCase.OnPostExecuteCallback<List<Group>> callback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<VKApiCommunityArray>>>() {
@@ -98,7 +98,7 @@ public class VkontakteEndpoint extends Endpoint {
                     Timber.e("List of VKApiCommunityArray instances cannot be null, but could be empty instead");
                     throw new ProgramException();
                 }
-                if (callback != null) callback.onFinish(convertMerge(ValueUtility.unwrap(values)));
+                if (callback != null) callback.onFinish(convertMerge(keywords, ValueUtility.unwrap(values)));
             }
 
             @Override
@@ -114,7 +114,7 @@ public class VkontakteEndpoint extends Endpoint {
      * splits groups by keywords.
      */
     @DebugLog
-    public void getGroupsByKeywordsSplit(Collection<Keyword> keywords,
+    public void getGroupsByKeywordsSplit(final List<Keyword> keywords,
                                          @Nullable final UseCase.OnPostExecuteCallback<List<List<Group>>> callback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<VKApiCommunityArray>>>() {
@@ -124,7 +124,7 @@ public class VkontakteEndpoint extends Endpoint {
                     Timber.e("List of VKApiCommunityArray instances cannot be null, but could be empty instead");
                     throw new ProgramException();
                 }
-                if (callback != null) callback.onFinish(convertSplit(ValueUtility.unwrap(values)));
+                if (callback != null) callback.onFinish(convertSplit(keywords, ValueUtility.unwrap(values)));
             }
 
             @Override
@@ -322,38 +322,43 @@ public class VkontakteEndpoint extends Endpoint {
     /* Conversion */
     // --------------------------------------------------------------------------------------------
     @NonNull
-    List<Group> convertMerge(List<VKApiCommunityArray> vkModels) {
+    List<Group> convertMerge(List<Keyword> keywords, List<VKApiCommunityArray> vkModels) {
+        int i = 0;
         List<Group> groups = new ArrayList<>();
         for (VKApiCommunityArray vkCommunityArray : vkModels) {
-            groups.addAll(convert(vkCommunityArray));
+            groups.addAll(convert(keywords.get(i), vkCommunityArray));
+            ++i;
         }
         return groups;
     }
 
     @NonNull
-    List<List<Group>> convertSplit(List<VKApiCommunityArray> vkModels) {
+    List<List<Group>> convertSplit(List<Keyword> keywords, List<VKApiCommunityArray> vkModels) {
+        int i = 0;
         List<List<Group>> groupsSplit = new ArrayList<>();
         for (VKApiCommunityArray vkCommunityArray : vkModels) {
-            List<Group> groups = convert(vkCommunityArray);
+            List<Group> groups = convert(keywords.get(i), vkCommunityArray);
             groupsSplit.add(groups);
+            ++i;
         }
         return groupsSplit;
     }
 
     @NonNull
-    List<Group> convert(VKApiCommunityArray vkCommunityArray) {
+    List<Group> convert(Keyword keyword, VKApiCommunityArray vkCommunityArray) {
         List<Group> groups = new ArrayList<>();
         for (VKApiCommunityFull vkGroup : vkCommunityArray) {
-            groups.add(convert(vkGroup));
+            groups.add(convert(keyword, vkGroup));
         }
         return groups;
     }
 
     @NonNull
-    Group convert(VKApiCommunityFull vkGroup) {
+    Group convert(Keyword keyword, VKApiCommunityFull vkGroup) {
         return Group.builder()
                 .setId(-vkGroup.id)  // negative id is for Vk Community, positive - for Vk User
                 .setCanPost(vkGroup.can_post)
+                .setKeyword(keyword)
                 .setMembersCount(vkGroup.members_count)
                 .setName(vkGroup.name)
                 .build();

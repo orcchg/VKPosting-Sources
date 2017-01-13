@@ -5,11 +5,13 @@ import io.realm.RealmObject;
 public class GroupDBO extends RealmObject {
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_CAN_POST = "can_post";
+    public static final String COLUMN_KEYWORD = "keyword";
     public static final String COLUMN_MEMBERS_COUNT = "members_count";
     public static final String COLUMN_NAME = "name";
 
     public long id;
     public boolean canPost;
+    public KeywordDBO keyword;
     public int membersCount;
     public String name;
 }

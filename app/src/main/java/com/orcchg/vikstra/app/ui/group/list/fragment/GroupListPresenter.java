@@ -34,7 +34,6 @@ import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -360,7 +359,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     GroupParentItem item = new GroupParentItem(newlyAddedKeyword);
                     groupParentItems.add(0, item);  // add new item on top of the list
 
-                    Collection<Keyword> keywords = new ArrayList<>();
+                    List<Keyword> keywords = new ArrayList<>();
                     keywords.add(newlyAddedKeyword);
                     newlyAddedKeyword = null;  // drop temporary keyword
                     vkontakteEndpoint.getGroupsByKeywordsSplit(keywords, createGetGroupsByKeywordsListCallback());
