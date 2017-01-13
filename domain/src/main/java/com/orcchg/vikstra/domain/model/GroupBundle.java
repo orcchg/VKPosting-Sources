@@ -1,11 +1,17 @@
 package com.orcchg.vikstra.domain.model;
 
 import android.support.annotation.NonNull;
+import android.support.v4.util.Pair;
 
 import com.google.auto.value.AutoValue;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @AutoValue
 public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<Group> {
@@ -37,6 +43,28 @@ public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<G
             if (group.isSelected()) ++count;
         }
         return count;
+    }
+
+    // TODO: unit-test this method
+    public List<List<Group>> splitGroupsByKeywords() {
+        Map<Keyword, Integer> keywords = new TreeMap<>();
+        Collection<Group> list = groups();
+        List<List<Group>> splitGroups = new ArrayList<>();
+        int index = 0, position = 0;
+
+        for (Group group : list) {
+            Keyword keyword = group.keyword();
+            if (keywords.containsKey(keyword)) {
+                position = keywords.get(keyword).intValue();
+            } else {
+                keywords.put(keyword, index);
+                splitGroups.add(new ArrayList<Group>());
+                position = index;
+                ++index;
+            }
+            splitGroups.get(position).add(group);
+        }
+        return splitGroups;
     }
 
     @Override

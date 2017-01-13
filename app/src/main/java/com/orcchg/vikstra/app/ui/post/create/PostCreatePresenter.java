@@ -206,7 +206,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         return new UseCase.OnPostExecuteCallback<Boolean>() {
             @Override
             public void onFinish(@Nullable Boolean result) {
-                // TODO: post not updated
+                // TODO: result false - post not updated
                 if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
             }
 

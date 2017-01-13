@@ -79,7 +79,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             putKeywordBundleUseCase.setParameters(parameters);
             putKeywordBundleUseCase.execute();
         } else {
-            Timber.v("update existing keywords bundle in repository");
+            Timber.v("update already existing keywords bundle in repository");
             KeywordBundle keywordsBundle = KeywordBundle.builder()
                     .setId(keywordBundleId)
                     .setKeywords(new ArrayList<>(keywords))  // turn collection into ordered list
@@ -146,7 +146,8 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     private UseCase.OnPostExecuteCallback<Boolean> createPostKeywordBundleCallback() {
         return new UseCase.OnPostExecuteCallback<Boolean>() {
             @Override
-            public void onFinish(@Nullable Boolean values) {
+            public void onFinish(@Nullable Boolean result) {
+                // TODO: result false - keyword-bundle not updated
                 if (isViewAttached()) {
                     getView().notifyKeywordsUpdated();
                     getView().closeView(Activity.RESULT_OK);

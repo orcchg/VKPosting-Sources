@@ -17,25 +17,20 @@ import javax.inject.Inject;
 public class PutGroupBundle extends UseCase<GroupBundle> {
 
     public static class Parameters {
-        String title;
         Collection<Group> groups;
         long keywordBundleId;
+        String title;
 
         Parameters(Builder builder) {
-            this.title = builder.title;
             this.groups = builder.groups;
             this.keywordBundleId = builder.keywordBundleId;
+            this.title = builder.title;
         }
 
         public static class Builder {
-            String title;
             Collection<Group> groups;
             long keywordBundleId;
-
-            public Builder setTitle(String title) {
-                this.title = title;
-                return this;
-            }
+            String title;
 
             public Builder setGroups(Collection<Group> groups) {
                 this.groups = groups;
@@ -44,6 +39,11 @@ public class PutGroupBundle extends UseCase<GroupBundle> {
 
             public Builder setKeywordBundleId(long keywordBundleId) {
                 this.keywordBundleId = keywordBundleId;
+                return this;
+            }
+
+            public Builder setTitle(String title) {
+                this.title = title;
                 return this;
             }
 

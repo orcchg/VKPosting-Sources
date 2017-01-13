@@ -7,12 +7,13 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.repository.IGroupRepository;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
 
 public class GetGroupBundleById extends UseCase<GroupBundle> {
 
-    long id;
+    long id = Constant.BAD_ID;
     final IGroupRepository groupRepository;
 
     @Inject
