@@ -12,18 +12,21 @@ public interface PostCreateContract {
         void addMediaThumbnail(Bitmap bmp);
         void addMediaThumbnail(String filePath);
         void onMediaAttachLimitReached(int limit);
-        void showMediaLoadDialog();
+        void openMediaLoadDialog();
+        void openSaveChangesDialog();
 
         void clearInputText();
         String getInputText();
         void setInputText(String text);
 
         ContentResolver contentResolver();
+        void closeView();  // with currently set result
         void closeView(int resultCode);
     }
 
     interface Presenter extends MvpPresenter<View> {
         void onAttachPressed();
+        void onBackPressed();
         void onLocationPressed();
         void onMediaPressed();
         void onPollPressed();

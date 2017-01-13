@@ -10,6 +10,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 public interface FragmentMediator {
     interface Receiver extends MediatorReceiver {
         void receiveAddKeywordRequest(Keyword keyword);
+        void receivePostHasChangedRequest();
         void receivePostToGroupsRequest();
     }
 

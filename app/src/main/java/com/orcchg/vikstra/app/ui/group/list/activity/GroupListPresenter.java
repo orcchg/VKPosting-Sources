@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.app.ui.group.list.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
@@ -8,10 +9,13 @@ import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListMediatorComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorModule;
+import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
@@ -33,6 +37,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 .build();
         mediatorComponent.inject(this);
         mediatorComponent.mediator().attachFirst(this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case PostCreateActivity.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    Timber.d("Post has been changed and should be refreshed");
+                    sendPostHasChangedRequest();
+                }
+                break;
+            // TODO: handle result from PostListActivity after new Post selected
+        }
     }
 
     @Override
@@ -108,6 +126,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void sendAddKeywordRequest(Keyword keyword) {
         mediatorComponent.mediator().sendAddKeywordRequest(keyword);
+    }
+
+    @Override
+    public void sendPostHasChangedRequest() {
+        mediatorComponent.mediator().sendPostHasChangedRequest();
     }
 
     @Override

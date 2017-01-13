@@ -109,7 +109,7 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     // --------------------------------------------------------------------------------------------
     private void initView() {
         fab.hide();  // hide fab at fresh start before post fetched
-        postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostViewScreen(this, postId));
+        postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostCreateScreen(this, postId));
         updateSelectedGroupsCounter(0, 0);
 
         FragmentManager fm = getSupportFragmentManager();

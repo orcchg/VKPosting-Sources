@@ -19,10 +19,8 @@ import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.group.GetGroupBundleById;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
-import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
 import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.model.Post;
-import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
@@ -114,14 +112,15 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
             long groupBundleId = keywordListPresenter.getSelectedGroupBundleId();
             long keywordBundleId = keywordListPresenter.getSelectedKeywordBundleId();
             long postId = postSingleGridPresenter.getSelectedPostId();
-            if (groupBundleId == Constant.BAD_ID) {
-                getView().openGroupListScreen(keywordBundleId, postId);
-            } else {
-                Timber.v("now get GroupBundle from repository, then get Post from repository");
-                getPostByIdUseCase.setPostId(postId);  // set proper id
-                getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
-                getGroupBundleByIdUseCase.execute();
-            }
+//            if (groupBundleId == Constant.BAD_ID) {
+//                getView().openGroupListScreen(keywordBundleId, postId);
+//            } else {
+//                Timber.v("now get GroupBundle from repository, then get Post from repository");
+//                getPostByIdUseCase.setPostId(postId);  // set proper id
+//                getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
+//                getGroupBundleByIdUseCase.execute();
+//            }
+            getView().openGroupListScreen(keywordBundleId, postId);
         }
     }
 

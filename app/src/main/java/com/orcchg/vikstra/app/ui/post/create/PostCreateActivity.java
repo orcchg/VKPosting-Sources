@@ -31,6 +31,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import timber.log.Timber;
 
+import static com.orcchg.vikstra.R.id.view;
+
 public class PostCreateActivity extends BaseActivity<PostCreateContract.View, PostCreateContract.Presenter>
         implements PostCreateContract.View {
     private static final String EXTRA_POST_ID = "extra_post_id";
@@ -103,7 +105,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         setContentView(R.layout.activity_post_create);
         ButterKnife.bind(this);
         initResources();
-        initView();
+        initToolbar();
     }
 
     @Override
@@ -138,12 +140,22 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
 
     /* View */
     // --------------------------------------------------------------------------------------------
-    private void initView() {
+    private void initToolbar() {
         toolbar.setTitle(R.string.post_create_screen_title);
-        toolbar.setNavigationOnClickListener((view) -> finish());
-        toolbar.inflateMenu(R.menu.save);
+        toolbar.setNavigationOnClickListener((view) -> presenter.onBackPressed());
+        toolbar.inflateMenu(R.menu.save);  // TODO: use view_save menu instead
+//        toolbar.inflateMenu(R.menu.view_save);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
+                case view:
+                    // TODO: BAD_ID in PostView is not allowed, but should allow to preview posts
+                    // TODO: currently under creation, so we should finish creation - save the post -
+                    // TODO: obtaining it's id - and then open PostView. Or something else ?
+                    navigationComponent.navigator().openPostViewScreen(this, postId);
+
+                    // TODO: do not reload PostCreate on back from PostView in order to prevent from
+                    // TODO: losing input data (text, media, etc...) for post under creation.
+                    return true;
                 case R.id.save:
                     presenter.onSavePressed();
                     return true;
@@ -174,8 +186,19 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     }
 
     @Override
-    public void showMediaLoadDialog() {
+    public void openMediaLoadDialog() {
         DialogProvider.showUploadPhotoDialog(this).show();
+    }
+
+    @Override
+    public void openSaveChangesDialog() {
+        DialogProvider.showTextDialogTwoButtons(this, R.string.post_create_dialog_save_changes_title,
+                R.string.post_create_dialog_save_changes_description, R.string.button_save, R.string.button_close,
+                (dialog, which) -> {
+                    presenter.onSavePressed();
+                    dialog.dismiss();
+                },
+                (dialog, which) -> closeView()).show();
     }
 
     // ------------------------------------------
@@ -192,12 +215,18 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     @Override
     public void setInputText(String text) {
         postDescriptionEditText.setText(text);
+        postDescriptionEditText.setSelection(text.length());  // move cursor to the end of text
     }
 
     // ------------------------------------------
     @Override
     public ContentResolver contentResolver() {
         return getContentResolver();
+    }
+
+    @Override
+    public void closeView() {
+        finish();  // with currently set result
     }
 
     @Override

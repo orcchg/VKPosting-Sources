@@ -22,6 +22,7 @@
     <string name="button_edit">Edit</string>
     <string name="button_save">Save</string>
     <string name="button_search">Search</string>
+    <string name="button_view">View</string>
 
     <string name="dialog_error_title">Error</string>
     <string name="dialog_input_edit_title">Change title</string>

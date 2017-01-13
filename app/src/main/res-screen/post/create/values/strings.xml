@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="post_create_dialog_save_changes_title">Post changed</string>
+    <string name="post_create_dialog_save_changes_description">Do you want to save changes?</string>
     <string name="post_create_screen_title">Create new post</string>
-    <string name="post_create_text_description_hint">Enter post description...</string>
     <string name="post_create_snackbar_media_attach_limit_message">You\'ve reached limit for media attachments: %s</string>
+    <string name="post_create_text_description_hint">Enter post description...</string>
 </resources>

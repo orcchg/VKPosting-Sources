@@ -64,18 +64,19 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         switch (requestCode) {
             case Constant.RequestCode.EXTERNAL_SCREEN_GALLERY:
                 Uri uri = data.getData();
-                String[] pathColums = { MediaStore.Images.Media.DATA };
+                String[] pathColumns = { MediaStore.Images.Media.DATA };
                 ContentResolver resolver = getView().contentResolver();
-                Cursor cursor = resolver.query(uri, pathColums, null, null, null);
-                if (cursor.moveToFirst()) {
-                    int columnIndex = cursor.getColumnIndex(pathColums[0]);
+                Cursor cursor = resolver.query(uri, pathColumns, null, null, null);
+                if (cursor != null && cursor.moveToFirst()) {
+                    int columnIndex = cursor.getColumnIndex(pathColumns[0]);
                     String imagePath = cursor.getString(columnIndex);
                     Timber.d("Selected image from Gallery, url: %s", imagePath);
                     if (isViewAttached()) getView().addMediaThumbnail(imagePath);
                     Media media = Media.builder().setId(1000).setUrl(imagePath).build();  // TODO: unique id
                     attachMedia.add(media);
+                } else if (cursor != null) {
+                    cursor.close();
                 }
-                cursor.close();
                 break;
             case Constant.RequestCode.EXTERNAL_SCREEN_CAMERA:
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
@@ -96,6 +97,17 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     }
 
     @Override
+    public void onBackPressed() {
+        if (isViewAttached()) {
+            if (hasChanges()) {
+                getView().openSaveChangesDialog();
+            } else {
+                getView().closeView();
+            }
+        }
+    }
+
+    @Override
     public void onLocationPressed() {
         //
     }
@@ -104,7 +116,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     public void onMediaPressed() {
         if (isViewAttached()) {
             if (attachMedia.size() < Constant.MEDIA_ATTACH_LIMIT) {
-                getView().showMediaLoadDialog();
+                getView().openMediaLoadDialog();
             } else {
                 getView().onMediaAttachLimitReached(Constant.MEDIA_ATTACH_LIMIT);
             }
@@ -118,27 +130,30 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     @Override
     public void onSavePressed() {
+        String xtitle = title;  // initial title
+        String xdescription = description;  // initial description
         long postId = getPostByIdUseCase.getPostId();
-        if (postId == Constant.BAD_ID) {
-            if (isViewAttached()) description = getView().getInputText();
-            title = "";  // TODO: set proper title; @Nullable
+
+        if (isViewAttached()) {
+            xdescription = getView().getInputText();
+            // TODO: set proper title; @Nullable
         }
 
         // TODO: set location, file attach, poll
         PostEssence essence = PostEssence.builder()
-                .setDescription(description)
+                .setDescription(xdescription)
                 .setMedia(attachMedia)
-                .setTitle(title)
+                .setTitle(xtitle)
                 .build();
         PostEssenceMapper mapper = new PostEssenceMapper(postId, timestamp);
 
         if (postId == Constant.BAD_ID) {
-            // add new post to repository
+            Timber.d("add new post to repository");
             PutPost.Parameters parameters = new PutPost.Parameters(essence);
             putPostUseCase.setParameters(parameters);
             putPostUseCase.execute();
         } else {
-            // update existing post in repository
+            Timber.d("update existing post in repository");
             PostPost.Parameters parameters = new PostPost.Parameters(mapper.map(essence));
             postPostUseCase.setParameters(parameters);
             postPostUseCase.execute();
@@ -164,6 +179,14 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         getPostByIdUseCase.execute();
     }
 
+    private boolean hasChanges() {
+        if (isViewAttached()) {
+            boolean hasTextContentChanged = !getView().getInputText().equals(description);
+            return hasTextContentChanged || !attachMedia.isEmpty();
+        }
+        return false;
+    }
+
     /* Callback */
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
@@ -176,21 +199,24 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     throw new ProgramException();
                 }
                 if (post != null) {
+                    Timber.d("Editing existing Post instance");
                     List<Media> media = post.media();
                     description = post.description();
                     if (media != null) attachMedia.addAll(media);
                     timestamp = post.timestamp();
                     title = post.title();
-                    // TODO: other fields is needed
+                    // TODO: other fields are needed
                     // TODO: if updating existing post - fill text field and media attachment view container
                     if (isViewAttached()) {
+                        // TODO: set title to view
+                        getView().setInputText(description);
                         getView().showContent(PostCreateActivity.RV_TAG, false);
                         for (Media item : attachMedia) {
                             getView().addMediaThumbnail(item.url());
                         }
                     }
                 } else {
-                    Timber.d("New Post instance will be create on this screen");
+                    Timber.d("New Post instance will be created on this screen");
                     if (isViewAttached()) getView().showEmptyList(PostCreateActivity.RV_TAG);
                 }
             }

@@ -44,6 +44,30 @@ public class DialogProvider {
                 .create();
     }
 
+    // ------------------------------------------
+    public static AlertDialog showTextDialogTwoButtons(Activity activity, @StringRes int title, @StringRes int description,
+                                                       @StringRes int yesLabel, @StringRes int noLabel,
+                                                       DialogInterface.OnClickListener yesListener,
+                                                       DialogInterface.OnClickListener noListener) {
+        String xtitle = activity.getResources().getString(title);
+        String xdescription = activity.getResources().getString(description);
+        String xyesLabel = activity.getResources().getString(yesLabel);
+        String xnoLabel = activity.getResources().getString(noLabel);
+        return showTextDialogTwoButtons(activity, xtitle, xdescription, xyesLabel, xnoLabel, yesListener, noListener);
+    }
+
+    public static AlertDialog showTextDialogTwoButtons(Activity activity, String title, String description,
+                                                       String yesLabel, String noLabel,
+                                                       DialogInterface.OnClickListener yesListener,
+                                                       DialogInterface.OnClickListener noListener) {
+        return new AlertDialog.Builder(activity)
+                .setTitle(title)
+                .setMessage(description)
+                .setPositiveButton(yesLabel, yesListener)
+                .setNegativeButton(noLabel, noListener)
+                .create();
+    }
+
     /* Edit text */
     // --------------------------------------------------------------------------------------------
     public interface OnEditTextDialogOkPressed {

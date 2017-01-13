@@ -178,6 +178,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receivePostHasChangedRequest() {
+        refreshPost();
+    }
+
+    @Override
     public void receivePostToGroupsRequest() {
         postToGroups();
     }
@@ -307,6 +312,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         }
     }
 
+    private void refreshPost() {
+        getPostByIdUseCase.execute();
+    }
+
     /* Callback */
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<Boolean> createAddKeywordToBundleCallback() {
@@ -370,10 +379,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
                 long groupBundleId = inputKeywordBundle.getGroupBundleId();
                 if (groupBundleId == Constant.BAD_ID) {
-                    Timber.v("there is not GroupBundle associated with input KeywordBundle, perform network request");
+                    Timber.d("there is not GroupBundle associated with input KeywordBundle, perform network request");
                     vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback());
                 } else {
-                    Timber.v("loading GroupBundle associated with input KeywordBundle from repository");
+                    Timber.d("loading GroupBundle associated with input KeywordBundle from repository");
                     getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
                     getGroupBundleByIdUseCase.execute();
                 }
@@ -476,7 +485,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 List<Group> groups = ValueUtility.merge(splitGroups);
                 long groupBundleId = getGroupBundleByIdUseCase.getGroupBundleId();
                 if (groupBundleId == Constant.BAD_ID) {
-                    Timber.v("create new groups bundle and store it in repository, update id in associated keywords bundle");
+                    Timber.d("create new groups bundle and store it in repository, update id in associated keywords bundle");
                     PutGroupBundle.Parameters parameters = new PutGroupBundle.Parameters.Builder()
                             .setGroups(groups)
                             .setKeywordBundleId(inputKeywordBundle.id())
@@ -485,7 +494,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     putGroupBundleUseCase.setParameters(parameters);
                     putGroupBundleUseCase.execute();
                 } else {
-                    Timber.v("refresh already existing groups bundle in repository");
+                    Timber.d("refresh already existing groups bundle in repository");
                     GroupBundle groupBundle = GroupBundle.builder()
                             .setId(groupBundleId)
                             .setGroups(groups)

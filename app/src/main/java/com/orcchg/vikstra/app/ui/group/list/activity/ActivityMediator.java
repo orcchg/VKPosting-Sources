@@ -21,6 +21,7 @@ public interface ActivityMediator {
 
     interface Sender extends MediatorSender {
         void sendAddKeywordRequest(Keyword keyword);
+        void sendPostHasChangedRequest();
         void sendPostToGroupsRequest();
     }
 }
