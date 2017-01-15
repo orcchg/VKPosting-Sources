@@ -239,7 +239,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         getPostByIdUseCase.execute();
     }
 
-    void addGroupsToList(List<Group> groups, int index) {
+    private void addGroupsToList(List<Group> groups, int index) {
         if (AppConfig.INSTANCE.isAllGroupsSortedByMembersCount()) Collections.sort(groups);
         int xTotalGroups = 0;
         List<GroupChildItem> childItems = new ArrayList<>(groups.size());
@@ -349,7 +349,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onFinish(@Nullable GroupBundle bundle) {
                 if (bundle == null) {
-                    Timber.e("No GroupBundle found by id associated with input KeywordBundle, " +
+                    Timber.e("No GroupBundle found by id associated with input KeywordBundle, %s",
                             "such id has improper value due to wrong association between instances at creation");
                     throw new ProgramException();
                 }
@@ -439,6 +439,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
                 // update input KeywordBundle and associate it with newly created GroupBundle (by setting id)
                 inputKeywordBundle.setGroupBundleId(bundle.id());
+                getGroupBundleByIdUseCase.setGroupBundleId(bundle.id());  // set proper id
                 postKeywordBundleUpdate();
             }
 
