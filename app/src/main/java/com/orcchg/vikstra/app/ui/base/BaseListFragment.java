@@ -44,7 +44,7 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
         return Memento.fromBundle(savedInstanceState);
     }
 
-    @Override
+    @DebugLog @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
@@ -72,7 +72,7 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
         });
     }
 
-    @DebugLog @Override
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         memento.layoutManagerState = layoutManager.onSaveInstanceState();
         memento.toBundle(outState);

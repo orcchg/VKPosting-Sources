@@ -67,7 +67,7 @@ public class GroupDetailActivity extends BaseActivity<GroupDetailContract.View, 
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
-        //
+        // TODO: GroupDetailActivity: initView
     }
 
     private void initToolbar() {

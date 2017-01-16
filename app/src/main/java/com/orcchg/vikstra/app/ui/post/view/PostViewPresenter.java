@@ -30,6 +30,7 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
     // --------------------------------------------------------------------------------------------
     @Override
     public void retry() {
+        Timber.i("retry");
         freshStart();
     }
 
@@ -48,9 +49,10 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
             @Override
             public void onFinish(@Nullable Post post) {
                 if (post == null) {
-                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
+                    Timber.wtf("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
                     throw new ProgramException();
                 }
+                Timber.i("Use-Case: succeeded to get Post by id");
                 PostViewVO viewObject = postToVoMapper.map(post);
                 if (isViewAttached()) getView().showPost(viewObject);
                 // TODO: if updating existing post - fill text field and media attachment view container
@@ -58,6 +60,7 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
 
             @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get Post by id");
                 if (isViewAttached()) getView().showError();
             }
         };

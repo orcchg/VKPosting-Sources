@@ -118,9 +118,7 @@ public class KeywordDatabase implements IKeywordStorage {
         Realm realm = Realm.getDefaultInstance();
         KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, bundle.id()).findFirst();
         if (dbo != null) {
-            realm.executeTransaction((xrealm) -> {
-                keywordBundleToDboPopulator.populate(bundle, dbo);
-            });
+            realm.executeTransaction((xrealm) -> keywordBundleToDboPopulator.populate(bundle, dbo));
             result = true;
         }
         realm.close();
@@ -129,15 +127,17 @@ public class KeywordDatabase implements IKeywordStorage {
 
     /* Delete */
     // ------------------------------------------
-    @Override
+    @DebugLog @Override
     public boolean deleteKeywords(long id) {
         if (id == Constant.BAD_ID) return false;
+        boolean result = false;
         Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction((xrealm) -> {
-            KeywordBundleDBO dbo = xrealm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
-            dbo.deleteFromRealm();
-        });
+        KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
+        if (dbo != null) {
+            realm.executeTransaction((xrealm) -> dbo.deleteFromRealm());
+            result = true;
+        }
         realm.close();
-        return true;
+        return result;
     }
 }

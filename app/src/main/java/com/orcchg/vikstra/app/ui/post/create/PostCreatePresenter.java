@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 import static android.R.attr.description;
@@ -63,6 +64,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
         switch (requestCode) {
             case Constant.RequestCode.EXTERNAL_SCREEN_GALLERY:
+                Timber.i("Received result image from Gallery");
                 Uri uri = data.getData();
                 String[] pathColumns = { MediaStore.Images.Media.DATA };
                 ContentResolver resolver = getView().contentResolver();
@@ -79,6 +81,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 }
                 break;
             case Constant.RequestCode.EXTERNAL_SCREEN_CAMERA:
+                Timber.i("Received result image from Camera");
                 Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
                 if (isViewAttached()) getView().addMediaThumbnail(thumbnail);
                 String url = ContentUtility.InMemoryStorage.getLastStoredInternalImageUrl();
@@ -93,11 +96,13 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     // --------------------------------------------------------------------------------------------
     @Override
     public void onAttachPressed() {
-        //
+        Timber.i("onAttachPressed");
+        // TODO: onAttachPressed
     }
 
     @Override
     public void onBackPressed() {
+        Timber.i("onBackPressed");
         if (isViewAttached()) {
             if (hasChanges()) {
                 getView().openSaveChangesDialog();
@@ -109,11 +114,13 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     @Override
     public void onLocationPressed() {
-        //
+        Timber.i("onLocationPressed");
+        // TODO: onLocationPressed
     }
 
     @Override
     public void onMediaPressed() {
+        Timber.i("onMediaPressed");
         if (isViewAttached()) {
             if (attachMedia.size() < Constant.MEDIA_ATTACH_LIMIT) {
                 getView().openMediaLoadDialog();
@@ -125,11 +132,13 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     @Override
     public void onPollPressed() {
-        //
+        Timber.i("onPollPressed");
+        // TODO: onPollPressed
     }
 
     @Override
     public void onSavePressed() {
+        Timber.i("onSavePressed");
         String description = inputPost != null ? inputPost.description() : "";
         String title = inputPost != null ? inputPost.title() : "";
         long postId = getPostByIdUseCase.getPostId();
@@ -147,12 +156,12 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 .build();
 
         if (postId == Constant.BAD_ID) {
-            Timber.d("add new post to repository");
+            Timber.d("Input Post id is BAD - add new Post instance to repository");
             PutPost.Parameters parameters = new PutPost.Parameters(essence);
             putPostUseCase.setParameters(parameters);
             putPostUseCase.execute();
         } else {
-            Timber.d("update existing post in repository");
+            Timber.d("Input Post id is [%s] - update already existing Post instance in repository", postId);
             PostEssenceMapper mapper = new PostEssenceMapper(postId, inputPost.timestamp());
             PostPost.Parameters parameters = new PostPost.Parameters(mapper.map(essence));
             postPostUseCase.setParameters(parameters);
@@ -168,6 +177,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     @Override
     public void retry() {
+        Timber.i("retry");
         freshStart();
     }
 
@@ -179,6 +189,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         getPostByIdUseCase.execute();
     }
 
+    @DebugLog
     private boolean hasChanges() {
         if (isViewAttached()) {
             boolean hasTextContentChanged = !getView().getInputText().equals(description);
@@ -191,16 +202,17 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
         return new UseCase.OnPostExecuteCallback<Post>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable Post post) {
                 inputPost = post;
                 long postId = getPostByIdUseCase.getPostId();
                 if (postId != Constant.BAD_ID && post == null) {
-                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
+                    Timber.wtf("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
                     throw new ProgramException();
                 }
+                Timber.i("Use-Case: succeeded to get Post by id");
                 if (post != null) {
-                    Timber.d("Editing existing Post instance");
+                    Timber.d("Existing Post with id [%s] will be updated on PostCreateScreen", postId);
                     List<Media> media = post.media();
                     if (media != null) attachMedia.addAll(media);
                     // TODO: other fields are needed
@@ -213,14 +225,15 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                             getView().addMediaThumbnail(item.url());
                         }
                     }
-                } else {
-                    Timber.d("New Post instance will be created on this screen");
+                } else {  // post is null and id is BAD
+                    Timber.d("New Post instance will be created on PostCreateScreen");
                     if (isViewAttached()) getView().showEmptyList(PostCreateActivity.RV_TAG);
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get Post by id");
                 if (isViewAttached()) getView().showError(PostCreateActivity.RV_TAG);
             }
         };
@@ -228,14 +241,19 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     private UseCase.OnPostExecuteCallback<Boolean> createPostPostCallback() {
         return new UseCase.OnPostExecuteCallback<Boolean>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable Boolean result) {
-                // TODO: result false - post not updated
+                if (result == null || !result) {
+                    Timber.wtf("Failed to update Post in repository - item not found by correct id, as expected");
+                    throw new ProgramException();
+                }
+                Timber.i("Use-Case: succeeded to post Post");
                 if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to post Post");
                 if (isViewAttached()) getView().showError(PostCreateActivity.RV_TAG);
             }
         };
@@ -243,17 +261,19 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     private UseCase.OnPostExecuteCallback<Post> createPutPostCallback() {
         return new UseCase.OnPostExecuteCallback<Post>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable Post post) {
                 if (post == null) {
-                    Timber.e("Failed to create new Post and put it to Repository");
+                    Timber.wtf("Failed to put new Post to repository - item not created, as expected");
                     throw new ProgramException();
                 }
+                Timber.i("Use-Case: succeeded to put Post");
                 if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to put Post");
                 if (isViewAttached()) getView().showError(PostCreateActivity.RV_TAG);
             }
         };

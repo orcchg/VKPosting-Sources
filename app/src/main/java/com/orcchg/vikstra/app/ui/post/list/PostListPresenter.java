@@ -62,6 +62,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
 
     @DebugLog @Override
     public void retry() {
+        Timber.i("retry");
         listAdapter.clear();
         freshStart();
     }
@@ -81,11 +82,13 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
             @DebugLog @Override
             public void onFinish(@Nullable List<Post> posts) {
                 if (posts == null) {
-                    Timber.e("List of Post items must not be null, it could be empty");
+                    Timber.e("List of Post items must not be null, it could be empty at least");
                     throw new ProgramException();
                 } else if (posts.isEmpty()) {
+                    Timber.i("Use-Case: succeeded to get list of Post-s");
                     if (isViewAttached()) getView().showEmptyList(PostListFragment.RV_TAG);
                 } else {
+                    Timber.i("Use-Case: succeeded to get list of Post-s");
                     List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
                     listAdapter.populate(vos, false);
                     if (isViewAttached()) getView().showPosts(vos == null || vos.isEmpty());
@@ -94,6 +97,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
 
             @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get list of Post-s");
                 if (isViewAttached()) getView().showError(PostListFragment.RV_TAG);
             }
         };

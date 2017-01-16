@@ -5,13 +5,15 @@ import android.support.annotation.Nullable;
 
 import java.util.List;
 
+import hugo.weaving.DebugLog;
+
 public abstract class BaseCompositePresenter<V extends MvpView> extends BasePresenter<V> {
 
     protected List<? extends MvpPresenter> presenterList;
 
     protected abstract List<? extends MvpPresenter> providePresenterList();
 
-    @Override
+    @DebugLog @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (presenterList == null) presenterList = providePresenterList();

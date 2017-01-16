@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class AbstractFlowLayout extends ViewGroup {
-    protected final String TAG = this.getClass().getSimpleName();
     private static final int mDotsViewId = 1000;
 
     private Set<WeakReference<View>> mLastRowViews;
@@ -264,8 +263,7 @@ public class AbstractFlowLayout extends ViewGroup {
                 if (mCurrentState == STATE_EXPANDED &&
                         ALLOWED_ROWS_COUNT > 0 &&
                         currentRow >= ALLOWED_ROWS_COUNT + 1) {  // last row only: ==
-                    WeakReference<View> viewRef = new WeakReference<>(child);
-                    mLastRowViews.add(viewRef);
+                    mLastRowViews.add(new WeakReference<>(child));
                 }
 
                 child.layout(xpos, ypos, xpos + childw, ypos + childh);

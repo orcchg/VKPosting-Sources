@@ -56,47 +56,55 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
 
     @DebugLog @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        Timber.i("onCreate");
         isStateRestored = savedInstanceState != null;
         // to override
     }
 
     @DebugLog @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Timber.i("onActivityResult");
         // to override
     }
 
-    @DebugLog @Override
+    @Override
     public void onStart() {
+        Timber.i("onStart");
         if (isFresh) {
-            Timber.i("Fresh start of %s", getClass().getSimpleName());
+            Timber.i("Fresh start");
             isFresh = false;
             freshStart();
         }
         // to override
     }
 
-    @DebugLog @Override
+    @Override
     public void onResume() {
+        Timber.i("onResume");
         // to override
     }
 
-    @DebugLog @Override
+    @Override
     public void onPause() {
+        Timber.i("onPause");
         // to override
     }
 
-    @DebugLog @Override
+    @Override
     public void onSaveInstanceState(Bundle outState) {
+        Timber.i("onSaveInstanceState");
         // to override
     }
 
-    @DebugLog @Override
+    @Override
     public void onStop() {
+        Timber.i("onStop");
         // to override
     }
 
-    @DebugLog @Override
+    @Override
     public void onDestroy() {
+        Timber.i("onDestroy");
         // to override
     }
 }

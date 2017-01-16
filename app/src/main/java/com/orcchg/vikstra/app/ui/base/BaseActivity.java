@@ -17,6 +17,7 @@ import com.orcchg.vikstra.app.injection.module.PermissionManagerModule;
 import com.orcchg.vikstra.app.navigation.NavigatorHolder;
 
 import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
         extends AppCompatActivity implements MvpView {
@@ -32,9 +33,10 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
 
     protected abstract void injectDependencies();
 
-    @Override
+    @DebugLog @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Timber.i("onCreate");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) injectPermissionManager();
         injectNavigator();
         injectDependencies();
@@ -46,42 +48,49 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     @DebugLog @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Timber.i("onActivityResult");
         presenter.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        Timber.i("onStart");
         presenter.onStart();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Timber.i("onResume");
         presenter.onResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Timber.i("onPause");
         presenter.onPause();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Timber.i("onSaveInstanceState");
         presenter.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        Timber.i("onStop");
         presenter.onStop();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Timber.i("onDestroy");
         presenter.onDestroy();
         presenter.detachView();
     }

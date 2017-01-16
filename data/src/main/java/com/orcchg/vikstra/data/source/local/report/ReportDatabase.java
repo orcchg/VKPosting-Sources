@@ -107,12 +107,14 @@ public class ReportDatabase implements IReportStorage {
     @DebugLog @Override
     public boolean deleteGroupReports(long id) {
         if (id == Constant.BAD_ID) return false;
+        boolean result = false;
         Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction((xrealm) -> {
-            GroupReportBundleDBO dbo = xrealm.where(GroupReportBundleDBO.class).equalTo(GroupReportBundleDBO.COLUMN_ID, id).findFirst();
-            dbo.deleteFromRealm();
-        });
+        GroupReportBundleDBO dbo = realm.where(GroupReportBundleDBO.class).equalTo(GroupReportBundleDBO.COLUMN_ID, id).findFirst();
+        if (dbo != null) {
+            realm.executeTransaction((xrealm) -> dbo.deleteFromRealm());
+            result = true;
+        }
         realm.close();
-        return true;
+        return result;
     }
 }

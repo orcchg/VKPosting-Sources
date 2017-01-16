@@ -93,9 +93,7 @@ public class PostDatabase implements IPostStorage {
         Realm realm = Realm.getDefaultInstance();
         PostDBO dbo = realm.where(PostDBO.class).equalTo(PostDBO.COLUMN_ID, post.id()).findFirst();
         if (dbo != null) {
-            realm.executeTransaction((xrealm) -> {
-                postToDboPopulator.populate(post, dbo);
-            });
+            realm.executeTransaction((xrealm) -> postToDboPopulator.populate(post, dbo));
             result = true;
         }
         realm.close();
@@ -104,15 +102,17 @@ public class PostDatabase implements IPostStorage {
 
     /* Delete */
     // ------------------------------------------
-    @Override
+    @DebugLog @Override
     public boolean deletePost(long id) {
         if (id == Constant.BAD_ID) return false;
+        boolean result = false;
         Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction((xrealm) -> {
-            PostDBO dbo = xrealm.where(PostDBO.class).equalTo(PostDBO.COLUMN_ID, id).findFirst();
-            dbo.deleteFromRealm();
-        });
+        PostDBO dbo = realm.where(PostDBO.class).equalTo(PostDBO.COLUMN_ID, id).findFirst();
+        if (dbo != null) {
+            realm.executeTransaction((xrealm) -> dbo.deleteFromRealm());
+            result = true;
+        }
         realm.close();
-        return true;
+        return result;
     }
 }

@@ -81,7 +81,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
@@ -105,6 +105,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     @Override
     public void retry() {
+        Timber.i("retry");
         changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
         listAdapter.clear();
         dropListStat();
@@ -113,10 +114,12 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
+    @DebugLog
     public long getSelectedGroupBundleId() {
         return selectedGroupBundleId;
     }
 
+    @DebugLog
     public long getSelectedKeywordBundleId() {
         return selectedKeywordBundleId;
     }
@@ -150,14 +153,16 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<List<KeywordBundle>> createGetKeywordBundlesCallback() {
         return new UseCase.OnPostExecuteCallback<List<KeywordBundle>>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable List<KeywordBundle> bundles) {
                 if (bundles == null) {
-                    Timber.e("List of KeywordBundle items must not be null, it could be empty");
+                    Timber.wtf("List of KeywordBundle-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 } else if (bundles.isEmpty()) {
+                    Timber.i("Use-Case: succeeded to get list of KeywordBundle-s");
                     if (isViewAttached()) getView().showEmptyList(KeywordListFragment.RV_TAG);
                 } else {
+                    Timber.i("Use-Case: succeeded to get list of KeywordBundle-s");
                     Collections.sort(bundles);
                     memento.currentSize += bundles.size();
                     List<KeywordListItemVO> vos = keywordBundleToVoMapper.map(bundles);
@@ -166,8 +171,9 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get list of KeywordBundle-s");
                 if (memento.currentSize <= 0) {
                     if (isViewAttached()) getView().showError(KeywordListFragment.RV_TAG);
                 } else {

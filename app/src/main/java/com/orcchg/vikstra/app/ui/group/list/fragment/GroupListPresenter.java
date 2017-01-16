@@ -109,7 +109,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    @Override
+    @DebugLog @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mediatorComponent = DaggerGroupListMediatorComponent.builder()
@@ -359,7 +359,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onFinish(@Nullable GroupBundle bundle) {
                 if (bundle == null) {
-                    Timber.e("No GroupBundle found by id associated with input KeywordBundle, %s",
+                    Timber.wtf("No GroupBundle found by id associated with input KeywordBundle, %s",
                             "such id has improper value due to wrong association between instances at creation");
                     throw new ProgramException();
                 }
@@ -379,7 +379,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
                 if (bundle == null) {
-                    Timber.e("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
+                    Timber.wtf("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
                     throw new ProgramException();
                 }
                 inputKeywordBundle = bundle;
@@ -429,7 +429,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onFinish(@Nullable GroupBundle bundle) {
                 if (bundle == null) {
-                    Timber.e("Failed to create new GroupBundle and put it to Repository");
+                    Timber.wtf("Failed to create new GroupBundle and put it to Repository");
                     throw new ProgramException();
                 }
                 // update input KeywordBundle and associate it with newly created GroupBundle (by setting id)
@@ -450,7 +450,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onFinish(@Nullable GroupReportBundle bundle) {
                 if (bundle == null) {
-                    Timber.e("Failed to create new GroupReportBundle and put it to Repository");
+                    Timber.wtf("Failed to create new GroupReportBundle and put it to Repository");
                     throw new ProgramException();
                 }
                 sendPostingStartedMessage(false);
@@ -473,7 +473,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @Override
             public void onFinish(@Nullable List<List<Group>> splitGroups) {
                 if (splitGroups == null) {
-                    Timber.e("Split groups list cannot be null, but could be empty instead");
+                    Timber.wtf("Split groups list cannot be null, but could be empty instead");
                     throw new ProgramException();
                 }
                 fillGroupsList(splitGroups);

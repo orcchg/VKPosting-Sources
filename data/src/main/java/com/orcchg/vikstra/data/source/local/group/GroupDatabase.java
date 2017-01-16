@@ -116,9 +116,7 @@ public class GroupDatabase implements IGroupStorage {
         Realm realm = Realm.getDefaultInstance();
         GroupBundleDBO dbo = realm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, bundle.id()).findFirst();
         if (dbo != null) {
-            realm.executeTransaction((xrealm) -> {
-                groupBundleToDboPopulator.populate(bundle, dbo);
-            });
+            realm.executeTransaction((xrealm) -> groupBundleToDboPopulator.populate(bundle, dbo));
             result = true;
         }
         realm.close();
@@ -127,15 +125,17 @@ public class GroupDatabase implements IGroupStorage {
 
     /* Delete */
     // ------------------------------------------
-    @Override
+    @DebugLog @Override
     public boolean deleteGroups(long id) {
         if (id == Constant.BAD_ID) return false;
+        boolean result = false;
         Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction((xrealm) -> {
-            GroupBundleDBO dbo = xrealm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, id).findFirst();
-            dbo.deleteFromRealm();
-        });
+        GroupBundleDBO dbo = realm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, id).findFirst();
+        if (dbo != null) {
+            realm.executeTransaction((xrealm) -> dbo.deleteFromRealm());
+            result = true;
+        }
         realm.close();
-        return true;
+        return result;
     }
 }

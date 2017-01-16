@@ -72,8 +72,9 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         // TODO: load more
     }
 
-    @DebugLog @Override
+    @Override
     public void retry() {
+        Timber.i("retry");
         changeSelectedPostId(Constant.BAD_ID);  // drop selection
         listAdapter.clear();
         freshStart();
@@ -81,6 +82,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
+    @DebugLog
     public long getSelectedPostId() {
         return selectedPostId;
     }
@@ -108,19 +110,22 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             @DebugLog @Override
             public void onFinish(@Nullable List<Post> posts) {
                 if (posts == null) {
-                    Timber.e("List of Post items must not be null, it could be empty");
+                    Timber.e("List of Post-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 } else if (posts.isEmpty()) {
+                    Timber.i("Use-Case: succeeded to get list of Post-s");
                     if (isViewAttached()) getView().showEmptyList(PostSingleGridFragment.RV_TAG);
                 } else {
+                    Timber.i("Use-Case: succeeded to get list of Post-s");
                     List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
                     listAdapter.populate(vos, false);
                     if (isViewAttached()) getView().showPosts(vos == null || vos.isEmpty());
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get list of Post-s");
                 if (isViewAttached()) getView().showError(PostSingleGridFragment.RV_TAG);
             }
         };

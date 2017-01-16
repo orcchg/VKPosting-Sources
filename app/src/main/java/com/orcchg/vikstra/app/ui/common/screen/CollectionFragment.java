@@ -21,6 +21,7 @@ import com.orcchg.vikstra.app.ui.util.UiUtility;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public abstract class CollectionFragment<V extends MvpView, P extends MvpPresenter<V>> extends BaseListFragment<V, P>
@@ -69,8 +70,7 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
         }
     }
 
-    @Nullable
-    @Override
+    @DebugLog @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.collection_layout, container, false);

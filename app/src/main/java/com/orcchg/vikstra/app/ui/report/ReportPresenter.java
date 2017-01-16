@@ -14,7 +14,6 @@ import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
-import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
@@ -29,6 +28,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class ReportPresenter extends BaseListPresenter<ReportContract.View> implements ReportContract.Presenter {
@@ -78,6 +78,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            Timber.d("Subscribe on posting progress callback on ReportScreen");
             ContentUtility.InMemoryStorage.setProgressCallback(postingProgressCallback);  // subscribe to progress updates
         }
     }
@@ -86,6 +87,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     public void onDestroy() {
         super.onDestroy();
         if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            Timber.d("Unsubscribe from posting progress callback on ReportScreen");
             ContentUtility.InMemoryStorage.setProgressCallback(null);  // unsubscribe from progress updates
         }
     }
@@ -99,6 +101,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     @Override
     public void retry() {
+        Timber.i("retry");
         listAdapter.clear();
         dropListStat();
         freshStart();
@@ -120,8 +123,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
         return new UseCase.OnPostExecuteCallback<Post>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable Post post) {
+                Timber.i("Use-Case: succeeded to get Post by id");
                 if (isViewAttached()) {
                     if (post != null) {
                         getView().showPost(postToSingleGridVoMapper.map(post));
@@ -131,9 +135,10 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
                 // TODO: failed to load post
+                Timber.e("Use-Case: failed to get Post by id");
                 if (isViewAttached()) getView().showError(ReportFragment.RV_TAG);
             }
         };
@@ -141,15 +146,17 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     private UseCase.OnPostExecuteCallback<GroupReportBundle> createGetGroupReportBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable GroupReportBundle bundle) {
                 if (bundle == null || bundle.groupReports() == null) {
-                    Timber.e("GroupReportBundle wasn't found by id: %s, or groupReports property is null",
+                    Timber.wtf("GroupReportBundle wasn't found by id [%s], or groupReports property is null",
                             getGroupReportBundleByIdUseCase.getGroupReportId());
                     throw new ProgramException();
                 } else if (bundle.groupReports().isEmpty()) {
+                    Timber.i("Use-Case: succeeded to get GroupReportBundle by id");
                     if (isViewAttached()) getView().showEmptyList(ReportFragment.RV_TAG);
                 } else {
+                    Timber.i("Use-Case: succeeded to get GroupReportBundle by id");
                     int[] counters = bundle.statusCount();
                     List<ReportListItemVO> vos = groupReportToVoMapper.map(bundle.groupReports());
                     listAdapter.populate(vos, false);
@@ -160,8 +167,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get GroupReportBundle by id");
                 if (isViewAttached()) getView().showError(ReportFragment.RV_TAG);
             }
         };
@@ -169,36 +177,33 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     // ------------------------------------------
     private MultiUseCase.ProgressCallback<GroupReportEssence> createPostingProgressCallback() {
-        return new MultiUseCase.ProgressCallback<GroupReportEssence>() {
-            @Override
-            public void onDone(int index, int total, Ordered<GroupReportEssence> item) {
-                // unwrap data
-                GroupReportEssence model = null;
-                if (item.data != null) {
-                    model = item.data;
-                    ++posted;  // count successfull posting
-                }
-                if (item.error != null) {
-                    VkUseCaseException e = (VkUseCaseException) item.error;
-                    Group group = ContentUtility.InMemoryStorage.getSelectedGroupsForPosting().get(index);
-                    model = GroupReportEssence.builder()
-                            .setErrorCode(e.getErrorCode())
-                            .setGroup(group)
-                            .setWallPostId(Constant.BAD_ID)
-                            .build();
-                }
-                if (model == null) {
-                    Timber.e("Unreachable state: GroupReportEssence must always be constructed from Ordered<> item");
-                    throw new ProgramException();
-                }
+        return (index, total, item) -> {
+            // unwrap data
+            GroupReportEssence model = null;
+            if (item.data != null) {
+                model = item.data;
+                ++posted;  // count successful posting
+            }
+            if (item.error != null) {
+                VkUseCaseException e = (VkUseCaseException) item.error;
+                Group group = ContentUtility.InMemoryStorage.getSelectedGroupsForPosting().get(index);
+                model = GroupReportEssence.builder()
+                        .setErrorCode(e.getErrorCode())
+                        .setGroup(group)
+                        .setWallPostId(Constant.BAD_ID)
+                        .build();
+            }
+            if (model == null) {
+                Timber.wtf("Unreachable state: GroupReportEssence must always be constructed from Ordered<> item");
+                throw new ProgramException();
+            }
 
-                ReportListItemVO viewObject = groupReportEssenceToVoMapper.map(model);
-                listAdapter.addInverse(viewObject);
-                if (isViewAttached()) {
-                    getView().showGroupReports(false);  // indemponent call (no-op if list items are already visible)
-                    getView().updatePostedCounters(posted, total);
-                    // TODO: estimate time to complete posting, use DomainConfig.INSTANCE.multiUseCaseSleepInterval
-                }
+            ReportListItemVO viewObject = groupReportEssenceToVoMapper.map(model);
+            listAdapter.addInverse(viewObject);
+            if (isViewAttached()) {
+                getView().showGroupReports(false);  // idemponent call (no-op if list items are already visible)
+                getView().updatePostedCounters(posted, total);
+                // TODO: estimate time to complete posting, use DomainConfig.INSTANCE.multiUseCaseSleepInterval
             }
         };
     }

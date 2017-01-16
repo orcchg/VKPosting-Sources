@@ -4,7 +4,7 @@ import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 
 /**
  * ViewMediator provides connection between two (or more) {@link MvpPresenter} instances.
- * Concrete subclasses musy be isolated within corresponding packages.
+ * Concrete subclasses must be isolated within corresponding packages.
  */
 public abstract class BaseMediator<FirstClient extends MediatorReceiver, SecondClient extends MediatorReceiver> {
 

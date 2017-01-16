@@ -13,8 +13,8 @@ import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
-import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
+import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.group.GetGroupBundleById;
@@ -79,7 +79,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
@@ -96,18 +96,21 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
+    @Override
     public void retryKeywords() {
+        Timber.i("retryKeywords");
         keywordListPresenter.retry();
     }
 
-    @DebugLog @Override
+    @Override
     public void retryPosts() {
+        Timber.i("retryPosts");
         postSingleGridPresenter.retry();
     }
 
     @Override
     public void onFabClick() {
+        Timber.i("onFabClick");
         if (isViewAttached()) {
             long groupBundleId = keywordListPresenter.getSelectedGroupBundleId();
             long keywordBundleId = keywordListPresenter.getSelectedKeywordBundleId();
@@ -136,25 +139,26 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
+    @Override
     protected void freshStart() {}
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<GroupBundle> createGetGroupBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<GroupBundle>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable GroupBundle bundle) {
                 if (bundle == null) {
-                    Timber.e("No GroupBundle found by id, which has improper value in selected KeywordBundle");
+                    Timber.wtf("No GroupBundle found by id, which has improper value in selected KeywordBundle");
                     throw new ProgramException();
                 }
-                Timber.d("Fetched GroupBundle, now get Post from repository, then make wall post");
+                Timber.i("Use-Case: succeeded to get GroupBundle by id");
                 getPostByIdUseCase.execute();
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get GroupBundle by id");
                 if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
@@ -162,16 +166,17 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
         return new UseCase.OnPostExecuteCallback<Post>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable Post post) {
                 // TODO: handle NULL Post
-                Timber.d("Fetched Post, now make wall post");
+                Timber.i("Use-Case: succeeded to get Post by id");
 //                vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, post,
 //                        createMakeWallPostCallback(), getView(), getView());
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get Post by id");
                 if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
@@ -179,14 +184,14 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
 //    private UseCase.OnPostExecuteCallback<List<GroupReportEssence>> createMakeWallPostCallback() {
 //        return new UseCase.OnPostExecuteCallback<List<GroupReportEssence>>() {
-//            @Override
+//            @DebugLog @Override
 //            public void onFinish(@Nullable List<GroupReportEssence> reports) {
 //                PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(reports);
 //                putGroupReportBundle.setParameters(parameters);
 //                putGroupReportBundle.execute();
 //            }
 //
-//            @Override
+//            @DebugLog @Override
 //            public void onError(Throwable e) {
 //                sendPostingStartedMessage(false);
 //                if (isViewAttached()) {

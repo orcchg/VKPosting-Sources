@@ -80,9 +80,11 @@ public abstract class UseCase<Result> implements Runnable {
      * {@link UseCase#postExecuteCallback}.
      */
     public void execute() {
+        Timber.d("Executing Use-Case...");
         if (threadExecutor == null) {
             String message = "UseCase created using default ctor must only be executed" +
                     " synchronously within some another UseCase !";
+            Timber.wtf(message);
             throw new IllegalStateException(message);
         }
         threadExecutor.execute(this);
@@ -97,7 +99,7 @@ public abstract class UseCase<Result> implements Runnable {
             Result result = doAction();
             postExecuteScheduler.post(wrapToRunnable(result));
         } catch (Throwable error) {
-            Timber.w(error, "An error has occurred during execution of Use-Case");
+            Timber.e(error, "An error has occurred during execution of Use-Case");
             postExecuteScheduler.post(wrapToRunnable(error));
         }
     }

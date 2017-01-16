@@ -96,7 +96,7 @@ public class ThumbView extends FrameLayout {
                 width = getResources().getDimensionPixelSize(R.dimen.standard_thumbnail_size_small);
                 break;
         }
-        height = width;
+        height = width;  // squared view
 
         LayoutInflater inflater = LayoutInflater.from(getContext());
         rootView = inflater.inflate(layoutRes, this, true);
