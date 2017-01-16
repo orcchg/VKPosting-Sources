@@ -29,6 +29,8 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
+import static android.R.attr.description;
+
 public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> implements PostCreateContract.Presenter {
 
     private final GetPostById getPostByIdUseCase;
@@ -37,9 +39,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     private List<Media> attachMedia = new ArrayList<>();  // TODO: save instance state
 
-    private long timestamp;
-    private String description;
-    private String title;
+    private @Nullable Post inputPost;
 
     @Inject
     PostCreatePresenter(GetPostById getPostByIdUseCase, PostPost postPostUseCase, PutPost putPostUseCase) {
@@ -130,22 +130,21 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     @Override
     public void onSavePressed() {
-        String xtitle = title;  // initial title
-        String xdescription = description;  // initial description
+        String description = inputPost != null ? inputPost.description() : "";
+        String title = inputPost != null ? inputPost.title() : "";
         long postId = getPostByIdUseCase.getPostId();
 
         if (isViewAttached()) {
-            xdescription = getView().getInputText();
+            description = getView().getInputText();
             // TODO: set proper title; @Nullable
         }
 
         // TODO: set location, file attach, poll
         PostEssence essence = PostEssence.builder()
-                .setDescription(xdescription)
+                .setDescription(description)
                 .setMedia(attachMedia)
-                .setTitle(xtitle)
+                .setTitle(title)
                 .build();
-        PostEssenceMapper mapper = new PostEssenceMapper(postId, timestamp);
 
         if (postId == Constant.BAD_ID) {
             Timber.d("add new post to repository");
@@ -154,6 +153,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
             putPostUseCase.execute();
         } else {
             Timber.d("update existing post in repository");
+            PostEssenceMapper mapper = new PostEssenceMapper(postId, inputPost.timestamp());
             PostPost.Parameters parameters = new PostPost.Parameters(mapper.map(essence));
             postPostUseCase.setParameters(parameters);
             postPostUseCase.execute();
@@ -193,6 +193,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
             public void onFinish(@Nullable Post post) {
+                inputPost = post;
                 long postId = getPostByIdUseCase.getPostId();
                 if (postId != Constant.BAD_ID && post == null) {
                     Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
@@ -201,15 +202,12 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 if (post != null) {
                     Timber.d("Editing existing Post instance");
                     List<Media> media = post.media();
-                    description = post.description();
                     if (media != null) attachMedia.addAll(media);
-                    timestamp = post.timestamp();
-                    title = post.title();
                     // TODO: other fields are needed
                     // TODO: if updating existing post - fill text field and media attachment view container
                     if (isViewAttached()) {
                         // TODO: set title to view
-                        getView().setInputText(description);
+                        getView().setInputText(post.description());
                         getView().showContent(PostCreateActivity.RV_TAG, false);
                         for (Media item : attachMedia) {
                             getView().addMediaThumbnail(item.url());

@@ -193,7 +193,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 }
 
                 ReportListItemVO viewObject = groupReportEssenceToVoMapper.map(model);
-                listAdapter.add(viewObject);
+                listAdapter.addInverse(viewObject);
                 if (isViewAttached()) {
                     getView().showGroupReports(false);  // indemponent call (no-op if list items are already visible)
                     getView().updatePostedCounters(posted, total);

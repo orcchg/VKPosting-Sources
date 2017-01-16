@@ -1,12 +1,11 @@
 package com.orcchg.vikstra.domain.model;
 
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
 
 @AutoValue
-public abstract class Keyword implements Comparable<Keyword>, Parcelable {
+public abstract class Keyword implements Comparable<Keyword> {
 
     public static Keyword create(String keyword) {
         return new AutoValue_Keyword(keyword);

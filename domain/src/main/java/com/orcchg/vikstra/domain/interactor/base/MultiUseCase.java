@@ -28,10 +28,17 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     private int sleepInterval = DomainConfig.INSTANCE.multiUseCaseSleepInterval;  // to avoid Captcha error, interval in ms
 
     private ThreadPoolExecutor threadExecutor;  // local pool designed to handle highload multi-use-case
+    private final PostExecuteScheduler progressCallbackScheduler;  // where to observe progress callbacks
 
     public MultiUseCase(int total, ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
+        this(total, threadExecutor, postExecuteScheduler, postExecuteScheduler);
+    }
+
+    public MultiUseCase(int total, ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler,
+                        PostExecuteScheduler progressCallbackScheduler) {
         super(threadExecutor, postExecuteScheduler);
         this.total = total;
+        this.progressCallbackScheduler = progressCallbackScheduler;
     }
 
     public void setAllowedError(Class<? extends Throwable>... allowedErrors) {
@@ -85,14 +92,19 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                 @Override
                 public void run() {
                     long elapsed = start;
-                    Ordered<Result> result = new Ordered<>();
+                    final Ordered<Result> result = new Ordered<>();
                     while (elapsed - start < 30_000) {
                         try {
                             Timber.d("Performing request [%s] at time %s", index, ValueUtility.time());
                             UseCase<Result> useCase = useCases.size() == 1 ? useCases.get(0) : useCases.get(index);
                             result.orderId = useCase.getOrderId();
                             result.data = useCase.doAction();  // perform use case synchronously
-                            if (progressCallback != null) progressCallback.onDone(index + 1, total, result);
+                            progressCallbackScheduler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (progressCallback != null) progressCallback.onDone(index + 1, total, result);
+                                }
+                            });
                             break;
                         } catch (Throwable e) {
                             if (ValueUtility.containsClass(e, allowedErrors)) {
@@ -107,7 +119,12 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                             } else {
                                 Timber.w("Unhandled exception: %s", e.toString());
                                 result.error = e;
-                                if (progressCallback != null) progressCallback.onDone(index + 1, total, result);
+                                progressCallbackScheduler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (progressCallback != null) progressCallback.onDone(index + 1, total, result);
+                                    }
+                                });
                                 break;
                             }
                         }

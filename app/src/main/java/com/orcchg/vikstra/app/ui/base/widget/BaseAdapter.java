@@ -100,6 +100,13 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
         }
     }
 
+    public void addInverse(Model item) {
+        if (item != null) {
+            this.models.add(0, item);  // shifting insertion
+            notifyItemInserted(0);
+        }
+    }
+
     public void populate(List<Model> items, boolean isThereMore) {
         isInError = false;
         if (items != null && !items.isEmpty()) {

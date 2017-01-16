@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.app.ui.group.list.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
@@ -68,9 +69,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     int totalSelectedGroups, totalGroups;
     private boolean isKeywordBundleChanged;
     private Keyword newlyAddedKeyword;
-    private GroupBundle inputGroupBundle;
-    private KeywordBundle inputKeywordBundle;
-    private Post currentPost;
+    private @NonNull GroupBundle inputGroupBundle;
+    private @NonNull KeywordBundle inputKeywordBundle;
+    private @Nullable Post currentPost;
 
     private GroupListMediatorComponent mediatorComponent;
 
