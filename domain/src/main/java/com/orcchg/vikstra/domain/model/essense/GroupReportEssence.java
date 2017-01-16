@@ -2,6 +2,7 @@ package com.orcchg.vikstra.domain.model.essense;
 
 import com.google.auto.value.AutoValue;
 import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.GroupReport;
 
 @AutoValue
 public abstract class GroupReportEssence implements Essence {
@@ -21,4 +22,10 @@ public abstract class GroupReportEssence implements Essence {
     public abstract int errorCode();
     public abstract Group group();
     public abstract long wallPostId();
+
+    @GroupReport.Status
+    public int status() {
+        if (errorCode() == 0) return GroupReport.STATUS_SUCCESS;
+        return GroupReport.STATUS_FAILURE;
+    }
 }

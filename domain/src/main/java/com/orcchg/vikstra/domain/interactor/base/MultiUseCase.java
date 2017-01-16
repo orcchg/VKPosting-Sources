@@ -2,6 +2,7 @@ package com.orcchg.vikstra.domain.interactor.base;
 
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.domain.DomainConfig;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.util.ValueUtility;
@@ -24,7 +25,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     protected int total;
     protected Class<? extends Throwable>[] allowedErrors;  // list of errors the failed use case should retry on raised
     protected final Object lock = new Object();
-    protected int sleepInterval = 333;  // to avoid Captcha error, interval in ms
+    private int sleepInterval = DomainConfig.INSTANCE.multiUseCaseSleepInterval;  // to avoid Captcha error, interval in ms
 
     private ThreadPoolExecutor threadExecutor;  // local pool designed to handle highload multi-use-case
 

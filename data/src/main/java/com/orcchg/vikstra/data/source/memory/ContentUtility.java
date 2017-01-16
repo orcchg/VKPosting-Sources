@@ -5,12 +5,14 @@ import android.os.Environment;
 
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
+import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * In-memory global storage.
@@ -44,6 +46,18 @@ public class ContentUtility {
 
         public static String getLastStoredInternalImageUrl() {
             return sLastStoredInternalImageUrl;
+        }
+
+        /* Parameters for posting */
+        // --------------------------------------
+        private static List<Group> sSelectedGroupsForPosting;
+
+        public static void setSelectedGroupsForPosting(List<Group> list) {
+            sSelectedGroupsForPosting = list;
+        }
+
+        public static List<Group> getSelectedGroupsForPosting() {
+            return sSelectedGroupsForPosting;
         }
 
         /* Posting progress & result */

@@ -163,7 +163,7 @@ public class VkontakteEndpoint extends Endpoint {
                               @Nullable MultiUseCase.ProgressCallback photoUploadProgressCb,
                               @Nullable MultiUseCase.ProgressCallback photoPrepareProgressCb) {
         MakeWallPostToGroups.Parameters.Builder paramsBuilder = new MakeWallPostToGroups.Parameters.Builder()
-                .setGroups(new ArrayList<>(groups))
+                .setGroups(new ArrayList<>(groups))  // preserve ordering
                 .setMessage(post.description());
         List<Media> media = post.media();
         if (media != null && !media.isEmpty()) {

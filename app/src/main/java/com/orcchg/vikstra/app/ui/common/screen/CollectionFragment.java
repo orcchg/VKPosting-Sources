@@ -21,6 +21,7 @@ import com.orcchg.vikstra.app.ui.util.UiUtility;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 public abstract class CollectionFragment<V extends MvpView, P extends MvpPresenter<V>> extends BaseListFragment<V, P>
         implements LceView {
@@ -101,6 +102,11 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
 
     @Override
     public void showContent(int tag, boolean isEmpty) {
+        if (!isEmpty && recyclerView.getVisibility() == View.VISIBLE) {
+            Timber.v("List items are already visible");
+            return;
+        }
+
         swipeRefreshLayout.setRefreshing(false);
         loadingView.setVisibility(View.GONE);
         errorView.setVisibility(View.GONE);
