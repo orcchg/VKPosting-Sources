@@ -20,6 +20,7 @@ public class GroupToDboPopulator implements Populator<Group, GroupDBO> {
     public void populate(Group object, GroupDBO dbo) {
         dbo.id = object.id();
         dbo.canPost = object.canPost();
+        dbo.isSelected = object.isSelected();
         dbo.keyword = keywordToDboMapper.map(object.keyword());
         dbo.membersCount = object.membersCount();
         dbo.name = object.name();
