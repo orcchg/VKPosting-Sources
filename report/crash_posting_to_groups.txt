@@ -1,0 +1,142 @@
+     VkAttachLocalCache  V  ⇢ hasPhoto(mediaId=1000)
+                         V  ⇠ hasPhoto [9ms] = false
+                         V  ⇢ hasPhoto(mediaId=1000)
+                         V  ⇠ hasPhoto [4ms] = false
+a:VkontakteEndpoint:173  V  Total media: cached: 0, retained: 2
+.vikstra:ImageLoader:57  D  Loading media, total count: 2
+vikstra:MultiUseCase:72  V  Performing multiple requests, total: 2, different use-cases: 2
+vikstra:MultiUseCase:73  V  Allowed errors total: 0
+vikstra:MultiUseCase:81  V  Request [1 / 2]
+vikstra:MultiUseCase:91  D  Performing request [0] at time 17182 16:16:38
+          BasePresenter  V  ⇢ onPause()
+                         V  ⇠ onPause [0ms]
+                         V  ⇢ onPause()
+                         V  ⇠ onPause [0ms]
+                         V  ⇢ attachView(view=com.orcchg.vikstra.app.ui.report.ReportActivity@c4768ec)
+                         V  ⇠ attachView [0ms]
+                         V  ⇢ onCreate(savedInstanceState=null)
+                         V  ⇠ onCreate [0ms]
+                         V  ⇢ attachView(view=ReportFragment{24e697f #0 id=0x7f0e0099 report_fragment_tag})
+                         V  ⇠ attachView [0ms]
+                         V  ⇢ onCreate(savedInstanceState=null)
+                         V  ⇠ onCreate [0ms]
+                         V  ⇢ onStart()
+ikstra:BasePresenter:71  I  Fresh start of SimpleBasePresenter
+          BasePresenter  V  ⇠ onStart [0ms]
+           BaseFragment  V  ⇢ isStateRestored()
+                         V  ⇠ isStateRestored [0ms] = false
+      BaseListPresenter  V  ⇢ onStart()
+          BasePresenter  V  ⇢ onStart()
+ikstra:BasePresenter:71  I  Fresh start of ReportPresenter
+           PostDatabase  V  ⇢ post(id=1) [Thread:"vikstra_thread_0"]
+          BasePresenter  V  ⇠ onStart [2ms]
+       BaseListFragment  V  ⇢ getListView(tag=1030)
+                         V  ⇠ getListView [0ms] = android.support.v7.widget.RecyclerView{d722414 GFED.V... ......I. 0,0-0,0 #7f0e00d5 app:id/rv_items}
+      BaseListPresenter  V  ⇠ onStart [5ms]
+          BasePresenter  V  ⇢ onResume()
+                         V  ⇠ onResume [0ms]
+                         V  ⇢ onResume()
+                         V  ⇠ onResume [0ms]
+           PostDatabase  V  ⇠ post [7ms] = Post{id=1, description=Hello world, media=[Media{id=1000, url=/storage/emulated/0/DCIM/Camera/IMG_20151002_115051.jpg}, Media{id=1000, url=/storage/emulated/0/DCI
+                            M/Camera/IMG_20140625_193636.jpg}], timestamp=1484583177989, title=}
+                Surface  E  getSlotFromBufferLocked: unknown buffer: 0x97ec2500
+         OpenGLRenderer  D  endAllStagingAnimators on 0x9c0e6f80 (RippleDrawable) with handle 0x9c034220
+a:VkontakteEndpoint:247  V  Photo preparing progress: 1 / 2
+vikstra:MultiUseCase:81  V  Request [2 / 2]
+vikstra:MultiUseCase:91  D  Performing request [1] at time 17182 16:16:39
+ikstra:MultiUseCase:116  D  Break loop
+a:VkontakteEndpoint:247  V  Photo preparing progress: 2 / 2
+ikstra:MultiUseCase:116  D  Break loop
+       BaseListFragment  V  ⇢ onSaveInstanceState(outState=Bundle[{}])
+          BasePresenter  V  ⇢ onSaveInstanceState(outState=Bundle[{bundle_key_lm_state=android.support.v7.widget.LinearLayoutManager$SavedState@78164ae}])
+                         V  ⇠ onSaveInstanceState [0ms]
+       BaseListFragment  V  ⇠ onSaveInstanceState [0ms]
+          BasePresenter  V  ⇢ onSaveInstanceState(outState=Bundle[{android:viewHierarchyState=Bundle[{android:views={16908290=android.view.AbsSavedState$1@7ed6359, 2131624069=android.view.AbsSavedState$1@7
+                            ed6359, 2131624070=android.view.AbsSavedState$1@7ed6359, 2131624089=android.view.AbsSavedState$1@7ed6359, 2131624090=android.support.design.widget.CoordinatorLayout$SavedState@b
+                            59124f, 2131624091=android.view.AbsSavedState$1@7ed6359, 2131624092=android.view.AbsSavedState$1@7ed6359, 2131624093=android.view.AbsSavedState$1@7ed6359, 2131624094=android.vie
+                            w.AbsSavedState$1@7ed6359, 2131624095=android.view.AbsSavedState$1@7ed6359, 2131624096=android.view.AbsSavedState$1@7ed6359, 2131624107=android.view.AbsSavedState$1@7ed6359, 213
+                            1624123=android.view.AbsSavedState$1@7ed6359, 2131624124=android.support.v7.widget.Toolbar$SavedState@9b0ddc, 2131624127=android.view.AbsSavedState$1@7ed6359, 2131624128=android
+                            .view.AbsSavedState$1@7ed6359, 2131624141=android.view.AbsSavedState$1@7ed6359, 2131624190=android.view.AbsSavedState$1@7ed6359, 2131624191=android.view.AbsSavedState$1@7ed6359,
+                             2131624192=android.view.AbsSavedState$1@7ed6359, 2131624193=android.view.AbsSavedState$1@7ed6359, 2131624208=android.view.AbsSavedState$1@7ed6359}, android:focusedViewId=213162
+                            4149}], android:support:fragments=android.support.v4.app.FragmentManagerState@4661ee5}])
+                         V  ⇠ onSaveInstanceState [0ms]
+                         V  ⇢ onStop()
+                         V  ⇠ onStop [0ms]
+        KeywordDatabase  V  ⇢ updateKeywords(bundle=KeywordBundle{id=1, keywords=[Keyword{keyword=Good}, Keyword{keyword=Sun}, Keyword{keyword=Well}], timestamp=1484583206191, title=Opt}) [Thread:"vikstra_
+                            thread_2"]
+          BasePresenter  V  ⇢ onStop()
+                         V  ⇠ onStop [0ms]
+        KeywordDatabase  V  ⇠ updateKeywords [22ms] = true
+a:VkontakteEndpoint:196  D  Finished to load images
+vikstra:UploadPhotos:52  D  Uploading images, total count: 2
+vikstra:MultiUseCase:72  V  Performing multiple requests, total: 2, different use-cases: 2
+vikstra:MultiUseCase:73  V  Allowed errors total: 1
+vikstra:MultiUseCase:81  V  Request [1 / 2]
+vikstra:MultiUseCase:91  D  Performing request [0] at time 17182 16:16:39
+vikstra:MultiUseCase:81  V  Request [2 / 2]
+vikstra:MultiUseCase:91  D  Performing request [1] at time 17182 16:16:39
+hg.vikstra:VkUseCase:47  I  Successfully received response: {"response":[{"id":456239241,"album_id":-14,"owner_id":355126456,"photo_75":"https:\/\/pp.vk.me\/c604828\/v604828456\/272b8\/q4yROxdrhxs.jpg","ph
+                            oto_130":"https:\/\/pp.vk.me\/c604828\/v604828456\/272b9\/sqkBIhnIzjI.jpg","photo_604":"https:\/\/pp.vk.me\/c604828\/v604828456\/272ba\/Jh_V3y2fbOU.jpg","photo_807":"https:\/\/p
+                            p.vk.me\/c604828\/v604828456\/272bb\/cOif3F_-cmc.jpg","photo_1280":"https:\/\/pp.vk.me\/c604828\/v604828456\/272bc\/JwPF354f1oA.jpg","width":816,"height":612,"text":"","date":14
+                            84583403}]}
+a:VkontakteEndpoint:234  V  Photo uploading progress: 2 / 2
+ikstra:MultiUseCase:116  D  Break loop
+hg.vikstra:VkUseCase:47  I  Successfully received response: {"response":[{"id":456239242,"album_id":-14,"owner_id":355126456,"photo_75":"https:\/\/pp.vk.me\/c604828\/v604828456\/272c1\/KdN9VbtaEO4.jpg","ph
+                            oto_130":"https:\/\/pp.vk.me\/c604828\/v604828456\/272c2\/YC71Vzipwps.jpg","photo_604":"https:\/\/pp.vk.me\/c604828\/v604828456\/272c3\/Ktb9FmHGSJI.jpg","photo_807":"https:\/\/p
+                            p.vk.me\/c604828\/v604828456\/272c4\/ls-kTvO4sSo.jpg","width":592,"height":800,"text":"","date":1484583403}]}
+a:VkontakteEndpoint:234  V  Photo uploading progress: 1 / 2
+ikstra:MultiUseCase:116  D  Break loop
+a:VkontakteEndpoint:318  D  Finished uploading images
+     VkAttachLocalCache  V  ⇢ writePhoto(mediaId=1000, vkPhoto=com.vk.sdk.api.model.VKApiPhoto@6e515e3)
+                         V  ⇠ writePhoto [30ms]
+                         V  ⇢ writePhoto(mediaId=1000, vkPhoto=com.vk.sdk.api.model.VKApiPhoto@cc7abe0)
+                         V  ⇠ writePhoto [16ms]
+MakeWallPostToGroups:95  D  Wall posting, total count: 27
+vikstra:MultiUseCase:72  V  Performing multiple requests, total: 27, different use-cases: 27
+vikstra:MultiUseCase:73  V  Allowed errors total: 1
+vikstra:MultiUseCase:81  V  Request [1 / 27]
+vikstra:MultiUseCase:91  D  Performing request [0] at time 17182 16:16:41
+vikstra:MakeWallPost:94  D  MakeWallPost.Parameters {group=Group {id=-108363182, canPost=true, membersCount=13067, name=Мужской рай}, message=Hello world, attach=photo355126456_456239242,photo355126456_456
+                            239241}
+vikstra:MultiUseCase:81  V  Request [2 / 27]
+vikstra:MultiUseCase:91  D  Performing request [1] at time 17182 16:16:41
+vikstra:MakeWallPost:94  D  MakeWallPost.Parameters {group=Group {id=-102341651, canPost=true, membersCount=6508, name=РАБОТА В СПБ}, message=Hello world, attach=photo355126456_456239242,photo355126456_456
+                            239241}
+hg.vikstra:VkUseCase:47  I  Successfully received response: {"response":{"post_id":10433}}
+vikstra:ValueUtility:70  V  Item class: CalledFromWrongThreadException
+ikstra:MultiUseCase:108  W  Unhandled exception: android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
+         AndroidRuntime  E  FATAL EXCEPTION: pool-8-thread-1
+                         E  Process: com.orcchg.vikstra, PID: 8096
+                         E  java.lang.ClassCastException: android.view.ViewRootImpl$CalledFromWrongThreadException cannot be cast to com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException
+                         E      at com.orcchg.vikstra.app.ui.report.ReportPresenter$3.onDone(ReportPresenter.java:182)
+                         E      at com.orcchg.vikstra.data.source.memory.ContentUtility$InMemoryStorage.setPostingProgress(ContentUtility.java:72)
+                         E      at com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint$8.onDone(VkontakteEndpoint.java:267)
+                         E      at com.orcchg.vikstra.domain.interactor.base.MultiUseCase$1.run(MultiUseCase.java:110)
+                         E      at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1113)
+                         E      at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:588)
+                         E      at java.lang.Thread.run(Thread.java:818)
+          BasePresenter  V  ⇢ onPause()
+                         V  ⇠ onPause [0ms]
+                         V  ⇢ onPause()
+                         V  ⇠ onPause [0ms]
+     GroupListPresenter  V  ⇢ onStart()
+       BaseListFragment  V  ⇢ getListView(tag=1000)
+                         V  ⇠ getListView [0ms] = android.support.v7.widget.RecyclerView{2061681 VFED.V... .F.....D 0,0-1080,1185 #7f0e00d5 app:id/rv_items}
+          BasePresenter  V  ⇢ onStart()
+                         V  ⇠ onStart [0ms]
+     GroupListPresenter  V  ⇠ onStart [0ms]
+           BaseFragment  V  ⇢ isStateRestored()
+                         V  ⇠ isStateRestored [0ms] = false
+          BasePresenter  V  ⇢ onStart()
+                         V  ⇠ onStart [0ms]
+                         V  ⇢ onResume()
+                         V  ⇠ onResume [0ms]
+                         V  ⇢ onResume()
+                         V  ⇠ onResume [0ms]
+hg.vikstra:VkUseCase:47  I  Successfully received response: {"response":{"post_id":1755}}
+vikstra:ValueUtility:70  V  Item class: CalledFromWrongThreadException
+ikstra:MultiUseCase:108  W  Unhandled exception: android.view.ViewRootImpl$CalledFromWrongThreadException: Only the original thread that created a view hierarchy can touch its views.
+                Process  I  Sending signal. PID: 8096 SIG: 9
+
+                            Process com.orcchg.vikstra (PID: 8096) ended
+
