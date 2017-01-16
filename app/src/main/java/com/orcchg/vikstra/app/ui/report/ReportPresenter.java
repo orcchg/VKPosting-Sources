@@ -1,13 +1,17 @@
 package com.orcchg.vikstra.app.ui.report;
 
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportToVoMapper;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
+import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
+import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
@@ -29,6 +33,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final GroupReportToVoMapper groupReportToVoMapper;
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
+    private final MultiUseCase.ProgressCallback postingProgressCallback;
+
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
                     GroupReportToVoMapper groupReportToVoMapper, PostToSingleGridVoMapper postToSingleGridVoMapper) {
@@ -39,6 +45,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
         this.groupReportToVoMapper = groupReportToVoMapper;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
+        this.postingProgressCallback = createPostingProgressCallback();
     }
 
     @Override
@@ -53,6 +60,24 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     protected int getListTag() {
         return ReportFragment.RV_TAG;
+    }
+
+    /* Lifecycle */
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            ContentUtility.InMemoryStorage.setProgressCallback(postingProgressCallback);  // subscribe to progress updates
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            ContentUtility.InMemoryStorage.setProgressCallback(null);  // unsubscribe from progress updates
+        }
     }
 
     /* Contract */
@@ -74,7 +99,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     protected void freshStart() {
         if (isViewAttached()) getView().showLoading(ReportFragment.RV_TAG);
-        getGroupReportBundleByIdUseCase.execute();
+        if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            getGroupReportBundleByIdUseCase.execute();
+        }
         getPostByIdUseCase.execute();
     }
 
@@ -127,5 +154,14 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 if (isViewAttached()) getView().showError(ReportFragment.RV_TAG);
             }
         };
+    }
+
+    // ------------------------------------------
+    private MultiUseCase.ProgressCallback createPostingProgressCallback() {
+        return ((index, total) -> {
+            // TODO: show progress on bar
+            // TODO: estimate time to complete posting
+            // TODO: impl - get each GroupReport from repo and show
+        });
     }
 }

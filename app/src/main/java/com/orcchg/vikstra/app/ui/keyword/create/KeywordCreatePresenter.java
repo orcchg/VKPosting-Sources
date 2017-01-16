@@ -71,7 +71,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         if (TextUtils.isEmpty(title)) {
             if (isViewAttached()) getView().openEditTitleDialog(title);
         } else if (keywordBundleId == Constant.BAD_ID) {
-            Timber.v("add new keywords bundle to repository");
+            Timber.d("add new keywords bundle to repository");
             PutKeywordBundle.Parameters parameters = new PutKeywordBundle.Parameters.Builder()
                     .setTitle(title)
                     .setKeywords(keywords)  // use unordered collection
@@ -79,7 +79,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             putKeywordBundleUseCase.setParameters(parameters);
             putKeywordBundleUseCase.execute();
         } else {
-            Timber.v("update already existing keywords bundle in repository");
+            Timber.d("update already existing keywords bundle in repository");
             KeywordBundle keywordsBundle = KeywordBundle.builder()
                     .setId(keywordBundleId)
                     .setKeywords(new ArrayList<>(keywords))  // turn collection into ordered list

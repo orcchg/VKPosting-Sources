@@ -55,7 +55,7 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
         reportComponent = DaggerReportComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .postModule(new PostModule(postId))
-                .reportModule(new ReportModule(groupReportBundleId))
+                .reportModule(new ReportModule(groupReportBundleId))  // if BAD_ID then update reports interactively
                 .build();
         reportComponent.inject(this);
     }

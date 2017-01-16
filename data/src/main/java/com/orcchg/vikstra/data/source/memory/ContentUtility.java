@@ -1,8 +1,9 @@
-package com.orcchg.vikstra.app.util;
+package com.orcchg.vikstra.data.source.memory;
 
 import android.content.Context;
 import android.os.Environment;
 
+import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.io.File;
@@ -10,8 +11,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * In-memory global storage.
+ */
 public class ContentUtility {
 
+    /* User session */
+    // --------------------------------------------------------------------------------------------
     public static class CurrentSession {
         private static long sLastSelectedPostId = Constant.BAD_ID;
 
@@ -24,7 +30,11 @@ public class ContentUtility {
         }
     }
 
+    /* In-memory storage */
+    // --------------------------------------------------------------------------------------------
     public static class InMemoryStorage {
+        /* Instant camera image */
+        // --------------------------------------
         private static String sLastStoredInternalImageUrl;
 
         public static void setLastStoredInternalImageUrl(String url) {
@@ -34,8 +44,34 @@ public class ContentUtility {
         public static String getLastStoredInternalImageUrl() {
             return sLastStoredInternalImageUrl;
         }
+
+        /* Posting progress & result */
+        // --------------------------------------
+        private static int sPostingProgress, sPostingTotal;
+        private static MultiUseCase.ProgressCallback sProgressCallback;
+
+        public static void setPostingProgress(int progress, int total) {
+            sPostingProgress = progress;
+            sPostingTotal = total;
+
+            if (sProgressCallback != null) sProgressCallback.onDone(progress, total);
+        }
+
+        public static void setProgressCallback(MultiUseCase.ProgressCallback callback) {
+            sProgressCallback = callback;
+        }
+
+        public static int getPostingProgress() {
+            return sPostingProgress;
+        }
+
+        public static int getPostingTotal() {
+            return sPostingTotal;
+        }
     }
 
+    /* Miscellaneous */
+    // --------------------------------------------------------------------------------------------
     public static String getFileProviderAuthority() {
         return "com.orcchg.vikstra.fileprovider";  // TODO: get authority from Gradle config
     }

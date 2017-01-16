@@ -23,7 +23,7 @@ import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
 import com.orcchg.vikstra.app.ui.report.ReportActivity;
 import com.orcchg.vikstra.app.ui.status.StatusActivity;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
-import com.orcchg.vikstra.app.util.ContentUtility;
+import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.io.File;
@@ -137,6 +137,10 @@ public class Navigator {
 
     /* Report */
     // ------------------------------------------
+    public void openReportScreen(@NonNull Context context, long postId) {
+        openReportScreen(context, Constant.BAD_ID, postId);
+    }
+
     public void openReportScreen(@NonNull Context context, long groupReportBundleId, long postId) {
         Intent intent = ReportActivity.getCallingIntent(context, groupReportBundleId, postId);
         context.startActivity(intent);

@@ -89,8 +89,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
         this.postKeywordBundleUseCase = postKeywordBundleUseCase;  // no callback - background task
-        this.postGroupBundleUseCase = postGroupBundleUseCase;
-        this.postGroupBundleUseCase.setPostExecuteCallback(createPostGroupBundleCallback());
+        this.postGroupBundleUseCase = postGroupBundleUseCase;  // no callback - background task
         this.putGroupBundleUseCase = putGroupBundleUseCase;
         this.putGroupBundleUseCase.setPostExecuteCallback(createPutGroupBundleCallback());
         this.putGroupReportBundle = putGroupReportBundle;
@@ -296,7 +295,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             sendPostingStartedMessage(true);
             vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, currentPost,
                     createMakeWallPostCallback(), getView(), getView());
-            if (isViewAttached()) getView().openStatusScreen();
+            if (isViewAttached()) {
+                if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+                    getView().openInteractiveReportScreen(currentPost.id());
+                } else {
+                    getView().openStatusScreen();
+                }
+            }
         } else {
             Timber.d("No post selected, nothing to be done");
             sendPostNotSelected();
@@ -414,21 +419,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         };
     }
 
-    private UseCase.OnPostExecuteCallback<Boolean> createPostGroupBundleCallback() {
-        return new UseCase.OnPostExecuteCallback<Boolean>() {
-            @Override
-            public void onFinish(@Nullable Boolean result) {
-                // TODO: result false - GroupBundle not updated
-                // TODO: impl updating GroupBundle
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                // TODO: failed to update GroupBundle in repo
-            }
-        };
-    }
-
     private UseCase.OnPostExecuteCallback<GroupBundle> createPutGroupBundleCallback() {
         return new UseCase.OnPostExecuteCallback<GroupBundle>() {
             @Override
@@ -505,7 +495,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                             .build();
                     PostGroupBundle.Parameters parameters = new PostGroupBundle.Parameters(groupBundle);
                     postGroupBundleUseCase.setParameters(parameters);
-                    postGroupBundleUseCase.execute();
+                    postGroupBundleUseCase.execute();  // silent update without callback
                 }
             }
 

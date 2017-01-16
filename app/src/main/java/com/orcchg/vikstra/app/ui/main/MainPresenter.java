@@ -13,7 +13,7 @@ import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
-import com.orcchg.vikstra.app.util.ContentUtility;
+import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -149,7 +149,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
                     Timber.e("No GroupBundle found by id, which has improper value in selected KeywordBundle");
                     throw new ProgramException();
                 }
-                Timber.v("Fetched GroupBundle, now get Post from repository, then make wall post");
+                Timber.d("Fetched GroupBundle, now get Post from repository, then make wall post");
                 getPostByIdUseCase.execute();
             }
 
@@ -165,7 +165,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
             @Override
             public void onFinish(@Nullable Post post) {
                 // TODO: handle NULL Post
-                Timber.v("Fetched Post, now make wall post");
+                Timber.d("Fetched Post, now make wall post");
 //                vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, post,
 //                        createMakeWallPostCallback(), getView(), getView());
             }

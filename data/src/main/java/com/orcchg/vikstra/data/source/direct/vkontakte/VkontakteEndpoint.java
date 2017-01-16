@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.data.source.direct.Endpoint;
 import com.orcchg.vikstra.data.source.direct.ImageLoader;
+import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
@@ -251,7 +252,10 @@ public class VkontakteEndpoint extends Endpoint {
                                @Nullable MultiUseCase.ProgressCallback progressCallback) {
         MakeWallPostToGroups useCase = new MakeWallPostToGroups(threadExecutor, postExecuteScheduler);
         useCase.setParameters(parameters);
-        useCase.setProgressCallback(progressCallback);
+        useCase.setProgressCallback(((index, total) -> {
+            ContentUtility.InMemoryStorage.setPostingProgress(index, total);
+            if (progressCallback != null) progressCallback.onDone(index, total);
+        }));
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<GroupReportEssence>>>() {
             @Override
             public void onFinish(@Nullable List<Ordered<GroupReportEssence>> reports) {

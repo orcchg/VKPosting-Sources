@@ -64,7 +64,7 @@ public class KeywordsFlowLayout extends AbstractFlowLayout {
                             break;
                     }
                 } catch (Exception e) {
-                    Timber.e(TAG, "Preventing from crash...");
+                    Timber.e("Preventing from crash...");
                 }
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
                     getViewTreeObserver().removeGlobalOnLayoutListener(this);

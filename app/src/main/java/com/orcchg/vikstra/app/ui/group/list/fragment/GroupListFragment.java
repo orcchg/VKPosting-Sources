@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
+import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.common.injection.KeywordModule;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
@@ -109,6 +110,11 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     }
 
     @Override
+    public void openInteractiveReportScreen(long postId) {
+        navigationComponent.navigator().openReportScreen(getActivity(), postId);
+    }
+
+    @Override
     public void openGroupDetailScreen(long groupId) {
         navigationComponent.navigator().openGroupDetailScreen(getActivity(), groupId);
     }
@@ -142,9 +148,13 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     public void onPostingProgress(int progress, int total) {
         postingNotification.onPostingProgress(progress, total);
 
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
-        if (dialog != null) dialog.updatePostingProgress(progress, total);
+        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            // TODO: send progress to report screen
+        } else {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
+            if (dialog != null) dialog.updatePostingProgress(progress, total);
+        }
     }
 
     @Override
@@ -156,9 +166,13 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     public void onPostingComplete() {
         postingNotification.onPostingComplete();
 
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
-        if (dialog != null) dialog.onPostingComplete();
+        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            // TODO: send progress to report screen
+        } else {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
+            if (dialog != null) dialog.onPostingComplete();
+        }
     }
 
     // ------------------------------------------

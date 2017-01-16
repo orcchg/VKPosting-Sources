@@ -68,7 +68,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     @DebugLog @Override
     public void onStart() {
         if (isFresh) {
-            Timber.v("Fresh start of %s", getClass().getSimpleName());
+            Timber.i("Fresh start of %s", getClass().getSimpleName());
             isFresh = false;
             freshStart();
         }

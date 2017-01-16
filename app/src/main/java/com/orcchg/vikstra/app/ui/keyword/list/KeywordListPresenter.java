@@ -12,7 +12,7 @@ import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;
-import com.orcchg.vikstra.app.util.ContentUtility;
+import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
@@ -26,8 +26,6 @@ import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
-
-import static android.R.attr.data;
 
 public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.View>
         implements KeywordListContract.Presenter {

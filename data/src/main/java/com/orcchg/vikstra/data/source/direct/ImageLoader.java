@@ -60,7 +60,7 @@ public class ImageLoader extends Endpoint {
             useCase.setPostExecuteCallback(callback);
             useCase.execute();
         } else {
-            Timber.v("Nothing to be done with empty list of media");
+            Timber.d("Nothing to be done with empty list of media");
         }
     }
 

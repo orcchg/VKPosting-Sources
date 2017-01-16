@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.util;
+package com.orcchg.vikstra.app.ui.common.view.misc;
 
 import android.content.Context;
 import android.graphics.Rect;
