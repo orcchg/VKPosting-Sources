@@ -12,12 +12,14 @@ import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
+import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 
 import java.util.List;
 
@@ -33,7 +35,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final GroupReportToVoMapper groupReportToVoMapper;
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
-    private final MultiUseCase.ProgressCallback postingProgressCallback;
+    private final MultiUseCase.ProgressCallback<GroupReportEssence> postingProgressCallback;
 
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
@@ -157,11 +159,14 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     }
 
     // ------------------------------------------
-    private MultiUseCase.ProgressCallback createPostingProgressCallback() {
-        return ((index, total) -> {
-            // TODO: show progress on bar
-            // TODO: estimate time to complete posting
-            // TODO: impl - get each GroupReport from repo and show
-        });
+    private MultiUseCase.ProgressCallback<GroupReportEssence> createPostingProgressCallback() {
+        return new MultiUseCase.ProgressCallback<GroupReportEssence>() {
+            @Override
+            public void onDone(int index, int total, Ordered<GroupReportEssence> data) {
+                // TODO: show progress on bar
+                // TODO: estimate time to complete posting
+                // TODO: impl - get each GroupReport from repo and show
+            }
+        };
     }
 }

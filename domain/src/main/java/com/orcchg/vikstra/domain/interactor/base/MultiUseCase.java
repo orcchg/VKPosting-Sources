@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -40,8 +39,8 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
 
     /* Callback */
     // ------------------------------------------
-    public interface ProgressCallback {
-        void onDone(int index, int total);
+    public interface ProgressCallback<Data> {
+        void onDone(int index, int total, Ordered<Data> data);
     }
 
     protected ProgressCallback progressCallback;
@@ -92,7 +91,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                             UseCase<Result> useCase = useCases.size() == 1 ? useCases.get(0) : useCases.get(index);
                             result.orderId = useCase.getOrderId();
                             result.data = useCase.doAction();  // perform use case synchronously
-                            if (progressCallback != null) progressCallback.onDone(index + 1, total);
+                            if (progressCallback != null) progressCallback.onDone(index + 1, total, result);
                             break;
                         } catch (Throwable e) {
                             if (ValueUtility.containsClass(e, allowedErrors)) {
@@ -107,7 +106,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                             } else {
                                 Timber.w("Unhandled exception: %s", e.toString());
                                 result.error = e;
-                                if (progressCallback != null) progressCallback.onDone(index + 1, total);
+                                if (progressCallback != null) progressCallback.onDone(index + 1, total, result);
                                 break;
                             }
                         }

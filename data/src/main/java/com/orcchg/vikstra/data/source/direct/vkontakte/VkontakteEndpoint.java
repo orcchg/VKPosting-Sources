@@ -215,30 +215,39 @@ public class VkontakteEndpoint extends Endpoint {
                                           @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                                           @Nullable IPostingNotificationDelegate postingNotificationDelegate,
                                           @Nullable IPhotoUploadNotificationDelegate photoUploadNotificationDelegate) {
-        MultiUseCase.ProgressCallback progressCallback = (index, total) -> {
-            Timber.v("Make wall posts progress: %s / %s", index, total);
-            if (postingNotificationDelegate == null) return;
-            if (index < total) {
-                postingNotificationDelegate.onPostingProgress(index, total);
-            } else {
-                postingNotificationDelegate.onPostingComplete();
+        MultiUseCase.ProgressCallback<GroupReportEssence> progressCallback = new MultiUseCase.ProgressCallback<GroupReportEssence>() {
+            @Override
+            public void onDone(int index, int total, Ordered<GroupReportEssence> data) {
+                Timber.v("Make wall posts progress: %s / %s", index, total);
+                if (postingNotificationDelegate == null) return;
+                if (index < total) {
+                    postingNotificationDelegate.onPostingProgress(index, total);
+                } else {
+                    postingNotificationDelegate.onPostingComplete();
+                }
             }
         };
 
-        MultiUseCase.ProgressCallback photoUploadProgressCb = (index, total) -> {
-            Timber.v("Photo uploading progress: %s / %s", index, total);
-            if (photoUploadNotificationDelegate == null) return;
-            if (index < total) {
-                photoUploadNotificationDelegate.onPhotoUploadProgress(index, total);
-            } else {
-                photoUploadNotificationDelegate.onPhotoUploadComplete();
+        MultiUseCase.ProgressCallback<VKPhotoArray> photoUploadProgressCb = new MultiUseCase.ProgressCallback<VKPhotoArray>() {
+            @Override
+            public void onDone(int index, int total, Ordered<VKPhotoArray> data) {
+                Timber.v("Photo uploading progress: %s / %s", index, total);
+                if (photoUploadNotificationDelegate == null) return;
+                if (index < total) {
+                    photoUploadNotificationDelegate.onPhotoUploadProgress(index, total);
+                } else {
+                    photoUploadNotificationDelegate.onPhotoUploadComplete();
+                }
             }
         };
 
-        MultiUseCase.ProgressCallback photoPrepareProgressCb = (index, total) -> {
-            Timber.v("Photo preparing progress: %s / %s", index, total);
-            if (photoUploadNotificationDelegate != null) {
-                photoUploadNotificationDelegate.onPhotoUploadProgressInfinite();
+        MultiUseCase.ProgressCallback<Bitmap> photoPrepareProgressCb = new MultiUseCase.ProgressCallback<Bitmap>() {
+            @Override
+            public void onDone(int index, int total, Ordered<Bitmap> data) {
+                Timber.v("Photo preparing progress: %s / %s", index, total);
+                if (photoUploadNotificationDelegate != null) {
+                    photoUploadNotificationDelegate.onPhotoUploadProgressInfinite();
+                }
             }
         };
 
@@ -252,10 +261,13 @@ public class VkontakteEndpoint extends Endpoint {
                                @Nullable MultiUseCase.ProgressCallback progressCallback) {
         MakeWallPostToGroups useCase = new MakeWallPostToGroups(threadExecutor, postExecuteScheduler);
         useCase.setParameters(parameters);
-        useCase.setProgressCallback(((index, total) -> {
-            ContentUtility.InMemoryStorage.setPostingProgress(index, total);
-            if (progressCallback != null) progressCallback.onDone(index, total);
-        }));
+        useCase.setProgressCallback(new MultiUseCase.ProgressCallback<GroupReportEssence>() {
+            @Override
+            public void onDone(int index, int total, Ordered<GroupReportEssence> data) {
+                ContentUtility.InMemoryStorage.setPostingProgress(index, total, data);
+                if (progressCallback != null) progressCallback.onDone(index, total, data);
+            }
+        });
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<GroupReportEssence>>>() {
             @Override
             public void onFinish(@Nullable List<Ordered<GroupReportEssence>> reports) {

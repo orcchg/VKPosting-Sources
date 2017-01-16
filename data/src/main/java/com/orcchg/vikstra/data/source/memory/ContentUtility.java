@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Environment;
 
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
+import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.io.File;
@@ -50,11 +51,11 @@ public class ContentUtility {
         private static int sPostingProgress, sPostingTotal;
         private static MultiUseCase.ProgressCallback sProgressCallback;
 
-        public static void setPostingProgress(int progress, int total) {
+        public static <Data> void setPostingProgress(int progress, int total, Ordered<Data> data) {
             sPostingProgress = progress;
             sPostingTotal = total;
 
-            if (sProgressCallback != null) sProgressCallback.onDone(progress, total);
+            if (sProgressCallback != null) sProgressCallback.onDone(progress, total, data);
         }
 
         public static void setProgressCallback(MultiUseCase.ProgressCallback callback) {
