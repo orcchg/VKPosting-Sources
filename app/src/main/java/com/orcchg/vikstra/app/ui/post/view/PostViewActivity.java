@@ -131,6 +131,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
         loadingView.setVisibility(View.GONE);
         errorView.setVisibility(View.GONE);
 
+        mediaContainer.removeAllViews();
         descriptionView.setText(viewObject.description());
         int totalMedia = viewObject.media().size();
         if (totalMedia > 0) {
