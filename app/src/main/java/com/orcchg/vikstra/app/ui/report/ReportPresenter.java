@@ -112,7 +112,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     protected void freshStart() {
         posted = 0;  // drop counter
-        if (isViewAttached()) getView().showLoading(ReportFragment.RV_TAG);
+        if (isViewAttached()) getView().showLoading(getListTag());
         if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
             getGroupReportBundleByIdUseCase.execute();
         }
@@ -139,7 +139,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             public void onError(Throwable e) {
                 // TODO: failed to load post
                 Timber.e("Use-Case: failed to get Post by id");
-                if (isViewAttached()) getView().showError(ReportFragment.RV_TAG);
+                if (isViewAttached()) getView().showError(getListTag());
             }
         };
     }
@@ -154,7 +154,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                     throw new ProgramException();
                 } else if (bundle.groupReports().isEmpty()) {
                     Timber.i("Use-Case: succeeded to get GroupReportBundle by id");
-                    if (isViewAttached()) getView().showEmptyList(ReportFragment.RV_TAG);
+                    if (isViewAttached()) getView().showEmptyList(getListTag());
                 } else {
                     Timber.i("Use-Case: succeeded to get GroupReportBundle by id");
                     int[] counters = bundle.statusCount();
@@ -170,7 +170,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get GroupReportBundle by id");
-                if (isViewAttached()) getView().showError(ReportFragment.RV_TAG);
+                if (isViewAttached()) getView().showError(getListTag());
             }
         };
     }
@@ -203,6 +203,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             if (isViewAttached()) {
                 getView().showGroupReports(false);  // idemponent call (no-op if list items are already visible)
                 getView().updatePostedCounters(posted, total);
+                getView().getListView(getListTag()).smoothScrollToPosition(0);
                 // TODO: estimate time to complete posting, use DomainConfig.INSTANCE.multiUseCaseSleepInterval
             }
         };

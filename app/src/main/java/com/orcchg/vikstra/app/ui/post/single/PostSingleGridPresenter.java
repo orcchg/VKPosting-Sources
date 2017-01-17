@@ -89,7 +89,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     @Override
     protected void freshStart() {
-        if (isViewAttached()) getView().showLoading(PostSingleGridFragment.RV_TAG);
+        if (isViewAttached()) getView().showLoading(getListTag());
         getPostsUseCase.execute();
     }
 
@@ -114,7 +114,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     throw new ProgramException();
                 } else if (posts.isEmpty()) {
                     Timber.i("Use-Case: succeeded to get list of Post-s");
-                    if (isViewAttached()) getView().showEmptyList(PostSingleGridFragment.RV_TAG);
+                    if (isViewAttached()) getView().showEmptyList(getListTag());
                 } else {
                     Timber.i("Use-Case: succeeded to get list of Post-s");
                     List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
@@ -126,7 +126,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get list of Post-s");
-                if (isViewAttached()) getView().showError(PostSingleGridFragment.RV_TAG);
+                if (isViewAttached()) getView().showError(getListTag());
             }
         };
     }

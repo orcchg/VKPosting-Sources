@@ -126,7 +126,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     @Override
     protected void freshStart() {
-        if (isViewAttached()) getView().showLoading(KeywordListFragment.RV_TAG);
+        if (isViewAttached()) getView().showLoading(getListTag());
         getKeywordBundlesUseCase.execute();
     }
 
@@ -160,7 +160,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                     throw new ProgramException();
                 } else if (bundles.isEmpty()) {
                     Timber.i("Use-Case: succeeded to get list of KeywordBundle-s");
-                    if (isViewAttached()) getView().showEmptyList(KeywordListFragment.RV_TAG);
+                    if (isViewAttached()) getView().showEmptyList(getListTag());
                 } else {
                     Timber.i("Use-Case: succeeded to get list of KeywordBundle-s");
                     Collections.sort(bundles);
@@ -175,7 +175,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get list of KeywordBundle-s");
                 if (memento.currentSize <= 0) {
-                    if (isViewAttached()) getView().showError(KeywordListFragment.RV_TAG);
+                    if (isViewAttached()) getView().showError(getListTag());
                 } else {
                     listAdapter.onError(true);
                 }

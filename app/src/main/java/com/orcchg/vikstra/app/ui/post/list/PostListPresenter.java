@@ -71,7 +71,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
-        if (isViewAttached()) getView().showLoading(PostListFragment.RV_TAG);
+        if (isViewAttached()) getView().showLoading(getListTag());
         getPostsUseCase.execute();
     }
 
@@ -86,7 +86,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
                     throw new ProgramException();
                 } else if (posts.isEmpty()) {
                     Timber.i("Use-Case: succeeded to get list of Post-s");
-                    if (isViewAttached()) getView().showEmptyList(PostListFragment.RV_TAG);
+                    if (isViewAttached()) getView().showEmptyList(getListTag());
                 } else {
                     Timber.i("Use-Case: succeeded to get list of Post-s");
                     List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
@@ -98,7 +98,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
             @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get list of Post-s");
-                if (isViewAttached()) getView().showError(PostListFragment.RV_TAG);
+                if (isViewAttached()) getView().showError(getListTag());
             }
         };
     }
