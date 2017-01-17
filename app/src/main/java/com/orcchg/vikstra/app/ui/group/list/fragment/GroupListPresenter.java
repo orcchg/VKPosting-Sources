@@ -203,6 +203,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void sendGroupsNotSelected() {
+        mediatorComponent.mediator().sendGroupsNotSelected();
+    }
+
+    @Override
     public void sendKeywordBundleChanged() {
         mediatorComponent.mediator().sendKeywordBundleChanged();
     }
@@ -303,6 +308,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     if (childItem.isSelected()) selectedGroups.add(childItem.getGroup());
                 }
             }
+            if (selectedGroups.isEmpty()) {
+                Timber.d("No Group-s selected, send warning");
+                sendGroupsNotSelected();
+                return;
+            }
             sendPostingStartedMessage(true);
             vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, currentPost,
                     createMakeWallPostCallback(), getView(), getView());
@@ -321,7 +331,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 Timber.w("No View is attached");
             }
         } else {
-            Timber.d("No Post was selected, nothing to be done");
+            Timber.d("No Post was selected, send warning");
             sendPostNotSelected();
         }
     }

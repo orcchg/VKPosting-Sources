@@ -150,6 +150,11 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     }
 
     @Override
+    public void onGroupsNotSelected() {
+        UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_groups_not_selected_message);
+    }
+
+    @Override
     public void onKeywordsLimitReached(int limit) {
         UiUtility.showSnackbar(coordinatorRoot, String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
     }

@@ -9,6 +9,7 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 public class UiUtility {
 
@@ -56,5 +57,10 @@ public class UiUtility {
 
     public static void showSnackbar(View view, String text) {
         Snackbar.make(view, text, Snackbar.LENGTH_SHORT).show();
+    }
+
+    public static void showSoftKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
     }
 }

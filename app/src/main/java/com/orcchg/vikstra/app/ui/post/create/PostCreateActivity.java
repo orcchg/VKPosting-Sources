@@ -128,7 +128,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
                     break;
             }
         } else {
-            Timber.w("Permissions %s were not granted !", Arrays.toString(permissions));
+            Timber.w("Permissions [%s] were not granted", Arrays.toString(permissions));
         }
     }
 

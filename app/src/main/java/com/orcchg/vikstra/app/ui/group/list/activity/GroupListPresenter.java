@@ -99,6 +99,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receiveGroupsNotSelected() {
+        if (isViewAttached()) getView().onGroupsNotSelected();
+    }
+
+    @Override
     public void receiveKeywordBundleChanged() {
         if (isViewAttached()) getView().setCloseViewResult(Activity.RESULT_OK);
     }

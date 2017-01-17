@@ -10,6 +10,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 interface GroupListContract {
     interface View extends MvpView {
         void onAddKeywordError();
+        void onGroupsNotSelected();
         void onKeywordsLimitReached(int limit);
         void onPostNotSelected();
 
