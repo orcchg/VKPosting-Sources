@@ -67,7 +67,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private GroupListAdapter listAdapter;
 
     int totalSelectedGroups, totalGroups;
-    private boolean isKeywordBundleChanged;
+    private boolean isKeywordBundleChanged, isGroupBundleChanged;
     private Keyword newlyAddedKeyword;
     private @NonNull GroupBundle inputGroupBundle;
     private @NonNull KeywordBundle inputKeywordBundle;
