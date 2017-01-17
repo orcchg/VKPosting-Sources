@@ -44,6 +44,7 @@ public class StartActivity extends SimpleBaseActivity {
                         R.string.main_dialog_authorization_failed, (xdialog, which) -> finish());
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);
+                dialog.show();
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);

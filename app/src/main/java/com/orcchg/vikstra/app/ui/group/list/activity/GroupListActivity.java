@@ -122,7 +122,7 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
 
     private void initToolbar() {
         toolbar.setTitle(R.string.group_list_screen_title);
-        toolbar.setNavigationOnClickListener((view) -> finish());
+        toolbar.setNavigationOnClickListener((view) -> finish());  // finish with current result
         toolbar.inflateMenu(R.menu.edit_dump);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
@@ -168,8 +168,9 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     @Override
     public void openAddKeywordDialog() {
         DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
-                (dialog, which, text) -> { if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text)); })
-        .show();
+                (dialog, which, text) -> {
+                    if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text));
+                }).show();
     }
 
     @Override

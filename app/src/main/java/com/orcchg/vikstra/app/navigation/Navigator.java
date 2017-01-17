@@ -84,7 +84,7 @@ public class Navigator {
             context.startActivityForResult(intent, Constant.RequestCode.EXTERNAL_SCREEN_GALLERY);
         } else {
             Timber.e("No Activity was found to open Gallery !");
-            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_gallery);
+            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_gallery).show();
         }
     }
 
@@ -106,7 +106,7 @@ public class Navigator {
             context.startActivityForResult(intent, Constant.RequestCode.EXTERNAL_SCREEN_CAMERA);
         } else {
             Timber.e("No Activity was found to open Camera !");
-            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_camera);
+            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_camera).show();
         }
     }
 
