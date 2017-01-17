@@ -35,6 +35,7 @@ import com.vk.sdk.api.model.VKPhotoArray;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -65,19 +66,22 @@ public class VkontakteEndpoint extends Endpoint {
     /**
      * Get group {@link Group} by it's string id {@param id}.
      */
+    @DebugLog
     public void getGroupById(long id, @Nullable final UseCase.OnPostExecuteCallback<Group> callback) {
         GetGroupById useCase = new GetGroupById(id, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKApiCommunityArray>() {
-            @Override
-            public void onFinish(@Nullable VKApiCommunityArray values) {
+            @DebugLog @Override
+            public void onFinish(@Nullable VKApiCommunityArray vkGroup) {
+                Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get Group by id");
                 if (callback != null) {
-                    Group group = values != null ? convert(null, values.get(0)) : null;  // null means no such group found by id
+                    Group group = vkGroup != null ? convert(null, vkGroup.get(0)) : null;  // null means no such group found by id
                     callback.onFinish(group);  // pass found group further: in case of null value destination screen will handle it
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case [Vkontakte Endpoint]: failed to get Group by id");
                 if (callback != null) callback.onError(e);
             }
         });
@@ -89,21 +93,24 @@ public class VkontakteEndpoint extends Endpoint {
      * Because one keyword generally corresponds to multiple groups, the resulting list is merged
      * and contains all retrieved groups.
      */
+    @DebugLog
     public void getGroupsByKeywords(final List<Keyword> keywords,
                                     @Nullable final UseCase.OnPostExecuteCallback<List<Group>> callback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<VKApiCommunityArray>>>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<VKApiCommunityArray>> values) {
                 if (values == null) {
-                    Timber.e("List of VKApiCommunityArray instances cannot be null, but could be empty instead");
+                    Timber.wtf("List of VKApiCommunityArray-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
+                Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get Group-s by Keyword-s");
                 if (callback != null) callback.onFinish(convertMerge(keywords, ValueUtility.unwrap(values)));
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case [Vkontakte Endpoint]: failed to get Group-s by Keyword-s");
                 if (callback != null) callback.onError(e);
             }
         });
@@ -119,17 +126,19 @@ public class VkontakteEndpoint extends Endpoint {
                                          @Nullable final UseCase.OnPostExecuteCallback<List<List<Group>>> callback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<VKApiCommunityArray>>>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<VKApiCommunityArray>> values) {
                 if (values == null) {
-                    Timber.e("List of VKApiCommunityArray instances cannot be null, but could be empty instead");
+                    Timber.wtf("List of VKApiCommunityArray-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
+                Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get Group-s by Keyword-s (split)");
                 if (callback != null) callback.onFinish(convertSplit(keywords, ValueUtility.unwrap(values)));
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case [Vkontakte Endpoint]: failed to get Group-s by Keyword-s (split)");
                 if (callback != null) callback.onError(e);
             }
         });
@@ -162,11 +171,17 @@ public class VkontakteEndpoint extends Endpoint {
                               @Nullable MultiUseCase.ProgressCallback progressCallback,
                               @Nullable MultiUseCase.ProgressCallback photoUploadProgressCb,
                               @Nullable MultiUseCase.ProgressCallback photoPrepareProgressCb) {
+
+        List<Group> sortedGroups = new ArrayList<>(groups);  // preserve ordering between groups and reports in future
+        Collections.sort(sortedGroups);
+
         MakeWallPostToGroups.Parameters.Builder paramsBuilder = new MakeWallPostToGroups.Parameters.Builder()
-                .setGroups(new ArrayList<>(groups))  // preserve ordering
+                .setGroups(sortedGroups)
                 .setMessage(post.description());
+
         List<Media> media = post.media();
         if (media != null && !media.isEmpty()) {
+            Timber.d("Found some media in attachments to Post, uploading media first before wall posting");
             List<Media> cached = new ArrayList<>();
             List<Media> retained = new ArrayList<>();
             attachLocalCache.retain(media, cached, retained);
@@ -191,9 +206,9 @@ public class VkontakteEndpoint extends Endpoint {
              * Nothing will be done is 'retained' list is empty or NULL
              */
             imageLoader.loadImages(retained, new UseCase.OnPostExecuteCallback<List<Ordered<Bitmap>>>() {
-                @Override
+                @DebugLog @Override
                 public void onFinish(@Nullable List<Ordered<Bitmap>> bitmaps) {
-                    Timber.d("Finished to load images");
+                    Timber.i("Use-Case: succeeded to load images by urls");
                     UploadPhotos useCase = new UploadPhotos(threadExecutor, postExecuteScheduler);
                     useCase.setParameters(new UploadPhotos.Parameters(ValueUtility.unwrap(bitmaps)));
                     useCase.setProgressCallback(photoUploadProgressCb);
@@ -201,12 +216,14 @@ public class VkontakteEndpoint extends Endpoint {
                     useCase.execute();
                 }
 
-                @Override
+                @DebugLog @Override
                 public void onError(Throwable e) {
+                    Timber.e("Use-Case: failed to load images by urls");
                     if (callback != null) callback.onError(e);
                 }
             }, photoPrepareProgressCb);
         } else {
+            Timber.d("No media attached to Post, make wall posting directly");
             makeWallPosts(paramsBuilder.build(), callback, progressCallback);
         }
     }
@@ -216,9 +233,9 @@ public class VkontakteEndpoint extends Endpoint {
                                           @Nullable IPostingNotificationDelegate postingNotificationDelegate,
                                           @Nullable IPhotoUploadNotificationDelegate photoUploadNotificationDelegate) {
         MultiUseCase.ProgressCallback<GroupReportEssence> progressCallback = new MultiUseCase.ProgressCallback<GroupReportEssence>() {
-            @Override
+            @DebugLog @Override
             public void onDone(int index, int total, Ordered<GroupReportEssence> data) {
-                Timber.v("Make wall posts progress: %s / %s", index, total);
+                Timber.d("Make wall posts progress: %s / %s", index, total);
                 if (postingNotificationDelegate == null) return;
                 if (index < total) {
                     postingNotificationDelegate.onPostingProgress(index, total);
@@ -229,9 +246,9 @@ public class VkontakteEndpoint extends Endpoint {
         };
 
         MultiUseCase.ProgressCallback<VKPhotoArray> photoUploadProgressCb = new MultiUseCase.ProgressCallback<VKPhotoArray>() {
-            @Override
+            @DebugLog @Override
             public void onDone(int index, int total, Ordered<VKPhotoArray> data) {
-                Timber.v("Photo uploading progress: %s / %s", index, total);
+                Timber.d("Photo uploading progress: %s / %s", index, total);
                 if (photoUploadNotificationDelegate == null) return;
                 if (index < total) {
                     photoUploadNotificationDelegate.onPhotoUploadProgress(index, total);
@@ -242,9 +259,9 @@ public class VkontakteEndpoint extends Endpoint {
         };
 
         MultiUseCase.ProgressCallback<Bitmap> photoPrepareProgressCb = new MultiUseCase.ProgressCallback<Bitmap>() {
-            @Override
+            @DebugLog @Override
             public void onDone(int index, int total, Ordered<Bitmap> data) {
-                Timber.v("Photo preparing progress: %s / %s", index, total);
+                Timber.d("Photo preparing progress: %s / %s", index, total);
                 if (photoUploadNotificationDelegate != null) {
                     photoUploadNotificationDelegate.onPhotoUploadProgressInfinite();
                 }
@@ -262,20 +279,20 @@ public class VkontakteEndpoint extends Endpoint {
         MakeWallPostToGroups useCase = new MakeWallPostToGroups(threadExecutor, postExecuteScheduler);
         useCase.setParameters(parameters);
         useCase.setProgressCallback(new MultiUseCase.ProgressCallback<GroupReportEssence>() {
-            @Override
+            @DebugLog @Override
             public void onDone(int index, int total, Ordered<GroupReportEssence> data) {
                 ContentUtility.InMemoryStorage.setPostingProgress(index, total, data);
                 if (progressCallback != null) progressCallback.onDone(index, total, data);
             }
         });
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<GroupReportEssence>>>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<GroupReportEssence>> reports) {
-                Timber.d("Finished wall posting");
                 if (reports == null) {
-                    Timber.e("List of GroupReports can not be null");
+                    Timber.wtf("List of GroupReport-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
+                Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get make wall posting");
                 int index = 0;
                 List<GroupReportEssence> refinedReports = new ArrayList<>();
                 for (Ordered<GroupReportEssence> item : reports) {
@@ -294,8 +311,9 @@ public class VkontakteEndpoint extends Endpoint {
                 if (callback != null) callback.onFinish(refinedReports);
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case [Vkontakte Endpoint]: failed to get make wall posting");
                 if (callback != null) callback.onError(e);
             }
         });
@@ -312,10 +330,13 @@ public class VkontakteEndpoint extends Endpoint {
             @Nullable UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
             @Nullable MultiUseCase.ProgressCallback progressCallback) {
         return new UseCase.OnPostExecuteCallback<List<Ordered<VKPhotoArray>>>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<VKPhotoArray>> photos) {
-                // TODO: NPE
-                Timber.d("Finished uploading images");
+                if (photos == null) {
+                    Timber.wtf("List of VKPhotoArray-s must not be null, it could be empty at least");
+                    throw new ProgramException();
+                }
+                Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get upload photos");
                 int index = 0;
                 VKAttachments attachments = new VKAttachments();
                 List<VKPhotoArray> refinedPhotos = ValueUtility.unwrap(photos);
@@ -328,8 +349,9 @@ public class VkontakteEndpoint extends Endpoint {
                 makeWallPosts(paramsBuilder.build(), callback, progressCallback);
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case [Vkontakte Endpoint]: failed to get upload photos");
                 if (callback != null) callback.onError(e);
             }
         };
