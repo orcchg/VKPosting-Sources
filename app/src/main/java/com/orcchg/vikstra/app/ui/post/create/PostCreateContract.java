@@ -22,6 +22,9 @@ public interface PostCreateContract {
         ContentResolver contentResolver();
         void closeView();  // with currently set result
         void closeView(int resultCode);
+
+        void showCreatePostFailure();
+        void showUpdatePostFailure();
     }
 
     interface Presenter extends MvpPresenter<View> {
@@ -32,7 +35,7 @@ public interface PostCreateContract {
         void onPollPressed();
         void onSavePressed();
 
-        void removeAttachedMedia();
+        void removeAttachedMedia(int position);
         void retry();
     }
 }

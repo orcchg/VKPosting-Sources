@@ -240,6 +240,17 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
 
     // ------------------------------------------
     @Override
+    public void showCreatePostFailure() {
+        UiUtility.showSnackbar(this, R.string.post_create_snackbar_failed_to_create_post);
+    }
+
+    @Override
+    public void showUpdatePostFailure() {
+        UiUtility.showSnackbar(this, R.string.post_create_snackbar_failed_to_update_post);
+    }
+
+    // ------------------------------------------
+    @Override
     public void showContent(int tag, boolean isEmpty) {
         container.setVisibility(View.VISIBLE);
         loadingView.setVisibility(View.GONE);
@@ -268,9 +279,10 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private void addMediaThumbnail(ThumbView mediaView) {
+        final int position = mediaContainer.getChildCount();
         mediaView.setCornerIcon(R.drawable.ic_close_white_18dp);
         mediaView.setOnClickListener((view) -> {
-            presenter.removeAttachedMedia();
+            presenter.removeAttachedMedia(position);
             mediaContainer.removeView(mediaView);
             if (mediaContainer.getChildCount() == 0) mediaContainerRoot.setVisibility(View.GONE);
         });

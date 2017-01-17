@@ -3,6 +3,8 @@
     <string name="post_create_dialog_save_changes_title">Post changed</string>
     <string name="post_create_dialog_save_changes_description">Do you want to save changes?</string>
     <string name="post_create_screen_title">Create new post</string>
+    <string name="post_create_snackbar_failed_to_create_post">Failed to create new post. Try again</string>
+    <string name="post_create_snackbar_failed_to_update_post">Failed to update current post. Try again</string>
     <string name="post_create_snackbar_media_attach_limit_message">You\'ve reached limit for media attachments: %s</string>
     <string name="post_create_text_description_hint">Enter post description...</string>
 </resources>

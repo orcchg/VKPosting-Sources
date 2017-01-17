@@ -37,6 +37,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     private final PutPost putPostUseCase;
 
     private List<Media> attachMedia = new ArrayList<>();  // TODO: save instance state
+    private boolean hasAttachChanged;
 
     private @Nullable Post inputPost;
 
@@ -74,6 +75,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     if (isViewAttached()) getView().addMediaThumbnail(imagePath);
                     Media media = Media.builder().setId(1000).setUrl(imagePath).build();  // TODO: unique id
                     attachMedia.add(media);
+                    hasAttachChanged = true;
                 } else if (cursor != null) {
                     cursor.close();
                 }
@@ -86,6 +88,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 ContentUtility.InMemoryStorage.setLastStoredInternalImageUrl(null);  // drop camera image url
                 Media media = Media.builder().setId(1000).setUrl(url).build();  // TODO: unique id
                 attachMedia.add(media);
+                hasAttachChanged = true;
                 break;
         }
     }
@@ -169,13 +172,16 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     // ------------------------------------------
     @Override
-    public void removeAttachedMedia() {
-        // TODO: removeAttachedMedia
+    public void removeAttachedMedia(int position) {
+        Timber.i("removeAttachedMedia: %s", position);
+        attachMedia.remove(position);
+        hasAttachChanged = true;
     }
 
     @Override
     public void retry() {
         Timber.i("retry");
+        hasAttachChanged = false;
         freshStart();
     }
 
@@ -192,7 +198,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         if (isViewAttached()) {
             String description = inputPost != null ? inputPost.description() : "";
             boolean hasTextContentChanged = !getView().getInputText().equals(description);
-            return hasTextContentChanged || !attachMedia.isEmpty();
+            return hasTextContentChanged || hasAttachChanged;
         }
         return false;
     }
@@ -213,7 +219,18 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 if (post != null) {
                     Timber.d("Existing Post with id [%s] will be updated on PostCreateScreen", postId);
                     List<Media> media = post.media();
-                    if (media != null) attachMedia.addAll(media);
+                    if (media != null) {
+                        /**
+                         * Persist all attached media supplied with loaded Post in 'attachMedia' list.
+                         *
+                         * This will override any media added by user, but this can'not be the case,
+                         * because re-loading could only occur on retry, and the other requests such as
+                         * update (POST) and create (PUT) have their own success-failure pipeline, which
+                         * doesn't involve standard retry invocation (and Post re-loading).
+                         */
+                        attachMedia.clear();
+                        attachMedia.addAll(media);
+                    }
                     // TODO: other fields are needed
                     // TODO: if updating existing post - fill text field and media attachment view container
                     if (isViewAttached()) {
@@ -247,13 +264,14 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to post Post");
+                hasAttachChanged = false;  // changes has been saved
                 if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
             }
 
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to post Post");
-                if (isViewAttached()) getView().showError(PostCreateActivity.RV_TAG);
+                if (isViewAttached()) getView().showUpdatePostFailure();
             }
         };
     }
@@ -267,13 +285,14 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put Post");
+                hasAttachChanged = false;  // changes has been saved
                 if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
             }
 
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to put Post");
-                if (isViewAttached()) getView().showError(PostCreateActivity.RV_TAG);
+                if (isViewAttached()) getView().showCreatePostFailure();
             }
         };
     }
