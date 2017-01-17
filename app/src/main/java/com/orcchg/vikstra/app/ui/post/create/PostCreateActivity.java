@@ -198,7 +198,10 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
                     presenter.onSavePressed();
                     dialog.dismiss();
                 },
-                (dialog, which) -> closeView()).show();
+                (dialog, which) -> {
+                    dialog.dismiss();
+                    closeView();
+                }).show();
     }
 
     // ------------------------------------------

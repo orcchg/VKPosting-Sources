@@ -81,7 +81,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
         setContentView(R.layout.activity_post_view);
         ButterKnife.bind(this);
         initResources();
-        initView();
+        initToolbar();
     }
 
     /* Data */
@@ -92,9 +92,18 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
 
     /* View */
     // --------------------------------------------------------------------------------------------
-    private void initView() {
+    private void initToolbar() {
         toolbar.setTitle(R.string.post_view_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());
+        toolbar.inflateMenu(R.menu.edit);
+        toolbar.setOnMenuItemClickListener((item) -> {
+            switch (item.getItemId()) {
+                case R.id.edit:
+                    navigationComponent.navigator().openPostCreateScreen(this, postId);
+                    return true;
+            }
+            return false;
+        });
     }
 
     /* Contract */

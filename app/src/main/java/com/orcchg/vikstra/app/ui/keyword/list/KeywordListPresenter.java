@@ -85,11 +85,11 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case GroupListActivity.REQUEST_CODE:  // keywords could change on GroupList screen
+            case GroupListActivity.REQUEST_CODE:  // keywords could change on GroupListScreen
             case KeywordCreateActivity.REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
+                    Timber.d("List of Keyword-s has been changed on KeywordListScreen resulting from screen with request code: %s", requestCode);
                     retry();  // refresh keywords list
-                    Timber.d("List of keywords has been changed on KeywordListScreen resulting from screen with request code: %s", requestCode);
                     if (isViewAttached()) getView().setCloseViewResult(Activity.RESULT_OK);
                 }
                 break;

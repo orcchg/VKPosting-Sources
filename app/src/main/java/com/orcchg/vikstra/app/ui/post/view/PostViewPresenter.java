@@ -1,8 +1,11 @@
 package com.orcchg.vikstra.app.ui.post.view;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
+import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.viewobject.PostViewVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToVoMapper;
 import com.orcchg.vikstra.domain.exception.ProgramException;
@@ -12,6 +15,7 @@ import com.orcchg.vikstra.domain.model.Post;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class PostViewPresenter extends BasePresenter<PostViewContract.View> implements PostViewContract.Presenter {
@@ -24,6 +28,21 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
         this.postToVoMapper = postToVoMapper;
+    }
+
+    /* Lifecycle */
+    // --------------------------------------------------------------------------------------------
+    @DebugLog @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case PostCreateActivity.REQUEST_CODE:  // post could change on PostCreateScreen
+                if (resultCode == Activity.RESULT_OK) {
+                    Timber.d("Post has been changed on PostViewScreen resulting from screen with request code: %s", requestCode);
+                    retry();  // refresh post
+                }
+                break;
+        }
     }
 
     /* Contract */

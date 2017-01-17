@@ -30,8 +30,6 @@ import javax.inject.Inject;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
-import static android.R.attr.description;
-
 public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> implements PostCreateContract.Presenter {
 
     private final GetPostById getPostByIdUseCase;
@@ -192,6 +190,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     @DebugLog
     private boolean hasChanges() {
         if (isViewAttached()) {
+            String description = inputPost != null ? inputPost.description() : "";
             boolean hasTextContentChanged = !getView().getInputText().equals(description);
             return hasTextContentChanged || !attachMedia.isEmpty();
         }
