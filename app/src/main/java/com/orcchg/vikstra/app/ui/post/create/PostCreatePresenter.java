@@ -54,11 +54,11 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    @Override
+    @DebugLog @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != Activity.RESULT_OK) {
-            Timber.d("Result from screen with request code %s is not OK", requestCode);
+            Timber.d("Result from screen with request code [%s] is not OK", requestCode);
             return;
         }
 

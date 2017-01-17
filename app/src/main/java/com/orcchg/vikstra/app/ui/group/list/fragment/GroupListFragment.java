@@ -148,9 +148,7 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     public void onPostingProgress(int progress, int total) {
         postingNotification.onPostingProgress(progress, total);
 
-        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
-            // TODO: send progress to report screen
-        } else {
+        if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
             if (dialog != null) dialog.updatePostingProgress(progress, total);
@@ -166,9 +164,7 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     public void onPostingComplete() {
         postingNotification.onPostingComplete();
 
-        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
-            // TODO: send progress to report screen
-        } else {
+        if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
             if (dialog != null) dialog.onPostingComplete();

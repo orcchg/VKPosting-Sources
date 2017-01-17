@@ -74,7 +74,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    @Override
+    @DebugLog @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (AppConfig.INSTANCE.useInteractiveReportScreen()) {

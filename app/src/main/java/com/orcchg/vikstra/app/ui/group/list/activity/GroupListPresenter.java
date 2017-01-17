@@ -15,6 +15,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
@@ -29,7 +30,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    @Override
+    @DebugLog @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mediatorComponent = DaggerGroupListMediatorComponent.builder()
@@ -39,13 +40,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         mediatorComponent.mediator().attachFirst(this);
     }
 
-    @Override
+    @DebugLog @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case PostCreateActivity.REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    Timber.d("Post has been changed and should be refreshed");
+                    Timber.d("Post has been changed (and should be refreshed) resulting from screen with request code: %s", requestCode);
                     sendPostHasChangedRequest();
                 }
                 break;
@@ -63,21 +64,25 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @Override
     public void addKeyword(Keyword keyword) {
+        Timber.i("addKeyword: %s", keyword.toString());
         sendAddKeywordRequest(keyword);
     }
 
     @Override
     public void onDumpPressed() {
+        Timber.i("onDumpPressed");
         // TODO: dump found groups
     }
 
     @Override
     public void onFabClick() {
+        Timber.i("onFabClick");
         sendPostToGroupsRequest();
     }
 
     @Override
     public void onTitleChanged(String text) {
+        Timber.i("onTitleChanged: %s", text);
         title = text;
     }
 

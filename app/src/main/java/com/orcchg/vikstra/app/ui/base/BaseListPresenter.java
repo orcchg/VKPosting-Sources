@@ -76,6 +76,8 @@ public abstract class BaseListPresenter<V extends MvpListView> extends BasePrese
             if (list.getAdapter() == null) {
                 list.setAdapter(listAdapter);
             }
+        } else {
+            Timber.w("No View is attached");
         }
     }
 

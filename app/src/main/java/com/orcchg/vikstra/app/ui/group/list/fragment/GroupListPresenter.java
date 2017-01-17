@@ -119,13 +119,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         mediatorComponent.mediator().attachSecond(this);
     }
 
-    @DebugLog @Override
+    @Override
     public void onStart() {
         if (isViewAttached()) {  // TODO: try to use BaseListPresenter
             RecyclerView list = getView().getListView(GroupListFragment.RV_TAG);
             if (list.getAdapter() == null) {
                 list.setAdapter(listAdapter);
             }
+        } else {
+            Timber.w("No View is attached");
         }
         super.onStart();
     }
@@ -146,6 +148,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @Override
     public void removeListItem(int position) {
+        Timber.i("removeListItem: %s", position);
         GroupParentItem item = groupParentItems.get(position);
         totalSelectedGroups -= item.getSelectedCount();
         totalGroups -= item.getChildCount();
@@ -158,8 +161,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         listAdapter.notifyParentRemoved(position);
     }
 
-    @DebugLog @Override
+    @Override
     public void retry() {
+        Timber.i("retry");
         groupParentItems.clear();
         inputGroupBundle = null;
         inputKeywordBundle = null;
@@ -233,14 +237,16 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
+    @Override
     protected void freshStart() {
         if (isViewAttached()) getView().showLoading(GroupListFragment.RV_TAG);
         getKeywordBundleByIdUseCase.execute();
         getPostByIdUseCase.execute();
     }
 
+    @DebugLog
     private void addGroupsToList(List<Group> groups, int index) {
+        Timber.i("addGroupsToList");
         if (AppConfig.INSTANCE.isAllGroupsSortedByMembersCount()) Collections.sort(groups);
         int xTotalGroups = 0;
         List<GroupChildItem> childItems = new ArrayList<>(groups.size());
@@ -263,6 +269,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     private void addKeyword(Keyword keyword) {
+        Timber.i("addKeyword: %s", keyword.toString());
         if (inputKeywordBundle.keywords().size() < Constant.KEYWORDS_LIMIT) {
             newlyAddedKeyword = keyword;
             addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
@@ -272,7 +279,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         }
     }
 
+    @DebugLog
     private void fillGroupsList(List<List<Group>> splitGroups) {
+        Timber.i("fillGroupsList");
         // TODO: batch by 20 groups and load-more
         for (int i = 0; i < splitGroups.size(); ++i) {
             addGroupsToList(splitGroups.get(i), i);
@@ -280,13 +289,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         listAdapter.notifyParentDataSetChanged(false);
         sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
-        if (isViewAttached()) {
-            getView().showGroups(splitGroups.isEmpty());
-        }
+        if (isViewAttached()) getView().showGroups(splitGroups.isEmpty());
     }
 
     private void postToGroups() {
+        Timber.i("postToGroups");
         if (currentPost != null) {
+            Timber.d("Selected single Post, start wall posting...");
             // exclude ids duplication
             Set<Group> selectedGroups = new TreeSet<>((lhs, rhs) -> (int) (lhs.id() - rhs.id()));
             for (GroupParentItem parentItem : listAdapter.getParentList()) {
@@ -299,30 +308,39 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     createMakeWallPostCallback(), getView(), getView());
             if (isViewAttached()) {
                 if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+                    Timber.d("Open ReportScreen in interactive mode showing posting progress");
                     ContentUtility.InMemoryStorage.setSelectedGroupsForPosting(new ArrayList<>(selectedGroups));  // preserve ordering
                     getView().openInteractiveReportScreen(currentPost.id());
                     // TODO: report screen could subscribe for posting-progress callback
                     // TODO:        too late, missing some early reports
                 } else {
+                    Timber.d("Show popup with wall posting progress");
                     getView().openStatusScreen();
                 }
+            } else {
+                Timber.w("No View is attached");
             }
         } else {
-            Timber.d("No post selected, nothing to be done");
+            Timber.d("No Post was selected, nothing to be done");
             sendPostNotSelected();
         }
     }
 
     private void postKeywordBundleUpdate() {
+        Timber.i("postKeywordBundleUpdate");
         if (isKeywordBundleChanged) {
+            Timber.d("Input KeywordBundle has been changed, it will be updated in repository");
             isKeywordBundleChanged = false;
             postKeywordBundleUseCase.setParameters(new PostKeywordBundle.Parameters(inputKeywordBundle));
             postKeywordBundleUseCase.execute();  // silent update without callback
             sendKeywordBundleChanged();
+        } else {
+            Timber.d("Input KeywordBundle wasn't changed");
         }
     }
 
     private void refreshPost() {
+        Timber.i("refreshPost");
         getPostByIdUseCase.execute();
     }
 
@@ -330,9 +348,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<Boolean> createAddKeywordToBundleCallback() {
         return new UseCase.OnPostExecuteCallback<Boolean>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable Boolean result) {
+                Timber.i("Use-Case: succeeded to add Keyword to KeywordBundle");
                 if (result != null && result) {
+                    Timber.d("Adding Keyword and requesting more Group-s from network");
                     inputKeywordBundle.keywords().add(newlyAddedKeyword);
                     isKeywordBundleChanged = true;
                     GroupParentItem item = new GroupParentItem(newlyAddedKeyword);
@@ -343,12 +363,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     newlyAddedKeyword = null;  // drop temporary keyword
                     vkontakteEndpoint.getGroupsByKeywordsSplit(keywords, createGetGroupsByKeywordsListCallback());
                 } else {
+                    Timber.d("Failed to add Keyword, but just warn user via popup");
                     sendAddKeywordError();
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to add Keyword to KeywordBundle");
                 sendAddKeywordError();
             }
         };
@@ -356,19 +378,21 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private UseCase.OnPostExecuteCallback<GroupBundle> createGetGroupBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<GroupBundle>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable GroupBundle bundle) {
                 if (bundle == null) {
                     Timber.wtf("No GroupBundle found by id associated with input KeywordBundle, %s",
                             "such id has improper value due to wrong association between instances at creation");
                     throw new ProgramException();
                 }
+                Timber.i("Use-Case: succeeded to get GroupBundle by id");
                 inputGroupBundle = bundle;
                 fillGroupsList(bundle.splitGroupsByKeywords());
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get GroupBundle by id");
                 if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
@@ -376,12 +400,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private UseCase.OnPostExecuteCallback<KeywordBundle> createGetKeywordBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
                 if (bundle == null) {
                     Timber.wtf("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
                     throw new ProgramException();
                 }
+                Timber.i("Use-Case: succeeded to get KeywordBundle by id");
                 inputKeywordBundle = bundle;
                 for (Keyword keyword : bundle) {
                     GroupParentItem item = new GroupParentItem(keyword);
@@ -389,17 +414,18 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
                 long groupBundleId = inputKeywordBundle.getGroupBundleId();
                 if (groupBundleId == Constant.BAD_ID) {
-                    Timber.d("there is not GroupBundle associated with input KeywordBundle, perform network request");
+                    Timber.d("There is no GroupBundle associated with input KeywordBundle, perform network request");
                     vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback());
                 } else {
-                    Timber.d("loading GroupBundle associated with input KeywordBundle from repository");
+                    Timber.d("Loading GroupBundle associated with input KeywordBundle from repository");
                     getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
                     getGroupBundleByIdUseCase.execute();
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get KeywordBundle by id");
                 if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
@@ -407,8 +433,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
         return new UseCase.OnPostExecuteCallback<Post>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable Post post) {
+                Timber.i("Use-Case: succeeded to get Post by id");
                 currentPost = post;
                 if (post != null) {
                     sendPost(postToSingleGridVoMapper.map(post));
@@ -417,8 +444,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get Post by id");
                 if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
@@ -426,20 +454,22 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private UseCase.OnPostExecuteCallback<GroupBundle> createPutGroupBundleCallback() {
         return new UseCase.OnPostExecuteCallback<GroupBundle>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable GroupBundle bundle) {
                 if (bundle == null) {
-                    Timber.wtf("Failed to create new GroupBundle and put it to Repository");
+                    Timber.wtf("Failed to put new GroupBundle to repository - item not created, as expected");
                     throw new ProgramException();
                 }
-                // update input KeywordBundle and associate it with newly created GroupBundle (by setting id)
+                Timber.i("Use-Case: succeeded to put GroupBundle");
+                Timber.d("Update input KeywordBundle and associate it with newly created GroupBundle (by setting id)");
                 inputKeywordBundle.setGroupBundleId(bundle.id());
                 getGroupBundleByIdUseCase.setGroupBundleId(bundle.id());  // set proper id
                 postKeywordBundleUpdate();
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to put GroupBundle");
                 // TODO: failed to create GroupBundle in repo
             }
         };
@@ -447,12 +477,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private UseCase.OnPostExecuteCallback<GroupReportBundle> createPutGroupReportBundleCallback() {
         return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable GroupReportBundle bundle) {
                 if (bundle == null) {
-                    Timber.wtf("Failed to create new GroupReportBundle and put it to Repository");
+                    Timber.wtf("Failed to put new GroupReportBundle to repository - item not created, as expected");
                     throw new ProgramException();
                 }
+                Timber.i("Use-Case: succeeded to put GroupReportBundle");
                 sendPostingStartedMessage(false);
                 if (isViewAttached()) {
                     getView().updateGroupReportBundleId(bundle.id());
@@ -460,8 +491,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to put GroupReportBundle");
                 // TODO: failed to put reports - retry posting?
                 sendPostingStartedMessage(false);
             }
@@ -470,12 +502,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private UseCase.OnPostExecuteCallback<List<List<Group>>> createGetGroupsByKeywordsListCallback() {
         return new UseCase.OnPostExecuteCallback<List<List<Group>>>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable List<List<Group>> splitGroups) {
                 if (splitGroups == null) {
-                    Timber.wtf("Split groups list cannot be null, but could be empty instead");
+                    Timber.wtf("Split list of Group-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
+                Timber.i("Use-Case: succeeded to get list of Group-s by list of Keyword-s");
                 fillGroupsList(splitGroups);
 
                 List<Group> groups = ValueUtility.merge(splitGroups);
@@ -504,8 +537,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get list of Group-s by list of Keyword-s");
                 if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
@@ -513,19 +547,19 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private UseCase.OnPostExecuteCallback<List<GroupReportEssence>> createMakeWallPostCallback() {
         return new UseCase.OnPostExecuteCallback<List<GroupReportEssence>>() {
-            @Override
+            @DebugLog @Override
             public void onFinish(@Nullable List<GroupReportEssence> reports) {
+                Timber.i("Use-Case: succeeded to make wall posting");
                 PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(reports);
                 putGroupReportBundle.setParameters(parameters);
                 putGroupReportBundle.execute();
             }
 
-            @Override
+            @DebugLog @Override
             public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to make wall posting");
                 sendPostingStartedMessage(false);
-                if (isViewAttached()) {
-                    getView().showError(GroupListFragment.RV_TAG);
-                }
+                if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
     }

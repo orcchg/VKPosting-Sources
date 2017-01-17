@@ -60,7 +60,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
         // TODO: load more
     }
 
-    @DebugLog @Override
+    @Override
     public void retry() {
         Timber.i("retry");
         listAdapter.clear();

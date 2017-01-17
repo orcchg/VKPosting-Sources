@@ -81,7 +81,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    @Override
+    @DebugLog @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
@@ -89,7 +89,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             case KeywordCreateActivity.REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
                     retry();  // refresh keywords list
-                    // keywords list has changed on this screen
+                    Timber.d("List of keywords has been changed on KeywordListScreen resulting from screen with request code: %s", requestCode);
                     if (isViewAttached()) getView().setCloseViewResult(Activity.RESULT_OK);
                 }
                 break;
