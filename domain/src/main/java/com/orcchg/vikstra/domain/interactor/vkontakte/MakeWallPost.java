@@ -69,7 +69,7 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
         public String toString() {
             return new StringBuilder("MakeWallPost.Parameters {group=").append(group.toString())
                     .append(", message=").append(message)
-                    .append(", attach=").append(attachments.toAttachmentsString())
+                    .append(", attach=").append(attachments != null ? attachments.toAttachmentsString() : "null")
                     .append("}").toString();
         }
     }

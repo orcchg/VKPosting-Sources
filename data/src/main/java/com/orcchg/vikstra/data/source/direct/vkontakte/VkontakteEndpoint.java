@@ -118,7 +118,7 @@ public class VkontakteEndpoint extends Endpoint {
     }
 
     /**
-     * Same as {@link VkontakteEndpoint#getGroupsByKeywords(Collection, UseCase.OnPostExecuteCallback)}, but
+     * Same as {@link VkontakteEndpoint#getGroupsByKeywords(List, UseCase.OnPostExecuteCallback)}, but
      * splits groups by keywords.
      */
     @DebugLog
