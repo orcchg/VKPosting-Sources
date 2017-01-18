@@ -1,17 +1,17 @@
 package com.orcchg.vikstra.domain.model;
 
 import android.support.annotation.NonNull;
-import android.support.v4.util.Pair;
 
 import com.google.auto.value.AutoValue;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import timber.log.Timber;
 
 @AutoValue
 public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<Group> {
@@ -50,12 +50,12 @@ public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<G
         Map<Keyword, Integer> keywords = new TreeMap<>();
         Collection<Group> list = groups();
         List<List<Group>> splitGroups = new ArrayList<>();
-        int index = 0, position = 0;
+        int index = 0, position;
 
         for (Group group : list) {
             Keyword keyword = group.keyword();
             if (keywords.containsKey(keyword)) {
-                position = keywords.get(keyword).intValue();
+                position = keywords.get(keyword);
             } else {
                 keywords.put(keyword, index);
                 splitGroups.add(new ArrayList<Group>());
@@ -64,6 +64,7 @@ public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<G
             }
             splitGroups.get(position).add(group);
         }
+        Timber.v("Total keywords: %s", keywords.size());
         return splitGroups;
     }
 

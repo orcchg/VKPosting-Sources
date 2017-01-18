@@ -71,7 +71,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private boolean fetchedInputGroupBundleFromRepo, isAddingNewKeyword;  // state control flags
     private boolean isKeywordBundleChanged, isGroupBundleChanged;
     private Keyword newlyAddedKeyword;
-    private @NonNull GroupBundle inputGroupBundle;
+    private @Nullable GroupBundle inputGroupBundle;
     private @NonNull KeywordBundle inputKeywordBundle;
     private @Nullable Post currentPost;
 
@@ -281,7 +281,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
          */
         boolean shouldSelectAllGroups = AppConfig.INSTANCE.isAllGroupsSelected() &&
                 (!fetchedInputGroupBundleFromRepo || isAddingNewKeyword);
-        isAddingNewKeyword = false;  // don't re-use state control flag
 
         int xSelectedCount = 0, xTotalGroups = 0;
         List<GroupChildItem> childItems = new ArrayList<>(groups.size());
@@ -320,10 +319,30 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @DebugLog
     private void fillGroupsList(List<List<Group>> splitGroups) {
-        Timber.i("fillGroupsList");
+        Timber.i("fillGroupsList: %s", splitGroups.size());
         // TODO: batch by 20 groups and load-more
+
+        /**
+         * Restore correspondence between the order of Keyword-s in expandable list and the order
+         * of lists of Group-s in 'splitGroups' parameter. This algorithm loops over all lists in
+         * 'splitGroups' trying the first Group in each list and compares it's Keyword with those in
+         * Parent item from expandable list. No matching means error in program and leads to exception.
+         */
         for (int i = 0; i < splitGroups.size(); ++i) {
-            addGroupsToList(splitGroups.get(i), i);
+            Keyword keyword = groupParentItems.get(i).getKeyword();
+            List<Group> groups = null;
+            for (List<Group> item : splitGroups) {
+                Group group = item.get(0);
+                if (keyword.equals(group.keyword())) {
+                    groups = item;
+                    break;  // found matching between Keyword and list of Group-s
+                }
+            }
+            if (groups == null) {
+                Timber.wtf("Split list of Group-s doesn't correspond to list of Keyword-s");
+                throw new ProgramException();
+            }
+            addGroupsToList(groups, i);
         }
 
         listAdapter.notifyParentDataSetChanged(false);
@@ -415,6 +434,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     GroupParentItem item = new GroupParentItem(newlyAddedKeyword);
                     groupParentItems.add(0, item);  // add new item on top of the list
 
+                    // prepare parameters to make new request for Group-s by Keyword
                     List<Keyword> keywords = new ArrayList<>();
                     keywords.add(newlyAddedKeyword);
                     newlyAddedKeyword = null;  // drop temporary keyword
@@ -467,9 +487,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 Timber.i("Use-Case: succeeded to get KeywordBundle by id");
                 inputKeywordBundle = bundle;
                 for (Keyword keyword : bundle) {
+                    Timber.v(keyword.toString());
                     GroupParentItem item = new GroupParentItem(keyword);
                     groupParentItems.add(item);
                 }
+                Timber.d("Total Parent list items: %s", groupParentItems.size());
                 long groupBundleId = inputKeywordBundle.getGroupBundleId();
                 fetchedInputGroupBundleFromRepo = groupBundleId != Constant.BAD_ID;
                 if (groupBundleId == Constant.BAD_ID) {
@@ -583,6 +605,22 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     putGroupBundleUseCase.execute();
                 } else {
                     Timber.d("Refresh already existing GroupBundle in repository");
+                    if (isAddingNewKeyword) {
+                        /**
+                         * If we are adding new Keyword to list, we should append newly fetched
+                         * Group-s to existing ones, otherwise we will wrongly rewrite them and get
+                         * inconsistency between number of Keyword-s and Parent items in expandable list
+                         * and actual number of Keyword-s inside 'inputGroupBundle' model, leading to crash.
+                         *
+                         * On the other hand, 'else' branch is quite unreachable, because there is no
+                         * way to update (POST) input GroupBundle in repository beside adding new Keyword.
+                         */
+                        groups.addAll(inputGroupBundle.groups());
+                    } else {
+                        Timber.wtf("Unreachable state - no way to post GroupBundle to repository beside %s ",
+                                "adding new Keyword to the expandable list and input KeywordBundle");
+                        throw new ProgramException();
+                    }
                     inputGroupBundle = GroupBundle.builder()
                             .setId(inputGroupBundle.id())
                             .setGroups(groups)
@@ -593,6 +631,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     isGroupBundleChanged = true;
                     postGroupBundleUpdate();
                 }
+
+                isAddingNewKeyword = false;  // don't re-use state control flag
             }
 
             @DebugLog @Override
