@@ -297,6 +297,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 ++totalSelectedGroups;
                 ++xSelectedCount;
             } else if (group.isSelected()) {
+                ++totalSelectedGroups;
                 ++xSelectedCount;
             }
         }
