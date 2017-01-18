@@ -30,6 +30,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     private final PutKeywordBundle putKeywordBundleUseCase;
 
     private Set<Keyword> keywords = new TreeSet<>();
+    private boolean hasKeywordsChanged, hasTitleChanged;
 
     private long timestamp;
     private @Nullable String title;
@@ -53,6 +54,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         if (keywords.size() < Constant.KEYWORDS_LIMIT) {
             Keyword keyword = Keyword.create(getView().getInputKeyword());
             keywords.add(keyword);
+            hasKeywordsChanged = true;
             if (isViewAttached()) {
                 getView().addKeyword(keyword);
                 getView().clearInputKeyword();
@@ -63,17 +65,40 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     }
 
     @Override
+    public void onBackPressed() {
+        Timber.i("onBackPressed");
+        if (isViewAttached()) {
+            if (hasChanges()) {
+                getView().openSaveChangesDialog();
+            } else {
+                getView().closeView();
+            }
+        }
+    }
+
+    @Override
     public void onKeywordPressed(Keyword keyword) {
         Timber.i("onKeywordPressed: %s", keyword.toString());
         keywords.remove(keyword);
+        hasKeywordsChanged = true;
     }
 
     @Override
     public void onSavePressed() {
         Timber.i("onSavePressed");
+        if (keywords.isEmpty()) {
+            Timber.d("No Keyword-s added - nothing to be saved");
+            if (isViewAttached()) {
+                getView().onNoKeywordsAdded();
+            } else {
+                Timber.w("No View is attached");
+            }
+            return;  // don't allow to create new KeywordBundle with empty Keyword-s list
+        }
+
         long keywordBundleId = getKeywordBundleByIdUseCase.getKeywordBundleId();
         if (TextUtils.isEmpty(title)) {
-            if (isViewAttached()) getView().openEditTitleDialog(title);
+            if (isViewAttached()) getView().openEditTitleDialog(title, true);
         } else if (keywordBundleId == Constant.BAD_ID) {
             Timber.d("Input KeywordBundle id is BAD - add new KeywordBundle instance to repository");
             PutKeywordBundle.Parameters parameters = new PutKeywordBundle.Parameters.Builder()
@@ -99,6 +124,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     @Override
     public void onTitleChanged(String text) {
         Timber.i("onTitleChanged: %s", text);
+        hasTitleChanged = !text.equals(title);
         title = text;
     }
 
@@ -106,6 +132,8 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     @Override
     public void retry() {
         Timber.i("retry");
+        hasKeywordsChanged = false;
+        hasTitleChanged = false;
         freshStart();
     }
 
@@ -115,6 +143,11 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     protected void freshStart() {
         if (isViewAttached()) getView().showLoading(KeywordCreateActivity.RV_TAG);
         getKeywordBundleByIdUseCase.execute();
+    }
+
+    @DebugLog
+    private boolean hasChanges() {
+        return hasTitleChanged || hasKeywordsChanged;
     }
 
     /* Callback */
@@ -161,6 +194,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to post KeywordBundle");
+                hasKeywordsChanged = false;  // changes has been saved
                 if (isViewAttached()) {
                     getView().notifyKeywordsUpdated();
                     getView().closeView(Activity.RESULT_OK);
@@ -184,6 +218,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put KeywordBundle");
+                hasKeywordsChanged = false;  // changes has been saved
                 if (isViewAttached()) {
                     getView().notifyKeywordsAdded();
                     getView().closeView(Activity.RESULT_OK);

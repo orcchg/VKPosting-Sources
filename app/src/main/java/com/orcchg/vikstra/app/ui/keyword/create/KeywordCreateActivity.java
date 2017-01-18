@@ -120,12 +120,12 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
 
     private void initToolbar() {
         toolbar.setTitle(R.string.keyword_create_screen_title);
-        toolbar.setNavigationOnClickListener((view) -> closeView(Activity.RESULT_CANCELED));
+        toolbar.setNavigationOnClickListener((view) -> presenter.onBackPressed());
         toolbar.inflateMenu(R.menu.edit_save);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.edit:
-                    openEditTitleDialog(toolbar.getTitle().toString());
+                    openEditTitleDialog(toolbar.getTitle().toString(), false);
                     return true;
                 case R.id.save:
                     presenter.onSavePressed();
@@ -173,15 +173,40 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
         UiUtility.showSnackbar(this, String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
     }
 
+    @Override
+    public void onNoKeywordsAdded() {
+        UiUtility.showSnackbar(this, R.string.keyword_create_snackbar_no_keywords_added_message);
+    }
+
     // ------------------------------------------
     @Override
-    public void openEditTitleDialog(@Nullable String initTitle) {
+    public void openEditTitleDialog(@Nullable String initTitle, boolean saveAfter) {
         DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, initTitle,
                 (dialog, which, text) -> {
                     toolbar.setTitle(text);
                     presenter.onTitleChanged(text);
-                    presenter.onSavePressed();
+                    dialog.dismiss();
+                    if (saveAfter) presenter.onSavePressed();
                 }).show();
+    }
+
+    @Override
+    public void openSaveChangesDialog() {
+        DialogProvider.showTextDialogTwoButtons(this, R.string.keyword_create_dialog_save_changes_title,
+                R.string.keyword_create_dialog_save_changes_description, R.string.button_save, R.string.button_close,
+                (dialog, which) -> {
+                    presenter.onSavePressed();
+                    dialog.dismiss();
+                },
+                (dialog, which) -> {
+                    dialog.dismiss();
+                    closeView(Activity.RESULT_CANCELED);
+                }).show();
+    }
+
+    @Override
+    public void closeView() {
+        finish();  // with currently set result
     }
 
     @Override

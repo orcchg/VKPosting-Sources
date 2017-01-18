@@ -18,13 +18,17 @@ public interface KeywordCreateContract {
         void notifyKeywordsAdded();
         void notifyKeywordsUpdated();
         void onKeywordsLimitReached(int limit);
+        void onNoKeywordsAdded();
 
-        void openEditTitleDialog(@Nullable String initTitle);
+        void openEditTitleDialog(@Nullable String initTitle, boolean saveAfter);
+        void openSaveChangesDialog();
+        void closeView();  // with currently set result
         void closeView(int resultCode);
     }
 
     interface Presenter extends MvpPresenter<View> {
         void onAddPressed();
+        void onBackPressed();
         void onKeywordPressed(Keyword keyword);
         void onSavePressed();
         void onTitleChanged(String text);

@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.post.create;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -200,7 +201,7 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
                 },
                 (dialog, which) -> {
                     dialog.dismiss();
-                    closeView();
+                    closeView(Activity.RESULT_CANCELED);
                 }).show();
     }
 
