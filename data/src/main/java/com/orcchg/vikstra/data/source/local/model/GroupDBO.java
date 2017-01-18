@@ -7,6 +7,7 @@ public class GroupDBO extends RealmObject {
     public static final String COLUMN_CAN_POST = "can_post";
     public static final String COLUMN_IS_SELECTED = "is_selected";
     public static final String COLUMN_KEYWORD = "keyword";
+    public static final String COLUMN_LINK = "link";
     public static final String COLUMN_MEMBERS_COUNT = "members_count";
     public static final String COLUMN_NAME = "name";
 
@@ -14,6 +15,7 @@ public class GroupDBO extends RealmObject {
     public boolean canPost;
     public boolean isSelected;
     public KeywordDBO keyword;
+    public String link;
     public int membersCount;
     public String name;
 }

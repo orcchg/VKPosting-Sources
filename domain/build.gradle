@@ -60,6 +60,7 @@ dependencies {
     compile domainDependencies.autoValue
     compile domainDependencies.gson
     compile domainDependencies.javaxInject
+    compile domainDependencies.openCSV
     compile domainDependencies.rxJava
     compile domainDependencies.timber
     compile domainDependencies.vkontakteSdk

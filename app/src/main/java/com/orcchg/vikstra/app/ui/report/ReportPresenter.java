@@ -15,6 +15,7 @@ import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.file.DumpGroupReports;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
 import com.orcchg.vikstra.domain.model.Group;
@@ -35,6 +36,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     private final GetGroupReportBundleById getGroupReportBundleByIdUseCase;
     private final GetPostById getPostByIdUseCase;
+    private final DumpGroupReports dumpGroupReportsUseCase;
 
     private final GroupReportToVoMapper groupReportToVoMapper;
     private final GroupReportEssenceToVoMapper groupReportEssenceToVoMapper;
@@ -45,13 +47,15 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
-                    GroupReportToVoMapper groupReportToVoMapper, GroupReportEssenceToVoMapper groupReportEssenceToVoMapper,
+                    DumpGroupReports dumpGroupReportsUseCase, GroupReportToVoMapper groupReportToVoMapper,
+                    GroupReportEssenceToVoMapper groupReportEssenceToVoMapper,
                     PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter();
         this.getGroupReportBundleByIdUseCase = getGroupReportBundleByIdUseCase;
         this.getGroupReportBundleByIdUseCase.setPostExecuteCallback(createGetGroupReportBundleByIdCallback());
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
+        this.dumpGroupReportsUseCase = dumpGroupReportsUseCase;  // no callback - background task
         this.groupReportToVoMapper = groupReportToVoMapper;
         this.groupReportEssenceToVoMapper = groupReportEssenceToVoMapper;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
@@ -105,6 +109,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         listAdapter.clear();
         dropListStat();
         freshStart();
+    }
+
+    @Override
+    public void onDumpPressed() {
+        Timber.i("onDumpPressed");
+        // TODO: dump reports, set params
+        dumpGroupReportsUseCase.execute();  // TODO: notification by result
     }
 
     /* Internal */

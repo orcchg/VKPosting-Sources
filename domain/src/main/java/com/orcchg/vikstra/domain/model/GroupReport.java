@@ -43,6 +43,14 @@ public abstract class GroupReport implements Comparable<GroupReport> {
         return STATUS_FAILURE;
     }
 
+    public String statusString() {
+        switch (status()) {
+            case STATUS_SUCCESS:  return "Success";
+            case STATUS_FAILURE:  return "Failure";
+        }
+        return "";
+    }
+
     @Override
     public int compareTo(@NonNull GroupReport o) {
         return (int) (o.timestamp() - timestamp());

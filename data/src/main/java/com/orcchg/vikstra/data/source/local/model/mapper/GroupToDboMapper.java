@@ -47,6 +47,7 @@ public class GroupToDboMapper implements DuplexMapper<Group, GroupDBO> {
                 .setId(object.id)
                 .setCanPost(object.canPost)
                 .setKeyword(keywordToDboMapper.mapBack(object.keyword))
+                .setLink(object.link)
                 .setMembersCount(object.membersCount)
                 .setName(object.name)
                 .build();

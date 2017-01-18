@@ -104,11 +104,11 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     private void initToolbar() {
         toolbar.setTitle(R.string.report_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());
-        toolbar.inflateMenu(R.menu.save);
+        toolbar.inflateMenu(R.menu.dump);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
-                case R.id.save:
-                    // TODO: save
+                case R.id.dump:
+                    presenter.onDumpPressed();
                     return true;
             }
             return false;

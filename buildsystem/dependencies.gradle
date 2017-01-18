@@ -35,6 +35,7 @@ ext {
     materialDrawerVersion = '5.5.0@aar'
     mosbyVersion = '2.0.1'
     okHttpVersion = '3.4.1'
+    openCSVversion = '2.3'
     recyclerViewVersion = '24.2.0'
     retrofitVersion = '2.1.0'
     rxAndroidVersion = '1.2.1'
@@ -102,6 +103,7 @@ ext {
             gson:                 "com.google.code.gson:gson:${gsonVersion}",
             javaxAnnotation:      "javax.annotation:jsr250-api:${javaxAnnotationVersion}",
             javaxInject:          "javax.inject:javax.inject:${javaxInjectVersion}",
+            openCSV:              "net.sf.opencsv:opencsv:${openCSVversion}",
             rxJava:               "io.reactivex:rxjava:${rxJavaVersion}",
             timber:               "com.jakewharton.timber:timber:${timberVersion}",
             vkontakteSdk:         "com.vk:androidsdk:${vkontakteSdkVersion}",

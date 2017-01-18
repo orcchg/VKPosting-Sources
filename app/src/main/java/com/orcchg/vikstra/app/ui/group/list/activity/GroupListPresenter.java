@@ -11,6 +11,7 @@ import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorComponent
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorModule;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.interactor.file.DumpGroups;
 import com.orcchg.vikstra.domain.model.Keyword;
 
 import javax.inject.Inject;
@@ -20,12 +21,15 @@ import timber.log.Timber;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
+    private final DumpGroups dumpGroupsUseCase;
+
     private String title;  // TODO: set initial title
 
     private GroupListMediatorComponent mediatorComponent;
 
     @Inject
-    GroupListPresenter() {
+    GroupListPresenter(DumpGroups dumpGroupsUseCase) {
+        this.dumpGroupsUseCase = dumpGroupsUseCase;  // no callback - background task
     }
 
     /* Lifecycle */
@@ -71,7 +75,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void onDumpPressed() {
         Timber.i("onDumpPressed");
-        // TODO: dump found groups
+        // TODO: dump found groups, set params
+        dumpGroupsUseCase.execute();  // TODO: notification by result
     }
 
     @Override

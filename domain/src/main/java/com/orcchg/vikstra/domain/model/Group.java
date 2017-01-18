@@ -20,6 +20,7 @@ public abstract class Group implements Comparable<Group> {
         public abstract Builder setId(long id);
         public abstract Builder setCanPost(boolean canPost);
         public abstract Builder setKeyword(Keyword keyword);
+        public abstract Builder setLink(String link);
         public abstract Builder setMembersCount(int count);
         public abstract Builder setName(String name);
         public abstract Group build();
@@ -28,6 +29,7 @@ public abstract class Group implements Comparable<Group> {
     public abstract @External long id();  // id of group in Social Network
     public abstract boolean canPost();
     public abstract @Nullable Keyword keyword();
+    public abstract String link();
     public abstract int membersCount();
     public abstract String name();
 
@@ -36,6 +38,12 @@ public abstract class Group implements Comparable<Group> {
     }
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
+    }
+
+    public String systemName() {
+        String link = link();
+        int index = link.lastIndexOf('/');
+        return link.substring(index >= 0 ? index : 0);
     }
 
     @Override

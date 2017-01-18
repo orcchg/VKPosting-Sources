@@ -18,5 +18,6 @@ public interface ReportContract {
     }
 
     interface Presenter extends MvpPresenter<View>, ListPresenter {
+        void onDumpPressed();
     }
 }
