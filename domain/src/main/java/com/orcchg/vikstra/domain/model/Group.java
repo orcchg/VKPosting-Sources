@@ -42,13 +42,4 @@ public abstract class Group implements Comparable<Group> {
     public int compareTo(@NonNull Group o) {
         return o.membersCount() - membersCount();
     }
-
-    @Override
-    public String toString() {
-        return new StringBuilder("Group {id=").append(id())
-                .append(", canPost=").append(canPost())
-                .append(", membersCount=").append(membersCount())
-                .append(", name=").append(name())
-                .append("}").toString();
-    }
 }

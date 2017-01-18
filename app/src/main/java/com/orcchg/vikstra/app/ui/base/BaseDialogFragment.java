@@ -33,6 +33,7 @@ public abstract class BaseDialogFragment<V extends MvpView, P extends MvpPresent
     @DebugLog @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Timber.tag(this.getClass().getSimpleName());
         Timber.i("onCreate");
         isStateRestored = savedInstanceState != null;
         injectNavigator();
@@ -45,6 +46,7 @@ public abstract class BaseDialogFragment<V extends MvpView, P extends MvpPresent
     @DebugLog @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Timber.tag(this.getClass().getSimpleName());
         Timber.i("onActivityResult");
         presenter.onActivityResult(requestCode, resultCode, data);
     }
@@ -52,6 +54,7 @@ public abstract class BaseDialogFragment<V extends MvpView, P extends MvpPresent
     @Override
     public void onStart() {
         super.onStart();
+        Timber.tag(this.getClass().getSimpleName());
         Timber.i("onStart");
         presenter.onStart();
     }
@@ -59,6 +62,7 @@ public abstract class BaseDialogFragment<V extends MvpView, P extends MvpPresent
     @Override
     public void onResume() {
         super.onResume();
+        Timber.tag(this.getClass().getSimpleName());
         Timber.i("onResume");
         presenter.onResume();
     }
@@ -66,6 +70,7 @@ public abstract class BaseDialogFragment<V extends MvpView, P extends MvpPresent
     @Override
     public void onPause() {
         super.onPause();
+        Timber.tag(this.getClass().getSimpleName());
         Timber.i("onPause");
         presenter.onPause();
     }
@@ -73,6 +78,7 @@ public abstract class BaseDialogFragment<V extends MvpView, P extends MvpPresent
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        Timber.tag(this.getClass().getSimpleName());
         Timber.i("onSaveInstanceState");
         presenter.onSaveInstanceState(outState);
     }
@@ -80,6 +86,7 @@ public abstract class BaseDialogFragment<V extends MvpView, P extends MvpPresent
     @Override
     public void onStop() {
         super.onStop();
+        Timber.tag(this.getClass().getSimpleName());
         Timber.i("onStop");
         presenter.onStop();
     }
@@ -87,6 +94,7 @@ public abstract class BaseDialogFragment<V extends MvpView, P extends MvpPresent
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Timber.tag(this.getClass().getSimpleName());
         Timber.i("onDestroy");
         presenter.onDestroy();
         presenter.detachView();

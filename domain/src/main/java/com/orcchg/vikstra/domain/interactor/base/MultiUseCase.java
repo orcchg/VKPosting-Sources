@@ -76,7 +76,9 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
      */
     @DebugLog
     protected <Result> List<Ordered<Result>> performMultipleRequests(final int total, final List<? extends UseCase<Result>> useCases) {
+        Timber.tag(this.getClass().getSimpleName());
         Timber.v("Performing multiple requests, total: %s, different use-cases: %s", total, useCases.size());
+        Timber.tag(this.getClass().getSimpleName());
         Timber.v("Allowed errors total: %s", ValueUtility.sizeOf(allowedErrors));
         final List<Ordered<Result>> results = new ArrayList<>();
         final boolean[] doneFlags = new boolean[total];
@@ -85,6 +87,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         this.threadExecutor = createHighloadThreadPoolExecutor();  // could be overriden in sub-classes
 
         for (int i = 0; i < total; ++i) {
+            Timber.tag(this.getClass().getSimpleName());
             Timber.v("Request [%s / %s]", i + 1, total);
             final int index = i;
             final long start = System.currentTimeMillis();
@@ -95,7 +98,8 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                     final Ordered<Result> result = new Ordered<>();
                     while (elapsed - start < 30_000) {
                         try {
-                            Timber.d("Performing request [%s] at time %s", index, ValueUtility.time());
+                            Timber.tag(this.getClass().getSimpleName());
+                            Timber.v("Performing request [%s] at time %s", index, ValueUtility.time());
                             UseCase<Result> useCase = useCases.size() == 1 ? useCases.get(0) : useCases.get(index);
                             result.orderId = useCase.getOrderId();
                             result.data = useCase.doAction();  // perform use case synchronously
@@ -115,8 +119,10 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                                 } catch (InterruptedException ie) {
                                     Thread.interrupted();  // continue executing at interruption
                                 }
-                                Timber.d("Retrying request [%s]...", index);
+                                Timber.tag(this.getClass().getSimpleName());
+                                Timber.v("Retrying request [%s]...", index);
                             } else {
+                                Timber.tag(this.getClass().getSimpleName());
                                 Timber.w("Unhandled exception: %s", e.toString());
                                 result.error = e;
                                 progressCallbackScheduler.post(new Runnable() {
@@ -130,7 +136,8 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                         }
                         elapsed = System.currentTimeMillis();
                     }
-                    Timber.d("Break loop");
+                    Timber.tag(this.getClass().getSimpleName());
+                    Timber.v("Break loop");
                     addToResults(results, result);
                     synchronized (lock) {
                         doneFlags[index] = true;

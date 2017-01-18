@@ -59,6 +59,7 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
     public void onStart() {
         super.onStart();
         if (isStateRestored() && memento.layoutManagerState != null) {
+            Timber.tag(this.getClass().getSimpleName());
             Timber.i("Restored state of layout manager");
             layoutManager.onRestoreInstanceState(memento.layoutManagerState);
         }

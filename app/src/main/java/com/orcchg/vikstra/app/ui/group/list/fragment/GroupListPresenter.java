@@ -39,6 +39,7 @@ import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.ValueUtility;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -67,6 +68,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private GroupListAdapter listAdapter;
 
     int totalSelectedGroups, totalGroups;
+    private boolean fetchedInputGroupBundleFromRepo, isAddingNewKeyword;  // state control flags
     private boolean isKeywordBundleChanged, isGroupBundleChanged;
     private Keyword newlyAddedKeyword;
     private @NonNull GroupBundle inputGroupBundle;
@@ -135,6 +137,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void onStop() {
         super.onStop();
+        postGroupBundleUpdate();    // TODO: not sync with onActivityResult()
         postKeywordBundleUpdate();  // TODO: not sync with onActivityResult()
     }
 
@@ -153,10 +156,19 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         totalSelectedGroups -= item.getSelectedCount();
         totalGroups -= item.getChildCount();
         sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
-        postKeywordBundleUpdate();  // refresh now, don't wait till onDestroy()
 
         Keyword keyword = groupParentItems.get(position).getKeyword();
         inputKeywordBundle.keywords().remove(keyword);
+        postKeywordBundleUpdate();  // refresh now, don't wait till screen closed
+
+        Collection<Group> groupsToRemove = new ArrayList<>();
+        for (GroupChildItem childItem : item.getChildList()) {
+            groupsToRemove.add(childItem.getGroup());
+        }
+        inputGroupBundle.groups().removeAll(groupsToRemove);
+        isGroupBundleChanged = true;
+        postGroupBundleUpdate();  // refresh now, don't wait till screen closed
+
         groupParentItems.remove(position);
         listAdapter.notifyParentRemoved(position);
     }
@@ -167,6 +179,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         groupParentItems.clear();
         inputGroupBundle = null;
         inputKeywordBundle = null;
+        isGroupBundleChanged = false;
         isKeywordBundleChanged = false;
         currentPost = null;
         totalSelectedGroups = 0;
@@ -203,6 +216,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void sendGroupBundleChanged() {
+        mediatorComponent.mediator().sendGroupBundleChanged();
+    }
+
+    @Override
     public void sendGroupsNotSelected() {
         mediatorComponent.mediator().sendGroupsNotSelected();
     }
@@ -236,7 +254,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
         inputKeywordBundle.setSelectedGroupsCount(newCount);
         inputKeywordBundle.setTotalGroupsCount(total);
-        isKeywordBundleChanged = true;
+        isKeywordBundleChanged = true;  // as counters have been changed
         mediatorComponent.mediator().sendUpdatedSelectedGroupsCounter(newCount, total);
     }
 
@@ -251,25 +269,40 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @DebugLog
     private void addGroupsToList(List<Group> groups, int index) {
-        Timber.i("addGroupsToList");
+        Timber.i("addGroupsToList: total groups = %s, index = %s", groups.size(), index);
         if (AppConfig.INSTANCE.isAllGroupsSortedByMembersCount()) Collections.sort(groups);
-        int xTotalGroups = 0;
+
+        /**
+         * Select all groups only in the following cases:
+         * - Group-s were fetched from Endpoint, not repository (no GroupBundle associated with input KeywordBundle)
+         * - Added new Keyword to list, resulting new Group-s to be fetched from Endpoint
+         *
+         * and 'isAllGroupsSelected' configuration must be enabled in both cases.
+         */
+        boolean shouldSelectAllGroups = AppConfig.INSTANCE.isAllGroupsSelected() &&
+                (!fetchedInputGroupBundleFromRepo || isAddingNewKeyword);
+        isAddingNewKeyword = false;  // don't re-use state control flag
+
+        int xSelectedCount = 0, xTotalGroups = 0;
         List<GroupChildItem> childItems = new ArrayList<>(groups.size());
         for (Group group : groups) {
             if (AppConfig.INSTANCE.useOnlyGroupsWhereCanPostFreely() && !group.canPost()) {
-                continue;  // skip groups where is no access for current user to make wall post
+                continue;  // skip Group-s where is no access for current user to make wall post
             }
             ++xTotalGroups;
             GroupChildItem childItem = new GroupChildItem(group);
             childItems.add(childItem);
-            if (AppConfig.INSTANCE.isAllGroupsSelected()) {
+            if (shouldSelectAllGroups) {
                 childItem.setSelected(true);
                 ++totalSelectedGroups;
+                ++xSelectedCount;
+            } else if (group.isSelected()) {
+                ++xSelectedCount;
             }
         }
         totalGroups += xTotalGroups;
         GroupParentItem parentItem = groupParentItems.get(index);
-        if (AppConfig.INSTANCE.isAllGroupsSelected()) parentItem.setSelectedCount(xTotalGroups);
+        parentItem.setSelectedCount(xSelectedCount);
         parentItem.setChildList(childItems);
     }
 
@@ -336,8 +369,21 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         }
     }
 
+    private void postGroupBundleUpdate() {
+        Timber.i("postGroupBundleUpdate: %s", isGroupBundleChanged);
+        if (isGroupBundleChanged) {
+            Timber.d("Input GroupBundle has been changed, it will be updated in repository");
+            isGroupBundleChanged = false;
+            postGroupBundleUseCase.setParameters(new PostGroupBundle.Parameters(inputGroupBundle));
+            postGroupBundleUseCase.execute();  // silent update without callback
+            sendGroupBundleChanged();
+        } else {
+            Timber.d("Input GroupBundle wasn't changed");
+        }
+    }
+
     private void postKeywordBundleUpdate() {
-        Timber.i("postKeywordBundleUpdate");
+        Timber.i("postKeywordBundleUpdate: %s", isKeywordBundleChanged);
         if (isKeywordBundleChanged) {
             Timber.d("Input KeywordBundle has been changed, it will be updated in repository");
             isKeywordBundleChanged = false;
@@ -371,6 +417,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     List<Keyword> keywords = new ArrayList<>();
                     keywords.add(newlyAddedKeyword);
                     newlyAddedKeyword = null;  // drop temporary keyword
+                    isAddingNewKeyword = true;  // to manipulate with newly fetched Group-s properly
                     vkontakteEndpoint.getGroupsByKeywordsSplit(keywords, createGetGroupsByKeywordsListCallback());
                 } else {
                     Timber.d("Failed to add Keyword, but just warn user via popup");
@@ -423,6 +470,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     groupParentItems.add(item);
                 }
                 long groupBundleId = inputKeywordBundle.getGroupBundleId();
+                fetchedInputGroupBundleFromRepo = groupBundleId != Constant.BAD_ID;
                 if (groupBundleId == Constant.BAD_ID) {
                     Timber.d("There is no GroupBundle associated with input KeywordBundle, perform network request");
                     vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback());
@@ -472,6 +520,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
                 Timber.i("Use-Case: succeeded to put GroupBundle");
                 Timber.d("Update input KeywordBundle and associate it with newly created GroupBundle (by setting id)");
+                inputGroupBundle = bundle;
                 inputKeywordBundle.setGroupBundleId(bundle.id());
                 getGroupBundleByIdUseCase.setGroupBundleId(bundle.id());  // set proper id
                 postKeywordBundleUpdate();
@@ -522,9 +571,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 fillGroupsList(splitGroups);
 
                 List<Group> groups = ValueUtility.merge(splitGroups);
-                long groupBundleId = getGroupBundleByIdUseCase.getGroupBundleId();
-                if (groupBundleId == Constant.BAD_ID) {
-                    Timber.d("create new groups bundle and store it in repository, update id in associated keywords bundle");
+                if (inputGroupBundle == null || inputGroupBundle.id() == Constant.BAD_ID) {
+                    Timber.d("Create new GroupsBundle and put it to repository, update id in associated input KeywordBundle");
                     PutGroupBundle.Parameters parameters = new PutGroupBundle.Parameters.Builder()
                             .setGroups(groups)
                             .setKeywordBundleId(inputKeywordBundle.id())
@@ -533,17 +581,16 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     putGroupBundleUseCase.setParameters(parameters);
                     putGroupBundleUseCase.execute();
                 } else {
-                    Timber.d("refresh already existing groups bundle in repository");
-                    GroupBundle groupBundle = GroupBundle.builder()
-                            .setId(groupBundleId)
+                    Timber.d("Refresh already existing GroupBundle in repository");
+                    inputGroupBundle = GroupBundle.builder()
+                            .setId(inputGroupBundle.id())
                             .setGroups(groups)
                             .setKeywordBundleId(inputKeywordBundle.id())
                             .setTimestamp(inputGroupBundle.timestamp())
                             .setTitle(inputGroupBundle.title())  // TODO: set group-bundle title from Toolbar
                             .build();
-                    PostGroupBundle.Parameters parameters = new PostGroupBundle.Parameters(groupBundle);
-                    postGroupBundleUseCase.setParameters(parameters);
-                    postGroupBundleUseCase.execute();  // silent update without callback
+                    isGroupBundleChanged = true;
+                    postGroupBundleUpdate();
                 }
             }
 
@@ -590,6 +637,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             totalSelectedGroups += isSelected ? unselected : -selected;
             listAdapter.notifyParentChanged(position);
             sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
+            isGroupBundleChanged = true;  // as Group-s 'isSelected' flag has been changed
         };
     }
 
@@ -597,6 +645,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         return (data, isChecked) -> {
             totalSelectedGroups += isChecked ? 1 : -1;
             sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
+            isGroupBundleChanged = true;  // as Group-s 'isSelected' flag has been changed
         };
     }
 }

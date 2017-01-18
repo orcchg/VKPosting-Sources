@@ -80,6 +80,7 @@ public abstract class UseCase<Result> implements Runnable {
      * {@link UseCase#postExecuteCallback}.
      */
     public void execute() {
+        Timber.tag(this.getClass().getSimpleName());
         Timber.d("Executing Use-Case...");
         if (threadExecutor == null) {
             String message = "UseCase created using default ctor must only be executed" +
@@ -97,8 +98,11 @@ public abstract class UseCase<Result> implements Runnable {
     public void run() {
         try {
             Result result = doAction();
+            Timber.tag(this.getClass().getSimpleName());
+            Timber.d("Finished Use-Case execution");
             postExecuteScheduler.post(wrapToRunnable(result));
         } catch (Throwable error) {
+            Timber.tag(this.getClass().getSimpleName());
             Timber.e(error, "An error has occurred during execution of Use-Case");
             postExecuteScheduler.post(wrapToRunnable(error));
         }

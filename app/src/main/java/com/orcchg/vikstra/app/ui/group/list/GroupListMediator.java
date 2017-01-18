@@ -46,6 +46,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendGroupBundleChanged() {
+        clientFirst.receiveGroupBundleChanged();
+    }
+
+    @Override
     public void sendGroupsNotSelected() {
         clientFirst.receiveGroupsNotSelected();
     }
