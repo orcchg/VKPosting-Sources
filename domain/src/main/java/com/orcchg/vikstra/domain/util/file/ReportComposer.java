@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.util.file;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
@@ -9,19 +11,21 @@ import java.io.IOException;
 import java.util.Collection;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import timber.log.Timber;
 
-@Singleton
 public class ReportComposer {
 
     @Inject
     ReportComposer() {
     }
 
-    public boolean writeGroupsToCsv(Collection<Group> groups, String path) {
+    public boolean writeGroupsToCsv(@Nullable Collection<Group> groups, String path) {
+        if (groups == null) {
+            Timber.w("Input collection of Group-s is null, nothing to be done");
+            return false;
+        }
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(path), ',');
             for (Group group : groups) {
@@ -43,7 +47,11 @@ public class ReportComposer {
         return false;
     }
 
-    public boolean writeGroupReportsToCsv(Collection<GroupReport> reports, String path) {
+    public boolean writeGroupReportsToCsv(@Nullable Collection<GroupReport> reports, String path) {
+        if (reports == null) {
+            Timber.w("Input collection of GroupReport-s is null, nothing to be done");
+            return false;
+        }
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(path), ',');
             for (GroupReport report : reports) {

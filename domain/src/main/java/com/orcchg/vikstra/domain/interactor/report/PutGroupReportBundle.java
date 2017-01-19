@@ -24,8 +24,8 @@ public class PutGroupReportBundle extends UseCase<GroupReportBundle> {
         }
     }
 
-    final IReportRepository reportRepository;
-    Parameters parameters;
+    private final IReportRepository reportRepository;
+    private Parameters parameters;
 
     @Inject
     PutGroupReportBundle(IReportRepository reportRepository, ThreadExecutor threadExecutor,

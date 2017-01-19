@@ -20,7 +20,7 @@ import javax.inject.Inject;
 
 public class MakeWallPostToGroupsBatch extends VkBatchUseCase<GroupReportEssence, List<GroupReportEssence>> {
 
-    MakeWallPostToGroups.Parameters parameters;
+    private MakeWallPostToGroups.Parameters parameters;
 
     @Inject
     public MakeWallPostToGroupsBatch(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {

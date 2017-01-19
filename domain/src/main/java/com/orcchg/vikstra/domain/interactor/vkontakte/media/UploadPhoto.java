@@ -25,7 +25,7 @@ public class UploadPhoto extends VkUseCase<VKPhotoArray> {
         }
     }
 
-    Parameters parameters;
+    private Parameters parameters;
 
     @Inject
     public UploadPhoto(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {

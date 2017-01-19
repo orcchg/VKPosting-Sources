@@ -15,11 +15,13 @@ interface GroupListContract {
         void onPostNotSelected();
 
         void openAddKeywordDialog();
+        void openDumpNotReadyDialog();
         void openEditTitleDialog(@Nullable String initTitle);
 
         void setInputGroupsTitle(String title);
         void setCloseViewResult(int result);
 
+        void showDumpError();
         void showEmptyPost();
         void showPost(@Nullable PostSingleGridItemVO viewObject);
         void showPostingStartedMessage(boolean isStarted);

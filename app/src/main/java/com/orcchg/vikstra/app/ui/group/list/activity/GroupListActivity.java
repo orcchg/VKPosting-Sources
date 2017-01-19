@@ -20,10 +20,12 @@ import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.group.list.activity.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.activity.injection.GroupListComponent;
+import com.orcchg.vikstra.app.ui.group.list.activity.injection.GroupListModule;
 import com.orcchg.vikstra.app.ui.group.list.fragment.GroupListFragment;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -81,6 +83,7 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     protected void injectDependencies() {
         groupComponent = DaggerGroupListComponent.builder()
                 .applicationComponent(getApplicationComponent())
+                .groupListModule(new GroupListModule(ContentUtility.getDumpGroupsFileName(this)))
                 .build();
         groupComponent.inject(this);
     }
@@ -174,6 +177,11 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     }
 
     @Override
+    public void openDumpNotReadyDialog() {
+        DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.group_list_dialog_groups_not_ready_to_dump);
+    }
+
+    @Override
     public void openEditTitleDialog(@Nullable String initTitle) {
         DialogProvider.showEditTextDialog(this, EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, initTitle,
                 (dialog, which, text) -> {
@@ -194,6 +202,11 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     }
 
     // ------------------------------------------
+    @Override
+    public void showDumpError() {
+        UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_groups_dump_failed);
+    }
+
     @Override
     public void showEmptyPost() {
         fab.hide();

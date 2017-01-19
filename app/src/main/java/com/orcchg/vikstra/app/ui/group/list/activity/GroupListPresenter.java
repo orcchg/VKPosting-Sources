@@ -11,8 +11,9 @@ import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorComponent
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorModule;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
-import com.orcchg.vikstra.domain.interactor.file.DumpGroups;
+import com.orcchg.vikstra.domain.interactor.group.DumpGroups;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
 
@@ -75,8 +76,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void onDumpPressed() {
         Timber.i("onDumpPressed");
-        // TODO: dump found groups, set params
-        dumpGroupsUseCase.execute();  // TODO: notification by result
+        long groupBundleId = sendAskForGroupBundleIdToDump();
+        if (groupBundleId != Constant.BAD_ID) {
+            Timber.d("GroupBundle id [%s] is valid, ready to dump", groupBundleId);
+            // TODO: add params
+            dumpGroupsUseCase.execute();  // TODO: notification by result
+        } else if (isViewAttached()) {
+            Timber.d("GroupBundle is not available to dump");
+            getView().openDumpNotReadyDialog();
+        }
     }
 
     @Override
@@ -92,7 +100,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     /* Mediator */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     public void receiveAddKeywordError() {
         if (isViewAttached()) getView().onAddKeywordError();
@@ -143,9 +151,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         if (isViewAttached()) getView().updateSelectedGroupsCounter(newCount, total);
     }
 
+    // ------------------------------------------
     @Override
     public void sendAddKeywordRequest(Keyword keyword) {
         mediatorComponent.mediator().sendAddKeywordRequest(keyword);
+    }
+
+    @Override
+    public long sendAskForGroupBundleIdToDump() {
+        return mediatorComponent.mediator().sendAskForGroupBundleIdToDump();
     }
 
     @Override

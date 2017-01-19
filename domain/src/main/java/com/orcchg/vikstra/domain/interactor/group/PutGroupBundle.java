@@ -53,8 +53,8 @@ public class PutGroupBundle extends UseCase<GroupBundle> {
         }
     }
 
-    final IGroupRepository groupRepository;
-    Parameters parameters;
+    private final IGroupRepository groupRepository;
+    private Parameters parameters;
 
     @Inject
     public PutGroupBundle(IGroupRepository groupRepository, ThreadExecutor threadExecutor,

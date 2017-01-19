@@ -189,10 +189,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     /* Mediator */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @Override
     public void receiveAddKeywordRequest(Keyword keyword) {
         addKeyword(keyword);
+    }
+
+    @Override
+    public long receiveAskForGroupBundleIdToDump() {
+        return inputGroupBundle != null ? inputGroupBundle.id() : Constant.BAD_ID;
     }
 
     @Override
@@ -205,6 +210,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         postToGroups();
     }
 
+    // ------------------------------------------
     @Override
     public void sendAddKeywordError() {
         mediatorComponent.mediator().sendAddKeywordError();

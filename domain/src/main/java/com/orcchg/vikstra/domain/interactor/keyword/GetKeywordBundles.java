@@ -27,8 +27,8 @@ public class GetKeywordBundles extends UseCase<List<KeywordBundle>> {
         }
     }
 
-    final IKeywordRepository keywordRepository;
-    Parameters parameters;
+    private final IKeywordRepository keywordRepository;
+    private Parameters parameters;
 
     @Inject
     GetKeywordBundles(IKeywordRepository keywordRepository, ThreadExecutor threadExecutor,

@@ -22,8 +22,8 @@ public class PutPost extends UseCase<Post> {
         }
     }
 
-    final IPostRepository postRepository;
-    Parameters parameters;
+    private final IPostRepository postRepository;
+    private Parameters parameters;
 
     @Inject
     PutPost(IPostRepository postRepository, ThreadExecutor threadExecutor,

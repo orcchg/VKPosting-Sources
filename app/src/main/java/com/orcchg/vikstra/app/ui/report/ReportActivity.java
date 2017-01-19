@@ -22,6 +22,7 @@ import com.orcchg.vikstra.app.ui.report.injection.DaggerReportComponent;
 import com.orcchg.vikstra.app.ui.report.injection.ReportComponent;
 import com.orcchg.vikstra.app.ui.report.injection.ReportModule;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
@@ -42,7 +43,7 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
 
     private ReportComponent reportComponent;
-    private long groupReportBundleId = Constant.BAD_ID;
+    private long groupReportBundleId = Constant.BAD_ID;  // if BAD_ID will not change later, then update reports interactively
     private long postId = Constant.BAD_ID;
 
     @NonNull @Override
@@ -55,7 +56,7 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
         reportComponent = DaggerReportComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .postModule(new PostModule(postId))
-                .reportModule(new ReportModule(groupReportBundleId))  // if BAD_ID then update reports interactively
+                .reportModule(new ReportModule(groupReportBundleId, ContentUtility.getDumpGroupReportsFileName(this)))
                 .build();
         reportComponent.inject(this);
     }

@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
 public class UploadPhotosBatch extends VkBatchUseCase<VKPhotoArray, List<VKPhotoArray>> {
 
-    UploadPhotos.Parameters parameters;
+    private UploadPhotos.Parameters parameters;
 
     @Inject
     public UploadPhotosBatch(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {

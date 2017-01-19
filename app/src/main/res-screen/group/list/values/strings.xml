@@ -2,12 +2,14 @@
 <resources>
     <string name="group_list_button_label_add_keyword">Add keyword</string>
     <string name="group_list_button_label_change_post">Change post</string>
+    <string name="group_list_dialog_groups_not_ready_to_dump">No groups data available to dump</string>
     <string name="group_list_dialog_new_keyword_title">New keyword</string>
     <string name="group_list_dialog_new_keyword_hind">Enter new keyword</string>
     <string name="group_list_error_add_keyword">Failed to add new keyword!</string>
     <string name="group_list_fab_label_post">Post</string>
     <string name="group_list_screen_title">Choose groups</string>
     <string name="group_list_selected_groups_total_count">Selected groups: %1$s &#47; %2$s</string>
+    <string name="group_list_snackbar_groups_dump_failed">Failed to dump groups to file</string>
     <string name="group_list_snackbar_groups_not_selected_message">You must select at least one group</string>
     <string name="group_list_snackbar_keywords_limit_message">You\'ve reached keywords limit: %s</string>
     <string name="group_list_snackbar_post_is_empty_message">You must select a post</string>

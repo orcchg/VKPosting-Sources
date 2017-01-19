@@ -27,8 +27,8 @@ public class GetPosts extends UseCase<List<Post>> {
         }
     }
 
-    final IPostRepository postRepository;
-    Parameters parameters;
+    private final IPostRepository postRepository;
+    private Parameters parameters;
 
     @Inject
     GetPosts(IPostRepository postRepository, ThreadExecutor threadExecutor,

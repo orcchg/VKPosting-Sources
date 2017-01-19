@@ -74,7 +74,7 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
         }
     }
 
-    Parameters parameters;
+    private Parameters parameters;
 
     @Inject
     public MakeWallPost(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {

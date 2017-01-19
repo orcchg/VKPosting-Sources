@@ -27,8 +27,8 @@ public class GetGroupBundles extends UseCase<List<GroupBundle>> {
         }
     }
 
-    final IGroupRepository groupRepository;
-    Parameters parameters;
+    private final IGroupRepository groupRepository;
+    private Parameters parameters;
 
     @Inject
     GetGroupBundles(IGroupRepository groupRepository, ThreadExecutor threadExecutor,

@@ -21,8 +21,8 @@ public class PostKeywordBundle extends UseCase<Boolean> {
         }
     }
 
-    final IKeywordRepository keywordRepository;
-    Parameters parameters;
+    private final IKeywordRepository keywordRepository;
+    private Parameters parameters;
 
     @Inject
     public PostKeywordBundle(IKeywordRepository keywordRepository, ThreadExecutor threadExecutor,

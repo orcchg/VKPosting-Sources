@@ -13,13 +13,21 @@ import javax.inject.Inject;
 
 public class GetGroupBundleById extends UseCase<GroupBundle> {
 
-    long id = Constant.BAD_ID;
-    final IGroupRepository groupRepository;
+    private long id = Constant.BAD_ID;
+    private final IGroupRepository groupRepository;
 
     @Inject
     public GetGroupBundleById(long id, IGroupRepository groupRepository,
                               ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
+        this.id = id;
+        this.groupRepository = groupRepository;
+    }
+
+    /**
+     * For internal use within another {@link UseCase} and synchronous calls only
+     */
+    GetGroupBundleById(long id, IGroupRepository groupRepository) {
         this.id = id;
         this.groupRepository = groupRepository;
     }

@@ -75,7 +75,7 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
         }
     }
 
-    Parameters parameters;
+    private Parameters parameters;
 
     @Inject
     public MakeWallPostToGroups(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {

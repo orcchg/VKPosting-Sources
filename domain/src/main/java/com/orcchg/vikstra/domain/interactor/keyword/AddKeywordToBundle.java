@@ -21,9 +21,9 @@ public class AddKeywordToBundle extends UseCase<Boolean> {
         }
     }
 
-    final long id;
-    final IKeywordRepository keywordRepository;
-    Parameters parameters;
+    private final long id;
+    private final IKeywordRepository keywordRepository;
+    private Parameters parameters;
 
     @Inject
     public AddKeywordToBundle(long id, IKeywordRepository keywordRepository,

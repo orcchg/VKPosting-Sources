@@ -13,8 +13,8 @@ import javax.inject.Inject;
 
 public class GetPostById extends UseCase<Post> {
 
-    long id = Constant.BAD_ID;
-    final IPostRepository postRepository;
+    private long id = Constant.BAD_ID;
+    private final IPostRepository postRepository;
 
     @Inject
     public GetPostById(long id, IPostRepository postRepository,

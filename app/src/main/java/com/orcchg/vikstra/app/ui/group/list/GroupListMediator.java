@@ -25,6 +25,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public long sendAskForGroupBundleIdToDump() {
+        return clientSecond.receiveAskForGroupBundleIdToDump();
+    }
+
+    @Override
     public void sendPostHasChangedRequest() {
         clientSecond.receivePostHasChangedRequest();
     }

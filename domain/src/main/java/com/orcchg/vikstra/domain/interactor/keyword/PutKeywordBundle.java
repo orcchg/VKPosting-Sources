@@ -45,8 +45,8 @@ public class PutKeywordBundle extends UseCase<KeywordBundle> {
         }
     }
 
-    final IKeywordRepository keywordRepository;
-    Parameters parameters;
+    private final IKeywordRepository keywordRepository;
+    private Parameters parameters;
 
     @Inject
     public PutKeywordBundle(IKeywordRepository keywordRepository, ThreadExecutor threadExecutor,

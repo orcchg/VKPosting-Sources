@@ -21,8 +21,8 @@ public class PostPost extends UseCase<Boolean> {
         }
     }
 
-    final IPostRepository postRepository;
-    Parameters parameters;
+    private final IPostRepository postRepository;
+    private Parameters parameters;
 
     @Inject
     PostPost(IPostRepository postRepository, ThreadExecutor threadExecutor,

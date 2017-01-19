@@ -32,7 +32,7 @@ public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<Ordered<VKPhot
         }
     }
 
-    Parameters parameters;
+    private Parameters parameters;
 
     @Inject
     public UploadPhotos(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {

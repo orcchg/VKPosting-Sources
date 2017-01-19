@@ -21,8 +21,8 @@ public class PostGroupBundle extends UseCase<Boolean> {
         }
     }
 
-    final IGroupRepository groupRepository;
-    Parameters parameters;
+    private final IGroupRepository groupRepository;
+    private Parameters parameters;
 
     @Inject
     public PostGroupBundle(IGroupRepository groupRepository, ThreadExecutor threadExecutor,
