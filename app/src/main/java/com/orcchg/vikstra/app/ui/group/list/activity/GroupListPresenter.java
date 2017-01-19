@@ -149,6 +149,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receiveShowPostingButtonRequest(boolean isVisible) {
+        if (isViewAttached()) getView().showPostingButton(isVisible);
+    }
+
+    @Override
     public void receiveUpdatedSelectedGroupsCounter(int newCount, int total) {
         if (isViewAttached()) getView().updateSelectedGroupsCounter(newCount, total);
     }

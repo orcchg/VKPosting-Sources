@@ -86,6 +86,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendShowPostingButtonRequest(boolean isVisible) {
+        clientFirst.receiveShowPostingButtonRequest(isVisible);
+    }
+
+    @Override
     public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
         clientFirst.receiveUpdatedSelectedGroupsCounter(newCount, total);
     }

@@ -257,6 +257,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void sendShowPostingButtonRequest(boolean isVisible) {
+        mediatorComponent.mediator().sendShowPostingButtonRequest(isVisible);
+    }
+
+    @Override
     public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
         inputKeywordBundle.setSelectedGroupsCount(newCount);
         inputKeywordBundle.setTotalGroupsCount(total);
@@ -269,6 +274,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     protected void freshStart() {
         if (isViewAttached()) getView().showLoading(GroupListFragment.RV_TAG);
+        sendShowPostingButtonRequest(false);
         getKeywordBundleByIdUseCase.execute();
         getPostByIdUseCase.execute();
     }
@@ -352,8 +358,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         }
 
         listAdapter.notifyParentDataSetChanged(false);
+        sendShowPostingButtonRequest(true);
         sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
-        if (isViewAttached()) getView().showGroups(splitGroups.isEmpty());
+        if (isViewAttached()) {
+            getView().showGroups(splitGroups.isEmpty());
+        }
     }
 
     private void postToGroups() {

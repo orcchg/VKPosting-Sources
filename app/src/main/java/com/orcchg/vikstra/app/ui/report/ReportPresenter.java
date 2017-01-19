@@ -48,7 +48,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final MultiUseCase.ProgressCallback<GroupReportEssence> postingProgressCallback;
     private List<GroupReport> storedReports = new ArrayList<>();
     private boolean isFinishedPosting;
-    private int posted = 0;
+    private int postedWithSuccess = 0, postedWithFailure = 0;
 
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
@@ -112,7 +112,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     public void retry() {
         Timber.i("retry");
-        posted = 0;  // drop counter
+        postedWithSuccess = 0;  // drop counter
+        postedWithFailure = 0;  // drop counter
         isFinishedPosting = false;
         storedReports.clear();
         listAdapter.clear();
@@ -159,6 +160,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     private UseCase.OnPostExecuteCallback<GroupReportBundle> createGetGroupReportBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
             @DebugLog @Override
@@ -217,7 +219,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         return new UseCase.OnPostExecuteCallback<Boolean>() {
             @Override
             public void onFinish(@Nullable Boolean result) {
-                if (result) {
+                if (result != null && result) {
                     Timber.i("Use-Case: succeeded to dump GroupReport-s");
                     if (isViewAttached()) getView().showDumpSuccess();
                 } else {
@@ -235,13 +237,14 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     }
 
     // ------------------------------------------
+    @SuppressWarnings("unchecked")
     private MultiUseCase.ProgressCallback<GroupReportEssence> createPostingProgressCallback() {
         return (index, total, item) -> {
             // unwrap data
             GroupReportEssence model = null;
             if (item.data != null) {
                 model = item.data;
-                ++posted;  // count successful posting
+                ++postedWithSuccess;  // count successful posting
             }
             if (item.error != null) {
                 VkUseCaseException e = (VkUseCaseException) item.error;
@@ -251,6 +254,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                         .setGroup(group)
                         .setWallPostId(Constant.BAD_ID)
                         .build();
+                ++postedWithFailure;  // count failed posting
             }
             if (model == null) {
                 Timber.wtf("Unreachable state: GroupReportEssence must always be constructed from Ordered<> item");
@@ -260,8 +264,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             ReportListItemVO viewObject = groupReportEssenceToVoMapper.map(model);
             listAdapter.addInverse(viewObject);
             if (isViewAttached()) {
-                getView().showGroupReports(false);  // idemponent call (no-op if list items are already visible)
-                getView().updatePostedCounters(posted, total);
+                getView().showGroupReports(false);  // idempotent call (no-op if list items are already visible)
+                getView().updatePostedCounters(postedWithSuccess, total);
                 getView().getListView(getListTag()).smoothScrollToPosition(0);
                 // TODO: estimate time to complete posting, use DomainConfig.INSTANCE.multiUseCaseSleepInterval
             }
@@ -270,7 +274,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             GroupReportEssenceMapper mapper = new GroupReportEssenceMapper(Constant.INIT_ID, timestamp);  // fictive id
             storedReports.add(mapper.map(model));
 
-            isFinishedPosting = posted == total;
+            isFinishedPosting = postedWithSuccess + postedWithFailure == total;
         };
     }
 }

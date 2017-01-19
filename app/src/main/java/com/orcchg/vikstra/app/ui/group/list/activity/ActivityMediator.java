@@ -18,6 +18,7 @@ public interface ActivityMediator {
         void receivePost(@Nullable PostSingleGridItemVO viewObject);
         void receivePostNotSelected();
         void receivePostingStartedMessage(boolean isStarted);
+        void receiveShowPostingButtonRequest(boolean isVisible);
         void receiveUpdatedSelectedGroupsCounter(int newCount, int total);
     }
 

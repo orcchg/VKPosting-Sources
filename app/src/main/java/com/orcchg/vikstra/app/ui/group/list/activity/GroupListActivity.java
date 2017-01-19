@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.PermissionManager;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
@@ -228,8 +227,16 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     @Override
     public void showPost(@Nullable PostSingleGridItemVO viewObject) {
-        if (viewObject != null) fab.show();
         postThumbnail.setPost(viewObject);
+    }
+
+    @Override
+    public void showPostingButton(boolean isVisible) {
+        if (isVisible) {
+            fab.show();
+        } else {
+            fab.hide();
+        }
     }
 
     @Override

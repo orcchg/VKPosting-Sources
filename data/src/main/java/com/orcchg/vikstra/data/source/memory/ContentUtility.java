@@ -15,6 +15,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 /**
  * In-memory global storage.
  */
@@ -99,15 +101,11 @@ public final class ContentUtility {
     }
 
     public static String getDumpGroupsFileName(Context context) {
-        String root = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath();
-        return new StringBuilder(root).append(externalApplicationFolder()).append('/')
-                .append("groups_").append(currentTimestamp()).append(".csv").toString();
+        return getDumpFileName(context, "groups_");
     }
 
     public static String getDumpGroupReportsFileName(Context context) {
-        String root = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath();
-        return new StringBuilder(root).append(externalApplicationFolder()).append('/')
-                .append("reports_").append(currentTimestamp()).append(".csv").toString();
+        return getDumpFileName(context, "reports_");
     }
 
     public static File createInternalImageFile(Context context) throws IOException {
@@ -119,10 +117,32 @@ public final class ContentUtility {
     /* Internal */
     // ------------------------------------------
     private static String currentTimestamp() {
-        return new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+        return new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ENGLISH).format(new Date());
+    }
+
+    private static String createExternalApplicationFolder(String root) {
+        String path = root + externalApplicationFolder();
+        File directory = new File(path);
+        directory.mkdirs();  // creates directories hierarchy if not exists
+        return path;
     }
 
     private static String externalApplicationFolder() {
         return "/vikstra";
+    }
+
+    private static String getDumpFileName(Context context, String prefix) {
+        String root = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath();
+        String directory = createExternalApplicationFolder(root);
+        String fileName = new StringBuilder(directory).append('/')
+                .append(prefix).append(currentTimestamp()).append(".csv").toString();
+        File file = new File(fileName);
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            Timber.e(e, "Failed to create a file by path: %s", fileName);
+            // this error is suppressed here but any further attempt to use this file will lead to IOException
+        }
+        return fileName;
     }
 }

@@ -33,7 +33,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
 
     protected abstract void injectDependencies();
 
-    @DebugLog @Override
+    @DebugLog @Override @SuppressWarnings("unchecked")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.tag(this.getClass().getSimpleName());

@@ -156,14 +156,14 @@ public class VkontakteEndpoint extends Endpoint {
     public void makeWallPosts(Collection<Group> groups, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                               @Nullable MultiUseCase.ProgressCallback progressCallback) {
-        makeWallPosts(groups, post, callback, null, null);
+        makeWallPosts(groups, post, callback, progressCallback, null);
     }
 
     public void makeWallPosts(Collection<Group> groups, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                               @Nullable MultiUseCase.ProgressCallback progressCallback,
                               @Nullable MultiUseCase.ProgressCallback photoUploadProgressCb) {
-        makeWallPosts(groups, post, callback, null, null, null);
+        makeWallPosts(groups, post, callback, progressCallback, photoUploadProgressCb, null);
     }
 
     public void makeWallPosts(Collection<Group> groups, @NonNull Post post,
@@ -232,39 +232,30 @@ public class VkontakteEndpoint extends Endpoint {
                                           @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                                           @Nullable IPostingNotificationDelegate postingNotificationDelegate,
                                           @Nullable IPhotoUploadNotificationDelegate photoUploadNotificationDelegate) {
-        MultiUseCase.ProgressCallback<GroupReportEssence> progressCallback = new MultiUseCase.ProgressCallback<GroupReportEssence>() {
-            @DebugLog @Override
-            public void onDone(int index, int total, Ordered<GroupReportEssence> data) {
-                Timber.d("Make wall posts progress: %s / %s", index, total);
-                if (postingNotificationDelegate == null) return;
-                if (index < total) {
-                    postingNotificationDelegate.onPostingProgress(index, total);
-                } else {
-                    postingNotificationDelegate.onPostingComplete();
-                }
+        MultiUseCase.ProgressCallback<GroupReportEssence> progressCallback = (index, total, data) -> {
+            Timber.d("Make wall posts progress: %s / %s", index + 1, total);
+            if (postingNotificationDelegate == null) return;
+            if (index + 1 < total) {  // progress == index + 1
+                postingNotificationDelegate.onPostingProgress(index + 1, total);
+            } else {
+                postingNotificationDelegate.onPostingComplete();
             }
         };
 
-        MultiUseCase.ProgressCallback<VKPhotoArray> photoUploadProgressCb = new MultiUseCase.ProgressCallback<VKPhotoArray>() {
-            @DebugLog @Override
-            public void onDone(int index, int total, Ordered<VKPhotoArray> data) {
-                Timber.d("Photo uploading progress: %s / %s", index, total);
-                if (photoUploadNotificationDelegate == null) return;
-                if (index < total) {
-                    photoUploadNotificationDelegate.onPhotoUploadProgress(index, total);
-                } else {
-                    photoUploadNotificationDelegate.onPhotoUploadComplete();
-                }
+        MultiUseCase.ProgressCallback<VKPhotoArray> photoUploadProgressCb = (index, total, data) -> {
+            Timber.d("Photo uploading progress: %s / %s", index + 1, total);
+            if (photoUploadNotificationDelegate == null) return;
+            if (index + 1 < total) {  // progress == index + 1
+                photoUploadNotificationDelegate.onPhotoUploadProgress(index + 1, total);
+            } else {
+                photoUploadNotificationDelegate.onPhotoUploadComplete();
             }
         };
 
-        MultiUseCase.ProgressCallback<Bitmap> photoPrepareProgressCb = new MultiUseCase.ProgressCallback<Bitmap>() {
-            @DebugLog @Override
-            public void onDone(int index, int total, Ordered<Bitmap> data) {
-                Timber.d("Photo preparing progress: %s / %s", index, total);
-                if (photoUploadNotificationDelegate != null) {
-                    photoUploadNotificationDelegate.onPhotoUploadProgressInfinite();
-                }
+        MultiUseCase.ProgressCallback<Bitmap> photoPrepareProgressCb = (index, total, data) -> {
+            Timber.d("Photo preparing progress: %s / %s", index + 1, total);
+            if (photoUploadNotificationDelegate != null) {
+                photoUploadNotificationDelegate.onPhotoUploadProgressInfinite();
             }
         };
 
@@ -273,18 +264,16 @@ public class VkontakteEndpoint extends Endpoint {
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     private void makeWallPosts(MakeWallPostToGroups.Parameters parameters,
                                @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                                @Nullable MultiUseCase.ProgressCallback progressCallback) {
         MakeWallPostToGroups useCase = new MakeWallPostToGroups(threadExecutor, postExecuteScheduler);
         useCase.setParameters(parameters);
-        useCase.setProgressCallback(new MultiUseCase.ProgressCallback<GroupReportEssence>() {
-            @DebugLog @Override
-            public void onDone(int index, int total, Ordered<GroupReportEssence> data) {
-                ContentUtility.InMemoryStorage.setPostingProgress(index, total, data);
-                if (progressCallback != null) progressCallback.onDone(index, total, data);
-            }
-        });
+        useCase.setProgressCallback(((index, total, data) -> {
+            ContentUtility.InMemoryStorage.setPostingProgress(index, total, data);
+            if (progressCallback != null) progressCallback.onDone(index, total, data);
+        }));
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<GroupReportEssence>>>() {
             @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<GroupReportEssence>> reports) {
@@ -325,7 +314,7 @@ public class VkontakteEndpoint extends Endpoint {
      * Creates callback on finish uploading photos to Vkontakte and then
      * makes wall posts, as initially intended.
      */
-    UseCase.OnPostExecuteCallback<List<Ordered<VKPhotoArray>>> createUploadPhotosCallback(
+    private UseCase.OnPostExecuteCallback<List<Ordered<VKPhotoArray>>> createUploadPhotosCallback(
             List<Media> media, MakeWallPostToGroups.Parameters.Builder paramsBuilder,
             @Nullable UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
             @Nullable MultiUseCase.ProgressCallback progressCallback) {

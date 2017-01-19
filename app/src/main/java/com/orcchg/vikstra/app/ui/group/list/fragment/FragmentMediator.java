@@ -25,6 +25,7 @@ public interface FragmentMediator {
         void sendPost(@Nullable PostSingleGridItemVO viewObject);
         void sendPostNotSelected();
         void sendPostingStartedMessage(boolean isStarted);
+        void sendShowPostingButtonRequest(boolean isVisible);
         void sendUpdatedSelectedGroupsCounter(int newCount, int total);
     }
 }

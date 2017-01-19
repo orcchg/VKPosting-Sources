@@ -74,7 +74,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
      * Performs {@param total} use-cases synchronously but each in a background thread,
      * then waits them to finish and accumulates results and possible errors in lists.
      */
-    @DebugLog
+    @DebugLog @SuppressWarnings("unchecked")
     protected <Result> List<Ordered<Result>> performMultipleRequests(final int total, final List<? extends UseCase<Result>> useCases) {
         Timber.tag(this.getClass().getSimpleName());
         Timber.v("Performing multiple requests, total: %s, different use-cases: %s", total, useCases.size());
@@ -106,7 +106,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                             progressCallbackScheduler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (progressCallback != null) progressCallback.onDone(index + 1, total, result);
+                                    if (progressCallback != null) progressCallback.onDone(index, total, result);
                                 }
                             });
                             break;
@@ -128,7 +128,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                                 progressCallbackScheduler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (progressCallback != null) progressCallback.onDone(index + 1, total, result);
+                                        if (progressCallback != null) progressCallback.onDone(index, total, result);
                                     }
                                 });
                                 break;

@@ -25,6 +25,7 @@ interface GroupListContract {
         void showDumpSuccess();
         void showEmptyPost();
         void showPost(@Nullable PostSingleGridItemVO viewObject);
+        void showPostingButton(boolean isVisible);
         void showPostingStartedMessage(boolean isStarted);
         void updateSelectedGroupsCounter(int newCount, int total);
     }

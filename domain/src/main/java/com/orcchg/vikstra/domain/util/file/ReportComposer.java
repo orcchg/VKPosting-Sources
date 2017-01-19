@@ -42,7 +42,7 @@ public class ReportComposer {
             writer.close();
             return true;
         } catch (IOException e) {
-            Timber.e("Failed to write csv to file on path: %s", path);
+            Timber.e(e, "Failed to write csv to file on path: %s", path);
         }
         return false;
     }
@@ -71,7 +71,7 @@ public class ReportComposer {
             writer.close();
             return true;
         } catch (IOException e) {
-            Timber.e("Failed to write csv to file on path: %s", path);
+            Timber.e(e, "Failed to write csv to file on path: %s", path);
         }
         return false;
     }
