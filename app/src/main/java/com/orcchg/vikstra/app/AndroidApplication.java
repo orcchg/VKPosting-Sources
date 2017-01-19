@@ -7,7 +7,7 @@ import com.orcchg.vikstra.BuildConfig;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.injection.component.DaggerApplicationComponent;
 import com.orcchg.vikstra.app.injection.module.ApplicationModule;
-import com.orcchg.vikstra.data.source.remote.injection.CloudModule;
+import com.orcchg.vikstra.data.injection.remote.CloudModule;
 import com.squareup.leakcanary.LeakCanary;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;

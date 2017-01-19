@@ -4,11 +4,11 @@ import android.content.Context;
 
 import com.bumptech.glide.RequestManager;
 import com.orcchg.vikstra.app.injection.module.ApplicationModule;
+import com.orcchg.vikstra.data.injection.remote.CloudComponent;
+import com.orcchg.vikstra.data.injection.remote.CloudModule;
 import com.orcchg.vikstra.data.source.direct.ImageLoader;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkAttachLocalCache;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
-import com.orcchg.vikstra.data.source.remote.injection.CloudComponent;
-import com.orcchg.vikstra.data.source.remote.injection.CloudModule;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.repository.IGroupRepository;

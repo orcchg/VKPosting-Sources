@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.data.source.remote.injection;
+package com.orcchg.vikstra.data.injection.remote;
 
 import javax.inject.Singleton;
 
