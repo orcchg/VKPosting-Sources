@@ -107,6 +107,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
         return null;
     }
 
+    // ------------------------------------------
     @Override
     public void openKeywordCreateScreen(long keywordBundleId) {
         navigationComponent.navigator().openKeywordCreateScreen(this, keywordBundleId);
@@ -122,6 +123,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
         setResult(Activity.RESULT_OK);
     }
 
+    // ------------------------------------------
     @Override
     public void showKeywords(boolean isEmpty) {
         KeywordListFragment fragment = getFragment();

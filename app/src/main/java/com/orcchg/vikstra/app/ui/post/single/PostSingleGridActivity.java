@@ -44,6 +44,7 @@ public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.
         return null;
     }
 
+    // ------------------------------------------
     @Override
     public void openPostCreateScreen() {
         navigationComponent.navigator().openPostCreateScreen(this);
@@ -54,6 +55,7 @@ public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.
         navigationComponent.navigator().openPostViewScreen(this, postId);
     }
 
+    // ------------------------------------------
     @Override
     public void showPosts(boolean isEmpty) {
         PostSingleGridFragment fragment = getFragment();

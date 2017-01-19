@@ -22,6 +22,7 @@ interface GroupListContract {
         void setCloseViewResult(int result);
 
         void showDumpError();
+        void showDumpSuccess();
         void showEmptyPost();
         void showPost(@Nullable PostSingleGridItemVO viewObject);
         void showPostingStartedMessage(boolean isStarted);

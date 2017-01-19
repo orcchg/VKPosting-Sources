@@ -122,6 +122,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         return null;
     }
 
+    // ------------------------------------------
     @Override
     public void openGroupListScreen(long keywordBundleId, long postId) {
         navigationComponent.navigator().openGroupListScreen(this, keywordBundleId, postId);

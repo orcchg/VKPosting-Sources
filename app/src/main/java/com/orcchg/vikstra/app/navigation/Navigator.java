@@ -24,6 +24,7 @@ import com.orcchg.vikstra.app.ui.report.ReportActivity;
 import com.orcchg.vikstra.app.ui.status.StatusActivity;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
+import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.io.File;
@@ -31,6 +32,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 @PerActivity
@@ -38,6 +40,28 @@ public class Navigator {
 
     @Inject
     public Navigator() {
+    }
+
+    /* Email */
+    // ------------------------------------------
+    /**
+     * {@see http://stackoverflow.com/questions/2197741/how-can-i-send-emails-from-my-android-application}
+     */
+    @DebugLog @ExternalScreen
+    public void openEmailScreen(@NonNull Activity context, @NonNull EmailContent emailContent) {
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:"));
+        intent.setType("message/rfc822");
+        intent.putExtra(Intent.EXTRA_EMAIL, emailContent.recipients().toArray());
+        intent.putExtra(Intent.EXTRA_SUBJECT, emailContent.subject());
+        intent.putExtra(Intent.EXTRA_TEXT, emailContent.body());
+        try {
+            String title = context.getResources().getString(R.string.message_send_email);
+            context.startActivity(Intent.createChooser(intent, title));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Timber.e("No Activity was found to send an email !");
+            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_email).show();
+        }
     }
 
     /* Groups */

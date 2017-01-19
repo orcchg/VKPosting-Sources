@@ -14,13 +14,16 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.base.BaseActivity;
+import com.orcchg.vikstra.app.PermissionManager;
+import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
+import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.report.injection.DaggerReportComponent;
 import com.orcchg.vikstra.app.ui.report.injection.ReportComponent;
 import com.orcchg.vikstra.app.ui.report.injection.ReportModule;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -28,7 +31,7 @@ import com.orcchg.vikstra.domain.util.Constant;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ReportActivity extends BaseActivity<ReportContract.View, ReportContract.Presenter>
+public class ReportActivity extends BasePermissionActivity<ReportContract.View, ReportContract.Presenter>
         implements ReportContract.View, IScrollList {
     private static final String FRAGMENT_TAG = "report_fragment_tag";
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
@@ -88,6 +91,13 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
         postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
     }
 
+    /* Permissions */
+    // ------------------------------------------
+    @Override
+    protected void onPermissionGranted_writeExternalStorage() {
+        presenter.onDumpPressed();
+    }
+
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
@@ -109,7 +119,7 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.dump:
-                    presenter.onDumpPressed();
+                    askForPermission_writeExternalStorage();
                     return true;
             }
             return false;
@@ -125,10 +135,20 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
         return null;
     }
 
+    // ------------------------------------------
     @Override
-    public void showGroupReports(boolean isEmpty) {
-        ReportFragment fragment = getFragment();
-        if (fragment != null) fragment.showGroupReports(isEmpty);
+    public void openDumpNotReadyDialog() {
+        DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_group_reports_not_ready_to_dump);
+    }
+
+    @Override
+    public void showDumpError() {
+        UiUtility.showSnackbar(this, R.string.report_snackbar_group_reports_dump_failed);
+    }
+
+    @Override
+    public void showDumpSuccess() {
+        UiUtility.showSnackbar(this, R.string.report_snackbar_group_reports_dump_succeeded);
     }
 
     @Override
@@ -146,6 +166,13 @@ public class ReportActivity extends BaseActivity<ReportContract.View, ReportCont
         reportTextView.setText(String.format(INFO_TITLE, posted, total));
         reportIndicatorView.setMax(total);
         reportIndicatorView.setProgress(posted);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void showGroupReports(boolean isEmpty) {
+        ReportFragment fragment = getFragment();
+        if (fragment != null) fragment.showGroupReports(isEmpty);
     }
 
     // ------------------------------------------

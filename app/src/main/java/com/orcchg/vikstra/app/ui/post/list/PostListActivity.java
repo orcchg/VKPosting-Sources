@@ -97,6 +97,7 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
         return null;
     }
 
+    // ------------------------------------------
     @Override
     public void openPostCreateScreen() {
         navigationComponent.navigator().openPostCreateScreen(this);
@@ -107,6 +108,7 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
         navigationComponent.navigator().openPostViewScreen(this, postId);
     }
 
+    // ------------------------------------------
     @Override
     public void showPosts(boolean isEmpty) {
         PostListFragment fragment = getFragment();

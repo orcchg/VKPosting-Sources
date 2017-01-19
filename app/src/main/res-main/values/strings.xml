@@ -11,6 +11,7 @@
     <string name="empty_btn_label">Create</string>
     <string name="error_btn_label">Retry</string>
     <string name="error_external_screen_not_found_camera">Camera application was not found on device!</string>
+    <string name="error_external_screen_not_found_email">Email application was not found on device!</string>
     <string name="error_external_screen_not_found_gallery">Gallery application was not found on device!</string>
     <string name="error_text">Data error</string>
     <string name="error_text_extended">An error has occurred.</string>
@@ -35,6 +36,8 @@
     </array>
     <string name="dialog_progress_posting">Posting&#8230;</string>
     <string name="dialog_warning_title">Warning</string>
+
+    <string name="message_send_email">Send email&#8230;</string>
 
     <string name="notification_posting_title">Wall posting</string>
     <string name="notification_posting_description_complete">Posting completed</string>

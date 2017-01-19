@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,8 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.PermissionManager;
-import com.orcchg.vikstra.app.ui.base.BaseActivity;
+import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.ThumbView;
 import com.orcchg.vikstra.app.ui.post.create.injection.DaggerPostCreateComponent;
@@ -25,16 +23,13 @@ import com.orcchg.vikstra.app.ui.post.create.injection.PostCreateModule;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
-import java.util.Arrays;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import timber.log.Timber;
 
 import static com.orcchg.vikstra.R.id.view;
 
-public class PostCreateActivity extends BaseActivity<PostCreateContract.View, PostCreateContract.Presenter>
+public class PostCreateActivity extends BasePermissionActivity<PostCreateContract.View, PostCreateContract.Presenter>
         implements PostCreateContract.View {
     private static final String EXTRA_POST_ID = "extra_post_id";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_CREATE_SCREEN;
@@ -115,28 +110,22 @@ public class PostCreateActivity extends BaseActivity<PostCreateContract.View, Po
         postDescriptionEditText.requestFocus();
     }
 
-    @Override
-    public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
-        if (granted) {
-            switch (requestCode) {
-                case PermissionManager.READ_EXTERNAL_STORAGE_REQUEST_CODE:
-                    navigationComponent.navigator().openGallery(this);
-                    break;
-                case PermissionManager.WRITE_EXTERNAL_STORAGE_REQUEST_CODE:
-                    navigationComponent.navigator().openCamera(this, true);
-                    break;
-            }
-        } else {
-            Timber.w("Permissions [%s] were not granted", Arrays.toString(permissions));
-        }
-    }
-
     /* Data */
     // --------------------------------------------------------------------------------------------
     private void initData() {
         postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+    }
+
+    /* Permissions */
+    // ------------------------------------------
+    @Override
+    protected void onPermissionGranted_readExternalStorage() {
+        navigationComponent.navigator().openGallery(this);
+    }
+
+    @Override
+    protected void onPermissionGranted_writeExternalStorage() {
+        navigationComponent.navigator().openCamera(this, true);
     }
 
     /* View */

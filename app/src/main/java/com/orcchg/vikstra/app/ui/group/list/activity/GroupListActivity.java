@@ -15,7 +15,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.base.BaseActivity;
+import com.orcchg.vikstra.app.PermissionManager;
+import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.group.list.activity.injection.DaggerGroupListComponent;
@@ -33,7 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GroupListActivity extends BaseActivity<GroupListContract.View, GroupListContract.Presenter>
+public class GroupListActivity extends BasePermissionActivity<GroupListContract.View, GroupListContract.Presenter>
         implements GroupListContract.View, ShadowHolder {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
@@ -108,6 +109,13 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
         postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
     }
 
+    /* Permissions */
+    // ------------------------------------------
+    @Override
+    protected void onPermissionGranted_writeExternalStorage() {
+        presenter.onDumpPressed();
+    }
+
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
@@ -133,7 +141,7 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
                     openEditTitleDialog(toolbar.getTitle().toString());
                     return true;
                 case R.id.dump:
-                    presenter.onDumpPressed();
+                    askForPermission_writeExternalStorage();
                     return true;
             }
             return false;
@@ -205,6 +213,11 @@ public class GroupListActivity extends BaseActivity<GroupListContract.View, Grou
     @Override
     public void showDumpError() {
         UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_groups_dump_failed);
+    }
+
+    @Override
+    public void showDumpSuccess() {
+        UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_groups_dump_succeeded);
     }
 
     @Override

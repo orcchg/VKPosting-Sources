@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="report_screen_title">Report</string>
+    <string name="report_dialog_group_reports_not_ready_to_dump">No group reports available to dump</string>
     <string name="report_posted_counters">Posted to %1$s of %2$s groups</string>
+    <string name="report_screen_title">Report</string>
+    <string name="report_snackbar_group_reports_dump_failed">Failed to dump group reports to file</string>
+    <string name="report_snackbar_group_reports_dump_succeeded">Successfully dumped group reports to file</string>
 </resources>

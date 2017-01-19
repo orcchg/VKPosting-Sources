@@ -18,11 +18,13 @@ import java.util.Locale;
 /**
  * In-memory global storage.
  */
-public class ContentUtility {
+public final class ContentUtility {
+
+    private ContentUtility() {}
 
     /* User session */
     // --------------------------------------------------------------------------------------------
-    public static class CurrentSession {
+    public static final class CurrentSession {
         private static long sLastSelectedPostId = Constant.BAD_ID;
 
         public static void setLastSelectedPostId(long postId) {
@@ -32,11 +34,13 @@ public class ContentUtility {
         public static long getLastSelectedPostId() {
             return sLastSelectedPostId;
         }
+
+        private CurrentSession() {}
     }
 
     /* In-memory storage */
     // --------------------------------------------------------------------------------------------
-    public static class InMemoryStorage {
+    public static final class InMemoryStorage {
         /* Instant camera image */
         // --------------------------------------
         private static String sLastStoredInternalImageUrl;
@@ -84,6 +88,8 @@ public class ContentUtility {
         public static int getPostingTotal() {
             return sPostingTotal;
         }
+
+        private InMemoryStorage() {}
     }
 
     /* Miscellaneous */
@@ -93,28 +99,29 @@ public class ContentUtility {
     }
 
     public static String getDumpGroupsFileName(Context context) {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
         String root = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath();
         return new StringBuilder(root).append(externalApplicationFolder()).append('/')
-                .append("groups_").append(timeStamp).append(".csv").toString();
+                .append("groups_").append(currentTimestamp()).append(".csv").toString();
     }
 
     public static String getDumpGroupReportsFileName(Context context) {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
         String root = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath();
         return new StringBuilder(root).append(externalApplicationFolder()).append('/')
-                .append("reports_").append(timeStamp).append(".csv").toString();
+                .append("reports_").append(currentTimestamp()).append(".csv").toString();
     }
 
     public static File createInternalImageFile(Context context) throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
-        String imageFileName = new StringBuilder("ViKStra_").append(timeStamp).append('_').toString();
+        String imageFileName = new StringBuilder("ViKStra_").append(currentTimestamp()).append('_').toString();
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
     /* Internal */
     // ------------------------------------------
+    private static String currentTimestamp() {
+        return new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
+    }
+
     private static String externalApplicationFolder() {
         return "/vikstra";
     }

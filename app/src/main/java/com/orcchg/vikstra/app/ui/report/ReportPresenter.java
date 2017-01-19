@@ -15,16 +15,18 @@ import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
-import com.orcchg.vikstra.domain.interactor.report.DumpGroupReports;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
+import com.orcchg.vikstra.domain.interactor.report.DumpGroupReports;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
+import com.orcchg.vikstra.domain.model.essense.mapper.GroupReportEssenceMapper;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -42,8 +44,11 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final GroupReportEssenceToVoMapper groupReportEssenceToVoMapper;
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
-    private final MultiUseCase.ProgressCallback<GroupReportEssence> postingProgressCallback;  // used in interactive mode
-    private int posted = 0;  // used in interactive mode
+    // used in interactive mode
+    private final MultiUseCase.ProgressCallback<GroupReportEssence> postingProgressCallback;
+    private List<GroupReport> storedReports = new ArrayList<>();
+    private boolean isFinishedPosting;
+    private int posted = 0;
 
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
@@ -55,7 +60,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         this.getGroupReportBundleByIdUseCase.setPostExecuteCallback(createGetGroupReportBundleByIdCallback());
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
-        this.dumpGroupReportsUseCase = dumpGroupReportsUseCase;  // no callback - background task
+        this.dumpGroupReportsUseCase = dumpGroupReportsUseCase;
+        this.dumpGroupReportsUseCase.setPostExecuteCallback(createDumpGroupReportsCallback());
         this.groupReportToVoMapper = groupReportToVoMapper;
         this.groupReportEssenceToVoMapper = groupReportEssenceToVoMapper;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
@@ -106,6 +112,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     public void retry() {
         Timber.i("retry");
+        posted = 0;  // drop counter
+        isFinishedPosting = false;
+        storedReports.clear();
         listAdapter.clear();
         dropListStat();
         freshStart();
@@ -114,15 +123,33 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     public void onDumpPressed() {
         Timber.i("onDumpPressed");
-        // TODO: dump reports, set params
-        dumpGroupReportsUseCase.execute();  // TODO: notification by result
+        boolean notReady = true;
+        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            if (isFinishedPosting && !storedReports.isEmpty()) {
+                dumpGroupReportsUseCase.setParameters(new DumpGroupReports.Parameters(storedReports));
+                notReady = false;
+            }
+        } else {
+            long groupReportBundleId = getGroupReportBundleByIdUseCase.getGroupReportId();
+            if (groupReportBundleId != Constant.BAD_ID) {
+                Timber.d("GroupReportBundle id [%s] is valid, ready to dump", groupReportBundleId);
+                dumpGroupReportsUseCase.setParameters(new DumpGroupReports.Parameters(groupReportBundleId));
+                notReady = false;
+            }
+        }
+
+        if (notReady) {
+            Timber.d("GroupReportBundle is not available to dump");
+            if (isViewAttached()) getView().openDumpNotReadyDialog();
+        } else {
+            dumpGroupReportsUseCase.execute();
+        }
     }
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
-        posted = 0;  // drop counter
         if (isViewAttached()) getView().showLoading(getListTag());
         if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
             getGroupReportBundleByIdUseCase.execute();
@@ -132,29 +159,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
-    private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
-        return new UseCase.OnPostExecuteCallback<Post>() {
-            @DebugLog @Override
-            public void onFinish(@Nullable Post post) {
-                Timber.i("Use-Case: succeeded to get Post by id");
-                if (isViewAttached()) {
-                    if (post != null) {
-                        getView().showPost(postToSingleGridVoMapper.map(post));
-                    } else {
-                        getView().showEmptyPost();
-                    }
-                }
-            }
-
-            @DebugLog @Override
-            public void onError(Throwable e) {
-                // TODO: failed to load post
-                Timber.e("Use-Case: failed to get Post by id");
-                if (isViewAttached()) getView().showError(getListTag());
-            }
-        };
-    }
-
     private UseCase.OnPostExecuteCallback<GroupReportBundle> createGetGroupReportBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
             @DebugLog @Override
@@ -182,6 +186,50 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get GroupReportBundle by id");
                 if (isViewAttached()) getView().showError(getListTag());
+            }
+        };
+    }
+
+    private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
+        return new UseCase.OnPostExecuteCallback<Post>() {
+            @DebugLog @Override
+            public void onFinish(@Nullable Post post) {
+                Timber.i("Use-Case: succeeded to get Post by id");
+                if (isViewAttached()) {
+                    if (post != null) {
+                        getView().showPost(postToSingleGridVoMapper.map(post));
+                    } else {
+                        getView().showEmptyPost();
+                    }
+                }
+            }
+
+            @DebugLog @Override
+            public void onError(Throwable e) {
+                // TODO: failed to load post
+                Timber.e("Use-Case: failed to get Post by id");
+                if (isViewAttached()) getView().showError(getListTag());
+            }
+        };
+    }
+
+    private UseCase.OnPostExecuteCallback<Boolean> createDumpGroupReportsCallback() {
+        return new UseCase.OnPostExecuteCallback<Boolean>() {
+            @Override
+            public void onFinish(@Nullable Boolean result) {
+                if (result) {
+                    Timber.i("Use-Case: succeeded to dump GroupReport-s");
+                    if (isViewAttached()) getView().showDumpSuccess();
+                } else {
+                    Timber.e("Use-Case: failed to dump GroupReport-s");
+                    if (isViewAttached()) getView().showDumpError();
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to dump GroupReport-s");
+                if (isViewAttached()) getView().showDumpError();
             }
         };
     }
@@ -217,6 +265,12 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 getView().getListView(getListTag()).smoothScrollToPosition(0);
                 // TODO: estimate time to complete posting, use DomainConfig.INSTANCE.multiUseCaseSleepInterval
             }
+
+            long timestamp = System.currentTimeMillis();
+            GroupReportEssenceMapper mapper = new GroupReportEssenceMapper(Constant.INIT_ID, timestamp);  // fictive id
+            storedReports.add(mapper.map(model));
+
+            isFinishedPosting = posted == total;
         };
     }
 }

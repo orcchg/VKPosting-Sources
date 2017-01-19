@@ -11,6 +11,7 @@ import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorComponent
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorModule;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.group.DumpGroups;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -30,7 +31,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @Inject
     GroupListPresenter(DumpGroups dumpGroupsUseCase) {
-        this.dumpGroupsUseCase = dumpGroupsUseCase;  // no callback - background task
+        this.dumpGroupsUseCase = dumpGroupsUseCase;
+        this.dumpGroupsUseCase.setPostExecuteCallback(createDumpGroupsCallback());
     }
 
     /* Lifecycle */
@@ -79,8 +81,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         long groupBundleId = sendAskForGroupBundleIdToDump();
         if (groupBundleId != Constant.BAD_ID) {
             Timber.d("GroupBundle id [%s] is valid, ready to dump", groupBundleId);
-            // TODO: add params
-            dumpGroupsUseCase.execute();  // TODO: notification by result
+            dumpGroupsUseCase.setParameters(new DumpGroups.Parameters(groupBundleId));
+            dumpGroupsUseCase.execute();
         } else if (isViewAttached()) {
             Timber.d("GroupBundle is not available to dump");
             getView().openDumpNotReadyDialog();
@@ -176,9 +178,31 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
-        // TODO:
     }
 
     // TODO: assign title
     // TODO: call: getView().setInputGroupsTitle(title);
+
+    /* Callback */
+    // --------------------------------------------------------------------------------------------
+    private UseCase.OnPostExecuteCallback<Boolean> createDumpGroupsCallback() {
+        return new UseCase.OnPostExecuteCallback<Boolean>() {
+            @Override
+            public void onFinish(@Nullable Boolean result) {
+                if (result) {
+                    Timber.i("Use-Case: succeeded to dump Group-s");
+                    if (isViewAttached()) getView().showDumpSuccess();
+                } else {
+                    Timber.e("Use-Case: failed to dump Group-s");
+                    if (isViewAttached()) getView().showDumpError();
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to dump Group-s");
+                if (isViewAttached()) getView().showDumpError();
+            }
+        };
+    }
 }
