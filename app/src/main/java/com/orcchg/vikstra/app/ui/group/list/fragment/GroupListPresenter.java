@@ -36,6 +36,7 @@ import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.ValueUtility;
 
 import java.util.ArrayList;
@@ -208,6 +209,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void receivePostToGroupsRequest() {
         postToGroups();
+    }
+
+    /* Debugging */
+    // ------------------------------------------
+    @DebugSake @Override
+    public void receivePostingTimeout(int timeout) {
+        vkontakteEndpoint.setPostingInterval(timeout);
     }
 
     // ------------------------------------------

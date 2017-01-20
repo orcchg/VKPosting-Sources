@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
+import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
@@ -29,6 +31,7 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.DebugSake;
 
 import java.util.Locale;
 
@@ -69,6 +72,8 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     private GroupListComponent groupComponent;
     private long keywordBundleId = Constant.BAD_ID;
     private long postId = Constant.BAD_ID;
+
+    private @DebugSake int chosenSettingVariant = 0;  // for DEBUG
 
     public static Intent getCallingIntent(@NonNull Context context, long keywordBunldeId, long postId) {
         Intent intent = new Intent(context, GroupListActivity.class);
@@ -145,9 +150,24 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                 case R.id.dump:
                     askForPermission_writeExternalStorage();
                     return true;
+                case R.id.settings:
+                    CharSequence[] variants = getResources().getStringArray(R.array.group_list_settings_posting_interval_variants);
+                    new AlertDialog.Builder(this)
+                            .setTitle(R.string.group_list_settings_posting_interval_title)
+                            .setSingleChoiceItems(variants, chosenSettingVariant, (dialog, which) -> {
+                                chosenSettingVariant = which;
+                                int timeout = Integer.parseInt(variants[which].toString());
+                                presenter.setPostingTimeout(timeout);
+                                dialog.dismiss();
+                            }).show();
+                    return true;
             }
             return false;
         });
+
+        if (!AppConfig.INSTANCE.showSettingsMenuOnGroupListScreen()) {
+            toolbar.getMenu().removeItem(R.id.settings);
+        }
     }
 
     @Override

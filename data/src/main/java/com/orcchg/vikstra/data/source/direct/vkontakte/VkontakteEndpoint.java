@@ -26,6 +26,7 @@ import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.ValueUtility;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
@@ -48,6 +49,8 @@ public class VkontakteEndpoint extends Endpoint {
     private final ImageLoader imageLoader;
     private final VkAttachLocalCache attachLocalCache;
 
+    private @DebugSake int postingInterval = 0;  // use default sleep interval
+
     public static class Scope {
         public static final String PHOTOS = "photos";
         public static final String WALL = "wall";
@@ -59,6 +62,11 @@ public class VkontakteEndpoint extends Endpoint {
         super(threadExecutor, postExecuteScheduler);
         this.imageLoader = imageLoader;
         this.attachLocalCache = attachLocalCache;
+    }
+
+    @DebugLog @DebugSake
+    public void setPostingInterval(int interval) {
+        postingInterval = interval;
     }
 
     /* Group */
@@ -306,6 +314,7 @@ public class VkontakteEndpoint extends Endpoint {
                 if (callback != null) callback.onError(e);
             }
         });
+        if (postingInterval > 0) useCase.setSleepInterval(postingInterval);
         useCase.execute();
     }
 

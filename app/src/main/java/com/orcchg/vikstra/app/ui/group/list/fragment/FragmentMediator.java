@@ -6,6 +6,7 @@ import com.orcchg.vikstra.app.ui.base.mediator.MediatorReceiver;
 import com.orcchg.vikstra.app.ui.base.mediator.MediatorSender;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.util.DebugSake;
 
 public interface FragmentMediator {
     interface Receiver extends MediatorReceiver {
@@ -13,6 +14,9 @@ public interface FragmentMediator {
         long receiveAskForGroupBundleIdToDump();
         void receivePostHasChangedRequest();
         void receivePostToGroupsRequest();
+
+        @DebugSake
+        void receivePostingTimeout(int timeout);
     }
 
     interface Sender extends MediatorSender {

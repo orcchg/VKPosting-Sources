@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.app;
 
+import com.orcchg.vikstra.domain.util.DebugSake;
+
 public enum AppConfig {
     INSTANCE;
 
@@ -9,6 +11,7 @@ public enum AppConfig {
     // ------------------------------------------
     private boolean isAllGroupsSelected = true;
     private boolean isAllGroupsSortedByMembersCount = true;
+    private @DebugSake boolean showSettingsMenuOnGroupListScreen = true;  // for DEBUG
     private boolean useInteractiveReportScreen = true;  // show ReportScreen instead of StatusDialog while posting
     private boolean useOnlyGroupsWhereCanPostFreely = true;
 
@@ -17,6 +20,9 @@ public enum AppConfig {
     }
     public boolean isAllGroupsSortedByMembersCount() {
         return isAllGroupsSortedByMembersCount;
+    }
+    @DebugSake public boolean showSettingsMenuOnGroupListScreen() {
+        return showSettingsMenuOnGroupListScreen;
     }
     public boolean useInteractiveReportScreen() { return useInteractiveReportScreen; }
     public boolean useOnlyGroupsWhereCanPostFreely() { return useOnlyGroupsWhereCanPostFreely; }

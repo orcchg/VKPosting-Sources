@@ -16,6 +16,7 @@ import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.group.DumpGroups;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.DebugSake;
 
 import javax.inject.Inject;
 
@@ -111,6 +112,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         dumpGroupsUseCase.execute();
     }
 
+    /* Debugging */
+    // ------------------------------------------
+    @DebugSake @Override
+    public void setPostingTimeout(int timeout) {
+        sendPostingTimeout(timeout);
+    }
+
     /* Mediator */
     // --------------------------------------------------------------------------------------------
     @Override
@@ -187,6 +195,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void sendPostToGroupsRequest() {
         mediatorComponent.mediator().sendPostToGroupsRequest();
+    }
+
+    /* Debugging */
+    // ------------------------------------------
+    @DebugSake @Override
+    public void sendPostingTimeout(int timeout) {
+        mediatorComponent.mediator().sendPostingTimeout(timeout);
     }
 
     /* Internal */

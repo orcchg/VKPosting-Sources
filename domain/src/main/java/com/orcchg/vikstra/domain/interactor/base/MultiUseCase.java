@@ -45,13 +45,22 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         this.allowedErrors = allowedErrors;
     }
 
+    @DebugLog
+    public void setSleepInterval(int interval) {
+        sleepInterval = interval;
+    }
+
     /* Callback */
     // ------------------------------------------
     public interface ProgressCallback<Data> {
         void onDone(int index, int total, Ordered<Data> data);
     }
 
-    protected ProgressCallback progressCallback;
+    private ProgressCallback progressCallback;
+
+    public ProgressCallback getProgressCallback() {
+        return progressCallback;
+    }
 
     public void setProgressCallback(ProgressCallback progressCallback) {
         this.progressCallback = progressCallback;
@@ -61,7 +70,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     // --------------------------------------------------------------------------------------------
     protected abstract List<? extends UseCase<Result>> createUseCases();
 
-    @Nullable @Override
+    @Nullable @Override @SuppressWarnings("unchecked")
     protected L doAction() {
         List<? extends UseCase<Result>> useCases = createUseCases();
         for (UseCase<Result> useCase : useCases) {
@@ -75,7 +84,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
      * then waits them to finish and accumulates results and possible errors in lists.
      */
     @DebugLog @SuppressWarnings("unchecked")
-    protected <Result> List<Ordered<Result>> performMultipleRequests(final int total, final List<? extends UseCase<Result>> useCases) {
+    private List<Ordered<Result>> performMultipleRequests(final int total, final List<? extends UseCase<Result>> useCases) {
         Timber.tag(this.getClass().getSimpleName());
         Timber.v("Performing multiple requests, total: %s, different use-cases: %s", total, useCases.size());
         Timber.tag(this.getClass().getSimpleName());
@@ -170,7 +179,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         return results;
     }
 
-    protected synchronized <Result> void addToResults(List<Ordered<Result>> results, @Nullable Ordered<Result> result) {
+    private synchronized void addToResults(List<Ordered<Result>> results, @Nullable Ordered<Result> result) {
         if (result != null) results.add(result);
     }
 

@@ -8,6 +8,7 @@ import com.orcchg.vikstra.app.ui.group.list.activity.ActivityMediator;
 import com.orcchg.vikstra.app.ui.group.list.fragment.FragmentMediator;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.util.DebugSake;
 
 import hugo.weaving.DebugLog;
 
@@ -39,7 +40,14 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
         clientSecond.receivePostToGroupsRequest();
     }
 
+    /* Debugging */
     // ------------------------------------------
+    @DebugSake @Override
+    public void sendPostingTimeout(int timeout) {
+        clientSecond.receivePostingTimeout(timeout);
+    }
+
+    // --------------------------------------------------------------------------------------------
     @Override
     public void sendAddKeywordError() {
         clientFirst.receiveAddKeywordError();

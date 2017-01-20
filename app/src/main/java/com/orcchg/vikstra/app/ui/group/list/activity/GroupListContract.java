@@ -6,6 +6,7 @@ import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.base.MvpView;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.util.DebugSake;
 
 interface GroupListContract {
     interface View extends MvpView {
@@ -39,5 +40,8 @@ interface GroupListContract {
         void onFabClick();
         void onTitleChanged(String text);
         void performDumping(String path);
+
+        @DebugSake
+        void setPostingTimeout(int timeout);
     }
 }
