@@ -395,9 +395,11 @@ public class VkontakteEndpoint extends Endpoint {
                 .setId(-vkGroup.id)  // negative id is for Vk Community, positive - for Vk User
                 .setCanPost(vkGroup.can_post)
                 .setKeyword(keyword)
-                .setLink(vkGroup.site)
+                .setLink("https://vk.com/" + vkGroup.screen_name)
                 .setMembersCount(vkGroup.members_count)
                 .setName(vkGroup.name)
+                .setScreenName(vkGroup.screen_name)
+                .setWebSite(vkGroup.site)
                 .build();
     }
 }

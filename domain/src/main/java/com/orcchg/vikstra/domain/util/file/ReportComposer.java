@@ -34,9 +34,10 @@ public class ReportComposer {
                         Long.toString(group.id()),
                         keyword != null ? keyword.keyword() : "",
                         group.link(),
+                        group.webSite(),
                         Integer.toString(group.membersCount()),
                         group.name(),
-                        group.systemName()};
+                        group.screenName()};
                 writer.writeNext(csv);
             }
             writer.close();
@@ -59,9 +60,10 @@ public class ReportComposer {
                 String[] csv = new String[]{
                         Long.toString(group.id()),
                         group.link(),
+                        group.webSite(),
                         Integer.toString(group.membersCount()),
                         group.name(),
-                        group.systemName(),
+                        group.screenName(),
                         report.statusString(),
                         "post id: " + Long.toString(report.wallPostId()),
                         "error code: " + report.errorCode()

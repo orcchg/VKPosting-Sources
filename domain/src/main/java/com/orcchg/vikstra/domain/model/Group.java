@@ -23,6 +23,8 @@ public abstract class Group implements Comparable<Group> {
         public abstract Builder setLink(String link);
         public abstract Builder setMembersCount(int count);
         public abstract Builder setName(String name);
+        public abstract Builder setScreenName(String screenName);
+        public abstract Builder setWebSite(String webSite);
         public abstract Group build();
     }
 
@@ -32,18 +34,14 @@ public abstract class Group implements Comparable<Group> {
     public abstract String link();
     public abstract int membersCount();
     public abstract String name();
+    public abstract String screenName();
+    public abstract String webSite();
 
     public boolean isSelected() {
         return isSelected;
     }
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
-    }
-
-    public String systemName() {
-        String link = link();
-        int index = link.lastIndexOf('/');
-        return link.substring(index >= 0 ? index : 0);
     }
 
     @Override

@@ -10,6 +10,8 @@ public class GroupDBO extends RealmObject {
     public static final String COLUMN_LINK = "link";
     public static final String COLUMN_MEMBERS_COUNT = "members_count";
     public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_SCREEN_NAME = "screen_name";
+    public static final String COLUMN_WEB_SITE = "web_site";
 
     public long id;
     public boolean canPost;
@@ -18,4 +20,6 @@ public class GroupDBO extends RealmObject {
     public String link;
     public int membersCount;
     public String name;
+    public String screenName;
+    public String webSite;
 }

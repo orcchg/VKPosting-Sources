@@ -33,7 +33,7 @@ public class GetGroupsByKeyword extends VkUseCase<VKApiCommunityArray> {
     @Override
     protected VKRequest prepareVkRequest() {
         String[] fields = new String[]{VKApiCommunityFull.CAN_POST, VKApiCommunityFull.MEMBERS_COUNT,
-                                       VKApiCommunityFull.SITE};
+                                       "screen_name", VKApiCommunityFull.SITE};
         VKParameters params = VKParameters.from(
                 VKApiConst.Q, keyword.keyword(),
                 VKApiConst.COUNT, Integer.toString(Constant.GROUPS_COUNT_PER_GET_REQUEST),

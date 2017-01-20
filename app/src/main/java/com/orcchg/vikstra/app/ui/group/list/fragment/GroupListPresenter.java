@@ -334,6 +334,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private void addKeyword(Keyword keyword) {
         Timber.i("addKeyword: %s", keyword.toString());
         if (inputKeywordBundle.keywords().size() < Constant.KEYWORDS_LIMIT) {
+            if (isViewAttached()) getView().showProgressDialog(true);
             newlyAddedKeyword = keyword;
             addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
             addKeywordToBundleUseCase.execute();
@@ -455,6 +456,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onFinish(@Nullable Boolean result) {
                 Timber.i("Use-Case: succeeded to add Keyword to KeywordBundle");
+                if (isViewAttached()) getView().showProgressDialog(false);
                 if (result != null && result) {
                     Timber.d("Adding Keyword and requesting more Group-s from network");
                     inputKeywordBundle.keywords().add(newlyAddedKeyword);
@@ -477,6 +479,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to add Keyword to KeywordBundle");
+                if (isViewAttached()) getView().showProgressDialog(false);
                 sendAddKeywordError();
             }
         };

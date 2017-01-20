@@ -25,5 +25,7 @@ public class GroupToDboPopulator implements Populator<Group, GroupDBO> {
         dbo.link = object.link();
         dbo.membersCount = object.membersCount();
         dbo.name = object.name();
+        dbo.screenName = object.screenName();
+        dbo.webSite = object.webSite();
     }
 }

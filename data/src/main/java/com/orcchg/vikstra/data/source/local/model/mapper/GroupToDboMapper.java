@@ -50,6 +50,8 @@ public class GroupToDboMapper implements DuplexMapper<Group, GroupDBO> {
                 .setLink(object.link)
                 .setMembersCount(object.membersCount)
                 .setName(object.name)
+                .setScreenName(object.screenName)
+                .setWebSite(object.webSite)
                 .build();
         group.setSelected(object.isSelected);
         return group;

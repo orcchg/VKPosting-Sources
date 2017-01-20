@@ -132,6 +132,11 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     }
 
     @Override
+    public void showProgressDialog(boolean isVisible) {
+
+    }
+
+    @Override
     public void updateGroupReportBundleId(long groupReportBundleId) {
         postingNotification.updateGroupReportBundleId(getActivity(), groupReportBundleId);
     }
