@@ -9,9 +9,10 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 public interface ReportContract {
     interface View extends SubView {
         void openDumpNotReadyDialog();
+        void openEditDumpFileNameDialog();
 
         void showDumpError();
-        void showDumpSuccess();
+        void showDumpSuccess(String path);
         void showEmptyPost();
         void showPost(PostSingleGridItemVO viewObject);
         void updatePostedCounters(int posted, int total);
@@ -23,5 +24,6 @@ public interface ReportContract {
 
     interface Presenter extends MvpPresenter<View>, ListPresenter {
         void onDumpPressed();
+        void performDumping(String path);
     }
 }

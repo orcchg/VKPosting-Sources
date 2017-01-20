@@ -16,7 +16,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-public class DumpGroupReports extends UseCase<Boolean> {
+public class DumpGroupReports extends UseCase<String> {
 
     public static class Parameters {
         private long groupReportBundleId;  // has priority over collection of Report-s
@@ -31,7 +31,7 @@ public class DumpGroupReports extends UseCase<Boolean> {
         }
     }
 
-    private final String path;
+    private String path;
     private final ReportComposer reportComposer;
     private final IReportRepository reportRepository;
     private Parameters parameters;
@@ -49,8 +49,12 @@ public class DumpGroupReports extends UseCase<Boolean> {
         this.parameters = parameters;
     }
 
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     @Nullable @Override
-    protected Boolean doAction() {
+    protected String doAction() {
         if (parameters == null) throw new NoParametersException();
         if (parameters.groupReportBundleId != Constant.BAD_ID) {
             GetGroupReportBundleById useCase = new GetGroupReportBundleById(parameters.groupReportBundleId, reportRepository);
@@ -59,6 +63,6 @@ public class DumpGroupReports extends UseCase<Boolean> {
                 parameters.reports = bundle.groupReports();
             }
         }
-        return reportComposer.writeGroupReportsToCsv(parameters.reports, path);
+        return reportComposer.writeGroupReportsToCsv(parameters.reports, path) ? path : null;
     }
 }

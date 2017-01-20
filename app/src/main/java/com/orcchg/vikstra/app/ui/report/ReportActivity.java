@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +15,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.PermissionManager;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
@@ -28,6 +28,8 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -37,7 +39,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
 
-    private String INFO_TITLE;
+    private String DIALOG_TITLE, DIALOG_HINT, INFO_TITLE, SNACKBAR_DUMP_SUCCESS;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tv_info_title) TextView reportTextView;
@@ -59,7 +61,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         reportComponent = DaggerReportComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .postModule(new PostModule(postId))
-                .reportModule(new ReportModule(groupReportBundleId, ContentUtility.getDumpGroupReportsFileName(this)))
+                .reportModule(new ReportModule(groupReportBundleId, ContentUtility.getDumpGroupReportsFileName(this, true /* external */)))
                 .build();
         reportComponent.inject(this);
     }
@@ -142,13 +144,24 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     @Override
+    public void openEditDumpFileNameDialog() {
+        DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
+                (dialog, which, text) -> {
+                    String path = ContentUtility.makeDumpFileName(this, text, true /* external */);
+                    presenter.performDumping(path);
+                    dialog.dismiss();
+                }).show();
+    }
+
+    // ------------------------------------------
+    @Override
     public void showDumpError() {
-        UiUtility.showSnackbar(this, R.string.report_snackbar_group_reports_dump_failed);
+        UiUtility.showSnackbar(this, R.string.report_snackbar_group_reports_dump_failed, Snackbar.LENGTH_LONG);
     }
 
     @Override
-    public void showDumpSuccess() {
-        UiUtility.showSnackbar(this, R.string.report_snackbar_group_reports_dump_succeeded);
+    public void showDumpSuccess(String path) {
+        UiUtility.showSnackbar(this, String.format(Locale.ENGLISH, SNACKBAR_DUMP_SUCCESS, ContentUtility.refineExternalPath(path)), Snackbar.LENGTH_LONG);
     }
 
     @Override
@@ -163,7 +176,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void updatePostedCounters(int posted, int total) {
-        reportTextView.setText(String.format(INFO_TITLE, posted, total));
+        reportTextView.setText(String.format(Locale.ENGLISH, INFO_TITLE, posted, total));
         reportIndicatorView.setMax(total);
         reportIndicatorView.setProgress(posted);
     }
@@ -227,6 +240,9 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // --------------------------------------------------------------------------------------------
     private void initResources() {
         Resources resources = getResources();
+        DIALOG_TITLE = resources.getString(R.string.report_dialog_new_dump_file_title);
+        DIALOG_HINT = resources.getString(R.string.report_dialog_new_dump_file_hint);
         INFO_TITLE = resources.getString(R.string.report_posted_counters);
+        SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.report_snackbar_group_reports_dump_succeeded);
     }
 }

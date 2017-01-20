@@ -26,6 +26,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -170,7 +171,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
 
     @Override
     public void onKeywordsLimitReached(int limit) {
-        UiUtility.showSnackbar(this, String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
+        UiUtility.showSnackbar(this, String.format(Locale.ENGLISH, SNACKBAR_KEYWORDS_LIMIT, limit));
     }
 
     @Override

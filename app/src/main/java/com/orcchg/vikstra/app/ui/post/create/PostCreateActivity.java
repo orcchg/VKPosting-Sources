@@ -23,6 +23,8 @@ import com.orcchg.vikstra.app.ui.post.create.injection.PostCreateModule;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -172,7 +174,7 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
 
     @Override
     public void onMediaAttachLimitReached(int limit) {
-        UiUtility.showSnackbar(this, String.format(SNACKBAR_MEDIA_ATTACH_LIMIT, limit));
+        UiUtility.showSnackbar(this, String.format(Locale.ENGLISH, SNACKBAR_MEDIA_ATTACH_LIMIT, limit));
     }
 
     @Override

@@ -13,6 +13,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.domain.model.Keyword;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -57,7 +58,7 @@ public class KeywordsFlowLayout extends AbstractFlowLayout {
                 try {
                     switch (mCurrentState) {
                         case STATE_COLLAPSED:
-                            ((TextView) mDotsView).setText(String.format(getResources().getString(R.string.keywords_flow_layout_more), mRestItems));
+                            ((TextView) mDotsView).setText(String.format(Locale.ENGLISH, getResources().getString(R.string.keywords_flow_layout_more), mRestItems));
                             break;
                         case STATE_EXPANDED:
                             ((TextView) mDotsView).setText(getResources().getString(R.string.keywords_flow_layout_more_collapse));

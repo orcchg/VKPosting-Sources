@@ -7,6 +7,7 @@ import com.orcchg.vikstra.domain.interactor.base.Ordered;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +43,7 @@ public class ValueUtility {
         long hours = xhours - TimeUnit.DAYS.toHours(xdays);
         long minutes = xminutes - TimeUnit.HOURS.toMinutes(xhours);
         long seconds = xseconds - TimeUnit.MINUTES.toSeconds(xminutes);
-        return String.format("%02d %02d:%02d:%02d", days, hours, minutes, seconds);
+        return String.format(Locale.ENGLISH, "%02d %02d:%02d:%02d", days, hours, minutes, seconds);
     }
 
     public static long random(long min, long max) {

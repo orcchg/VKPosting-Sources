@@ -94,24 +94,33 @@ public final class ContentUtility {
         private InMemoryStorage() {}
     }
 
-    /* Miscellaneous */
+    /* Files */
     // --------------------------------------------------------------------------------------------
-    public static String getFileProviderAuthority() {
-        return "com.orcchg.vikstra.fileprovider";  // TODO: get authority from Gradle config
-    }
-
-    public static String getDumpGroupsFileName(Context context) {
-        return getDumpFileName(context, "groups_");
-    }
-
-    public static String getDumpGroupReportsFileName(Context context) {
-        return getDumpFileName(context, "reports_");
-    }
-
     public static File createInternalImageFile(Context context) throws IOException {
         String imageFileName = new StringBuilder("ViKStra_").append(currentTimestamp()).append('_').toString();
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, ".jpg", storageDir);
+    }
+
+    public static String getFileProviderAuthority() {
+        return "com.orcchg.vikstra.fileprovider";  // TODO: get authority from Gradle config
+    }
+
+    public static String getDumpGroupsFileName(Context context, boolean external) {
+        return getDumpFileName(context, "groups_", external, true);
+    }
+
+    public static String getDumpGroupReportsFileName(Context context, boolean external) {
+        return getDumpFileName(context, "reports_", external, true);
+    }
+
+    public static String makeDumpFileName(Context context, String name, boolean external) {
+        return getDumpFileName(context, name, external, false);
+    }
+
+    public static String refineExternalPath(String rawPath) {
+        int index = rawPath.indexOf(externalApplicationFolder());
+        return "/sdcard" + rawPath.substring(index);
     }
 
     /* Internal */
@@ -128,21 +137,23 @@ public final class ContentUtility {
     }
 
     private static String externalApplicationFolder() {
-        return "/vikstra";
+        return "/vkposting";
     }
 
-    private static String getDumpFileName(Context context, String prefix) {
-        String root = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath();
+    private static String getDumpFileName(Context context, String prefix, boolean external, boolean withTs) {
+        String root = external ? Environment.getExternalStorageDirectory().getPath()
+                               : context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath();
         String directory = createExternalApplicationFolder(root);
-        String fileName = new StringBuilder(directory).append('/')
-                .append(prefix).append(currentTimestamp()).append(".csv").toString();
-        File file = new File(fileName);
+        StringBuilder fileName = new StringBuilder(directory).append('/').append(prefix);
+        if (withTs) fileName.append(currentTimestamp());
+        fileName.append(".csv");
+        File file = new File(fileName.toString());
         try {
             file.createNewFile();
         } catch (IOException e) {
             Timber.e(e, "Failed to create a file by path: %s", fileName);
             // this error is suppressed here but any further attempt to use this file will lead to IOException
         }
-        return fileName;
+        return fileName.toString();
     }
 }

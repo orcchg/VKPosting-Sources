@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.report;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
@@ -142,9 +143,16 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         if (notReady) {
             Timber.d("GroupReportBundle is not available to dump");
             if (isViewAttached()) getView().openDumpNotReadyDialog();
-        } else {
-            dumpGroupReportsUseCase.execute();
+        } else if (isViewAttached()) {
+            getView().openEditDumpFileNameDialog();
         }
+    }
+
+    @Override
+    public void performDumping(String path) {
+        Timber.i("performDumping: %s", path);
+        dumpGroupReportsUseCase.setPath(path);
+        dumpGroupReportsUseCase.execute();
     }
 
     /* Internal */
@@ -215,13 +223,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         };
     }
 
-    private UseCase.OnPostExecuteCallback<Boolean> createDumpGroupReportsCallback() {
-        return new UseCase.OnPostExecuteCallback<Boolean>() {
+    private UseCase.OnPostExecuteCallback<String> createDumpGroupReportsCallback() {
+        return new UseCase.OnPostExecuteCallback<String>() {
             @Override
-            public void onFinish(@Nullable Boolean result) {
-                if (result != null && result) {
+            public void onFinish(@Nullable String path) {
+                if (!TextUtils.isEmpty(path)) {
                     Timber.i("Use-Case: succeeded to dump GroupReport-s");
-                    if (isViewAttached()) getView().showDumpSuccess();
+                    if (isViewAttached()) getView().showDumpSuccess(path);
                 } else {
                     Timber.e("Use-Case: failed to dump GroupReport-s");
                     if (isViewAttached()) getView().showDumpError();

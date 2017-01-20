@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -29,6 +30,8 @@ import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -41,8 +44,8 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     public static final int REQUEST_CODE = Constant.RequestCode.GROUP_LIST_SCREEN;
 
     private String ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT,
-            EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, INFO_TITLE,
-            SNACKBAR_KEYWORDS_LIMIT;
+            DIALOG_TITLE, DIALOG_HINT, EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT,
+            INFO_TITLE, SNACKBAR_DUMP_SUCCESS, SNACKBAR_KEYWORDS_LIMIT;
 
     @BindView(R.id.coordinator_root) ViewGroup coordinatorRoot;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -83,7 +86,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     protected void injectDependencies() {
         groupComponent = DaggerGroupListComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .groupListModule(new GroupListModule(ContentUtility.getDumpGroupsFileName(this)))
+                .groupListModule(new GroupListModule(ContentUtility.getDumpGroupsFileName(this, true /* external */)))
                 .build();
         groupComponent.inject(this);
     }
@@ -166,7 +169,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     @Override
     public void onKeywordsLimitReached(int limit) {
-        UiUtility.showSnackbar(coordinatorRoot, String.format(SNACKBAR_KEYWORDS_LIMIT, limit));
+        UiUtility.showSnackbar(coordinatorRoot, String.format(Locale.ENGLISH, SNACKBAR_KEYWORDS_LIMIT, limit));
     }
 
     @Override
@@ -180,6 +183,16 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
                 (dialog, which, text) -> {
                     if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text));
+                }).show();
+    }
+
+    @Override
+    public void openEditDumpFileNameDialog() {
+        DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
+                (dialog, which, text) -> {
+                    String path = ContentUtility.makeDumpFileName(this, text, true /* external */);
+                    presenter.performDumping(path);
+                    dialog.dismiss();
                 }).show();
     }
 
@@ -211,12 +224,12 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     // ------------------------------------------
     @Override
     public void showDumpError() {
-        UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_groups_dump_failed);
+        UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_groups_dump_failed, Snackbar.LENGTH_LONG);
     }
 
     @Override
-    public void showDumpSuccess() {
-        UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_groups_dump_succeeded);
+    public void showDumpSuccess(String path) {
+        UiUtility.showSnackbar(coordinatorRoot, String.format(Locale.ENGLISH, SNACKBAR_DUMP_SUCCESS, ContentUtility.refineExternalPath(path)), Snackbar.LENGTH_LONG);
     }
 
     @Override
@@ -250,7 +263,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     @Override
     public void updateSelectedGroupsCounter(int count, int total) {
-        selectedGroupsCountView.setText(String.format(INFO_TITLE, count, total));
+        selectedGroupsCountView.setText(String.format(Locale.ENGLISH, INFO_TITLE, count, total));
     }
 
     /* Resources */
@@ -258,10 +271,13 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     private void initResources() {
         Resources resources = getResources();
         ADD_KEYWORD_DIALOG_TITLE = resources.getString(R.string.group_list_dialog_new_keyword_title);
-        ADD_KEYWORD_DIALOG_HINT = resources.getString(R.string.group_list_dialog_new_keyword_hind);
+        ADD_KEYWORD_DIALOG_HINT = resources.getString(R.string.group_list_dialog_new_keyword_hint);
+        DIALOG_TITLE = resources.getString(R.string.group_list_dialog_new_dump_file_title);
+        DIALOG_HINT = resources.getString(R.string.group_list_dialog_new_dump_file_hint);
         EDIT_TITLE_DIALOG_TITLE = resources.getString(R.string.dialog_input_edit_title);
         EDIT_TITLE_DIALOG_HINT = resources.getString(R.string.dialog_input_edit_title_hint);
         INFO_TITLE = resources.getString(R.string.group_list_selected_groups_total_count);
+        SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.group_list_snackbar_groups_dump_succeeded);
         SNACKBAR_KEYWORDS_LIMIT = resources.getString(R.string.group_list_snackbar_keywords_limit_message);
     }
 }

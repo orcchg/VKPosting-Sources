@@ -15,6 +15,7 @@ interface GroupListContract {
         void onPostNotSelected();
 
         void openAddKeywordDialog();
+        void openEditDumpFileNameDialog();
         void openDumpNotReadyDialog();
         void openEditTitleDialog(@Nullable String initTitle);
 
@@ -22,7 +23,7 @@ interface GroupListContract {
         void setCloseViewResult(int result);
 
         void showDumpError();
-        void showDumpSuccess();
+        void showDumpSuccess(String path);
         void showEmptyPost();
         void showPost(@Nullable PostSingleGridItemVO viewObject);
         void showPostingButton(boolean isVisible);
@@ -37,5 +38,6 @@ interface GroupListContract {
         void onDumpPressed();
         void onFabClick();
         void onTitleChanged(String text);
+        void performDumping(String path);
     }
 }

@@ -44,19 +44,35 @@ public class UiUtility {
     }
 
     public static void showSnackbar(Activity activity, @StringRes int resId) {
-        Snackbar.make(activity.findViewById(android.R.id.content), resId, Snackbar.LENGTH_SHORT).show();
+        showSnackbar(activity, resId, Snackbar.LENGTH_SHORT);
+    }
+
+    public static void showSnackbar(Activity activity, @StringRes int resId, int duration) {
+        Snackbar.make(activity.findViewById(android.R.id.content), resId, duration).show();
     }
 
     public static void showSnackbar(Activity activity, String text) {
-        Snackbar.make(activity.findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT).show();
+        showSnackbar(activity, text, Snackbar.LENGTH_SHORT);
+    }
+
+    public static void showSnackbar(Activity activity, String text, int duration) {
+        Snackbar.make(activity.findViewById(android.R.id.content), text, duration).show();
     }
 
     public static void showSnackbar(View view, @StringRes int resId) {
-        Snackbar.make(view, resId, Snackbar.LENGTH_SHORT).show();
+        showSnackbar(view, resId, Snackbar.LENGTH_SHORT);
+    }
+
+    public static void showSnackbar(View view, @StringRes int resId, int duration) {
+        Snackbar.make(view, resId, duration).show();
     }
 
     public static void showSnackbar(View view, String text) {
-        Snackbar.make(view, text, Snackbar.LENGTH_SHORT).show();
+        showSnackbar(view, text, Snackbar.LENGTH_SHORT);
+    }
+
+    public static void showSnackbar(View view, String text, int duration) {
+        Snackbar.make(view, text, duration).show();
     }
 
     public static void showSoftKeyboard(View view) {
