@@ -132,6 +132,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receiveErrorPost() {
+        if (isViewAttached()) getView().showErrorPost();
+    }
+
+    @Override
     public void receiveGroupBundleChanged() {
         if (isViewAttached()) getView().setCloseViewResult(Activity.RESULT_OK);
     }

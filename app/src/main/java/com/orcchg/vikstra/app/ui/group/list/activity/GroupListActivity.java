@@ -259,6 +259,11 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     }
 
     @Override
+    public void showErrorPost() {
+        postThumbnail.showError(true);
+    }
+
+    @Override
     public void showPost(@Nullable PostSingleGridItemVO viewObject) {
         postThumbnail.setPost(viewObject);
     }

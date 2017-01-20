@@ -26,6 +26,7 @@ interface GroupListContract {
         void showDumpError();
         void showDumpSuccess(String path);
         void showEmptyPost();
+        void showErrorPost();
         void showPost(@Nullable PostSingleGridItemVO viewObject);
         void showPostingButton(boolean isVisible);
         void showPostingStartedMessage(boolean isStarted);

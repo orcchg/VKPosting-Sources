@@ -99,6 +99,10 @@ public class PostThumbnail extends FrameLayout {
         }
     }
 
+    public void showError(boolean isVisible) {
+        // TODO: show error with button
+    }
+
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {

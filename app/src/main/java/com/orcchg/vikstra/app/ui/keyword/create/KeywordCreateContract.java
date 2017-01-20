@@ -24,6 +24,9 @@ public interface KeywordCreateContract {
         void openSaveChangesDialog();
         void closeView();  // with currently set result
         void closeView(int resultCode);
+
+        void showCreateKeywordBundleFailure();
+        void showUpdateKeywordBundleFailure();
     }
 
     interface Presenter extends MvpPresenter<View> {
@@ -34,5 +37,7 @@ public interface KeywordCreateContract {
         void onTitleChanged(String text);
 
         void retry();
+        void retryCreateKeywordBundle();
+        void retryUpdateKeywordBundle();
     }
 }

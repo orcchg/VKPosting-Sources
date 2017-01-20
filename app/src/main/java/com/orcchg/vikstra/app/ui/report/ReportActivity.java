@@ -170,6 +170,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     @Override
+    public void showErrorPost() {
+        postThumbnail.showError(true);
+    }
+
+    @Override
     public void showPost(PostSingleGridItemVO viewObject) {
         postThumbnail.setPost(viewObject);
     }

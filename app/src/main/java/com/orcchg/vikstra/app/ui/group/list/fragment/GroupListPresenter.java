@@ -230,6 +230,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void sendErrorPost() {
+        mediatorComponent.mediator().sendErrorPost();
+    }
+
+    @Override
     public void sendGroupBundleChanged() {
         mediatorComponent.mediator().sendGroupBundleChanged();
     }
@@ -551,7 +556,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get Post by id");
-                if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
+                sendErrorPost();
             }
         };
     }
@@ -575,7 +580,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to put GroupBundle");
-                // TODO: failed to create GroupBundle in repo
+                // TODO: failed to put GroupBundle to repo
             }
         };
     }
@@ -599,7 +604,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to put GroupReportBundle");
-                // TODO: failed to put reports - retry posting?
+                // TODO: failed to put GroupBundleReport - retry posting?
                 sendPostingStartedMessage(false);
             }
         };
@@ -680,6 +685,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to make wall posting");
                 sendPostingStartedMessage(false);
+                // TODO: error on wall posting properly
                 if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };

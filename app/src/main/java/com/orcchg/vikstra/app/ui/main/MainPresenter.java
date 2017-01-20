@@ -36,7 +36,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     private KeywordListPresenter keywordListPresenter;
     private PostSingleGridPresenter postSingleGridPresenter;
 
-    private final GetGroupBundleById getGroupBundleByIdUseCase;
+    private final GetGroupBundleById getGroupBundleByIdUseCase;  // TODO: unused
     private final GetPostById getPostByIdUseCase;
     private final VkontakteEndpoint vkontakteEndpoint;
 
@@ -177,6 +177,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get Post by id");
+                // TODO: impl error properly
                 if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };

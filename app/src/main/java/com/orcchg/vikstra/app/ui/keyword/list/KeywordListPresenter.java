@@ -71,6 +71,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                 }
             }
         });
+        adapter.setOnErrorClickListener((view) -> retryLoadMore());
         return adapter;
     }
 
@@ -99,17 +100,24 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void onScroll(int itemsLeftToEnd) {
-        // TODO: load more
-    }
-
-    @Override
     public void retry() {
         Timber.i("retry");
         changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
         listAdapter.clear();
         dropListStat();
         freshStart();
+    }
+
+    /* List */
+    // ------------------------------------------
+    @Override
+    protected void onLoadMore() {
+        // TODO: on load more
+    }
+
+    private void retryLoadMore() {
+        listAdapter.onError(false); // show loading more
+        // TODO: load more limit-offset
     }
 
     /* Internal */
@@ -182,4 +190,6 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             }
         };
     }
+
+    // TODO: assign totalItems
 }

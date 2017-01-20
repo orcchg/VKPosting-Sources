@@ -59,6 +59,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendErrorPost() {
+        clientFirst.receiveErrorPost();
+    }
+
+    @Override
     public void sendGroupBundleChanged() {
         clientFirst.receiveGroupBundleChanged();
     }

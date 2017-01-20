@@ -21,6 +21,7 @@
     <string name="button_close">Close</string>
     <string name="button_dump">Dump</string>
     <string name="button_edit">Edit</string>
+    <string name="button_retry">Retry</string>
     <string name="button_save">Save</string>
     <string name="button_search">Search</string>
     <string name="button_settings">Settings</string>

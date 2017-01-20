@@ -7,6 +7,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -214,6 +215,19 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     public void closeView(int resultCode) {
         setResult(resultCode);
         finish();
+    }
+
+    // ------------------------------------------
+    @Override
+    public void showCreateKeywordBundleFailure() {
+        UiUtility.showSnackbar(this, R.string.keyword_create_snackbar_failed_to_create_post,
+                Snackbar.LENGTH_LONG, R.string.button_retry, (view) -> presenter.retryCreateKeywordBundle());
+    }
+
+    @Override
+    public void showUpdateKeywordBundleFailure() {
+        UiUtility.showSnackbar(this, R.string.keyword_create_snackbar_failed_to_update_post,
+                Snackbar.LENGTH_LONG, R.string.button_retry, (view) -> presenter.retryUpdateKeywordBundle());
     }
 
     // ------------------------------------------

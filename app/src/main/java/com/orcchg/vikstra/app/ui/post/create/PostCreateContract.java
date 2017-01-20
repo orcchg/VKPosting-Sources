@@ -37,5 +37,7 @@ public interface PostCreateContract {
 
         void removeAttachedMedia(int position);
         void retry();
+        void retryCreatePost();
+        void retryUpdatePost();
     }
 }

@@ -45,6 +45,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
         adapter.setOnItemClickListener((view, viewObject, position) -> {
             if (isViewAttached()) getView().openPostViewScreen(viewObject.id());
         });
+        adapter.setOnErrorClickListener((view) -> retryLoadMore());
         return adapter;
     }
 
@@ -56,15 +57,23 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void onScroll(int itemsLeftToEnd) {
-        // TODO: load more
-    }
-
-    @Override
     public void retry() {
         Timber.i("retry");
         listAdapter.clear();
+        dropListStat();
         freshStart();
+    }
+
+    /* List */
+    // ------------------------------------------
+    @Override
+    protected void onLoadMore() {
+        // TODO: on load more
+    }
+
+    private void retryLoadMore() {
+        listAdapter.onError(false); // show loading more
+        // TODO: load more limit-offset
     }
 
     /* Internal */
@@ -89,6 +98,7 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
                     if (isViewAttached()) getView().showEmptyList(getListTag());
                 } else {
                     Timber.i("Use-Case: succeeded to get list of Post-s");
+                    memento.currentSize += posts.size();
                     List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
                     listAdapter.populate(vos, false);
                     if (isViewAttached()) getView().showPosts(vos == null || vos.isEmpty());
@@ -98,8 +108,14 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
             @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get list of Post-s");
-                if (isViewAttached()) getView().showError(getListTag());
+                if (memento.currentSize <= 0) {
+                    if (isViewAttached()) getView().showError(getListTag());
+                } else {
+                    listAdapter.onError(true);
+                }
             }
         };
     }
+
+    // TODO: assign totalItems
 }

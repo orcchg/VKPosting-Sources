@@ -12,6 +12,7 @@ public interface ActivityMediator {
     interface Receiver extends MediatorReceiver {
         void receiveAddKeywordError();
         void receiveEmptyPost();
+        void receiveErrorPost();
         void receiveGroupBundleChanged();
         void receiveGroupsNotSelected();
         void receiveKeywordBundleChanged();

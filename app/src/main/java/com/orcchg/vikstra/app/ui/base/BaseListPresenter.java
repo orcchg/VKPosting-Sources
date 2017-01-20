@@ -6,16 +6,19 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
 import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.common.screen.ListPresenter;
+import com.orcchg.vikstra.domain.DomainConfig;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
-public abstract class BaseListPresenter<V extends MvpListView> extends BasePresenter<V> {
+public abstract class BaseListPresenter<V extends MvpListView> extends BasePresenter<V> implements ListPresenter {
 
     protected BaseAdapter listAdapter;
 
     protected abstract BaseAdapter createListAdapter();
     protected abstract int getListTag();
+    protected abstract void onLoadMore();
 
     protected static class Memento {
         protected static final String BUNDLE_KEY_CURRENT_SIZE = "bundle_key_current_size";
@@ -78,6 +81,16 @@ public abstract class BaseListPresenter<V extends MvpListView> extends BasePrese
             }
         } else {
             Timber.w("No View is attached");
+        }
+    }
+
+    /* Contract */
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void onScroll(int itemsLeftToEnd) {
+        if (isThereMore() && itemsLeftToEnd <= DomainConfig.INSTANCE.loadMoreThreshold) {
+            memento.currentOffset += DomainConfig.INSTANCE.limitItemsPerRequest;
+            onLoadMore();
         }
     }
 

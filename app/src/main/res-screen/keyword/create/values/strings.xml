@@ -5,6 +5,8 @@
     <string name="keyword_create_dialog_save_changes_title">Keywords changed</string>
     <string name="keyword_create_dialog_save_changes_description">Do you want to save changes?</string>
     <string name="keyword_create_screen_title">New keywords</string>
+    <string name="keyword_create_snackbar_failed_to_create_post">Failed to create set of keywords. Try again</string>
+    <string name="keyword_create_snackbar_failed_to_update_post">Failed to update current keywords. Try again</string>
     <string name="keyword_create_snackbar_keywords_limit_message">You\'ve reached keywords limit: %s</string>
     <string name="keyword_create_snackbar_no_keywords_added_message">You must add at least one keyword</string>
 </resources>

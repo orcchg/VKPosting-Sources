@@ -14,6 +14,7 @@ public interface ReportContract {
         void showDumpError();
         void showDumpSuccess(String path);
         void showEmptyPost();
+        void showErrorPost();
         void showPost(PostSingleGridItemVO viewObject);
         void updatePostedCounters(int posted, int total);
     }
@@ -25,5 +26,6 @@ public interface ReportContract {
     interface Presenter extends MvpPresenter<View>, ListPresenter {
         void onDumpPressed();
         void performDumping(String path);
+        void retry();
     }
 }

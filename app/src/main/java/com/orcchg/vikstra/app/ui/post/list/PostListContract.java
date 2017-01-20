@@ -12,5 +12,6 @@ public interface PostListContract {
     }
 
     interface Presenter extends MvpPresenter<View>, ListPresenter {
+        void retry();
     }
 }

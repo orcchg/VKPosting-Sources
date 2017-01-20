@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.data.source.repository.report.IReportStorage;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
 
@@ -36,6 +37,9 @@ public class ReportCloud implements IReportStorage {
 
     @Nullable @Override
     public GroupReportBundle groupReports(long id) {
+        if (id != Constant.BAD_ID) {
+            // TODO: cloud impl
+        }
         return null;
     }
 
@@ -48,6 +52,8 @@ public class ReportCloud implements IReportStorage {
 
     @Override
     public boolean deleteGroupReports(long id) {
+        if (id == Constant.BAD_ID) return false;
+        // TODO: cloud impl
         return false;
     }
 }

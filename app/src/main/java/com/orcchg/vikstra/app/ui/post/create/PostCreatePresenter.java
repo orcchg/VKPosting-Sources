@@ -185,6 +185,18 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         freshStart();
     }
 
+    @Override
+    public void retryCreatePost() {
+        Timber.i("retryCreatePost");
+        putPostUseCase.execute();  // parameters have been already set at previous failed attempt
+    }
+
+    @Override
+    public void retryUpdatePost() {
+        Timber.i("retryUpdatePost");
+        postPostUseCase.execute();  // parameters have been already set at previous failed attempt
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @Override

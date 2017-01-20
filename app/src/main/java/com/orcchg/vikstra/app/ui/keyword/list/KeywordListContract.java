@@ -17,5 +17,6 @@ public interface KeywordListContract {
     }
 
     interface Presenter extends MvpPresenter<View>, ListPresenter {
+        void retry();
     }
 }

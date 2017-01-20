@@ -75,6 +75,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         adapter.setOnItemClickListener((view, viewObject, position) -> {
             // TODO: click
         });
+        adapter.setOnErrorClickListener((view) -> retryLoadMore());
         return adapter;
     }
 
@@ -105,11 +106,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
-    @Override
-    public void onScroll(int itemsLeftToEnd) {
-        // TODO: load more
-    }
-
     @Override
     public void retry() {
         Timber.i("retry");
@@ -153,6 +149,18 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         Timber.i("performDumping: %s", path);
         dumpGroupReportsUseCase.setPath(path);
         dumpGroupReportsUseCase.execute();
+    }
+
+    /* List */
+    // ------------------------------------------
+    @Override
+    protected void onLoadMore() {
+        // TODO: on load more
+    }
+
+    private void retryLoadMore() {
+        listAdapter.onError(false); // show loading more
+        // TODO: load more limit-offset
     }
 
     /* Internal */
@@ -216,9 +224,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
             @DebugLog @Override
             public void onError(Throwable e) {
-                // TODO: failed to load post
                 Timber.e("Use-Case: failed to get Post by id");
-                if (isViewAttached()) getView().showError(getListTag());
+                if (isViewAttached()) getView().showErrorPost();
             }
         };
     }

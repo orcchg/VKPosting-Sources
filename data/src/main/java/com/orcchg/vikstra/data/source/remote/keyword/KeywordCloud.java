@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.orcchg.vikstra.data.source.repository.keyword.IKeywordStorage;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.List;
 
@@ -39,6 +40,9 @@ public class KeywordCloud implements IKeywordStorage {
 
     @Override
     public KeywordBundle keywords(long id) {
+        if (id != Constant.BAD_ID) {
+            // TODO: cloud impl
+        }
         return null;
     }
 
@@ -58,6 +62,8 @@ public class KeywordCloud implements IKeywordStorage {
     // ------------------------------------------
     @Override
     public boolean deleteKeywords(long id) {
+        if (id == Constant.BAD_ID) return false;
+        // TODO: cloud impl
         return false;
     }
 }

@@ -22,6 +22,7 @@ public interface FragmentMediator {
     interface Sender extends MediatorSender {
         void sendAddKeywordError();
         void sendEmptyPost();
+        void sendErrorPost();
         void sendGroupBundleChanged();
         void sendGroupsNotSelected();
         void sendKeywordBundleChanged();

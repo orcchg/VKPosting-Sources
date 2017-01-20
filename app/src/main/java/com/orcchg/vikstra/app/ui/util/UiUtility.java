@@ -11,6 +11,8 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.orcchg.vikstra.R;
+
 public class UiUtility {
 
     public static int getAttributeColor(Context context, int attributeId) {
@@ -51,12 +53,28 @@ public class UiUtility {
         Snackbar.make(activity.findViewById(android.R.id.content), resId, duration).show();
     }
 
+    public static void showSnackbar(Activity activity, @StringRes int resId, int duration,
+                                    @StringRes int actionResId, View.OnClickListener listener) {
+        Snackbar.make(activity.findViewById(android.R.id.content), resId, duration)
+                .setActionTextColor(UiUtility.getAttributeColor(activity, R.attr.colorAccent))
+                .setAction(actionResId, listener)
+                .show();
+    }
+
     public static void showSnackbar(Activity activity, String text) {
         showSnackbar(activity, text, Snackbar.LENGTH_SHORT);
     }
 
     public static void showSnackbar(Activity activity, String text, int duration) {
         Snackbar.make(activity.findViewById(android.R.id.content), text, duration).show();
+    }
+
+    public static void showSnackbar(Activity activity, String text, int duration,
+                                    @StringRes int actionResId, View.OnClickListener listener) {
+        Snackbar.make(activity.findViewById(android.R.id.content), text, duration)
+                .setActionTextColor(UiUtility.getAttributeColor(activity, R.attr.colorAccent))
+                .setAction(actionResId, listener)
+                .show();
     }
 
     public static void showSnackbar(View view, @StringRes int resId) {
@@ -67,12 +85,28 @@ public class UiUtility {
         Snackbar.make(view, resId, duration).show();
     }
 
+    public static void showSnackbar(View view, @StringRes int resId, int duration,
+                                    @StringRes int actionResId, View.OnClickListener listener) {
+        Snackbar.make(view, resId, duration)
+                .setActionTextColor(view.getResources().getColor(R.color.accent))
+                .setAction(actionResId, listener)
+                .show();
+    }
+
     public static void showSnackbar(View view, String text) {
         showSnackbar(view, text, Snackbar.LENGTH_SHORT);
     }
 
     public static void showSnackbar(View view, String text, int duration) {
         Snackbar.make(view, text, duration).show();
+    }
+
+    public static void showSnackbar(View view, String text, int duration,
+                                    @StringRes int actionResId, View.OnClickListener listener) {
+        Snackbar.make(view, text, duration)
+                .setActionTextColor(view.getResources().getColor(R.color.accent))
+                .setAction(actionResId, listener)
+                .show();
     }
 
     public static void showSoftKeyboard(View view) {

@@ -137,6 +137,18 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         freshStart();
     }
 
+    @Override
+    public void retryCreateKeywordBundle() {
+        Timber.i("retryCreateKeywordBundle");
+        putKeywordBundleUseCase.execute();  // parameters have been already set at previous failed attempt
+    }
+
+    @Override
+    public void retryUpdateKeywordBundle() {
+        Timber.i("retryUpdateKeywordBundle");
+        postKeywordBundleUseCase.execute();  // parameters have been already set at previous failed attempt
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @Override
@@ -204,7 +216,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to post KeywordBundle");
-                if (isViewAttached()) getView().showError(KeywordCreateActivity.RV_TAG);
+                if (isViewAttached()) getView().showUpdateKeywordBundleFailure();
             }
         };
     }
@@ -228,7 +240,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to put KeywordBundle");
-                if (isViewAttached()) getView().showError(KeywordCreateActivity.RV_TAG);
+                if (isViewAttached()) getView().showCreateKeywordBundleFailure();
             }
         };
     }

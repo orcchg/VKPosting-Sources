@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.data.source.repository.group.IGroupStorage;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupBundle;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.List;
 
@@ -38,6 +39,9 @@ public class GroupCloud implements IGroupStorage {
 
     @Nullable @Override
     public GroupBundle groups(long id) {
+        if (id != Constant.BAD_ID) {
+            // TODO: cloud impl
+        }
         return null;
     }
 
@@ -57,6 +61,8 @@ public class GroupCloud implements IGroupStorage {
     // ------------------------------------------
     @Override
     public boolean deleteGroups(long id) {
+        if (id == Constant.BAD_ID) return false;
+        // TODO: cloud impl
         return false;
     }
 }
