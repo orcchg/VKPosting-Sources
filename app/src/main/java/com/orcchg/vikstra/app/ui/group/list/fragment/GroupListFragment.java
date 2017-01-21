@@ -95,13 +95,18 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        swipeRefreshLayout.setOnRefreshListener(() -> presenter.retry());  // override
+        swipeRefreshLayout.setOnRefreshListener(() -> presenter.refresh());  // override
         itemTouchHelper.attachToRecyclerView(recyclerView);
         return rootView;
     }
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void enableSwipeToRefresh(boolean isEnabled) {
+        swipeRefreshLayout.setEnabled(isEnabled);
+    }
+
     @Override
     public void onReportReady(long groupReportBundleId, long postId) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
@@ -133,7 +138,12 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
 
     @Override
     public void showProgressDialog(boolean isVisible) {
+        // TODO: is need?
+    }
 
+    @Override
+    public void showRefreshing(boolean isVisible) {
+        swipeRefreshLayout.setRefreshing(isVisible);
     }
 
     @Override

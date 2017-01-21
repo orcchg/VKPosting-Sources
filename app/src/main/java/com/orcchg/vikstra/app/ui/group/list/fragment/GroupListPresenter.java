@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.app.ui.group.list.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +40,8 @@ import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.ValueUtility;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -73,10 +76,24 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private boolean isKeywordBundleChanged, isGroupBundleChanged;
     private Keyword newlyAddedKeyword;
     private @Nullable GroupBundle inputGroupBundle;
-    private @NonNull KeywordBundle inputKeywordBundle;
+    private @Nullable KeywordBundle inputKeywordBundle;
     private @Nullable Post currentPost;
 
     private GroupListMediatorComponent mediatorComponent;
+
+    private static final class StateContainer {
+        private static final int ERROR_LOAD = -1;
+        private static final int START = 0;
+        private static final int KEYWORDS_LOADED = 1;
+        private static final int GROUPS_LOADED = 2;
+        private static final int REFRESHING = 3;
+
+        @IntDef({ERROR_LOAD, START, KEYWORDS_LOADED, GROUPS_LOADED, REFRESHING})
+        @Retention(RetentionPolicy.SOURCE)
+        private @interface State {}
+    }
+
+    private @StateContainer.State int state;
 
     @Inject
     GroupListPresenter(AddKeywordToBundle addKeywordToBundleUseCase, GetGroupBundleById getGroupBundleByIdUseCase,
@@ -108,6 +125,153 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         GroupListAdapter adapter = new GroupListAdapter(items, listener, listener2);
         adapter.setExternalChildItemSwitcherListener(createExternalChildItemSwitcherCallback());
         return adapter;
+    }
+
+    /* State */
+    // --------------------------------------------------------------------------------------------
+    /**
+     * State machine:
+     *
+     *                           START ----- < ------ ERROR_LOAD  { user retry }
+     *                             |                 |
+     *                             |                 |
+     *                        KEYWORDS_LOADED  or    #
+     *                             |                 |
+     *                             |                 |
+     *                             |                 |
+     *                        GROUPS_LOADED    or    #
+     *                          |       |
+     *                          |       |
+     *                          |       |
+     * { user refresh }  REFRESHING ->--|
+     */
+
+    @DebugLog
+    private void setState(@StateContainer.State int newState) {
+        @StateContainer.State int previousState = state;
+        Timber.i("Previous state [%s], New state: %s", previousState, newState);
+
+        // check consistency between state transitions
+        if (previousState == StateContainer.ERROR_LOAD && newState != StateContainer.START ||
+            previousState != StateContainer.GROUPS_LOADED && newState == StateContainer.REFRESHING) {
+            Timber.wtf("Illegal state transition from [%s] to [%s]", previousState, newState);
+            throw new IllegalStateException();
+        }
+
+        state = newState;
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to ERROR_LOAD state, when some critical data was not loaded
+     */
+    private void stateErrorLoad() {
+        setState(StateContainer.ERROR_LOAD);
+        // enter ERROR_LOAD state logic
+
+        if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to START state, drop all previous values and prepare to fresh start
+     */
+    private void stateStart() {
+        setState(StateContainer.START);
+        // enter START state logic
+
+        currentPost = null;
+        inputGroupBundle = null;
+        inputKeywordBundle = null;
+
+        isGroupBundleChanged = false;
+        isKeywordBundleChanged = false;
+
+        totalSelectedGroups = 0;
+        totalGroups = 0;
+
+        groupParentItems.clear();
+        listAdapter.clear();
+
+        // fresh start - show loading, disable swipe-to-refresh
+        if (isViewAttached()) {
+            getView().enableSwipeToRefresh(false);
+            getView().showLoading(GroupListFragment.RV_TAG);
+        }
+
+        sendShowPostingButtonRequest(false);  // hide posting button
+
+        // fresh start - load input KeywordBundle and Post
+        getKeywordBundleByIdUseCase.execute();
+        getPostByIdUseCase.execute();
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to KEYWORDS_LOADED state, assign input KeywordBundle and make Parent items in expandable list
+     */
+    private void stateKeywordsLoaded(@NonNull KeywordBundle bundle) {
+        setState(StateContainer.KEYWORDS_LOADED);
+        // enter KEYWORDS_LOADED state logic
+
+        inputKeywordBundle = bundle;  // assign input KeywordBundle
+
+        // fill Parent items in expandable list
+        fillKeywordsList(bundle);
+
+        // decide the way how to load GroupBundle and perform loading
+        long groupBundleId = inputKeywordBundle.getGroupBundleId();
+        fetchedInputGroupBundleFromRepo = groupBundleId != Constant.BAD_ID;
+        if (groupBundleId == Constant.BAD_ID) {
+            Timber.d("There is no GroupBundle associated with input KeywordBundle, perform network request");
+            vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback());
+        } else {
+            Timber.d("Loading GroupBundle associated with input KeywordBundle from repository");
+            getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
+            getGroupBundleByIdUseCase.execute();
+        }
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to GROUPS_LOADED state, assign input GroupBundle and fill expandable list with Child items
+     */
+    private void stateGroupsLoaded(@NonNull GroupBundle bundle) {
+        setState(StateContainer.GROUPS_LOADED);
+        // enter GROUPS_LOADED state logic
+
+        inputGroupBundle = bundle;  // assign input GroupBundle
+
+        // fill Child items in expandable list and show it
+        List<List<Group>> splitGroups = bundle.splitGroupsByKeywords();
+        fillGroupsList(splitGroups);
+
+        // enable swipe-to-refresh after all Group-s loaded, show Group-s in expandable list
+        if (isViewAttached()) {
+            getView().enableSwipeToRefresh(true);
+            getView().showGroups(splitGroups.isEmpty());
+            getView().showRefreshing(false);
+        }
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to REFRESHING state, reloading GroupBundle by existing Keyword-s
+     */
+    private void stateRefreshing() {
+        setState(StateContainer.REFRESHING);
+        // enter REFRESHING state logic
+
+        //listAdapter.clear();  // clear expandable list to avoid inconsistency
+
+        // disable swipe-to-refresh while another refreshing is in progress
+        if (isViewAttached()) {
+            getView().enableSwipeToRefresh(false);
+            getView().showRefreshing(true);
+        }
+
+        // load actual Group-s from Vkontakte endpoint
+        vkontakteEndpoint.getGroupsByKeywordsSplit(inputKeywordBundle.keywords(), createGetGroupsByKeywordsListCallback());
     }
 
     /* Lifecycle */
@@ -175,18 +339,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void refresh() {
+        Timber.i("refresh");
+        stateRefreshing();
+    }
+
+    @Override
     public void retry() {
         Timber.i("retry");
-        groupParentItems.clear();
-        inputGroupBundle = null;
-        inputKeywordBundle = null;
-        isGroupBundleChanged = false;
-        isKeywordBundleChanged = false;
-        currentPost = null;
-        totalSelectedGroups = 0;
-        totalGroups = 0;
-        listAdapter.clear();
-        freshStart();
+        stateStart();
     }
 
     /* Mediator */
@@ -286,10 +447,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
-        if (isViewAttached()) getView().showLoading(GroupListFragment.RV_TAG);
-        sendShowPostingButtonRequest(false);
-        getKeywordBundleByIdUseCase.execute();
-        getPostByIdUseCase.execute();
+        stateStart();
     }
 
     @DebugLog
@@ -344,6 +502,17 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @DebugLog
+    private void fillKeywordsList(@NonNull KeywordBundle bundle) {
+        Timber.i("fillKeywordsList: %s", bundle.keywords().size());
+        for (Keyword keyword : bundle) {
+            Timber.v(keyword.toString());
+            GroupParentItem item = new GroupParentItem(keyword);
+            groupParentItems.add(item);
+        }
+        Timber.d("Total Parent list items: %s", groupParentItems.size());
+    }
+
+    @DebugLog
     private void fillGroupsList(List<List<Group>> splitGroups) {
         Timber.i("fillGroupsList: %s", splitGroups.size());
         // TODO: batch by 20 groups and load-more
@@ -374,9 +543,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         listAdapter.notifyParentDataSetChanged(false);
         sendShowPostingButtonRequest(true);
         sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
-        if (isViewAttached()) {
-            getView().showGroups(splitGroups.isEmpty());
-        }
     }
 
     private void postToGroups() {
@@ -495,14 +661,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get GroupBundle by id");
-                inputGroupBundle = bundle;
-                fillGroupsList(bundle.splitGroupsByKeywords());
+                stateGroupsLoaded(bundle);
             }
 
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get GroupBundle by id");
-                if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
+                stateErrorLoad();
             }
         };
     }
@@ -516,29 +681,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get KeywordBundle by id");
-                inputKeywordBundle = bundle;
-                for (Keyword keyword : bundle) {
-                    Timber.v(keyword.toString());
-                    GroupParentItem item = new GroupParentItem(keyword);
-                    groupParentItems.add(item);
-                }
-                Timber.d("Total Parent list items: %s", groupParentItems.size());
-                long groupBundleId = inputKeywordBundle.getGroupBundleId();
-                fetchedInputGroupBundleFromRepo = groupBundleId != Constant.BAD_ID;
-                if (groupBundleId == Constant.BAD_ID) {
-                    Timber.d("There is no GroupBundle associated with input KeywordBundle, perform network request");
-                    vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback());
-                } else {
-                    Timber.d("Loading GroupBundle associated with input KeywordBundle from repository");
-                    getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
-                    getGroupBundleByIdUseCase.execute();
-                }
+                stateKeywordsLoaded(bundle);
             }
 
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get KeywordBundle by id");
-                if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
+                stateErrorLoad();
             }
         };
     }
@@ -573,8 +722,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put GroupBundle");
+                stateGroupsLoaded(bundle);
+
                 Timber.d("Update input KeywordBundle and associate it with newly created GroupBundle (by setting id)");
-                inputGroupBundle = bundle;
+                isKeywordBundleChanged = true;
                 inputKeywordBundle.setGroupBundleId(bundle.id());
                 getGroupBundleByIdUseCase.setGroupBundleId(bundle.id());  // set proper id
                 postKeywordBundleUpdate();
@@ -622,7 +773,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get list of Group-s by list of Keyword-s");
-                fillGroupsList(splitGroups);
 
                 List<Group> groups = ValueUtility.merge(splitGroups);
                 if (inputGroupBundle == null || inputGroupBundle.id() == Constant.BAD_ID) {
@@ -643,22 +793,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                          * inconsistency between number of Keyword-s and Parent items in expandable list
                          * and actual number of Keyword-s inside 'inputGroupBundle' model, leading to crash.
                          *
-                         * On the other hand, 'else' branch is quite unreachable, because there is no
-                         * way to update (POST) input GroupBundle in repository beside adding new Keyword.
+                         * On the other hand, 'else' branch is performed when expandable list is
+                         * refreshing to fetch actual set of Group-s from the Endpoint
                          */
                         groups.addAll(inputGroupBundle.groups());
-                    } else {
-                        Timber.wtf("Unreachable state - no way to post GroupBundle to repository beside %s ",
-                                "adding new Keyword to the expandable list and input KeywordBundle");
-                        throw new ProgramException();
                     }
-                    inputGroupBundle = GroupBundle.builder()
+                    GroupBundle bundle = GroupBundle.builder()
                             .setId(inputGroupBundle.id())
                             .setGroups(groups)
                             .setKeywordBundleId(inputKeywordBundle.id())
                             .setTimestamp(inputGroupBundle.timestamp())
                             .setTitle(inputGroupBundle.title())  // TODO: set group-bundle title from Toolbar
                             .build();
+                    stateGroupsLoaded(bundle);
+
                     isGroupBundleChanged = true;
                     postGroupBundleUpdate();
                 }
@@ -669,7 +817,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get list of Group-s by list of Keyword-s");
-                if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
+                stateErrorLoad();
             }
         };
     }
@@ -689,7 +837,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 Timber.e("Use-Case: failed to make wall posting");
                 sendPostingStartedMessage(false);
                 // TODO: error on wall posting properly
-                if (isViewAttached()) getView().showError(GroupListFragment.RV_TAG);
             }
         };
     }
