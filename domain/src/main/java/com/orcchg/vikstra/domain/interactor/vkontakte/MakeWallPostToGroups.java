@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
 import com.orcchg.vikstra.domain.exception.NoParametersException;
+import com.orcchg.vikstra.domain.exception.vkontakte.Api220VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
@@ -77,10 +78,11 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
 
     private Parameters parameters;
 
-    @Inject
+    @Inject @SuppressWarnings("unchecked")
     public MakeWallPostToGroups(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(0, threadExecutor, postExecuteScheduler);  // total count will be set later
-        setAllowedError(VkUseCaseRetryException.class);
+        setAllowedErrors(VkUseCaseRetryException.class);
+        setTerminalErrors(Api220VkUseCaseException.class);
     }
 
     public void setParameters(Parameters parameters) {

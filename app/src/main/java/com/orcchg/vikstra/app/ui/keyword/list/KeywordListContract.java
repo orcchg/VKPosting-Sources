@@ -17,6 +17,7 @@ public interface KeywordListContract {
     }
 
     interface Presenter extends MvpPresenter<View>, ListPresenter {
+        void removeListItem(int position);
         void retry();
     }
 }

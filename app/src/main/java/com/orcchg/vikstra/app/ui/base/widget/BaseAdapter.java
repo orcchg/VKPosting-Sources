@@ -95,14 +95,14 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
 
     public void add(Model item) {
         if (item != null) {
-            this.models.add(item);
-            notifyItemInserted(this.models.size());
+            models.add(item);
+            notifyItemInserted(models.size());
         }
     }
 
     public void addInverse(Model item) {
         if (item != null) {
-            this.models.add(0, item);  // shifting insertion
+            models.add(0, item);  // shifting insertion
             notifyItemInserted(0);
         }
     }
@@ -120,6 +120,13 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
         isInError = false;
         models.clear();
         notifyDataSetChanged();
+    }
+
+    public void remove(int position) {
+        if (models.size() > position && position >= 0) {
+            models.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 
     /* Customization */

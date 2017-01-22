@@ -75,9 +75,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private boolean fetchedInputGroupBundleFromRepo, isAddingNewKeyword;  // state control flags
     private boolean isKeywordBundleChanged, isGroupBundleChanged;
     private Keyword newlyAddedKeyword;
-    private @Nullable GroupBundle inputGroupBundle;
-    private @Nullable KeywordBundle inputKeywordBundle;
-    private @Nullable Post currentPost;
+    private GroupBundle inputGroupBundle;
+    private KeywordBundle inputKeywordBundle;
+    private Post currentPost;
 
     private GroupListMediatorComponent mediatorComponent;
 
@@ -254,14 +254,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     /**
      * Go to GROUPS_LOADED state, assign input GroupBundle and fill expandable list with Child items
      */
-    private void stateGroupsLoaded(@NonNull GroupBundle bundle) {
+    private void stateGroupsLoaded(@NonNull GroupBundle bundle, List<List<Group>> splitGroups) {
         setState(StateContainer.GROUPS_LOADED);
         // enter GROUPS_LOADED state logic
 
         inputGroupBundle = bundle;  // assign input GroupBundle
 
         // fill Child items in expandable list and show it
-        List<List<Group>> splitGroups = bundle.splitGroupsByKeywords();
         fillGroupsList(splitGroups);
 
         // enable swipe-to-refresh after all Group-s loaded, show Group-s in expandable list
@@ -381,6 +380,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         totalGroups -= item.getChildCount();
         sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
 
+        /**
+         * User can remove all Parent items from expandable list making input KeywordBundle empty.
+         * Although user can continue and add new Keyword to list later on GroupListScreen, empty
+         * KeywordBundle-s are not allowed and will be wiped out from repository when user navigates
+         * back to MainScreen or KeywordListScreen.
+         */
         Keyword keyword = groupParentItems.get(position).getKeyword();
         inputKeywordBundle.keywords().remove(keyword);
         postKeywordBundleUpdate();  // refresh now, don't wait till screen closed
@@ -699,7 +704,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get GroupBundle by id");
-                stateGroupsLoaded(bundle);
+                stateGroupsLoaded(bundle, bundle.splitGroupsByKeywords());
             }
 
             @DebugLog @Override
@@ -760,7 +765,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put GroupBundle");
-                stateGroupsLoaded(bundle);
+                stateGroupsLoaded(bundle, bundle.splitGroupsByKeywords());
 
                 Timber.d("Update input KeywordBundle and associate it with newly created GroupBundle (by setting id)");
                 isKeywordBundleChanged = true;
@@ -843,7 +848,16 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                             .setTimestamp(inputGroupBundle.timestamp())
                             .setTitle(inputGroupBundle.title())  // TODO: set group-bundle title from Toolbar
                             .build();
-                    stateGroupsLoaded(bundle);
+
+                    /**
+                     * Note the separation between list of Group-s within the GroupBundle parameter
+                     * (as a result of {@link GroupBundle#splitGroupsByKeywords() method call} and
+                     * autonomous list of Group-a as 'splitGroups' parameter. In case of adding new
+                     * Keyword to the expandable list we should only fill the latter with those Group-s
+                     * corresponding to the newly added Keyword, but the 'bundle' parameter contains
+                     * the whole set of Group-s for all available Keyword-s in the input KeywordBundle.
+                     */
+                    stateGroupsLoaded(bundle, splitGroups);
 
                     isGroupBundleChanged = true;
                     postGroupBundleUpdate();

@@ -18,12 +18,12 @@ public class GetGroupsByKeywordsList extends MultiUseCase<VKApiCommunityArray, L
 
     private final List<Keyword> keywords;
 
-    @Inject
+    @Inject @SuppressWarnings("unchecked")
     public GetGroupsByKeywordsList(List<Keyword> keywords, ThreadExecutor threadExecutor,
                                    PostExecuteScheduler postExecuteScheduler) {
         super(keywords.size(), threadExecutor, postExecuteScheduler);
         this.keywords = keywords;
-        setAllowedError(VkUseCaseRetryException.class);
+        setAllowedErrors(VkUseCaseRetryException.class);
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.keyword.DeleteKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -31,7 +32,9 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         implements KeywordListContract.Presenter {
 
     private final GetKeywordBundles getKeywordBundlesUseCase;
+    private final DeleteKeywordBundle deleteKeywordBundleUseCase;
 
+    private List<KeywordBundle> keywordBundles;
     private long selectedGroupBundleId = Constant.BAD_ID;
     private long selectedKeywordBundleId = Constant.BAD_ID;
     private final @BaseSelectAdapter.SelectMode int selectMode;
@@ -41,11 +44,13 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     @Inject
     public KeywordListPresenter(@BaseSelectAdapter.SelectMode int selectMode,
-            GetKeywordBundles getKeywordBundlesUseCase, KeywordBundleToVoMapper keywordBundleToVoMapper) {
+            GetKeywordBundles getKeywordBundlesUseCase, DeleteKeywordBundle deleteKeywordBundleUseCase,
+            KeywordBundleToVoMapper keywordBundleToVoMapper) {
         this.selectMode = selectMode;
         this.listAdapter = createListAdapter();
         this.getKeywordBundlesUseCase = getKeywordBundlesUseCase;
         this.getKeywordBundlesUseCase.setPostExecuteCallback(createGetKeywordBundlesCallback());
+        this.deleteKeywordBundleUseCase = deleteKeywordBundleUseCase;  // no callback - background task
         this.keywordBundleToVoMapper = keywordBundleToVoMapper;
     }
 
@@ -100,9 +105,26 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void removeListItem(int position) {
+        Timber.i("removeListItem: %s", position);
+        long keywordBundleId = keywordBundles.get(position).id();
+        deleteKeywordBundleUseCase.setKeywordBundleId(keywordBundleId);
+        deleteKeywordBundleUseCase.execute();  // silent delete without callback
+
+        keywordBundles.remove(position);
+        listAdapter.remove(position);
+
+        if (keywordBundles.isEmpty() && isViewAttached()) {
+            getView().showEmptyList(getListTag());
+        }
+    }
+
+    @Override
     public void retry() {
         Timber.i("retry");
         changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
+        deleteKeywordBundleUseCase.setKeywordBundleId(Constant.BAD_ID);
+        keywordBundles = null;
         listAdapter.clear();
         dropListStat();
         freshStart();
@@ -159,6 +181,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     private UseCase.OnPostExecuteCallback<List<KeywordBundle>> createGetKeywordBundlesCallback() {
         return new UseCase.OnPostExecuteCallback<List<KeywordBundle>>() {
             @DebugLog @Override
@@ -172,6 +195,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                 } else {
                     Timber.i("Use-Case: succeeded to get list of KeywordBundle-s");
                     Collections.sort(bundles);
+                    keywordBundles = bundles;
                     memento.currentSize += bundles.size();
                     List<KeywordListItemVO> vos = keywordBundleToVoMapper.map(bundles);
                     listAdapter.populate(vos, isThereMore());

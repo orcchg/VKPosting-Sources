@@ -2,7 +2,7 @@ package com.orcchg.vikstra.domain.interactor.vkontakte;
 
 import android.support.annotation.Nullable;
 
-import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
+import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseExceptionFactory;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
@@ -56,7 +56,7 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
                     Timber.d("Throwing Vk use-case retry exception");
                     vkException = new VkUseCaseRetryException();
                 } else {
-                    vkException = new VkUseCaseException(error);
+                    vkException = VkUseCaseExceptionFactory.create(error);
                 }
             }
         };

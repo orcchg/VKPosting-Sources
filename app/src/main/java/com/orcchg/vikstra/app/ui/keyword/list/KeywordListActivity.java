@@ -15,6 +15,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
+import com.orcchg.vikstra.app.ui.common.content.ISwipeToDismiss;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.DaggerKeywordListComponent;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListComponent;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListModule;
@@ -26,7 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class KeywordListActivity extends BaseActivity<KeywordListContract.View, KeywordListContract.Presenter>
-        implements KeywordListContract.View, IScrollList, ShadowHolder {
+        implements KeywordListContract.View, IScrollList, ISwipeToDismiss, ShadowHolder {
     public static final int REQUEST_CODE = Constant.RequestCode.KEYWORD_LIST_SCREEN;
     private static final String FRAGMENT_TAG = "keyword_list_fragment_tag";
 
@@ -168,6 +169,12 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     @Override
     public void onScrollList(int itemsLeftToEnd) {
         presenter.onScroll(itemsLeftToEnd);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onSwipeToDismiss(int position) {
+        presenter.removeListItem(position);
     }
 
     /* Internal */

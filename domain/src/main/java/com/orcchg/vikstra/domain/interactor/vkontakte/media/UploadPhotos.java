@@ -34,10 +34,10 @@ public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<Ordered<VKPhot
 
     private Parameters parameters;
 
-    @Inject
+    @Inject @SuppressWarnings("unchecked")
     public UploadPhotos(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(0, threadExecutor, postExecuteScheduler);  // total count will be set later
-        setAllowedError(VkUseCaseRetryException.class);
+        setAllowedErrors(VkUseCaseRetryException.class);
     }
 
     public void setParameters(Parameters parameters) {

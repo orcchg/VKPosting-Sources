@@ -65,6 +65,9 @@ public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<G
             splitGroups.get(position).add(group);
         }
         Timber.v("Total keywords: %s", keywords.size());
+        for (Map.Entry<Keyword, Integer> entry : keywords.entrySet()) {
+            Timber.v(entry.getKey().keyword());
+        }
         return splitGroups;
     }
 

@@ -17,8 +17,10 @@ public interface MainContract {
     }
 
     interface Presenter extends MvpPresenter<View> {
+        void removeListItem(int position);
         void retryKeywords();
         void retryPosts();
+
         void onFabClick();
         void onScrollKeywordsList(int itemsLeftToEnd);
         void onScrollPostsGrid(int itemsLeftToEnd);

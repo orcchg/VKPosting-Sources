@@ -15,6 +15,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
@@ -23,11 +24,14 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     private int BASE_ORDER_ID = 0;
 
     protected int total;
-    protected Class<? extends Throwable>[] allowedErrors;  // list of errors the failed use case should retry on raised
-    protected final Object lock = new Object();
+    private volatile AtomicBoolean isCancelled = new AtomicBoolean();
+    private Class<? extends Throwable>[] allowedErrors;   // if any of these errors occurs, use-case should retry execution
+// TODO: impl   private Class<? extends Throwable>[] suspendErrors;   // if any of these errors occurs, any further use-cases should wait
+    private Class<? extends Throwable>[] terminalErrors;  // if any of these errors occurs, any further use-cases should be rejected
+
+    private final Object lock = new Object();
     private int sleepInterval = DomainConfig.INSTANCE.multiUseCaseSleepInterval;  // to avoid Captcha error, interval in ms
 
-    private ThreadPoolExecutor threadExecutor;  // local pool designed to handle highload multi-use-case
     private final PostExecuteScheduler progressCallbackScheduler;  // where to observe progress callbacks
 
     public MultiUseCase(int total, ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
@@ -41,8 +45,12 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         this.progressCallbackScheduler = progressCallbackScheduler;
     }
 
-    public void setAllowedError(Class<? extends Throwable>... allowedErrors) {
+    public void setAllowedErrors(Class<? extends Throwable>... allowedErrors) {
         this.allowedErrors = allowedErrors;
+    }
+
+    public void setTerminalErrors(Class<? extends Throwable>... terminalErrors) {
+        this.terminalErrors = terminalErrors;
     }
 
     @DebugLog
@@ -93,13 +101,25 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         final boolean[] doneFlags = new boolean[total];
         Arrays.fill(doneFlags, false);
 
-        this.threadExecutor = createHighloadThreadPoolExecutor();  // could be overriden in sub-classes
+        // local pool designed to handle highload multi-use-case
+        ThreadPoolExecutor threadExecutor = createHighloadThreadPoolExecutor();  // could be overriden in sub-classes
 
         for (int i = 0; i < total; ++i) {
             Timber.tag(this.getClass().getSimpleName());
             Timber.v("Request [%s / %s]", i + 1, total);
             final int index = i;
             final long start = System.currentTimeMillis();
+
+//            if (isCancelled) {
+//                Timber.v("Execution was cancelled, skipped all iterations at %s", index);
+//                threadExecutor.shutdownNow();  // stop all running use-cases
+//                synchronized (lock) {
+//                    Arrays.fill(doneFlags, true);
+//                    lock.notify();  // wake-up main thread
+//                }
+//                break;
+//            }
+
             threadExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -131,6 +151,12 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                                 Timber.tag(this.getClass().getSimpleName());
                                 Timber.v("Retrying request [%s]...", index);
                             } else {
+                                // test terminal error as soon as possible and proceed
+                                if (ValueUtility.containsClass(e, terminalErrors)) {
+                                    isCancelled.getAndSet(true);  // atomic operation
+                                    Timber.d("Terminal error has occurred - cancel the rest use-cases");
+                                }
+
                                 Timber.tag(this.getClass().getSimpleName());
                                 Timber.w("Unhandled exception: %s", e.toString());
                                 result.error = e;
@@ -166,7 +192,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         }
 
         synchronized (lock) {
-            while (!ValueUtility.isAllTrue(doneFlags)) {
+            while (!ValueUtility.isAllTrue(doneFlags) /*&& !isCancelled.get()*/) {
                 try {
                     lock.wait();
                 } catch (InterruptedException e) {

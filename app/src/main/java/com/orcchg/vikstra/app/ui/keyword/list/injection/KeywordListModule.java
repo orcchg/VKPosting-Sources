@@ -5,6 +5,7 @@ import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.injection.ListModule;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;
+import com.orcchg.vikstra.domain.interactor.keyword.DeleteKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 
 import dagger.Module;
@@ -19,7 +20,7 @@ public class KeywordListModule extends ListModule {
 
     @Provides @PerActivity
     protected KeywordListPresenter provideKeywordListPresenter(GetKeywordBundles getKeywordBundlesUseCase,
-           KeywordBundleToVoMapper keywordBundleToVoMapper) {
-        return new KeywordListPresenter(selectMode, getKeywordBundlesUseCase, keywordBundleToVoMapper);
+           DeleteKeywordBundle deleteKeywordBundleUseCase, KeywordBundleToVoMapper keywordBundleToVoMapper) {
+        return new KeywordListPresenter(selectMode, getKeywordBundlesUseCase, deleteKeywordBundleUseCase, keywordBundleToVoMapper);
     }
 }

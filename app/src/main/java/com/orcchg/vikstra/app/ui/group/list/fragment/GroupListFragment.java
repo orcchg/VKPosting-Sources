@@ -197,7 +197,7 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         photoUploadNotification.onPhotoUploadComplete();
     }
 
-    /* Resources */
+    /* Internal */
     // --------------------------------------------------------------------------------------------
     private void initItemTouchHelper() {
         itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {

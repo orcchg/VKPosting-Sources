@@ -16,6 +16,7 @@ import com.orcchg.vikstra.app.ui.base.MvpListView;
 import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
+import com.orcchg.vikstra.app.ui.common.content.ISwipeToDismiss;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
 import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
@@ -33,7 +34,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity<MainContract.View, MainContract.Presenter>
-        implements MainContract.View, IScrollGrid, IScrollList {
+        implements MainContract.View, IScrollGrid, IScrollList, ISwipeToDismiss {
     private static final String POST_GRID_FRAGMENT_TAG = "post_grid_fragment_tag";
     private static final String KEYW_LIST_FRAGMENT_TAG = "keyw_list_fragment_tag";
 
@@ -261,6 +262,12 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void onScrollGrid(int itemsLeftToEnd) {
         presenter.onScrollPostsGrid(itemsLeftToEnd);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onSwipeToDismiss(int position) {
+        presenter.removeListItem(position);
     }
 
     /* Notification delegate */

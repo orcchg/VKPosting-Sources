@@ -97,6 +97,11 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void removeListItem(int position) {
+        keywordListPresenter.removeListItem(position);
+    }
+
+    @Override
     public void retryKeywords() {
         Timber.i("retryKeywords");
         keywordListPresenter.retry();
@@ -108,6 +113,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
         postSingleGridPresenter.retry();
     }
 
+    // ------------------------------------------
     @Override
     public void onFabClick() {
         Timber.i("onFabClick");
