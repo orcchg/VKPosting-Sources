@@ -170,6 +170,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         if (isViewAttached()) getView().showLoading(getListTag());
         if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
             getGroupReportBundleByIdUseCase.execute();
+        } else if (isViewAttached()) {
+            // disable swipe-to-refresh when GroupReport-s are coming interactively
+            getView().enableSwipeToRefresh(false);
         }
         getPostByIdUseCase.execute();
     }

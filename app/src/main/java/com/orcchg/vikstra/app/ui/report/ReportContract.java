@@ -8,6 +8,8 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 
 public interface ReportContract {
     interface View extends SubView {
+        void enableSwipeToRefresh(boolean isEnabled);
+
         void openDumpNotReadyDialog();
         void openEditDumpFileNameDialog();
 
@@ -20,6 +22,7 @@ public interface ReportContract {
     }
 
     interface SubView extends LceView, MvpListView {
+        void enableSwipeToRefresh(boolean isEnabled);
         void showGroupReports(boolean isEmpty);
     }
 

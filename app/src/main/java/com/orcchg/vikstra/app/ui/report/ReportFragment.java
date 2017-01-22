@@ -18,6 +18,11 @@ public class ReportFragment extends SimpleCollectionFragment implements ReportCo
     /* Contract */
     // ------------------------------------------
     @Override
+    public void enableSwipeToRefresh(boolean isEnabled) {
+        swipeRefreshLayout.setEnabled(isEnabled);
+    }
+
+    @Override
     public void showGroupReports(boolean isEmpty) {
         showContent(RV_TAG, isEmpty);
     }

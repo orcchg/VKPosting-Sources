@@ -139,6 +139,13 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     // ------------------------------------------
     @Override
+    public void enableSwipeToRefresh(boolean isEnabled) {
+        ReportFragment fragment = getFragment();
+        if (fragment != null) fragment.enableSwipeToRefresh(isEnabled);
+    }
+
+    // ------------------------------------------
+    @Override
     public void openDumpNotReadyDialog() {
         DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_group_reports_not_ready_to_dump);
     }
