@@ -142,11 +142,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     }
 
     @Override
-    public void showRefreshing(boolean isVisible) {
-        swipeRefreshLayout.setRefreshing(isVisible);
-    }
-
-    @Override
     public void updateGroupReportBundleId(long groupReportBundleId) {
         postingNotification.updateGroupReportBundleId(getActivity(), groupReportBundleId);
     }

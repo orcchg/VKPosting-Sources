@@ -87,8 +87,18 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         private static final int KEYWORDS_LOADED = 1;
         private static final int GROUPS_LOADED = 2;
         private static final int REFRESHING = 3;
+        private static final int ADD_KEYWORD_START = 4;
+        private static final int ADD_KEYWORD_FINISH = 5;
 
-        @IntDef({ERROR_LOAD, START, KEYWORDS_LOADED, GROUPS_LOADED, REFRESHING})
+        @IntDef({
+            ERROR_LOAD,
+            START,
+            KEYWORDS_LOADED,
+            GROUPS_LOADED,
+            REFRESHING,
+            ADD_KEYWORD_START,
+            ADD_KEYWORD_FINISH
+        })
         @Retention(RetentionPolicy.SOURCE)
         private @interface State {}
     }
@@ -143,7 +153,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
      *                          |       |
      *                          |       |
      *                          |       |
-     * { user refresh }  REFRESHING ->--|
+     * { user refresh }  REFRESHING ->--|----------- < ------- < ---------|
+     *                                                                    |
+     *                                                                    |
+     * { user add keyword }  ADD_KEYWORD_START -->-- ADD_KEYWORD_FINISH --|
+     *
+     *
+     * { user remove keyword }  background execution
      */
 
     @DebugLog
@@ -153,6 +169,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         // check consistency between state transitions
         if (previousState == StateContainer.ERROR_LOAD && newState != StateContainer.START ||
+            // forbid transition from any kind of loading to refreshing
             previousState != StateContainer.GROUPS_LOADED && newState == StateContainer.REFRESHING) {
             Timber.wtf("Illegal state transition from [%s] to [%s]", previousState, newState);
             throw new IllegalStateException();
@@ -221,6 +238,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         // decide the way how to load GroupBundle and perform loading
         long groupBundleId = inputKeywordBundle.getGroupBundleId();
+        // TODO: this drops all selection after refresh - fix it
         fetchedInputGroupBundleFromRepo = groupBundleId != Constant.BAD_ID;
         if (groupBundleId == Constant.BAD_ID) {
             Timber.d("There is no GroupBundle associated with input KeywordBundle, perform network request");
@@ -250,7 +268,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         if (isViewAttached()) {
             getView().enableSwipeToRefresh(true);
             getView().showGroups(splitGroups.isEmpty());
-            getView().showRefreshing(false);
         }
     }
 
@@ -262,16 +279,58 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.REFRESHING);
         // enter REFRESHING state logic
 
-        //listAdapter.clear();  // clear expandable list to avoid inconsistency
-
         // disable swipe-to-refresh while another refreshing is in progress
         if (isViewAttached()) {
+            getView().showLoading(GroupListFragment.RV_TAG);
             getView().enableSwipeToRefresh(false);
-            getView().showRefreshing(true);
         }
+
+        totalSelectedGroups = 0;
+        totalGroups = 0;
 
         // load actual Group-s from Vkontakte endpoint
         vkontakteEndpoint.getGroupsByKeywordsSplit(inputKeywordBundle.keywords(), createGetGroupsByKeywordsListCallback());
+    }
+
+    // ------------------------------------------
+    private void stateAddKeywordStart(Keyword keyword) {
+        setState(StateContainer.ADD_KEYWORD_START);
+        // enter ADD_KEYWORD_START state logic
+
+        // disable swipe-to-refresh while add keyword is in progress
+        if (isViewAttached()) {
+            // TODO: show soft loading during add new keyword
+            getView().enableSwipeToRefresh(false);
+        }
+
+        newlyAddedKeyword = keyword;
+
+        addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
+        addKeywordToBundleUseCase.execute();
+    }
+
+    private void stateAddKeywordFinish(boolean result) {
+        setState(StateContainer.ADD_KEYWORD_FINISH);
+        // enter ADD_KEYWORD_FINISH state logic
+
+        if (result) {
+            Timber.d("Adding Keyword and requesting more Group-s from network");
+            inputKeywordBundle.keywords().add(newlyAddedKeyword);
+            isKeywordBundleChanged = true;
+
+            GroupParentItem item = new GroupParentItem(newlyAddedKeyword);
+            groupParentItems.add(0, item);  // add new item on top of the list
+
+            // prepare parameters to make new request for Group-s by Keyword
+            List<Keyword> keywords = new ArrayList<>();
+            keywords.add(newlyAddedKeyword);
+            newlyAddedKeyword = null;  // drop temporary keyword
+            isAddingNewKeyword = true;  // to manipulate with newly fetched Group-s properly
+            vkontakteEndpoint.getGroupsByKeywordsSplit(keywords, createGetGroupsByKeywordsListCallback());
+        } else {
+            Timber.d("Failed to add Keyword, but just warn user via popup");
+            sendAddKeywordError();
+        }
     }
 
     /* Lifecycle */
@@ -492,10 +551,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private void addKeyword(Keyword keyword) {
         Timber.i("addKeyword: %s", keyword.toString());
         if (inputKeywordBundle.keywords().size() < Constant.KEYWORDS_LIMIT) {
-            if (isViewAttached()) getView().showProgressDialog(true);
-            newlyAddedKeyword = keyword;
-            addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
-            addKeywordToBundleUseCase.execute();
+            stateAddKeywordStart(keyword);
         } else {
             sendKeywordsLimitReached(Constant.KEYWORDS_LIMIT);
         }
@@ -622,31 +678,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onFinish(@Nullable Boolean result) {
                 Timber.i("Use-Case: succeeded to add Keyword to KeywordBundle");
-                if (isViewAttached()) getView().showProgressDialog(false);
-                if (result != null && result) {
-                    Timber.d("Adding Keyword and requesting more Group-s from network");
-                    inputKeywordBundle.keywords().add(newlyAddedKeyword);
-                    isKeywordBundleChanged = true;
-                    GroupParentItem item = new GroupParentItem(newlyAddedKeyword);
-                    groupParentItems.add(0, item);  // add new item on top of the list
-
-                    // prepare parameters to make new request for Group-s by Keyword
-                    List<Keyword> keywords = new ArrayList<>();
-                    keywords.add(newlyAddedKeyword);
-                    newlyAddedKeyword = null;  // drop temporary keyword
-                    isAddingNewKeyword = true;  // to manipulate with newly fetched Group-s properly
-                    vkontakteEndpoint.getGroupsByKeywordsSplit(keywords, createGetGroupsByKeywordsListCallback());
-                } else {
-                    Timber.d("Failed to add Keyword, but just warn user via popup");
-                    sendAddKeywordError();
-                }
+                stateAddKeywordFinish(result != null && result);
             }
 
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to add Keyword to KeywordBundle");
-                if (isViewAttached()) getView().showProgressDialog(false);
-                sendAddKeywordError();
+                stateAddKeywordFinish(false);
             }
         };
     }

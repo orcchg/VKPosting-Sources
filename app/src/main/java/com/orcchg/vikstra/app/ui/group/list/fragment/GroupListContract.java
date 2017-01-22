@@ -17,7 +17,6 @@ interface GroupListContract {
 
         void showGroups(boolean isEmpty);
         void showProgressDialog(boolean isVisible);
-        void showRefreshing(boolean isVisible);
         void updateGroupReportBundleId(long groupReportBundleId);
     }
 

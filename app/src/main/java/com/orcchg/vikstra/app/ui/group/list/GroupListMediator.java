@@ -10,13 +10,15 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.DebugSake;
 
+import javax.inject.Inject;
+
 import hugo.weaving.DebugLog;
 
 @PerActivity
 public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, FragmentMediator.Receiver>
         implements ActivityMediator.Sender, FragmentMediator.Sender {
 
-    @DebugLog
+    @DebugLog @Inject
     public GroupListMediator() {
     }
 
