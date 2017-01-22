@@ -46,7 +46,8 @@
                 android:layout_below="@id/tv_info_title"
                 android:layout_toRightOf="@id/btn_add_keyword"
                 android:layout_marginTop="@dimen/standard_side_padding"
-                android:text="@string/group_list_button_label_change_post"/>
+                android:text="@string/group_list_button_label_change_post"
+                android:visibility="invisible"/>
 
             <FrameLayout
                 android:layout_width="@dimen/standard_thumbnail_size"
