@@ -1,0 +1,123 @@
+01-21 23:47:39.916 11030-11105/com.orcchg.vikstra D/GetPostById: Finished Use-Case execution
+01-21 23:47:39.916 11030-11281/com.orcchg.vikstra V/KeywordDatabase: ⇠ keywords [4ms] = KeywordBundle{id=3, keywords=[Keyword{keyword=Dota}, Keyword{keyword=Tuskar}], timestamp=1485042454593, title=Dota}
+01-21 23:47:39.916 11030-11281/com.orcchg.vikstra D/GetKeywordBundleById: Finished Use-Case execution
+01-21 23:47:39.937 1280-1328/? D/gralloc_ranchu: gralloc_alloc: format 1 and usage 0x900 imply creation of host color buffer
+01-21 23:47:39.956 1280-1328/? D/gralloc_ranchu: gralloc_alloc: format 1 and usage 0x900 imply creation of host color buffer
+01-21 23:47:39.979 1280-1328/? D/gralloc_ranchu: gralloc_alloc: format 1 and usage 0x900 imply creation of host color buffer
+01-21 23:47:40.003 11030-11106/com.orcchg.vikstra E/EGL_emulation: tid 11106: eglSurfaceAttrib(1146): error 0x3009 (EGL_BAD_MATCH)
+01-21 23:47:40.003 11030-11106/com.orcchg.vikstra W/OpenGLRenderer: Failed to set EGL_SWAP_BEHAVIOR on surface 0xab7b4e80, error=EGL_BAD_MATCH
+01-21 23:47:40.015 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇢ onFinish(post=Post{id=1, description=Hello, media=[], timestamp=1484999488654, title=})
+01-21 23:47:40.015 11030-11030/com.orcchg.vikstra I/com.orcchg.vikstra:GroupListPresenter:739: Use-Case: succeeded to get Post by id
+01-21 23:47:40.016 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇠ onFinish [0ms]
+01-21 23:47:40.017 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇢ onFinish(bundle=KeywordBundle{id=3, keywords=[Keyword{keyword=Dota}, Keyword{keyword=Tuskar}], timestamp=1485042454593, title=Dota})
+01-21 23:47:40.017 11030-11030/com.orcchg.vikstra I/com.orcchg.vikstra:GroupListPresenter:723: Use-Case: succeeded to get KeywordBundle by id
+01-21 23:47:40.017 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇢ setState(newState=1)
+01-21 23:47:40.018 11030-11030/com.orcchg.vikstra I/com.orcchg.vikstra:GroupListPresenter:168: Previous state [0], New state: 1
+01-21 23:47:40.018 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇠ setState [0ms]
+01-21 23:47:40.018 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇢ fillKeywordsList(bundle=KeywordBundle{id=3, keywords=[Keyword{keyword=Dota}, Keyword{keyword=Tuskar}], timestamp=1485042454593, title=Dota})
+01-21 23:47:40.018 11030-11030/com.orcchg.vikstra I/com.orcchg.vikstra:GroupListPresenter:564: fillKeywordsList: 2
+01-21 23:47:40.019 11030-11030/com.orcchg.vikstra V/com.orcchg.vikstra:GroupListPresenter:566: Keyword{keyword=Dota}
+01-21 23:47:40.019 11030-11030/com.orcchg.vikstra V/com.orcchg.vikstra:GroupListPresenter:566: Keyword{keyword=Tuskar}
+01-21 23:47:40.020 11030-11030/com.orcchg.vikstra D/com.orcchg.vikstra:GroupListPresenter:570: Total Parent list items: 2
+01-21 23:47:40.020 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇠ fillKeywordsList [1ms]
+01-21 23:47:40.020 11030-11030/com.orcchg.vikstra D/com.orcchg.vikstra:GroupListPresenter:243: There is no GroupBundle associated with input KeywordBundle, perform network request
+01-21 23:47:40.022 11030-11030/com.orcchg.vikstra V/VkontakteEndpoint: ⇢ getGroupsByKeywordsSplit(keywords=[Keyword{keyword=Dota}, Keyword{keyword=Tuskar}], callback=com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter$7@4d102de)
+01-21 23:47:40.026 11030-11030/com.orcchg.vikstra D/GetGroupsByKeywordsList: Executing Use-Case...
+01-21 23:47:40.026 11030-11030/com.orcchg.vikstra V/VkontakteEndpoint: ⇠ getGroupsByKeywordsSplit [4ms]
+01-21 23:47:40.027 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇠ onFinish [9ms]
+01-21 23:47:40.028 11030-11104/com.orcchg.vikstra V/GetGroupsByKeywordsList: Performing multiple requests, total: 2, different use-cases: 2
+01-21 23:47:40.030 11030-11104/com.orcchg.vikstra V/GetGroupsByKeywordsList: Allowed errors total: 1
+01-21 23:47:40.030 11030-11104/com.orcchg.vikstra V/GetGroupsByKeywordsList: Request [1 / 2]
+                                                                             
+                                                                             [ 01-21 23:47:40.036 11030:13011 V/         ]
+                                                                             Performing request [0] at time 17187 23:47:40
+01-21 23:47:40.102 1562-1591/system_process I/ActivityManager: Displayed com.orcchg.vikstra/.app.ui.group.list.activity.GroupListActivity: +311ms
+01-21 23:47:40.117 11030-11106/com.orcchg.vikstra D/OpenGLRenderer: endAllActiveAnimators on 0x966e3280 (RippleDrawable) with handle 0x97b57830
+01-21 23:47:40.475 11030-11030/com.orcchg.vikstra I/PostSingleGridFragment: onSaveInstanceState
+01-21 23:47:40.475 11030-11030/com.orcchg.vikstra I/SimpleBasePresenter: onSaveInstanceState
+01-21 23:47:40.475 11030-11030/com.orcchg.vikstra I/KeywordListFragment: onSaveInstanceState
+01-21 23:47:40.476 11030-11030/com.orcchg.vikstra I/SimpleBasePresenter: onSaveInstanceState
+01-21 23:47:40.477 11030-11030/com.orcchg.vikstra I/MainActivity: onSaveInstanceState
+01-21 23:47:40.477 11030-11030/com.orcchg.vikstra I/MainPresenter: onSaveInstanceState
+01-21 23:47:40.477 11030-11030/com.orcchg.vikstra I/KeywordListPresenter: onSaveInstanceState
+01-21 23:47:40.477 11030-11030/com.orcchg.vikstra I/PostSingleGridPresenter: onSaveInstanceState
+01-21 23:47:40.486 11030-11030/com.orcchg.vikstra I/PostSingleGridFragment: onStop
+01-21 23:47:40.486 11030-11030/com.orcchg.vikstra I/SimpleBasePresenter: onStop
+01-21 23:47:40.487 11030-11030/com.orcchg.vikstra I/KeywordListFragment: onStop
+01-21 23:47:40.487 11030-11030/com.orcchg.vikstra I/SimpleBasePresenter: onStop
+01-21 23:47:40.487 11030-11030/com.orcchg.vikstra I/MainActivity: onStop
+01-21 23:47:40.487 11030-11030/com.orcchg.vikstra I/MainPresenter: onStop
+01-21 23:47:40.487 11030-11030/com.orcchg.vikstra I/KeywordListPresenter: onStop
+01-21 23:47:40.487 11030-11030/com.orcchg.vikstra I/PostSingleGridPresenter: onStop
+01-21 23:47:40.488 1562-1573/system_process I/WindowManager: Destroying surface Surface(name=com.orcchg.vikstra/com.orcchg.vikstra.app.ui.main.MainActivity) called by com.android.server.wm.WindowStateAnimator.destroySurface:2014 com.android.server.wm.WindowStateAnimator.destroySurfaceLocked:881 com.android.server.wm.WindowState.destroyOrSaveSurface:2073 com.android.server.wm.WindowManagerService.tryStartExitingAnimation:3017 com.android.server.wm.WindowManagerService.relayoutWindow:2897 com.android.server.wm.Session.relayout:215 android.view.IWindowSession$Stub.onTransact:286 com.android.server.wm.Session.onTransact:136 
+01-21 23:47:41.031 11030-11104/com.orcchg.vikstra V/GetGroupsByKeywordsList: Request [2 / 2]
+                                                                             
+                                                                             [ 01-21 23:47:41.032 11030:13030 V/         ]
+                                                                             Performing request [1] at time 17187 23:47:41
+01-21 23:47:41.157 11030-11095/com.orcchg.vikstra I/com.orcchg.vikstra:VkUseCase:47: Successfully received response: {"response":{"count":2,"items":[{"id":50940065,"name":"Private community","screen_name":"or_tuskar","is_closed":2,"type":"group","photo_50":"https:\/\/vk.com\/images\/community_50.png","photo_100":"https:\/\/vk.com\/images\/community_100.png","photo_200":"https:\/\/vk.com\/images\/community_200.png"},{"id":64144789,"name":"Tuskar","screen_name":"club64144789","is_closed":0,"type":"page","can_post":0,"members_count":1,"site":"","photo_50":"https:\/\/vk.com\/images\/community_50.png","photo_100":"https:\/\/vk.com\/images\/community_100.png","photo_200":"https:\/\/vk.com\/images\/community_200.png"}]}}
+                                                                                     
+                                                                                     [ 01-21 23:47:41.159 11030:13030 V/         ]
+                                                                                     Break loop
+01-21 23:47:42.674 11030-11095/com.orcchg.vikstra E/com.orcchg.vikstra:VkUseCase:54: Failed to receive response: VKError (HTTP failed; unexpected end of stream)
+01-21 23:47:42.674 11030-13011/com.orcchg.vikstra V/com.orcchg.vikstra:ValueUtility:71: Item class: NullPointerException
+                                                                                        
+                                                                                        [ 01-21 23:47:42.674 11030:13011 W/         ]
+                                                                                        Unhandled exception: java.lang.NullPointerException: Attempt to read from field 'java.lang.Object com.vk.sdk.api.VKResponse.parsedModel' on a null object reference
+                                                                                        
+                                                                                        [ 01-21 23:47:42.675 11030:13011 V/         ]
+                                                                                        Break loop
+01-21 23:47:42.675 11030-11104/com.orcchg.vikstra D/GetGroupsByKeywordsList: Finished Use-Case execution
+01-21 23:47:42.676 11030-11030/com.orcchg.vikstra V/VkontakteEndpoint: ⇢ onFinish(values=[com.orcchg.vikstra.domain.interactor.base.Ordered@a2c5878, com.orcchg.vikstra.domain.interactor.base.Ordered@ca66b51])
+01-21 23:47:42.676 11030-11030/com.orcchg.vikstra I/com.orcchg.vikstra:VkontakteEndpoint:143: Use-Case [Vkontakte Endpoint]: succeeded to get Group-s by Keyword-s (split)
+01-21 23:47:42.680 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇢ onFinish(splitGroups=[[Group{id=-50940065, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/or_tuskar, membersCount=0, name=Private community, screenName=or_tuskar, webSite=}, Group{id=-64144789, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/club64144789, membersCount=1, name=Tuskar, screenName=club64144789, webSite=}]])
+01-21 23:47:42.681 11030-11030/com.orcchg.vikstra I/com.orcchg.vikstra:GroupListPresenter:815: Use-Case: succeeded to get list of Group-s by list of Keyword-s
+01-21 23:47:42.681 11030-11030/com.orcchg.vikstra D/com.orcchg.vikstra:GroupListPresenter:819: Create new GroupsBundle and put it to repository, update id in associated input KeywordBundle
+01-21 23:47:42.681 11030-11030/com.orcchg.vikstra D/PutGroupBundle: Executing Use-Case...
+01-21 23:47:42.681 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇠ onFinish [0ms]
+01-21 23:47:42.681 11030-11030/com.orcchg.vikstra V/VkontakteEndpoint: ⇠ onFinish [5ms]
+01-21 23:47:42.682 11030-11187/com.orcchg.vikstra V/GroupDatabase: ⇢ getLastId() [Thread:"vikstra_thread_2"]
+01-21 23:47:42.684 11030-11187/com.orcchg.vikstra V/GroupDatabase: ⇠ getLastId [2ms] = 2
+01-21 23:47:42.689 11030-11187/com.orcchg.vikstra V/GroupDatabase: ⇢ addGroups(bundle=GroupBundle{id=3, groups=[Group{id=-50940065, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/or_tuskar, membersCount=0, name=Private community, screenName=or_tuskar, webSite=}, Group{id=-64144789, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/club64144789, membersCount=1, name=Tuskar, screenName=club64144789, webSite=}], keywordBundleId=3, timestamp=1485042462687, title=title}) [Thread:"vikstra_thread_2"]
+01-21 23:47:42.812 11030-11187/com.orcchg.vikstra V/GroupDatabase: ⇠ addGroups [123ms] = GroupBundle{id=3, groups=[Group{id=-50940065, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/or_tuskar, membersCount=0, name=Private community, screenName=or_tuskar, webSite=}, Group{id=-64144789, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/club64144789, membersCount=1, name=Tuskar, screenName=club64144789, webSite=}], keywordBundleId=3, timestamp=1485042462687, title=title}
+01-21 23:47:42.812 11030-11187/com.orcchg.vikstra D/PutGroupBundle: Finished Use-Case execution
+01-21 23:47:42.820 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇢ onFinish(bundle=GroupBundle{id=3, groups=[Group{id=-50940065, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/or_tuskar, membersCount=0, name=Private community, screenName=or_tuskar, webSite=}, Group{id=-64144789, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/club64144789, membersCount=1, name=Tuskar, screenName=club64144789, webSite=}], keywordBundleId=3, timestamp=1485042462687, title=title})
+01-21 23:47:42.820 11030-11030/com.orcchg.vikstra I/com.orcchg.vikstra:GroupListPresenter:764: Use-Case: succeeded to put GroupBundle
+01-21 23:47:42.821 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇢ setState(newState=2)
+01-21 23:47:42.822 11030-11030/com.orcchg.vikstra I/com.orcchg.vikstra:GroupListPresenter:168: Previous state [1], New state: 2
+01-21 23:47:42.823 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇠ setState [1ms]
+01-21 23:47:42.823 11030-11030/com.orcchg.vikstra V/com.orcchg.vikstra:GroupBundle:67: Total keywords: 1
+01-21 23:47:42.824 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇢ fillGroupsList(splitGroups=[[Group{id=-50940065, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/or_tuskar, membersCount=0, name=Private community, screenName=or_tuskar, webSite=}, Group{id=-64144789, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/club64144789, membersCount=1, name=Tuskar, screenName=club64144789, webSite=}]])
+01-21 23:47:42.824 11030-11030/com.orcchg.vikstra I/com.orcchg.vikstra:GroupListPresenter:575: fillGroupsList: 1
+01-21 23:47:42.825 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇢ addGroupsToList(groups=[Group{id=-50940065, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/or_tuskar, membersCount=0, name=Private community, screenName=or_tuskar, webSite=}, Group{id=-64144789, canPost=false, keyword=Keyword{keyword=Dota}, link=https://vk.com/club64144789, membersCount=1, name=Tuskar, screenName=club64144789, webSite=}], index=0)
+01-21 23:47:42.826 11030-11030/com.orcchg.vikstra I/com.orcchg.vikstra:GroupListPresenter:516: addGroupsToList: total groups = 2, index = 0
+01-21 23:47:42.826 11030-11030/com.orcchg.vikstra V/GroupListPresenter: ⇠ addGroupsToList [0ms]
+01-21 23:47:42.826 11030-11030/com.orcchg.vikstra D/AndroidRuntime: Shutting down VM
+01-21 23:47:42.827 11030-11030/com.orcchg.vikstra E/AndroidRuntime: FATAL EXCEPTION: main
+                                                                    Process: com.orcchg.vikstra, PID: 11030
+                                                                    java.lang.NullPointerException: Attempt to invoke interface method 'java.util.Iterator java.util.List.iterator()' on a null object reference
+                                                                        at com.bignerdranch.expandablerecyclerview.model.ExpandableWrapper.generateChildItemList(ExpandableWrapper.java:99)
+                                                                        at com.bignerdranch.expandablerecyclerview.model.ExpandableWrapper.<init>(ExpandableWrapper.java:33)
+                                                                        at com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter.generateParentWrapper(ExpandableRecyclerAdapter.java:1357)
+                                                                        at com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter.generateFlattenedParentChildList(ExpandableRecyclerAdapter.java:1326)
+                                                                        at com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter.notifyParentDataSetChanged(ExpandableRecyclerAdapter.java:833)
+                                                                        at com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter.fillGroupsList_aroundBody8(GroupListPresenter.java:601)
+                                                                        at com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter$AjcClosure9.run(GroupListPresenter.java:1)
+                                                                        at org.aspectj.runtime.reflect.JoinPointImpl.proceed(JoinPointImpl.java:149)
+                                                                        at hugo.weaving.internal.Hugo.logAndExecute(Hugo.java:39)
+                                                                        at com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter.fillGroupsList(GroupListPresenter.java:575)
+                                                                        at com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter.stateGroupsLoaded(GroupListPresenter.java:264)
+                                                                        at com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter.access$100(GroupListPresenter.java:57)
+                                                                        at com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter$5.onFinish_aroundBody0(GroupListPresenter.java:765)
+                                                                        at com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter$5$AjcClosure1.run(GroupListPresenter.java:1)
+                                                                        at org.aspectj.runtime.reflect.JoinPointImpl.proceed(JoinPointImpl.java:149)
+                                                                        at hugo.weaving.internal.Hugo.logAndExecute(Hugo.java:39)
+                                                                        at com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter$5.onFinish(GroupListPresenter.java:760)
+                                                                        at com.orcchg.vikstra.app.ui.group.list.fragment.GroupListPresenter$5.onFinish(GroupListPresenter.java:757)
+                                                                        at com.orcchg.vikstra.domain.interactor.base.UseCase$1.run(UseCase.java:117)
+                                                                        at android.os.Handler.handleCallback(Handler.java:751)
+                                                                        at android.os.Handler.dispatchMessage(Handler.java:95)
+                                                                        at android.os.Looper.loop(Looper.java:154)
+                                                                        at android.app.ActivityThread.main(ActivityThread.java:6077)
+                                                                        at java.lang.reflect.Method.invoke(Native Method)
+                                                                        at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:865)
+                                                                        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:755)
