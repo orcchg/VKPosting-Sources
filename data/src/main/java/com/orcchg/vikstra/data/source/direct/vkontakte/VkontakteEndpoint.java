@@ -290,7 +290,7 @@ public class VkontakteEndpoint extends Endpoint {
                     Timber.wtf("List of GroupReport-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
-                Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get make wall posting");
+                Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to make wall posting");
                 int index = 0;
                 List<GroupReportEssence> refinedReports = new ArrayList<>();
                 // loop over all available resuls (there could a bit cancelled ones)

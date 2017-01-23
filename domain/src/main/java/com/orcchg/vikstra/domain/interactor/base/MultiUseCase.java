@@ -225,6 +225,12 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                     }
                     Timber.tag(this.getClass().getSimpleName());
                     Timber.v("Finished while-loop");
+                    if (result.data == null && result.error == null) {
+                        Timber.tag(this.getClass().getSimpleName());
+                        Timber.v("Current use-case [%s / %s] has failed to retry over allowed time %s",
+                                index + 1, total, "it is marked cancelled now");
+                        result.cancelled = true;  // this use-case has failed to retry over time
+                    }
 
                     if (Thread.currentThread().isInterrupted() && isCancelled.get()) {
                         Timber.tag(this.getClass().getSimpleName());

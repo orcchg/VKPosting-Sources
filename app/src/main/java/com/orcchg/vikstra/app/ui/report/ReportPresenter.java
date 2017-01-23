@@ -288,6 +288,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             GroupReportEssenceMapper mapper = new GroupReportEssenceMapper(Constant.INIT_ID, timestamp);  // fictive id
             storedReports.add(mapper.map(model));
 
+            Timber.v("Posting stat: success [%s], failure [%s], cancel [%s], total [%s]",
+                    postedWithSuccess, postedWithFailure, postedWithCancel, total);
             isFinishedPosting = postedWithCancel + postedWithFailure + postedWithSuccess == total;
         };
     }
