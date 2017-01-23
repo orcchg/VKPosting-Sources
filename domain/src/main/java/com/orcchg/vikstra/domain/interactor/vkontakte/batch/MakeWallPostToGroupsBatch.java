@@ -57,6 +57,7 @@ public class MakeWallPostToGroupsBatch extends VkBatchUseCase<GroupReportEssence
         for (int i = 0; i < vkBatchResponse.length; ++i) {
             VKWallPostResult data = (VKWallPostResult) vkBatchResponse[i].parsedModel;
             GroupReportEssence item = GroupReportEssence.builder()
+                    .setCancelled(false)  // ignore cancellation for successful result
                     .setErrorCode(Constant.NO_ERROR)
                     .setGroup(parameters.getGroups().get(i))
                     .setWallPostId(data.post_id)

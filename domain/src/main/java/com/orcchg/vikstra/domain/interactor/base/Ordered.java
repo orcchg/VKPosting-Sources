@@ -4,6 +4,7 @@ public class Ordered<Result> implements Comparable<Ordered<Result>> {
     public int orderId;
     public Result data;
     public Throwable error;
+    public volatile boolean cancelled;
 
     @Override
     public int compareTo(Ordered<Result> o) {

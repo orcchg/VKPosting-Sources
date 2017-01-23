@@ -105,6 +105,7 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
 //        return new Gson().fromJson(vkResponse.responseString, VKWallPostResult.class);
         VKWallPostResult data = (VKWallPostResult) vkResponse.parsedModel;
         return GroupReportEssence.builder()
+                .setCancelled(false)  // ignore cancellation for successful result
                 .setErrorCode(Constant.NO_ERROR)
                 .setGroup(parameters.getGroup())
                 .setWallPostId(data.post_id)

@@ -10,10 +10,11 @@ import java.lang.annotation.RetentionPolicy;
 
 @AutoValue
 public abstract class GroupReport implements Comparable<GroupReport> {
+    public static final int STATUS_CANCEL = -1;
     public static final int STATUS_SUCCESS = 0;
     public static final int STATUS_FAILURE = 1;
     public static final int STATUSES_COUNT = STATUS_FAILURE + 1;
-    @IntDef({STATUS_SUCCESS, STATUS_FAILURE})
+    @IntDef({STATUS_CANCEL, STATUS_SUCCESS, STATUS_FAILURE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Status {}
 

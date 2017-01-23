@@ -293,17 +293,39 @@ public class VkontakteEndpoint extends Endpoint {
                 int index = 0;
                 List<GroupReportEssence> refinedReports = new ArrayList<>();
                 for (Ordered<GroupReportEssence> item : reports) {
+                    /**
+                     * Compose an ordered collection of refined posting results, preserving the order
+                     * as of input parameters. Cancellation flag is ignored for successful results and
+                     * those results, finished due to non-terminal error.
+                     *
+                     * There can not be non-null data (successful result) and error simultaneously.
+                     * So, the following two if-statements are mutually exclusive.
+                     */
+                    Group group = parameters.getGroups().get(index);
+                    boolean reported = item.data != null || item.error != null;
                     if (item.data != null) refinedReports.add(item.data);
                     if (item.error != null) {
                         VkUseCaseException e = (VkUseCaseException) item.error;
+                        boolean cancelByError = ValueUtility.containsClass(e, useCase.getTerminalErrors());
                         GroupReportEssence report = GroupReportEssence.builder()
+                                .setCancelled(cancelByError)
                                 .setErrorCode(e.getErrorCode())
-                                .setGroup(parameters.getGroups().get(index))
+                                .setGroup(group)
                                 .setWallPostId(Constant.BAD_ID)
                                 .build();
                         refinedReports.add(report);
-                        ++index;
                     }
+                    if (!reported) {
+                        // Wall posting has been cancelled before obtaining any data or error code
+                        GroupReportEssence report = GroupReportEssence.builder()
+                                .setCancelled(item.cancelled)
+                                .setErrorCode(Constant.NO_ERROR)
+                                .setGroup(group)
+                                .setWallPostId(Constant.BAD_ID)
+                                .build();
+                        refinedReports.add(report);
+                    }
+                    ++index;
                 }
                 if (callback != null) callback.onFinish(refinedReports);
             }
