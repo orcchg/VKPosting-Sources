@@ -82,11 +82,19 @@ public class DialogProvider {
         input.setText(init);
         input.setHint(hint);
         input.setSelection(init.length());
+        String errorMessage = activity.getResources().getString(R.string.error_empty_input_text);
 
         AlertDialog alertDialog = new AlertDialog.Builder(activity)
                 .setTitle(title)
                 .setView(view)
-                .setPositiveButton(R.string.button_ok, (dialog, which) -> okListener.onClick(dialog, which, input.getText().toString()))
+                .setPositiveButton(R.string.button_ok, (dialog, which) -> {
+                    String text = input.getText().toString();
+                    if (TextUtils.isEmpty(text)) {
+                        input.setError(errorMessage);  // TODO: not working properly
+                    } else {
+                        okListener.onClick(dialog, which, text);
+                    }
+                })
                 .setNegativeButton(R.string.button_cancel, null)
                 .create();
 

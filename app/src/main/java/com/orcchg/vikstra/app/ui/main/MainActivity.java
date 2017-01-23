@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
@@ -17,6 +19,7 @@ import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.content.ISwipeToDismiss;
+import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
 import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
@@ -27,6 +30,7 @@ import com.orcchg.vikstra.app.ui.main.injection.DaggerMainComponent;
 import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridFragment;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridModule;
+import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
@@ -34,10 +38,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity<MainContract.View, MainContract.Presenter>
-        implements MainContract.View, IScrollGrid, IScrollList, ISwipeToDismiss {
+        implements MainContract.View, IScrollGrid, IScrollList, ISwipeToDismiss, ShadowHolder {
     private static final String POST_GRID_FRAGMENT_TAG = "post_grid_fragment_tag";
     private static final String KEYW_LIST_FRAGMENT_TAG = "keyw_list_fragment_tag";
 
+    @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @BindView(R.id.tv_groups_selection_counter) TextView selectedGroupsTextView;
     @BindView(R.id.fab) FloatingActionButton fab;
     @OnClick(R.id.fab)
@@ -88,8 +94,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         ButterKnife.bind(this);
         initView();
         initNotifications();
-// TODO: page-proofs for loader dialog
-//        navigationComponent.navigator().openStatusDialog(getSupportFragmentManager(), "tag");
+        initToolbar();
     }
 
     /* View */
@@ -110,6 +115,25 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         }
     }
 
+    private void initToolbar() {
+        toolbar.setTitle(R.string.main_screen_title);
+        toolbar.setNavigationIcon(null);  // no navigation back from MainScreen
+        toolbar.inflateMenu(R.menu.logout);
+        toolbar.setOnMenuItemClickListener((item) -> {
+            switch (item.getItemId()) {
+                case R.id.logout:
+                    openLogoutDialog();
+                    return true;
+            }
+            return false;
+        });
+    }
+
+    @Override
+    public void showShadow(boolean show) {
+        dropshadowView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
+    }
+
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
@@ -121,6 +145,13 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         }
         if (fragment != null) return fragment.getListView(tag);
         return null;
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onLoggedOut() {
+        navigationComponent.navigator().openStartScreen(this);
+        finish();
     }
 
     // ------------------------------------------
@@ -331,5 +362,12 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private PostSingleGridFragment getPostGridFragment() {
         FragmentManager fm = getSupportFragmentManager();
         return (PostSingleGridFragment) fm.findFragmentByTag(POST_GRID_FRAGMENT_TAG);
+    }
+
+    private void openLogoutDialog() {
+        DialogProvider.showTextDialogTwoButtons(this, R.string.main_dialog_logout_title,
+                R.string.main_dialog_logout_description, R.string.button_logout, R.string.button_cancel,
+                (dialog, which) -> presenter.logout(),
+                (dialog, which) -> dialog.dismiss()).show();
     }
 }

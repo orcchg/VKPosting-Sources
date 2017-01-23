@@ -22,6 +22,7 @@ import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.vk.sdk.VKSdk;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,24 +98,6 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void removeListItem(int position) {
-        keywordListPresenter.removeListItem(position);
-    }
-
-    @Override
-    public void retryKeywords() {
-        Timber.i("retryKeywords");
-        keywordListPresenter.retry();
-    }
-
-    @Override
-    public void retryPosts() {
-        Timber.i("retryPosts");
-        postSingleGridPresenter.retry();
-    }
-
-    // ------------------------------------------
-    @Override
     public void onFabClick() {
         Timber.i("onFabClick");
         if (isViewAttached()) {
@@ -141,6 +124,31 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Override
     public void onScrollPostsGrid(int itemsLeftToEnd) {
         postSingleGridPresenter.onScroll(itemsLeftToEnd);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void logout() {
+        VKSdk.logout();
+        if (isViewAttached()) getView().onLoggedOut();
+    }
+
+    // ------------------------------------------
+    @Override
+    public void removeListItem(int position) {
+        keywordListPresenter.removeListItem(position);
+    }
+
+    @Override
+    public void retryKeywords() {
+        Timber.i("retryKeywords");
+        keywordListPresenter.retry();
+    }
+
+    @Override
+    public void retryPosts() {
+        Timber.i("retryPosts");
+        postSingleGridPresenter.retry();
     }
 
     /* Internal */

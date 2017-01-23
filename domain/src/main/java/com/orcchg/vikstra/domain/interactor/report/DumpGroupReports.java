@@ -10,6 +10,7 @@ import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.repository.IReportRepository;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.file.FileUtility;
 import com.orcchg.vikstra.domain.util.file.ReportComposer;
 
 import java.util.Collection;
@@ -63,6 +64,7 @@ public class DumpGroupReports extends UseCase<String> {
                 parameters.reports = bundle.groupReports();
             }
         }
+        FileUtility.createFileByPath(path);  // create file or throw IOException
         return reportComposer.writeGroupReportsToCsv(parameters.reports, path) ? path : null;
     }
 }

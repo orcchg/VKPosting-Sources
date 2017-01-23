@@ -8,6 +8,8 @@ public class VkUtility {
 
     public static long getCurrentUserId() {
         VKAccessToken accessToken = VKAccessToken.currentToken();
-        return accessToken != null ? Long.parseLong(accessToken.userId) : BAD_VK_USER_ID;
+        return accessToken != null && !accessToken.isExpired()
+                ? Long.parseLong(accessToken.userId)
+                : BAD_VK_USER_ID;
     }
 }

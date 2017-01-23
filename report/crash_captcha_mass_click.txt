@@ -1,0 +1,59 @@
+                         V  ⇠ getListView [0ms] = android.support.v7.widget.RecyclerView{96ef40a VFED.V... .F....I. 0,0-1080,438 #7f0e00d5 app:id/rv_items}
+a:VkontakteEndpoint:244  D  Make wall posts progress: 79 / 586
+   MakeWallPostToGroups  V  Request [554 / 586]
+                         V  Request [555 / 586]
+                         V  Request [556 / 586]
+                         V  Request [557 / 586]
+                         V  Request [558 / 586]
+                         V  Request [559 / 586]
+                         V  Request [560 / 586]
+                         V  Request [561 / 586]
+                         V  Request [562 / 586]
+                         V  Request [563 / 586]
+                         V  Request [564 / 586]
+                         V  Request [565 / 586]
+                         V  Request [566 / 586]
+                         V  Request [567 / 586]
+                         V  Request [568 / 586]
+                         V  Request [569 / 586]
+                         V  Request [570 / 586]
+                         V  Request [571 / 586]
+                         V  Request [572 / 586]
+                         V  Request [573 / 586]
+                         V  Request [574 / 586]
+                         V  Request [575 / 586]
+                Surface  E  getSlotFromBufferLocked: unknown buffer: 0x9ed550b0
+     InputEventReceiver  W  Attempted to finish an input event but the input event receiver has already been disposed.
+hg.vikstra:VkUseCase:54  E  Failed to receive response: VKError (Canceled)
+vikstra:ValueUtility:71  V  Item class: NullPointerException
+                         V  Item class: NullPointerException
+                         V  Item class: NullPointerException
+                         W  Unhandled exception: java.lang.NullPointerException: Attempt to read from field 'java.lang.Object com.vk.sdk.api.VKResponse.parsedModel' on a null object reference
+                         V  Finished while-loop
+                         V  Performing request [80] at time 17189 11:23:13
+vikstra:MakeWallPost:94  D  MakeWallPost.Parameters {group=Group{id=-74443920, canPost=true, keyword=Keyword{keyword=Boots}, link=https://vk.com/nike_boots_and_football, membersCount=103, name=Nike Magista
+                            , Obra, Opus, Orden, Onda, Mercurial, screenName=nike_boots_and_football, webSite=}, message=Post, attach=photo355126456_456239253}
+   MakeWallPostToGroups  V  Request [576 / 586]
+         AndroidRuntime  D  Shutting down VM
+                         E  FATAL EXCEPTION: main
+                         E  Process: com.orcchg.vikstra, PID: 22446
+                         E  java.lang.ClassCastException: java.lang.NullPointerException cannot be cast to com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException
+                         E      at com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint.refineModel(VkontakteEndpoint.java:412)
+                         E      at com.orcchg.vikstra.app.ui.report.ReportPresenter.lambda$createPostingProgressCallback$66(ReportPresenter.java:265)
+                         E      at com.orcchg.vikstra.app.ui.report.ReportPresenter.access$lambda$2(ReportPresenter.java:0)
+                         E      at com.orcchg.vikstra.app.ui.report.ReportPresenter$$Lambda$3.onDone(Unknown Source)
+                         E      at com.orcchg.vikstra.data.source.memory.ContentUtility$InMemoryStorage.setPostingProgress(ContentUtility.java:75)
+                         E      at com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint.lambda$makeWallPosts$3(VkontakteEndpoint.java:282)
+                         E      at com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint.access$lambda$3(VkontakteEndpoint.java:0)
+                         E      at com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint$$Lambda$6.onDone(Unknown Source)
+                         E      at com.orcchg.vikstra.domain.interactor.base.MultiUseCase$1$2.run(MultiUseCase.java:200)
+                         E      at android.os.Handler.handleCallback(Handler.java:739)
+                         E      at android.os.Handler.dispatchMessage(Handler.java:95)
+                         E      at android.os.Looper.loop(Looper.java:148)
+                         E      at android.app.ActivityThread.main(ActivityThread.java:5417)
+                         E      at java.lang.reflect.Method.invoke(Native Method)
+                         E      at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:726)
+                         E      at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:616)
+   MakeWallPostToGroups  V  Request [577 / 586]
+                         V  Request [578 / 586]
+

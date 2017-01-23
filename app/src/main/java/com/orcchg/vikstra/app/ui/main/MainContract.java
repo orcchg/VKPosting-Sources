@@ -9,6 +9,8 @@ import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 public interface MainContract {
     interface View extends KeywordListContract.View, PostSingleGridContract.View,
             IPostingNotificationDelegate, IPhotoUploadNotificationDelegate {
+        void onLoggedOut();
+
         void openGroupListScreen(long keywordBundleId, long postId);
         void openReportScreen(long groupReportBundleId, long postId);
         void showFab(boolean isVisible);
@@ -17,12 +19,14 @@ public interface MainContract {
     }
 
     interface Presenter extends MvpPresenter<View> {
-        void removeListItem(int position);
-        void retryKeywords();
-        void retryPosts();
-
         void onFabClick();
         void onScrollKeywordsList(int itemsLeftToEnd);
         void onScrollPostsGrid(int itemsLeftToEnd);
+
+        void logout();
+
+        void removeListItem(int position);
+        void retryKeywords();
+        void retryPosts();
     }
 }

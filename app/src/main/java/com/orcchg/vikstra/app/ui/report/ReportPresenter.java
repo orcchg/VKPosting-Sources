@@ -11,10 +11,13 @@ import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportEssenceToVoMapper;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportToVoMapper;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
+import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
+import com.orcchg.vikstra.domain.exception.vkontakte.Api220VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
+import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.DumpGroupReports;
@@ -26,6 +29,7 @@ import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.essense.mapper.GroupReportEssenceMapper;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.ValueUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +51,10 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     // used in interactive mode
     private final MultiUseCase.ProgressCallback<GroupReportEssence> postingProgressCallback;
+    private final MultiUseCase.CancelCallback postingCancelledCallback;
     private List<GroupReport> storedReports = new ArrayList<>();
     private boolean isFinishedPosting;
-    private int postedWithSuccess = 0, postedWithFailure = 0;
+    private int postedWithCancel = 0, postedWithFailure = 0, postedWithSuccess = 0;
 
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
@@ -67,6 +72,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         this.groupReportEssenceToVoMapper = groupReportEssenceToVoMapper;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
         this.postingProgressCallback = createPostingProgressCallback();
+        this.postingCancelledCallback = createPostingCancelledCallback();
     }
 
     @Override
@@ -92,6 +98,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
             Timber.d("Subscribe on posting progress callback on ReportScreen");
             ContentUtility.InMemoryStorage.setProgressCallback(postingProgressCallback);  // subscribe to progress updates
+            ContentUtility.InMemoryStorage.setCancelCallback(postingCancelledCallback);   // subscribe to cancellation
         }
     }
 
@@ -101,6 +108,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
             Timber.d("Unsubscribe from posting progress callback on ReportScreen");
             ContentUtility.InMemoryStorage.setProgressCallback(null);  // unsubscribe from progress updates
+            ContentUtility.InMemoryStorage.setCancelCallback(null);    // unsubscribe from cancellation
         }
     }
 
@@ -258,26 +266,15 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @SuppressWarnings("unchecked")
     private MultiUseCase.ProgressCallback<GroupReportEssence> createPostingProgressCallback() {
         return (index, total, item) -> {
-            // unwrap data
-            GroupReportEssence model = null;
-            if (item.data != null) {
-                model = item.data;
-                ++postedWithSuccess;  // count successful posting
-            }
-            if (item.error != null) {
-                VkUseCaseException e = (VkUseCaseException) item.error;
-                Group group = ContentUtility.InMemoryStorage.getSelectedGroupsForPosting().get(index);
-                model = GroupReportEssence.builder()
-                        .setErrorCode(e.getErrorCode())
-                        .setGroup(group)
-                        .setWallPostId(Constant.BAD_ID)
-                        .build();
-                ++postedWithFailure;  // count failed posting
-            }
-            if (model == null) {
-                Timber.wtf("Unreachable state: GroupReportEssence must always be constructed from Ordered<> item");
-                throw new ProgramException();
-            }
+            Group group = ContentUtility.InMemoryStorage.getSelectedGroupsForPosting().get(index);
+            GroupReportEssence model = VkontakteEndpoint.refineModel(item, group, Api220VkUseCaseException.class);  // TODO: use terminal error from proper UseCase instad of hardcoded one
+            if (item.data != null)  ++postedWithSuccess;  // count successful posting
+            if (item.error != null) ++postedWithFailure;  // count failed posting
+            /**
+             * Flag {@link Ordered#cancelled} is not checked here because it could be true and
+             * {@link Ordered#data} or {@link Ordered#error} could not be null at the same time.
+             */
+            if (item.data == null && item.error == null) ++postedWithCancel;  // count cancelled posting
 
             ReportListItemVO viewObject = groupReportEssenceToVoMapper.map(model);
             listAdapter.addInverse(viewObject);
@@ -292,7 +289,14 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             GroupReportEssenceMapper mapper = new GroupReportEssenceMapper(Constant.INIT_ID, timestamp);  // fictive id
             storedReports.add(mapper.map(model));
 
-            isFinishedPosting = postedWithSuccess + postedWithFailure == total;
+            isFinishedPosting = postedWithCancel + postedWithFailure + postedWithSuccess == total;
+        };
+    }
+
+    private MultiUseCase.CancelCallback createPostingCancelledCallback() {
+        return () -> {
+            if (isViewAttached()) getView().onPostingCancel();
+            isFinishedPosting = true;
         };
     }
 }

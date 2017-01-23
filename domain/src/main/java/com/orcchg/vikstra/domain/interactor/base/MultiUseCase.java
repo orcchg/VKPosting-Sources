@@ -24,9 +24,10 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     private int BASE_ORDER_ID = 0;
 
     protected int total;
-    private volatile AtomicBoolean isCancelled = new AtomicBoolean();
+    private AtomicBoolean isCancelled = new AtomicBoolean();
+    private AtomicBoolean isSuspended = new AtomicBoolean();
     private Class<? extends Throwable>[] allowedErrors;   // if any of these errors occurs, use-case should retry execution
-// TODO: impl   private Class<? extends Throwable>[] suspendErrors;   // if any of these errors occurs, any further use-cases should wait
+    private Class<? extends Throwable>[] suspendErrors;   // if any of these errors occurs, any further use-cases should wait until resumed
     private Class<? extends Throwable>[] terminalErrors;  // if any of these errors occurs, any further use-cases should be rejected
 
     private final Object lock = new Object();
@@ -45,21 +46,31 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         this.progressCallbackScheduler = progressCallbackScheduler;
     }
 
+    @DebugLog
+    public void setSleepInterval(int interval) {
+        sleepInterval = interval;
+    }
+
+    /* Error sets */
+    // --------------------------------------------------------------------------------------------
     public void setAllowedErrors(Class<? extends Throwable>... allowedErrors) {
         this.allowedErrors = allowedErrors;
+    }
+
+    public void setSuspendErrors(Class<? extends Throwable>... suspendErrors) {
+        this.suspendErrors = suspendErrors;
     }
 
     public void setTerminalErrors(Class<? extends Throwable>... terminalErrors) {
         this.terminalErrors = terminalErrors;
     }
 
-    @DebugLog
-    public void setSleepInterval(int interval) {
-        sleepInterval = interval;
-    }
-
     public Class<? extends Throwable>[] getAllowedErrors() {
         return allowedErrors;
+    }
+
+    public Class<? extends Throwable>[] getSuspendErrors() {
+        return suspendErrors;
     }
 
     public Class<? extends Throwable>[] getTerminalErrors() {
@@ -67,7 +78,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     }
 
     /* Callback */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     public interface ProgressCallback<Data> {
         void onDone(int index, int total, Ordered<Data> data);
     }
@@ -80,6 +91,21 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
 
     public void setProgressCallback(ProgressCallback progressCallback) {
         this.progressCallback = progressCallback;
+    }
+
+    // ------------------------------------------
+    public interface CancelCallback {
+        void onCancel();
+    }
+
+    private CancelCallback cancelCallback;
+
+    public CancelCallback getCancelCallback() {
+        return cancelCallback;
+    }
+
+    public void setCancelCallback(CancelCallback cancelCallback) {
+        this.cancelCallback = cancelCallback;
     }
 
     /* Internal */
@@ -121,9 +147,11 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
             if (isCancelled.get()) {
                 Timber.tag(this.getClass().getSimpleName());
                 Timber.d("Execution was cancelled, skipped all iterations from %s", index);
-                threadExecutor.shutdownNow();  // let all running use-cases to finish, but don't accept the new ones
-                break;
+                threadExecutor.shutdownNow();  // interrupt all running use-cases, but don't accept the new ones
+                break;  // skip not launched use-cases and go to wait for the currently running ones
             }
+
+            // TODO: use isSuspended to pause the rest use-cases
 
             threadExecutor.execute(new Runnable() {
                 @Override
@@ -140,8 +168,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                             progressCallbackScheduler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (progressCallback != null)
-                                        progressCallback.onDone(index, total, result);
+                                    if (progressCallback != null) progressCallback.onDone(index, total, result);
                                 }
                             });
                             break;
@@ -170,6 +197,11 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                                     isCancelled.getAndSet(true);  // atomic operation
                                     Timber.tag(this.getClass().getSimpleName());
                                     Timber.d("Terminal error has occurred - cancel the rest use-cases");
+                                } else if (ValueUtility.containsClass(e, suspendErrors)) {
+                                    // suspend errors are less important than terminal errors
+                                    isSuspended.getAndSet(true);  // atomic operation
+                                    Timber.tag(this.getClass().getSimpleName());
+                                    Timber.d("Suspend error has occurred - pause the rest use-cases");
                                 }
 
                                 Timber.tag(this.getClass().getSimpleName());
@@ -178,8 +210,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                                 progressCallbackScheduler.post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (progressCallback != null)
-                                            progressCallback.onDone(index, total, result);
+                                        if (progressCallback != null) progressCallback.onDone(index, total, result);
                                     }
                                 });
                                 break;
@@ -209,7 +240,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                 try {
                     Thread.sleep(sleepInterval);
                 } catch (InterruptedException e) {
-                    Thread.interrupted();  // continue executing at interruption
+                    Thread.currentThread().interrupt();  // in case of any allowed error - continue iterating
                 }
             }
         }
@@ -220,20 +251,30 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
          * and output results.
          */
         synchronized (lock) {
-            while (!ValueUtility.isAllTrue(doneFlags) /*&& !isCancelled.get()*/) {
+            while (!ValueUtility.isAllTrue(doneFlags)) {
                 try {
-                    lock.wait();
+                    lock.wait();  // waiting all tasks to finish
+
+                    if (isCancelled.get()) {
+                        Timber.tag(this.getClass().getSimpleName());
+                        Timber.d("Execution was cancelled, interrupting all running (not finished) use-cases");
+                        threadExecutor.shutdownNow();  // interrupt all running use-cases
+                    }
+                    // continue awaiting for currently running use-cases
                 } catch (InterruptedException e) {
-                    Thread.interrupted();  // в случае прерывания - продолжить выполнение цикла
+                    Thread.currentThread().interrupt();  // in case of any allowed error - continue iterating
                 }
             }
         }
 
-//        if (isCancelled.get()) {
-//            Timber.d("Execution was cancelled, interrupting all running (not finished) use-cases");
-//            threadExecutor.shutdownNow();
-//        }
+        if (isCancelled.get()) progressCallbackScheduler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (cancelCallback != null) cancelCallback.onCancel();
+            }
+        });
 
+        Timber.tag(this.getClass().getSimpleName());
         Timber.v("Multi Use-Case: total results: %s", results.size());
         Collections.sort(results);  // sort results to correspond to each use-case
         return results;

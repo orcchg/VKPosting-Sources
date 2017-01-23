@@ -10,6 +10,7 @@ public interface ReportContract {
     interface View extends SubView {
         void enableSwipeToRefresh(boolean isEnabled);
 
+        void onPostingCancel();
         void openDumpNotReadyDialog();
         void openEditDumpFileNameDialog();
 

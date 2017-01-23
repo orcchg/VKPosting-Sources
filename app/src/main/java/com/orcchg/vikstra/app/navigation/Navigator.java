@@ -17,6 +17,7 @@ import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.main.MainActivity;
+import com.orcchg.vikstra.app.ui.main.StartActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.list.PostListActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
@@ -96,6 +97,11 @@ public class Navigator {
     // ------------------------------------------
     public void openMainScreen(@NonNull Context context) {
         Intent intent = MainActivity.getCallingIntent(context);
+        context.startActivity(intent);
+    }
+
+    public void openStartScreen(@NonNull Context context) {
+        Intent intent = StartActivity.getCallingIntent(context);
         context.startActivity(intent);
     }
 

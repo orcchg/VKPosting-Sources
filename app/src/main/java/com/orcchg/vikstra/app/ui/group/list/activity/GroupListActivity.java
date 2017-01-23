@@ -28,10 +28,10 @@ import com.orcchg.vikstra.app.ui.group.list.fragment.GroupListFragment;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
-import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
+import com.orcchg.vikstra.domain.util.file.FileUtility;
 
 import java.util.Locale;
 
@@ -91,7 +91,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     protected void injectDependencies() {
         groupComponent = DaggerGroupListComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .groupListModule(new GroupListModule(ContentUtility.getDumpGroupsFileName(this, true /* external */)))
+                .groupListModule(new GroupListModule(FileUtility.getDumpGroupsFileName(this, true /* external */)))
                 .build();
         groupComponent.inject(this);
     }
@@ -210,7 +210,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     public void openEditDumpFileNameDialog() {
         DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
                 (dialog, which, text) -> {
-                    String path = ContentUtility.makeDumpFileName(this, text, true /* external */);
+                    String path = FileUtility.makeDumpFileName(this, text, true /* external */);
                     presenter.performDumping(path);
                     dialog.dismiss();
                 }).show();
@@ -249,7 +249,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     @Override
     public void showDumpSuccess(String path) {
-        UiUtility.showSnackbar(coordinatorRoot, String.format(Locale.ENGLISH, SNACKBAR_DUMP_SUCCESS, ContentUtility.refineExternalPath(path)), Snackbar.LENGTH_LONG);
+        UiUtility.showSnackbar(coordinatorRoot, String.format(Locale.ENGLISH, SNACKBAR_DUMP_SUCCESS, FileUtility.refineExternalPath(path)), Snackbar.LENGTH_LONG);
     }
 
     @Override

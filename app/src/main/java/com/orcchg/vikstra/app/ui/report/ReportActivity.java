@@ -25,8 +25,8 @@ import com.orcchg.vikstra.app.ui.report.injection.ReportComponent;
 import com.orcchg.vikstra.app.ui.report.injection.ReportModule;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
-import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.file.FileUtility;
 
 import java.util.Locale;
 
@@ -61,7 +61,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         reportComponent = DaggerReportComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .postModule(new PostModule(postId))
-                .reportModule(new ReportModule(groupReportBundleId, ContentUtility.getDumpGroupReportsFileName(this, true /* external */)))
+                .reportModule(new ReportModule(groupReportBundleId, FileUtility.getDumpGroupReportsFileName(this, true /* external */)))
                 .build();
         reportComponent.inject(this);
     }
@@ -146,15 +146,20 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     // ------------------------------------------
     @Override
+    public void onPostingCancel() {
+        DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_posting_was_cancelled_daily_limit_reached).show();
+    }
+
+    @Override
     public void openDumpNotReadyDialog() {
-        DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_group_reports_not_ready_to_dump);
+        DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_group_reports_not_ready_to_dump).show();
     }
 
     @Override
     public void openEditDumpFileNameDialog() {
         DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
                 (dialog, which, text) -> {
-                    String path = ContentUtility.makeDumpFileName(this, text, true /* external */);
+                    String path = FileUtility.makeDumpFileName(this, text, true /* external */);
                     presenter.performDumping(path);
                     dialog.dismiss();
                 }).show();
@@ -168,7 +173,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void showDumpSuccess(String path) {
-        UiUtility.showSnackbar(this, String.format(Locale.ENGLISH, SNACKBAR_DUMP_SUCCESS, ContentUtility.refineExternalPath(path)), Snackbar.LENGTH_LONG);
+        UiUtility.showSnackbar(this, String.format(Locale.ENGLISH, SNACKBAR_DUMP_SUCCESS, FileUtility.refineExternalPath(path)), Snackbar.LENGTH_LONG);
     }
 
     @Override

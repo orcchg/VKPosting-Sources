@@ -7,15 +7,11 @@ import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.file.FileUtility;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-
-import timber.log.Timber;
 
 /**
  * In-memory global storage.
@@ -67,10 +63,11 @@ public final class ContentUtility {
             return sSelectedGroupsForPosting;
         }
 
-        /* Posting progress & result */
+        /* Posting progress & result & cancel */
         // --------------------------------------
         private static int sPostingProgress, sPostingTotal;
         private static MultiUseCase.ProgressCallback sProgressCallback;
+        private static MultiUseCase.CancelCallback sCancelCallback;
 
         public static <Data> void setPostingProgress(int progress, int total, Ordered<Data> data) {
             sPostingProgress = progress;
@@ -79,8 +76,16 @@ public final class ContentUtility {
             if (sProgressCallback != null) sProgressCallback.onDone(progress, total, data);
         }
 
+        public static void onPostingCancelled() {
+            if (sCancelCallback != null) sCancelCallback.onCancel();
+        }
+
         public static void setProgressCallback(MultiUseCase.ProgressCallback callback) {
             sProgressCallback = callback;
+        }
+
+        public static void setCancelCallback(MultiUseCase.CancelCallback callback) {
+            sCancelCallback = callback;
         }
 
         public static int getPostingProgress() {
@@ -97,63 +102,12 @@ public final class ContentUtility {
     /* Files */
     // --------------------------------------------------------------------------------------------
     public static File createInternalImageFile(Context context) throws IOException {
-        String imageFileName = new StringBuilder("ViKStra_").append(currentTimestamp()).append('_').toString();
+        String imageFileName = new StringBuilder("ViKStra_").append(FileUtility.currentTimestamp()).append('_').toString();
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
     public static String getFileProviderAuthority() {
         return "com.orcchg.vikstra.fileprovider";  // TODO: get authority from Gradle config
-    }
-
-    public static String getDumpGroupsFileName(Context context, boolean external) {
-        return getDumpFileName(context, "groups_", external, true);
-    }
-
-    public static String getDumpGroupReportsFileName(Context context, boolean external) {
-        return getDumpFileName(context, "reports_", external, true);
-    }
-
-    public static String makeDumpFileName(Context context, String name, boolean external) {
-        return getDumpFileName(context, name, external, false);
-    }
-
-    public static String refineExternalPath(String rawPath) {
-        int index = rawPath.indexOf(externalApplicationFolder());
-        return "/sdcard" + rawPath.substring(index);
-    }
-
-    /* Internal */
-    // ------------------------------------------
-    private static String currentTimestamp() {
-        return new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ENGLISH).format(new Date());
-    }
-
-    private static String createExternalApplicationFolder(String root) {
-        String path = root + externalApplicationFolder();
-        File directory = new File(path);
-        directory.mkdirs();  // creates directories hierarchy if not exists
-        return path;
-    }
-
-    private static String externalApplicationFolder() {
-        return "/vkposting";
-    }
-
-    private static String getDumpFileName(Context context, String prefix, boolean external, boolean withTs) {
-        String root = external ? Environment.getExternalStorageDirectory().getPath()
-                               : context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath();
-        String directory = createExternalApplicationFolder(root);
-        StringBuilder fileName = new StringBuilder(directory).append('/').append(prefix);
-        if (withTs) fileName.append(currentTimestamp());
-        fileName.append(".csv");
-        File file = new File(fileName.toString());
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            Timber.e(e, "Failed to create a file by path: %s", fileName);
-            // this error is suppressed here but any further attempt to use this file will lead to IOException
-        }
-        return fileName.toString();
     }
 }
