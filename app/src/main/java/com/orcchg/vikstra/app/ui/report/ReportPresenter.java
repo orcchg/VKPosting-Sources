@@ -15,7 +15,6 @@ import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api220VkUseCaseException;
-import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -29,7 +28,6 @@ import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.essense.mapper.GroupReportEssenceMapper;
 import com.orcchg.vikstra.domain.util.Constant;
-import com.orcchg.vikstra.domain.util.ValueUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -267,7 +265,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private MultiUseCase.ProgressCallback<GroupReportEssence> createPostingProgressCallback() {
         return (index, total, item) -> {
             Group group = ContentUtility.InMemoryStorage.getSelectedGroupsForPosting().get(index);
-            GroupReportEssence model = VkontakteEndpoint.refineModel(item, group, Api220VkUseCaseException.class);  // TODO: use terminal error from proper UseCase instad of hardcoded one
+            // TODO: use terminal error from proper UseCase instead of hardcoded one
+            GroupReportEssence model = VkontakteEndpoint.refineModel(item, group, Api220VkUseCaseException.class);
             if (item.data != null)  ++postedWithSuccess;  // count successful posting
             if (item.error != null) ++postedWithFailure;  // count failed posting
             /**

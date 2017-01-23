@@ -145,10 +145,15 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
             final long start = System.currentTimeMillis();
 
             if (isCancelled.get()) {
+                if (!threadExecutor.isShutdown()) {  // shutdown only once
+                    Timber.tag(this.getClass().getSimpleName());
+                    Timber.d("Execution was cancelled, skipped all iterations from %s or %s", i + 1, total);
+                    threadExecutor.shutdownNow();  // interrupt all running use-cases, but don't accept the new ones
+                }
                 Timber.tag(this.getClass().getSimpleName());
-                Timber.d("Execution was cancelled, skipped all iterations from %s", index);
-                threadExecutor.shutdownNow();  // interrupt all running use-cases, but don't accept the new ones
-                break;  // skip not launched use-cases and go to wait for the currently running ones
+                Timber.d("Skipped request [%s / %s]", i + 1, total);
+                doneFlags[index] = true;  // mark cancelled use-case as already finished
+                continue;  // skip not launched use-cases and go to wait for the currently running ones
             }
 
             // TODO: use isSuspended to pause the rest use-cases
@@ -255,7 +260,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                 try {
                     lock.wait();  // waiting all tasks to finish
 
-                    if (isCancelled.get()) {
+                    if (isCancelled.get() && !threadExecutor.isShutdown()) {  // shutdown only once
                         Timber.tag(this.getClass().getSimpleName());
                         Timber.d("Execution was cancelled, interrupting all running (not finished) use-cases");
                         threadExecutor.shutdownNow();  // interrupt all running use-cases
