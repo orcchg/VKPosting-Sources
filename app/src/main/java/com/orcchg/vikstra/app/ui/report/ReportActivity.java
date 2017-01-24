@@ -151,6 +151,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     @Override
+    public void onPostingFinished() {
+        UiUtility.showSnackbar(this, R.string.report_snackbar_posting_finished);
+    }
+
+    @Override
     public void openDumpNotReadyDialog() {
         DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_group_reports_not_ready_to_dump).show();
     }

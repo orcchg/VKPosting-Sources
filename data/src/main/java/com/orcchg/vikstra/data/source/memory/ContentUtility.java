@@ -68,7 +68,9 @@ public final class ContentUtility {
         private static int sPostingProgress, sPostingTotal;
         private static MultiUseCase.ProgressCallback sProgressCallback;
         private static MultiUseCase.CancelCallback sCancelCallback;
+        private static MultiUseCase.FinishCallback sFinishCallback;
 
+        @SuppressWarnings("unchecked")
         public static <Data> void setPostingProgress(int progress, int total, Ordered<Data> data) {
             sPostingProgress = progress;
             sPostingTotal = total;
@@ -80,12 +82,20 @@ public final class ContentUtility {
             if (sCancelCallback != null) sCancelCallback.onCancel();
         }
 
+        public static void onPostingFinished() {
+            if (sFinishCallback != null) sFinishCallback.onFinish();
+        }
+
         public static void setProgressCallback(MultiUseCase.ProgressCallback callback) {
             sProgressCallback = callback;
         }
 
         public static void setCancelCallback(MultiUseCase.CancelCallback callback) {
             sCancelCallback = callback;
+        }
+
+        public static void setFinishCallback(MultiUseCase.FinishCallback callback) {
+            sFinishCallback = callback;
         }
 
         public static int getPostingProgress() {

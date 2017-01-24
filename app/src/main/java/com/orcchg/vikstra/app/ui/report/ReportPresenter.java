@@ -50,6 +50,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     // used in interactive mode
     private final MultiUseCase.ProgressCallback<GroupReportEssence> postingProgressCallback;
     private final MultiUseCase.CancelCallback postingCancelledCallback;
+    private final MultiUseCase.FinishCallback postingFinishedCallback;
     private List<GroupReport> storedReports = new ArrayList<>();
     private boolean isFinishedPosting;
     private int postedWithCancel = 0, postedWithFailure = 0, postedWithSuccess = 0;
@@ -71,6 +72,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
         this.postingProgressCallback = createPostingProgressCallback();
         this.postingCancelledCallback = createPostingCancelledCallback();
+        this.postingFinishedCallback = createPostingFinishedCallback();
     }
 
     @Override
@@ -97,6 +99,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             Timber.d("Subscribe on posting progress callback on ReportScreen");
             ContentUtility.InMemoryStorage.setProgressCallback(postingProgressCallback);  // subscribe to progress updates
             ContentUtility.InMemoryStorage.setCancelCallback(postingCancelledCallback);   // subscribe to cancellation
+            ContentUtility.InMemoryStorage.setFinishCallback(postingFinishedCallback);  // subscribe to finish posting
         }
     }
 
@@ -107,6 +110,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             Timber.d("Unsubscribe from posting progress callback on ReportScreen");
             ContentUtility.InMemoryStorage.setProgressCallback(null);  // unsubscribe from progress updates
             ContentUtility.InMemoryStorage.setCancelCallback(null);    // unsubscribe from cancellation
+            ContentUtility.InMemoryStorage.setFinishCallback(null);  // unsubscribe from finish posting
         }
     }
 
@@ -290,6 +294,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
             Timber.v("Posting stat: success [%s], failure [%s], cancel [%s], total [%s]",
                     postedWithSuccess, postedWithFailure, postedWithCancel, total);
+            // TODO: not properly counted if there are retry-failed use-cases
             isFinishedPosting = postedWithCancel + postedWithFailure + postedWithSuccess == total;
         };
     }
@@ -297,6 +302,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private MultiUseCase.CancelCallback createPostingCancelledCallback() {
         return () -> {
             if (isViewAttached()) getView().onPostingCancel();
+            isFinishedPosting = true;
+        };
+    }
+
+    private MultiUseCase.FinishCallback createPostingFinishedCallback() {
+        return () -> {
+            if (isViewAttached()) getView().onPostingFinished();
             isFinishedPosting = true;
         };
     }

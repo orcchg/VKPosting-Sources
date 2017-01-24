@@ -27,7 +27,10 @@ public class ReportComposer {
             return false;
         }
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter(path), ',');
+            CSVWriter writer = new CSVWriter(new FileWriter(path), ';');
+            String[] header = new String[]{"", "Group ID", "Keyword", "Link", "Web site", "Members",
+                    "Name", "Screen name"};
+            writer.writeNext(header);
             for (Group group : groups) {
                 Keyword keyword = group.keyword();
                 String[] csv = new String[]{
@@ -54,11 +57,16 @@ public class ReportComposer {
             return false;
         }
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter(path), ',');
+            CSVWriter writer = new CSVWriter(new FileWriter(path), ';');
+            String[] header = new String[]{"", "Group ID", "Keyword", "Link", "Web site", "Members",
+                    "Name", "Screen name", "Status", "Post ID", "Error code"};
+            writer.writeNext(header);
             for (GroupReport report : reports) {
                 Group group = report.group();
+                Keyword keyword = group.keyword();
                 String[] csv = new String[]{
                         Long.toString(group.id()),
+                        keyword != null ? keyword.keyword() : "",
                         group.link(),
                         group.webSite(),
                         Integer.toString(group.membersCount()),

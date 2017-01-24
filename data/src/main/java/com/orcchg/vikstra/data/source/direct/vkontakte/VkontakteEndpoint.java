@@ -282,7 +282,7 @@ public class VkontakteEndpoint extends Endpoint {
             ContentUtility.InMemoryStorage.setPostingProgress(index, total, data);
             if (progressCallback != null) progressCallback.onDone(index, total, data);
         }));
-        useCase.setCancelCallback(() -> ContentUtility.InMemoryStorage.onPostingCancelled());
+        useCase.setCancelCallback(ContentUtility.InMemoryStorage::onPostingCancelled);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<GroupReportEssence>>>() {
             @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<GroupReportEssence>> reports) {
@@ -291,6 +291,7 @@ public class VkontakteEndpoint extends Endpoint {
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to make wall posting");
+                ContentUtility.InMemoryStorage.onPostingFinished();  // fire additional callback
                 int index = 0;
                 List<GroupReportEssence> refinedReports = new ArrayList<>();
                 // loop over all available resuls (there could a bit cancelled ones)

@@ -8,4 +8,5 @@
     <string name="report_screen_title">Report</string>
     <string name="report_snackbar_group_reports_dump_failed">Failed to dump group reports to file</string>
     <string name="report_snackbar_group_reports_dump_succeeded">Dumped&#58; %s</string>
+    <string name="report_snackbar_posting_finished">Posting has finished</string>
 </resources>

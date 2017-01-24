@@ -11,6 +11,7 @@ public interface ReportContract {
         void enableSwipeToRefresh(boolean isEnabled);
 
         void onPostingCancel();
+        void onPostingFinished();
         void openDumpNotReadyDialog();
         void openEditDumpFileNameDialog();
 
