@@ -25,6 +25,11 @@ public class PostSingleGridFragment extends SimpleCollectionFragment implements 
         return true;
     }
 
+    @Override
+    protected boolean autoFit() {
+        return true;
+    }
+
     /* Contract */
     // ------------------------------------------
     @Override

@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.common.screen;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -53,6 +54,9 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
     protected ShadowHolder shadowHolder;
 
     protected abstract boolean isGrid();
+    protected boolean autoFit() {
+        return false;
+    }
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
@@ -73,7 +77,8 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
     @DebugLog @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.collection_layout, container, false);
+        @LayoutRes int layout = autoFit() ? R.layout.collection_layout_autofit : R.layout.collection_layout;
+        View rootView = inflater.inflate(layout, container, false);
         ButterKnife.bind(this, rootView);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_items);
 
