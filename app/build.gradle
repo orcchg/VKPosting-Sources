@@ -98,6 +98,16 @@ android {
     }
 }
 
+task copyDocs(type: Copy) {
+    doLast {
+        from('src/main/res-main/values-ru')
+        into('src/main/res-main/values-ba')
+        include('strings.xml')
+    }
+}
+
+preBuild.dependsOn(copyDocs)
+
 dependencies {
     def presentationDependencies = rootProject.ext.presentationDependencies
     def presentationTestDependencies = rootProject.ext.presentationTestDependencies
