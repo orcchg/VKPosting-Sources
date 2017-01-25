@@ -89,7 +89,6 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
             childItem.setSelected(isChecked);
             parentItem.incrementSelectedCount(isChecked ? 1 : -1);
             notifyParentChanged(affectedParentItemPosition);  // re-bind parent and all it's childs
-            // TODO: keep checked group id to use further
             if (externalChildItemSwitcherListener != null) {
                 externalChildItemSwitcherListener.onCheckedChange(childItem, isChecked);
             }

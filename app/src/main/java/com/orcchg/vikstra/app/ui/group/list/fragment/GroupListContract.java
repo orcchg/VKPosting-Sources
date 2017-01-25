@@ -23,7 +23,8 @@ interface GroupListContract {
     // ------------------------------------------
     interface Presenter extends MvpPresenter<View>,
             FragmentMediator.Receiver, FragmentMediator.Sender {
-        void removeListItem(int position);
+        void removeChildListItem(int position, int parentPosition);
+        void removeParentListItem(int position);
         void refresh();
         void retry();
     }

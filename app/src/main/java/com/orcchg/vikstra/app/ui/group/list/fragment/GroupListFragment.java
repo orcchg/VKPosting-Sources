@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bignerdranch.expandablerecyclerview.ChildViewHolder;
+import com.bignerdranch.expandablerecyclerview.ParentViewHolder;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.common.injection.KeywordModule;
@@ -22,9 +24,11 @@ import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListCo
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListModule;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
+import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.OnClick;
+import timber.log.Timber;
 
 public class GroupListFragment extends CollectionFragment<GroupListContract.View, GroupListContract.Presenter>
         implements GroupListContract.View {
@@ -208,7 +212,16 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                presenter.removeListItem(viewHolder.getAdapterPosition());
+                if (ChildViewHolder.class.isInstance(viewHolder)) {
+                    ChildViewHolder cvh = (ChildViewHolder) viewHolder;
+                    presenter.removeChildListItem(cvh.getChildAdapterPosition(), cvh.getParentAdapterPosition());
+                } else if (ParentViewHolder.class.isInstance(viewHolder)) {
+                    ParentViewHolder pvh = (ParentViewHolder) viewHolder;
+                    presenter.removeParentListItem(pvh.getParentAdapterPosition());
+                } else {
+                    Timber.wtf("Removing item neither child not parent item.");
+                    throw new ProgramException();
+                }
             }
         });
     }

@@ -373,33 +373,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void removeListItem(int position) {
-        Timber.i("removeListItem: %s", position);
-        GroupParentItem item = groupParentItems.get(position);
-        totalSelectedGroups -= item.getSelectedCount();
-        totalGroups -= item.getChildCount();
-        sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
+    public void removeChildListItem(int position, int parentPosition) {
+        Timber.i("removeChildListItem: %s, %s", position, parentPosition);
+        removeGroupAtPosition(position, parentPosition);
+    }
 
-        /**
-         * User can remove all Parent items from expandable list making input KeywordBundle empty.
-         * Although user can continue and add new Keyword to list later on GroupListScreen, empty
-         * KeywordBundle-s are not allowed and will be wiped out from repository when user navigates
-         * back to MainScreen or KeywordListScreen.
-         */
-        Keyword keyword = groupParentItems.get(position).getKeyword();
-        inputKeywordBundle.keywords().remove(keyword);
-        postKeywordBundleUpdate();  // refresh now, don't wait till screen closed
-
-        Collection<Group> groupsToRemove = new ArrayList<>();
-        for (GroupChildItem childItem : item.getChildList()) {
-            groupsToRemove.add(childItem.getGroup());
-        }
-        inputGroupBundle.groups().removeAll(groupsToRemove);
-        isGroupBundleChanged = true;
-        postGroupBundleUpdate();  // refresh now, don't wait till screen closed
-
-        groupParentItems.remove(position);
-        listAdapter.notifyParentRemoved(position);
+    @Override
+    public void removeParentListItem(int position) {
+        Timber.i("removeParentListItem: %s", position);
+        removeKeywordAtPosition(position);
     }
 
     @Override
@@ -606,6 +588,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
     }
 
+    // ------------------------------------------
     private void postToGroups() {
         Timber.i("postToGroups");
         if (currentPost != null) {
@@ -645,6 +628,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         }
     }
 
+    // ------------------------------------------
     private void postGroupBundleUpdate() {
         Timber.i("postGroupBundleUpdate: %s", isGroupBundleChanged);
         if (isGroupBundleChanged) {
@@ -674,6 +658,56 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private void refreshPost() {
         Timber.i("refreshPost");
         getPostByIdUseCase.execute();
+    }
+
+    // ------------------------------------------
+    private void removeGroupAtPosition(int position, int keywordPosition) {
+        Timber.i("removeGroupAtPosition: %s, %s", position, keywordPosition);
+        GroupParentItem item = groupParentItems.get(keywordPosition);
+        --totalSelectedGroups;
+        --totalGroups;
+        sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
+
+        Collection<Group> groupsToRemove = new ArrayList<>();
+        GroupChildItem childItem = item.getChildList().get(position);
+        groupsToRemove.add(childItem.getGroup());
+        inputGroupBundle.groups().removeAll(groupsToRemove);
+        isGroupBundleChanged = true;
+        postGroupBundleUpdate();  // refresh now, don't wait till screen closed
+
+        item.getChildList().remove(position);
+        item.incrementSelectedCount(childItem.isSelected() ? -1 : 0);
+        listAdapter.notifyParentChanged(keywordPosition);
+        listAdapter.notifyChildRemoved(position, keywordPosition);
+    }
+
+    private void removeKeywordAtPosition(int position) {
+        Timber.i("removeKeywordAtPosition: %s", position);
+        GroupParentItem item = groupParentItems.get(position);
+        totalSelectedGroups -= item.getSelectedCount();
+        totalGroups -= item.getChildCount();
+        sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
+
+        /**
+         * User can remove all Parent items from expandable list making input KeywordBundle empty.
+         * Although user can continue and add new Keyword to list later on GroupListScreen, empty
+         * KeywordBundle-s are not allowed and will be wiped out from repository when user navigates
+         * back to MainScreen or KeywordListScreen.
+         */
+        Keyword keyword = groupParentItems.get(position).getKeyword();
+        inputKeywordBundle.keywords().remove(keyword);
+        postKeywordBundleUpdate();  // refresh now, don't wait till screen closed
+
+        Collection<Group> groupsToRemove = new ArrayList<>();
+        for (GroupChildItem childItem : item.getChildList()) {
+            groupsToRemove.add(childItem.getGroup());
+        }
+        inputGroupBundle.groups().removeAll(groupsToRemove);
+        isGroupBundleChanged = true;
+        postGroupBundleUpdate();  // refresh now, don't wait till screen closed
+
+        groupParentItems.remove(position);
+        listAdapter.notifyParentRemoved(position);
     }
 
     /* Callback */
