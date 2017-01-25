@@ -1,7 +1,6 @@
 package com.orcchg.vikstra.domain.util.file;
 
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.orcchg.vikstra.domain.DomainConfig;
 import com.orcchg.vikstra.domain.model.Group;
@@ -30,8 +29,7 @@ public class ReportComposer {
         }
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(path), ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
-            String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Web site", "Members",
-                    "Name", "Screen name"};
+            String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Members", "Name", "Screen name"};
             writer.writeNext(header);
             int index = 1;
             for (Group group : groups) {
@@ -39,13 +37,11 @@ public class ReportComposer {
                     continue;  // skip Group-s where is no access for current user to make wall post
                 }
                 Keyword keyword = group.keyword();
-                String webSite = group.webSite();
                 String[] csv = new String[]{
                         Integer.toString(index),
                         keyword != null ? keyword.keyword() : " ",
                         Long.toString(group.id()),
                         group.link(),
-                        !TextUtils.isEmpty(webSite) ? webSite : " ",
                         Integer.toString(group.membersCount()),
                         group.name().replaceAll("\"", "*"),
                         group.screenName()};
@@ -67,20 +63,18 @@ public class ReportComposer {
         }
         try {
             CSVWriter writer = new CSVWriter(new FileWriter(path), ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
-            String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Web site", "Members",
-                    "Name", "Screen name", "Status", "Post ID", "Error code"};
+            String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Members", "Name",
+                    "Screen name", "Status", "Post ID", "Error code"};
             writer.writeNext(header);
             int index = 1;
             for (GroupReport report : reports) {
                 Group group = report.group();
                 Keyword keyword = group.keyword();
-                String webSite = group.webSite();
                 String[] csv = new String[]{
                         Integer.toString(index),
                         keyword != null ? keyword.keyword() : " ",
                         Long.toString(group.id()),
                         group.link(),
-                        !TextUtils.isEmpty(webSite) ? webSite : " ",
                         Integer.toString(group.membersCount()),
                         group.name().replaceAll("\"", "*"),
                         group.screenName(),
