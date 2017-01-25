@@ -22,6 +22,8 @@ allprojects {
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         testApplicationId = 'com.orcchg.vikstra.test'
     }
+
+    apply from: "$rootProject.projectDir/buildsystem/preconfig.gradle"
 }
 
 task wrapper(type: Wrapper) {
