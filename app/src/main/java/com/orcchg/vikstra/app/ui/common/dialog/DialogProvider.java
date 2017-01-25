@@ -24,6 +24,11 @@ public class DialogProvider {
         return showTextDialog(activity, title, description, null);
     }
 
+    public static AlertDialog showTextDialog(Activity activity, @StringRes int title, String description) {
+        String xtitle = activity.getResources().getString(title);
+        return showTextDialog(activity, xtitle, description, null);
+    }
+
     public static AlertDialog showTextDialog(Activity activity, @StringRes int title, @StringRes int description,
                                              DialogInterface.OnClickListener listener) {
         String xtitle = activity.getResources().getString(title);

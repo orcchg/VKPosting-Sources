@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.data.source.direct.Endpoint;
 import com.orcchg.vikstra.data.source.direct.ImageLoader;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
+import com.orcchg.vikstra.domain.DomainConfig;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
@@ -294,7 +295,7 @@ public class VkontakteEndpoint extends Endpoint {
                 ContentUtility.InMemoryStorage.onPostingFinished();  // fire additional callback
                 int index = 0;
                 List<GroupReportEssence> refinedReports = new ArrayList<>();
-                // loop over all available resuls (there could a bit cancelled ones)
+                // loop over all available results (there could a bit cancelled ones)
                 for (Ordered<GroupReportEssence> item : reports) {
                     Group group = parameters.getGroups().get(index);
                     refinedReports.add(refineModel(item, group, useCase.getTerminalErrors()));
@@ -353,7 +354,7 @@ public class VkontakteEndpoint extends Endpoint {
     /* Conversion */
     // --------------------------------------------------------------------------------------------
     @NonNull
-    List<Group> convertMerge(List<Keyword> keywords, List<VKApiCommunityArray> vkModels) {
+    private List<Group> convertMerge(List<Keyword> keywords, List<VKApiCommunityArray> vkModels) {
         int i = 0;
         List<Group> groups = new ArrayList<>();
         for (VKApiCommunityArray vkCommunityArray : vkModels) {
@@ -364,7 +365,7 @@ public class VkontakteEndpoint extends Endpoint {
     }
 
     @NonNull
-    List<List<Group>> convertSplit(List<Keyword> keywords, List<VKApiCommunityArray> vkModels) {
+    private List<List<Group>> convertSplit(List<Keyword> keywords, List<VKApiCommunityArray> vkModels) {
         int i = 0;
         List<List<Group>> groupsSplit = new ArrayList<>();
         for (VKApiCommunityArray vkCommunityArray : vkModels) {
@@ -376,16 +377,23 @@ public class VkontakteEndpoint extends Endpoint {
     }
 
     @NonNull
-    List<Group> convert(Keyword keyword, VKApiCommunityArray vkCommunityArray) {
+    private List<Group> convert(Keyword keyword, VKApiCommunityArray vkCommunityArray) {
+        int skipped = 0;
         List<Group> groups = new ArrayList<>();
         for (VKApiCommunityFull vkGroup : vkCommunityArray) {
+            if (DomainConfig.INSTANCE.useOnlyGroupsWhereCanPostFreely() && !vkGroup.can_post) {
+                ++skipped;
+                continue;  // skip Group-s where is no access for current user to make wall post
+            }
             groups.add(convert(keyword, vkGroup));
         }
+        Timber.v("convert: keyword [%s], total vkGroups [%s], result size [%s], skipped [%s]",
+                keyword.keyword(), vkCommunityArray.size(), groups.size(), skipped);
         return groups;
     }
 
     @NonNull
-    Group convert(Keyword keyword, VKApiCommunityFull vkGroup) {
+    private Group convert(Keyword keyword, VKApiCommunityFull vkGroup) {
         return Group.builder()
                 .setId(-vkGroup.id)  // negative id is for Vk Community, positive - for Vk User
                 .setCanPost(vkGroup.can_post)

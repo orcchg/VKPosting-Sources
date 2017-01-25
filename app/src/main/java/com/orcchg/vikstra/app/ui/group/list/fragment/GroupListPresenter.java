@@ -514,9 +514,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         int xSelectedCount = 0, xTotalGroups = 0;
         List<GroupChildItem> childItems = new ArrayList<>(groups.size());
         for (Group group : groups) {
-            if (AppConfig.INSTANCE.useOnlyGroupsWhereCanPostFreely() && !group.canPost()) {
-                continue;  // skip Group-s where is no access for current user to make wall post
-            }
             ++xTotalGroups;
             GroupChildItem childItem = new GroupChildItem(group);
             childItems.add(childItem);
@@ -566,9 +563,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
          * 'splitGroups' trying the first Group in each list and compares it's Keyword with those in
          * Parent item from expandable list. No matching means error in program and leads to exception.
          */
-        for (int i = 0; i < splitGroups.size(); ++i) {
-            Keyword keyword = groupParentItems.get(i).getKeyword();
-            List<Group> groups = null;
+        for (int i = 0; i < groupParentItems.size(); ++i) {
+            Keyword keyword = groupParentItems.get(i).getKeyword();  // take each Keyword
+            List<Group> groups = new ArrayList<>();  // list of Group-s corresponding to the Keyword
             for (List<Group> item : splitGroups) {
                 Group group = item.get(0);
                 if (keyword.equals(group.keyword())) {
@@ -576,10 +573,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     break;  // found matching between Keyword and list of Group-s
                 }
             }
-            if (groups == null) {
-                Timber.wtf("Split list of Group-s doesn't correspond to list of Keyword-s");
-                throw new ProgramException();
-            }
+            if (groups.isEmpty()) Timber.d("Group-s not found for Keyword: %s", keyword.keyword());
             addGroupsToList(groups, i);
         }
 

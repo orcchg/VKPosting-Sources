@@ -13,6 +13,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import hugo.weaving.DebugLog;
+
 /**
  * In-memory global storage.
  */
@@ -70,7 +72,7 @@ public final class ContentUtility {
         private static MultiUseCase.CancelCallback sCancelCallback;
         private static MultiUseCase.FinishCallback sFinishCallback;
 
-        @SuppressWarnings("unchecked")
+        @DebugLog @SuppressWarnings("unchecked")
         public static <Data> void setPostingProgress(int progress, int total, Ordered<Data> data) {
             sPostingProgress = progress;
             sPostingTotal = total;
@@ -78,10 +80,12 @@ public final class ContentUtility {
             if (sProgressCallback != null) sProgressCallback.onDone(progress, total, data);
         }
 
+        @DebugLog
         public static void onPostingCancelled() {
             if (sCancelCallback != null) sCancelCallback.onCancel();
         }
 
+        @DebugLog
         public static void onPostingFinished() {
             if (sFinishCallback != null) sFinishCallback.onFinish();
         }

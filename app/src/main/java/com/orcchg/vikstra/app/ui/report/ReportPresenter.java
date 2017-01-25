@@ -53,9 +53,12 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final MultiUseCase.FinishCallback postingFinishedCallback;
     private List<GroupReport> storedReports = new ArrayList<>();
     private boolean isFinishedPosting;
-    private int postedWithCancel = 0, postedWithFailure = 0, postedWithSuccess = 0;
+    private int postedWithCancel = 0;
+    private int postedWithFailure = 0;
+    private int postedWithSuccess = 0;
+    private int totalForPosting = 0;
 
-    @Inject
+            @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
                     DumpGroupReports dumpGroupReportsUseCase, GroupReportToVoMapper groupReportToVoMapper,
                     GroupReportEssenceToVoMapper groupReportEssenceToVoMapper,
@@ -296,6 +299,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                     postedWithSuccess, postedWithFailure, postedWithCancel, total);
             // TODO: not properly counted if there are retry-failed use-cases
             isFinishedPosting = postedWithCancel + postedWithFailure + postedWithSuccess == total;
+            totalForPosting = total;  // save counter to use further
         };
     }
 
@@ -308,7 +312,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     private MultiUseCase.FinishCallback createPostingFinishedCallback() {
         return () -> {
-            if (isViewAttached()) getView().onPostingFinished();
+            if (isViewAttached()) getView().onPostingFinished(postedWithSuccess, totalForPosting);
             isFinishedPosting = true;
         };
     }

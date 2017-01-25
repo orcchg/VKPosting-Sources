@@ -39,7 +39,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
 
-    private String DIALOG_TITLE, DIALOG_HINT, INFO_TITLE, SNACKBAR_DUMP_SUCCESS;
+    private String DIALOG_TITLE, DIALOG_HINT, INFO_TITLE,
+            SNACKBAR_DUMP_SUCCESS, SNACKBAR_POSTING_FINISHED;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.tv_info_title) TextView reportTextView;
@@ -151,8 +152,9 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     @Override
-    public void onPostingFinished() {
-        UiUtility.showSnackbar(this, R.string.report_snackbar_posting_finished);
+    public void onPostingFinished(int posted, int total) {
+        String text = String.format(Locale.ENGLISH, SNACKBAR_POSTING_FINISHED, posted, total);
+        DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text).show();
     }
 
     @Override
@@ -266,5 +268,6 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         DIALOG_HINT = resources.getString(R.string.report_dialog_new_dump_file_hint);
         INFO_TITLE = resources.getString(R.string.report_posted_counters);
         SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.report_snackbar_group_reports_dump_succeeded);
+        SNACKBAR_POSTING_FINISHED = resources.getString(R.string.report_snackbar_posting_finished);
     }
 }
