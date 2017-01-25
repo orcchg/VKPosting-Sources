@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="main_button_label_new_keywords">New keywords</string>
-    <string name="main_dialog_authorization_failed">Authorization was not passed.</string>
+    <string name="main_dialog_authorization_failed">Authorization was not passed</string>
     <string name="main_dialog_logout_title">Logout</string>
     <string name="main_dialog_logout_description">You will be logged out from Vk</string>
-    <string name="main_groups_list_title">Groups list</string>
+    <string name="main_groups_list_title">Keywords list</string>
     <string name="main_screen_title">VK Posting</string>
 </resources>

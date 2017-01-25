@@ -1,52 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ViKStra</string>
-    <string name="str_about_message">Author: Maxim (Orcchg) Alov\nContact: alovmax@yandex.ru\nWeb: orcchg.wordpress.com\nMusicSquare application for Yandex</string>
-
-    <string name="keywords_flow_layout_more">more %d</string>
-    <string name="keywords_flow_layout_more_collapse">collapse</string>
-
-    <string name="empty_data">Data is empty</string>
-    <string name="empty_data_short">Empty</string>
-    <string name="empty_btn_label">Create</string>
-    <string name="error_btn_label">Retry</string>
-    <string name="error_empty_input_text">Input text is invalid!</string>
-    <string name="error_external_screen_not_found_camera">Camera application was not found on device!</string>
-    <string name="error_external_screen_not_found_email">Email application was not found on device!</string>
-    <string name="error_external_screen_not_found_gallery">Gallery application was not found on device!</string>
-    <string name="error_text">Data error</string>
-    <string name="error_text_extended">An error has occurred.</string>
-
+    <string name="app_name">VK постинг</string>
+    <string name="str_about_message">Автор: Maxim (Orcchg) Alov\nКонтакт: alovmax@yandex.ru\nСайт: orcchg.wordpress.com\nПриложение для автоматизированного постинга Вконтакте</string>
+    <string name="keywords_flow_layout_more">еще %d</string>
+    <string name="keywords_flow_layout_more_collapse">свернуть</string>
+    <string name="empty_data">Здесь пока пусто</string>
+    <string name="empty_data_short">Пусто</string>
+    <string name="empty_btn_label">Создать</string>
+    <string name="error_btn_label">Повторить</string>
+    <string name="error_empty_input_text">Введен некорректный текст!</string>
+    <string name="error_external_screen_not_found_camera">Приложение для Камеры не было найдено на устройстве!</string>
+    <string name="error_external_screen_not_found_email">Приложение для Email не было найдено на устройстве!</string>
+    <string name="error_external_screen_not_found_gallery">Приложение для Галереи не было найдено на устройстве!</string>
+    <string name="error_text">Произошла ошибка</string>
+    <string name="error_text_extended">Произошла ошибка.</string>
     <string name="button_ok">OK</string>
-    <string name="button_cancel">Cancel</string>
-    <string name="button_close">Close</string>
-    <string name="button_dump">Dump</string>
-    <string name="button_edit">Edit</string>
-    <string name="button_logout">Logout</string>
-    <string name="button_retry">Retry</string>
-    <string name="button_save">Save</string>
-    <string name="button_search">Search</string>
-    <string name="button_settings">Settings</string>
-    <string name="button_view">View</string>
-
-    <string name="dialog_error_title">Error</string>
-    <string name="dialog_input_edit_title">Change title</string>
-    <string name="dialog_input_edit_title_hint">Enter new title</string>
-    <string name="dialog_upload_photo_title">Where to get photo</string>
+    <string name="button_cancel">Отмена</string>
+    <string name="button_close">Закрыть</string>
+    <string name="button_dump">Выгрузить</string>
+    <string name="button_edit">Изменить</string>
+    <string name="button_logout">Выйти</string>
+    <string name="button_retry">Повторить</string>
+    <string name="button_save">Сохранить</string>
+    <string name="button_search">Поиск</string>
+    <string name="button_settings">Настройки</string>
+    <string name="button_view">Просмотр</string>
+    <string name="dialog_error_title">Ошибка</string>
+    <string name="dialog_input_edit_title">Изменить заголовок</string>
+    <string name="dialog_input_edit_title_hint">Введите новый заголовок</string>
+    <string name="dialog_upload_photo_title">Откуда загрузить фото</string>
     <array name="dialog_upload_photo_variants">
-        <item name="dialog_upload_photo_variant_gallery">Gallery</item>
-        <item name="dialog_upload_photo_variant_camera">Camera</item>
-        <!-- <item name="dialog_upload_photo_variant_albums">Albums</item> -->
+        <item name="dialog_upload_photo_variant_gallery">Галерея</item>
+        <item name="dialog_upload_photo_variant_camera">Камера</item>
+        <!-- <item name="dialog_upload_photo_variant_albums">Альбомы</item> -->
     </array>
-    <string name="dialog_progress_posting">Posting&#8230;</string>
-    <string name="dialog_warning_title">Warning</string>
-
-    <string name="message_send_email">Send email&#8230;</string>
-
-    <string name="notification_posting_title">Wall posting</string>
-    <string name="notification_posting_description_complete">Posting completed</string>
-    <string name="notification_posting_description_progress">Posting in progress</string>
-    <string name="notification_photo_upload_title">Photo uploading</string>
-    <string name="notification_photo_upload_description_complete">All photos uploaded</string>
-    <string name="notification_photo_upload_description_progress">Photo upload in progress</string>
+    <string name="dialog_progress_posting">Идет публикация&#8230;</string>
+    <string name="dialog_warning_title">Внимание</string>
+    <string name="message_send_email">Отправить email&#8230;</string>
+    <string name="notification_posting_title">Публикация</string>
+    <string name="notification_posting_description_complete">Публикация завершилась</string>
+    <string name="notification_posting_description_progress">Выполняется публикация</string>
+    <string name="notification_photo_upload_title">Фото загружаются</string>
+    <string name="notification_photo_upload_description_complete">Все фото загружены</string>
+    <string name="notification_photo_upload_description_progress">Выполняется загрузка фото</string>
+    <!-- Group detail screen -->
+    <string name="group_detail_screen_title">Информация о группе</string>
+    <!-- Group list screen -->
+    <string name="group_list_button_label_add_keyword">Добавить слово</string>
+    <string name="group_list_button_label_change_post">Изменить публикацию</string>
+    <string name="group_list_dialog_groups_not_ready_to_dump">Данные по группам не готовы для выгрузки</string>
+    <string name="group_list_dialog_new_dump_file_title">Новый файл выгрузки</string>
+    <string name="group_list_dialog_new_dump_file_hint">Введите имя файла</string>
+    <string name="group_list_dialog_new_keyword_title">Новое слово</string>
+    <string name="group_list_dialog_new_keyword_hint">Введите новое слово</string>
+    <string name="group_list_error_add_keyword">Не удалось добавить слово!</string>
+    <string name="group_list_fab_label_post">Пост</string>
+    <string name="group_list_screen_title">Выберите группы</string>
+    <string name="group_list_selected_groups_total_count">Выбранные группы: %1$s &#47; %2$s</string>
+    <string name="group_list_snackbar_groups_dump_failed">Не удалось выгрузить группы в файл</string>
+    <string name="group_list_snackbar_groups_dump_succeeded">Выгружено&#58; %s</string>
+    <string name="group_list_snackbar_groups_not_selected_message">Вы должны выбрать хотя бы одну группу</string>
+    <string name="group_list_snackbar_keywords_limit_message">Достигнут лимит ключевых слов: %s</string>
+    <string name="group_list_snackbar_post_is_empty_message">Вы должны выбрать публикацию</string>
+    <string name="group_list_snackbar_posting_started">Началась публикация</string>
+    <string name="group_list_snackbar_posting_finished">Публикация завершилась</string>
+    <!-- Keyword create screen -->
+    <string name="keyword_create_bundle_added">Создан новый набор слов</string>
+    <string name="keyword_create_bundle_updated">Набор слов был обновлен</string>
+    <string name="keyword_create_dialog_save_changes_title">Слова были обновлены</string>
+    <string name="keyword_create_dialog_save_changes_description">Сохранить все изменения?</string>
+    <string name="keyword_create_screen_title">Новый набор слов</string>
+    <string name="keyword_create_snackbar_failed_to_create_post">Не удалось создать набор слов. Повторите попытку</string>
+    <string name="keyword_create_snackbar_failed_to_update_post">Не удалось обновить набор слов. Повторите попытку</string>
+    <string name="keyword_create_snackbar_keywords_limit_message">Достигнут лимит ключевых слов: %s</string>
+    <string name="keyword_create_snackbar_no_keywords_added_message">Вы должны добавить хотя бы одно слово</string>
+    <!-- Main screen -->
+    <string name="main_button_label_new_keywords">Добавить слова</string>
+    <string name="main_dialog_authorization_failed">Авторизация не пройдена</string>
+    <string name="main_dialog_logout_title">Выход</string>
+    <string name="main_dialog_logout_description">Вы совершите выход из текущего аккаунта Вконтакте</string>
+    <string name="main_groups_list_title">Слова</string>
+    <string name="main_screen_title">VK постинг</string>
+    <!-- Post create screen -->
+    <string name="post_create_dialog_save_changes_title">Публикация изменена</string>
+    <string name="post_create_dialog_save_changes_description">Сохранить все изменения?</string>
+    <string name="post_create_screen_title">Новая публикация</string>
+    <string name="post_create_snackbar_failed_to_create_post">Не удалось создать публикацию. Повторите попытку</string>
+    <string name="post_create_snackbar_failed_to_update_post">Не удалось изменить публикацию. Повторите попытку</string>
+    <string name="post_create_snackbar_media_attach_limit_message">Достигнут лимит прикрепленных изображений: %s</string>
+    <string name="post_create_text_description_hint">Введите текст публикации&#8230;</string>
+    <!-- Post list screen -->
+    <string name="post_list_screen_title">Все публикации</string>
+    <!-- Post view screen -->
+    <string name="post_view_screen_title">Публикация</string>
+    <!-- Report screen -->
+    <string name="report_dialog_group_reports_not_ready_to_dump">Данный по отчетам не готовы для выгрузки</string>
+    <string name="report_dialog_new_dump_file_title">Новый файл</string>
+    <string name="report_dialog_new_dump_file_hint">Введите имя файла</string>
+    <string name="report_dialog_posting_was_cancelled_daily_limit_reached">Вы достигли суточный лимит публикаций.\nИспользуйте другой аккаунт Вконтакте или продолжите завтра.</string>
+    <string name="report_posted_counters">Опубликовано в %1$s из %2$s групп</string>
+    <string name="report_screen_title">Отчет</string>
+    <string name="report_snackbar_group_reports_dump_failed">Не удалось выгрузить отчеты в файл</string>
+    <string name="report_snackbar_group_reports_dump_succeeded">Выгружено&#58; %s</string>
+    <string name="report_snackbar_posting_finished">Публикация завершилась</string>
+    <!-- Status screen -->
+    <string name="status_button_report">Отчет</string>
+    <string name="status_screen_title">Прогресс</string>
 </resources>

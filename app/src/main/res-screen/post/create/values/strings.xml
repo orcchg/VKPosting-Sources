@@ -6,5 +6,5 @@
     <string name="post_create_snackbar_failed_to_create_post">Failed to create new post. Try again</string>
     <string name="post_create_snackbar_failed_to_update_post">Failed to update current post. Try again</string>
     <string name="post_create_snackbar_media_attach_limit_message">You\'ve reached limit for media attachments: %s</string>
-    <string name="post_create_text_description_hint">Enter post description...</string>
+    <string name="post_create_text_description_hint">Enter post description&#8230;</string>
 </resources>

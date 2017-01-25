@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="keyword_create_bundle_added">Added new set of keywords.</string>
-    <string name="keyword_create_bundle_updated">Keywords has been updated.</string>
+    <string name="keyword_create_bundle_added">Added new set of keywords</string>
+    <string name="keyword_create_bundle_updated">Keywords has been updated</string>
     <string name="keyword_create_dialog_save_changes_title">Keywords changed</string>
     <string name="keyword_create_dialog_save_changes_description">Do you want to save changes?</string>
     <string name="keyword_create_screen_title">New keywords</string>
