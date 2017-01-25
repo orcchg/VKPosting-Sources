@@ -35,7 +35,7 @@ public abstract class Group implements Comparable<Group> {
     public abstract int membersCount();
     public abstract String name();
     public abstract String screenName();
-    public abstract String webSite();
+    public abstract @Nullable String webSite();
 
     public boolean isSelected() {
         return isSelected;

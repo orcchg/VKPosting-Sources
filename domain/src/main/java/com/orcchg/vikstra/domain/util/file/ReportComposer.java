@@ -1,7 +1,9 @@
 package com.orcchg.vikstra.domain.util.file;
 
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
+import com.orcchg.vikstra.domain.DomainConfig;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
@@ -27,21 +29,28 @@ public class ReportComposer {
             return false;
         }
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter(path), ';');
-            String[] header = new String[]{"", "Group ID", "Keyword", "Link", "Web site", "Members",
+            CSVWriter writer = new CSVWriter(new FileWriter(path), ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
+            String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Web site", "Members",
                     "Name", "Screen name"};
             writer.writeNext(header);
+            int index = 1;
             for (Group group : groups) {
+                if (DomainConfig.INSTANCE.useOnlyGroupsWhereCanPostFreely() && !group.canPost()) {
+                    continue;  // skip Group-s where is no access for current user to make wall post
+                }
                 Keyword keyword = group.keyword();
+                String webSite = group.webSite();
                 String[] csv = new String[]{
+                        Integer.toString(index),
+                        keyword != null ? keyword.keyword() : " ",
                         Long.toString(group.id()),
-                        keyword != null ? keyword.keyword() : "",
                         group.link(),
-                        group.webSite(),
+                        !TextUtils.isEmpty(webSite) ? webSite : " ",
                         Integer.toString(group.membersCount()),
-                        group.name(),
+                        group.name().replaceAll("\"", "*"),
                         group.screenName()};
                 writer.writeNext(csv);
+                ++index;
             }
             writer.close();
             return true;
@@ -57,26 +66,30 @@ public class ReportComposer {
             return false;
         }
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter(path), ';');
-            String[] header = new String[]{"", "Group ID", "Keyword", "Link", "Web site", "Members",
+            CSVWriter writer = new CSVWriter(new FileWriter(path), ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
+            String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Web site", "Members",
                     "Name", "Screen name", "Status", "Post ID", "Error code"};
             writer.writeNext(header);
+            int index = 1;
             for (GroupReport report : reports) {
                 Group group = report.group();
                 Keyword keyword = group.keyword();
+                String webSite = group.webSite();
                 String[] csv = new String[]{
+                        Integer.toString(index),
+                        keyword != null ? keyword.keyword() : " ",
                         Long.toString(group.id()),
-                        keyword != null ? keyword.keyword() : "",
                         group.link(),
-                        group.webSite(),
+                        !TextUtils.isEmpty(webSite) ? webSite : " ",
                         Integer.toString(group.membersCount()),
-                        group.name(),
+                        group.name().replaceAll("\"", "*"),
                         group.screenName(),
                         report.statusString(),
                         "post id: " + Long.toString(report.wallPostId()),
                         "error code: " + report.errorCode()
                 };
                 writer.writeNext(csv);
+                ++index;
             }
             writer.close();
             return true;
