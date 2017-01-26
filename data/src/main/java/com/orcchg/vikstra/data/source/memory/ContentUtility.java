@@ -118,7 +118,9 @@ public final class ContentUtility {
     public static File createInternalImageFile(Context context) throws IOException {
         String imageFileName = new StringBuilder("ViKStra_").append(FileUtility.currentTimestamp()).append('_').toString();
         File storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        return File.createTempFile(imageFileName, ".jpg", storageDir);
+        File file = File.createTempFile(imageFileName, ".jpg", storageDir);
+        file.deleteOnExit();  // delete this file when JVM terminates normally
+        return file;
     }
 
     public static String getFileProviderAuthority() {

@@ -199,6 +199,17 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
 
     // ------------------------------------------
     @Override
+    public int getThumbnailWidth() {
+        return getResources().getDimensionPixelSize(R.dimen.standard_thumbnail_size_small);
+    }
+
+    @Override
+    public int getThumbnailHeight() {
+        return getResources().getDimensionPixelSize(R.dimen.standard_thumbnail_size_small);
+    }
+
+    // ------------------------------------------
+    @Override
     public void clearInputText() {
         postDescriptionEditText.setText("");
     }

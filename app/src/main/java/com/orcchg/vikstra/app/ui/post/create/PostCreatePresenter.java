@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -41,6 +43,8 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     private @Nullable Post inputPost;
 
+    private int thumbnailWidth, thumbnailHeight;
+
     @Inject
     PostCreatePresenter(GetPostById getPostByIdUseCase, PostPost postPostUseCase, PutPost putPostUseCase) {
         this.getPostByIdUseCase = getPostByIdUseCase;
@@ -53,6 +57,15 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (isViewAttached()) {
+            thumbnailWidth  = getView().getThumbnailWidth();
+            thumbnailHeight = getView().getThumbnailHeight();
+        }
+    }
+
     @DebugLog @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -81,11 +94,16 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 }
                 break;
             case Constant.RequestCode.EXTERNAL_SCREEN_CAMERA:
-                Timber.i("Received result image from Camera");
-                Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-                if (isViewAttached()) getView().addMediaThumbnail(thumbnail);
                 String url = ContentUtility.InMemoryStorage.getLastStoredInternalImageUrl();
                 ContentUtility.InMemoryStorage.setLastStoredInternalImageUrl(null);  // drop camera image url
+                Timber.i("Received result image from Camera, url: %s", url);
+                Bitmap thumbnail = null;
+                if (data != null && data.getExtras() != null) {
+                    thumbnail = (Bitmap) data.getExtras().get("data");
+                } else {
+                    thumbnail = UiUtility.getBitmapFromFile(url, thumbnailWidth, thumbnailHeight);
+                }
+                if (isViewAttached()) getView().addMediaThumbnail(thumbnail);
                 Media media = Media.builder().setId(1000).setUrl(url).build();  // TODO: unique id
                 attachMedia.add(media);
                 hasAttachChanged = true;

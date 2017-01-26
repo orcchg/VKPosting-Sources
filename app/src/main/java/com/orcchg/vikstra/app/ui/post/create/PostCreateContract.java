@@ -15,6 +15,9 @@ public interface PostCreateContract {
         void openMediaLoadDialog();
         void openSaveChangesDialog();
 
+        int getThumbnailWidth();   // pixel size
+        int getThumbnailHeight();  // pixel size
+
         void clearInputText();
         String getInputText();
         void setInputText(String text);

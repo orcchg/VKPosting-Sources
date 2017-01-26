@@ -3,6 +3,7 @@ package com.orcchg.vikstra.app.ui.util;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -39,6 +40,31 @@ public class UiUtility {
         Bitmap bmp = Bitmap.createBitmap(view.getDrawingCache());
         view.setDrawingCacheEnabled(false);
         return bmp;
+    }
+
+    /**
+     * Retrieves {@link Bitmap} from file specified with {@param path}, resized to adopt
+     * the {@param targetWidth} and {@param targetHeight}.
+     *
+     * {@see https://developer.android.com/training/camera/photobasics.html}
+     */
+    public static Bitmap getBitmapFromFile(String path, int targetWidth, int targetHeight) {
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(path, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        // Determine how much to scale down the image
+        int scaleFactor = Math.min(photoW / targetWidth, photoH / targetHeight);
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+
+        return BitmapFactory.decodeFile(path, bmOptions);
     }
 
     public static boolean isVisible(View view) {
