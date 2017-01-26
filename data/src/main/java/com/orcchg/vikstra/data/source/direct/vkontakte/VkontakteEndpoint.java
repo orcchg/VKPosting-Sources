@@ -395,7 +395,7 @@ public class VkontakteEndpoint extends Endpoint {
     @NonNull
     private Group convert(Keyword keyword, VKApiCommunityFull vkGroup) {
         return Group.builder()
-                .setId(-vkGroup.id)  // negative id is for Vk Community, positive - for Vk User
+                .setId(vkGroup.id)
                 .setCanPost(vkGroup.can_post)
                 .setKeyword(keyword)
                 .setLink("https://vk.com/" + vkGroup.screen_name)

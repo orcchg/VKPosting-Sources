@@ -18,7 +18,7 @@ public class GetGroupById extends VkUseCase<VKApiCommunityArray> {
     public GetGroupById(long vkGroupId, ThreadExecutor threadExecutor,
                         PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
-        this.vkGroupId = Math.abs(vkGroupId);  // omit 'minus' sign
+        this.vkGroupId = vkGroupId;
     }
 
     @Override

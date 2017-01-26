@@ -93,7 +93,8 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
         if (parameters == null) throw new NoParametersException();
         Timber.d(parameters.toString());
         VKParameters params = new VKParameters();
-        params.put(VKApiConst.OWNER_ID, Long.toString(parameters.group.id()));  // destination user / community id
+        // negative id is for Vk Community, positive - for Vk User
+        params.put(VKApiConst.OWNER_ID, Long.toString(-parameters.group.id()));  // destination user / community id
         params.put(VKApiConst.MESSAGE, parameters.message);
         params.put(VKApiConst.ATTACHMENTS, parameters.attachments);
         params.put(VKApiConst.EXTENDED, 1);
