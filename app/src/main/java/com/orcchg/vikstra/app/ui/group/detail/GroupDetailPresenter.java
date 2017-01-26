@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
+import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.Group;
 
@@ -35,7 +36,11 @@ public class GroupDetailPresenter extends BasePresenter<GroupDetailContract.View
             @DebugLog @Override
             public void onFinish(@Nullable Group group) {
                 Timber.i("Use-Case: succeeded to get Group by id");
-                // TODO: impl
+                if (group == null) {
+                    Timber.wtf("Group wasn't found by id: %s", groupId);
+                    throw new ProgramException();
+                }
+                if (isViewAttached()) getView().onGroupLoaded(group.link());
             }
 
             @DebugLog @Override

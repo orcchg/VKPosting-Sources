@@ -12,6 +12,8 @@ import com.orcchg.vikstra.app.ui.base.widget.viewholder.NormalViewHolder;
 import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
 import com.orcchg.vikstra.domain.model.GroupReport;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -38,7 +40,7 @@ public class ReportViewHolder extends NormalViewHolder<ReportListItemVO> {
     @Override
     public void bind(ReportListItemVO viewObject) {
         titleTextView.setText(viewObject.groupName());
-        countTextView.setText(Integer.toString(viewObject.membersCount()));
+        countTextView.setText(String.format(Locale.ENGLISH, "%s", viewObject.membersCount()));
 
         @GroupReport.Status int status = viewObject.reportStatus();
         switch (status) {

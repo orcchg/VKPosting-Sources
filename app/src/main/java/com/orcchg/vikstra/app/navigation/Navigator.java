@@ -8,6 +8,8 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
+import android.text.TextUtils;
+import android.webkit.URLUtil;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.injection.PerActivity;
@@ -62,6 +64,29 @@ public class Navigator {
         } catch (android.content.ActivityNotFoundException ex) {
             Timber.e("No Activity was found to send an email !");
             DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_email).show();
+        }
+    }
+
+    /* File & Web */
+    // ------------------------------------------
+    @DebugLog @ExternalScreen
+    public void openBrowser(@NonNull Activity context, String url) {
+        if (URLUtil.isValidUrl(url)) {
+            Uri uri = Uri.parse(url);
+            if (TextUtils.isEmpty(uri.getScheme())) {
+                url = "https://" + url;
+                uri = Uri.parse(url);
+            }
+
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            if (intent.resolveActivity(context.getPackageManager()) != null) {
+                context.startActivity(intent);
+            } else {
+                Timber.e("No Activity was found to open Browser !");
+                DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_browser).show();
+            }
+        } else {
+            Timber.e("Input url [%s] is invalid !", url);
         }
     }
 

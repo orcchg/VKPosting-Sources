@@ -11,6 +11,7 @@
     <string name="empty_btn_label">Create</string>
     <string name="error_btn_label">Retry</string>
     <string name="error_empty_input_text">Input text is invalid!</string>
+    <string name="error_external_screen_not_found_browser">Browser application was not found on device!</string>
     <string name="error_external_screen_not_found_camera">Camera application was not found on device!</string>
     <string name="error_external_screen_not_found_email">Email application was not found on device!</string>
     <string name="error_external_screen_not_found_gallery">Gallery application was not found on device!</string>

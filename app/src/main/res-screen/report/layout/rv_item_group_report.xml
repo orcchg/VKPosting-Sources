@@ -31,6 +31,7 @@
             android:layout_marginStart="@dimen/standard_side_padding_small"
             android:drawablePadding="@dimen/standard_side_padding_mini"
             android:drawableRight="@drawable/ic_person_outline_black_18dp"
+            android:drawableEnd="@drawable/ic_person_outline_black_18dp"
             android:drawableTint="@color/black_40_opacity"
             android:gravity="center"
             android:textColor="@color/textSecondary"

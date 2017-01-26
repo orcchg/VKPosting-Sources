@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
 
 import com.orcchg.vikstra.R;
@@ -15,13 +16,13 @@ import com.orcchg.vikstra.app.ui.group.detail.injection.GroupDetailModule;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class GroupDetailActivity extends BaseActivity<GroupDetailContract.View, GroupDetailContract.Presenter>
         implements GroupDetailContract.View {
     private static final String EXTRA_GROUP_ID = "extra_group_id";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.fab) FloatingActionButton fab;
 
     private GroupDetailComponent groupDetailComponent;
     private long groupId = Constant.BAD_ID;
@@ -53,9 +54,9 @@ public class GroupDetailActivity extends BaseActivity<GroupDetailContract.View, 
         initData();  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_detail);
-        ButterKnife.bind(this);
-        initView();
-        initToolbar();
+//        ButterKnife.bind(this);
+//        initView();
+//        initToolbar();
     }
 
     /* Data */
@@ -73,5 +74,13 @@ public class GroupDetailActivity extends BaseActivity<GroupDetailContract.View, 
     private void initToolbar() {
         toolbar.setTitle(R.string.group_detail_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());
+    }
+
+    /* Contract */
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void onGroupLoaded(String url) {
+        navigationComponent.navigator().openBrowser(this, url);
+        finish();
     }
 }

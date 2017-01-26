@@ -9,6 +9,7 @@
     <string name="empty_btn_label">Создать</string>
     <string name="error_btn_label">Повторить</string>
     <string name="error_empty_input_text">Введен некорректный текст!</string>
+    <string name="error_external_screen_not_found_browser">Приложение Браузер не было найдено на устройстве!</string>
     <string name="error_external_screen_not_found_camera">Приложение для Камеры не было найдено на устройстве!</string>
     <string name="error_external_screen_not_found_email">Приложение для Email не было найдено на устройстве!</string>
     <string name="error_external_screen_not_found_gallery">Приложение для Галереи не было найдено на устройстве!</string>

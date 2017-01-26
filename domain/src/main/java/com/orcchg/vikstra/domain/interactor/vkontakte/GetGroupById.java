@@ -18,12 +18,14 @@ public class GetGroupById extends VkUseCase<VKApiCommunityArray> {
     public GetGroupById(long vkGroupId, ThreadExecutor threadExecutor,
                         PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
-        this.vkGroupId = vkGroupId;
+        this.vkGroupId = Math.abs(vkGroupId);  // omit 'minus' sign
     }
 
     @Override
     protected VKRequest prepareVkRequest() {
-        VKParameters params = VKParameters.from("group_id", vkGroupId, VKApiConst.EXTENDED, 1);
+        VKParameters params = new VKParameters();
+        params.put(VKApiConst.GROUP_ID, vkGroupId);
+        params.put(VKApiConst.EXTENDED, 1);
         return VKApi.groups().getById(params);
     }
 
