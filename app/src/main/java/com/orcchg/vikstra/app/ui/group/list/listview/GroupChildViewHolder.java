@@ -9,8 +9,12 @@ import com.bignerdranch.expandablerecyclerview.ChildViewHolder;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
 
+import java.util.Locale;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.R.attr.data;
 
 public class GroupChildViewHolder extends ChildViewHolder<GroupChildItem> {
 
@@ -37,7 +41,7 @@ public class GroupChildViewHolder extends ChildViewHolder<GroupChildItem> {
 
     public void bind(GroupChildItem model) {
         titleTextView.setText(model.getName());
-        countTextView.setText(Integer.toString(model.getCount()));
+        countTextView.setText(String.format(Locale.ENGLISH, "%s", model.getCount()));
 
         SupplyData data = new SupplyData.Builder()
                 .setModel(getChild())

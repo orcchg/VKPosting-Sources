@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 
+import com.orcchg.vikstra.BuildConfig;
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.group.list.OnAllGroupsSelectedListener;
@@ -594,14 +595,23 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     if (childItem.isSelected()) selectedGroups.add(childItem.getGroup());
                 }
             }
+
             if (selectedGroups.isEmpty()) {
                 Timber.d("No Group-s selected, send warning");
                 sendGroupsNotSelected();
                 return;
             }
+            Timber.d("Total selected Group-s: %s", selectedGroups.size());
+            if (BuildConfig.DEBUG) {
+                for (Group group : selectedGroups) {
+                    Timber.v("Selected Group: [%s] %s %s", group.id(), group.name(), group.membersCount());
+                }
+            }
+
             sendPostingStartedMessage(true);
             vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, currentPost,
                     createMakeWallPostCallback(), getView(), getView());
+
             if (isViewAttached()) {
                 if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
                     Timber.d("Open ReportScreen in interactive mode showing posting progress");
