@@ -172,7 +172,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         if (previousState == StateContainer.ERROR_LOAD && newState != StateContainer.START ||
             // forbid transition from any kind of loading to refreshing
             previousState != StateContainer.GROUPS_LOADED && newState == StateContainer.REFRESHING) {
-            Timber.wtf("Illegal state transition from [%s] to [%s]", previousState, newState);
+            Timber.e("Illegal state transition from [%s] to [%s]", previousState, newState);
             throw new IllegalStateException();
         }
 
@@ -737,7 +737,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onFinish(@Nullable GroupBundle bundle) {
                 if (bundle == null) {
-                    Timber.wtf("No GroupBundle found by id associated with input KeywordBundle, %s",
+                    Timber.e("No GroupBundle found by id associated with input KeywordBundle, %s",
                             "such id has improper value due to wrong association between instances at creation");
                     throw new ProgramException();
                 }
@@ -758,7 +758,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
                 if (bundle == null) {
-                    Timber.wtf("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
+                    Timber.e("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get KeywordBundle by id");
@@ -799,7 +799,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onFinish(@Nullable GroupBundle bundle) {
                 if (bundle == null) {
-                    Timber.wtf("Failed to put new GroupBundle to repository - item not created, as expected");
+                    Timber.e("Failed to put new GroupBundle to repository - item not created, as expected");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put GroupBundle");
@@ -825,7 +825,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onFinish(@Nullable GroupReportBundle bundle) {
                 if (bundle == null) {
-                    Timber.wtf("Failed to put new GroupReportBundle to repository - item not created, as expected");
+                    Timber.e("Failed to put new GroupReportBundle to repository - item not created, as expected");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put GroupReportBundle");
@@ -850,7 +850,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onFinish(@Nullable List<List<Group>> splitGroups) {
                 if (splitGroups == null) {
-                    Timber.wtf("Split list of Group-s must not be null, it could be empty at least");
+                    Timber.e("Split list of Group-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get list of Group-s by list of Keyword-s");

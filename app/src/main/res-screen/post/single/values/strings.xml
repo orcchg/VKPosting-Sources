@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="post_single_grid_empty_data_button_label">Create</string>
+    <string name="post_single_grid_empty_data_text">Create first post</string>
+    <string name="post_single_grid_screen_title">Posts</string>
+</resources>

@@ -163,7 +163,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
             @DebugLog @Override
             public void onFinish(@Nullable GroupBundle bundle) {
                 if (bundle == null) {
-                    Timber.wtf("No GroupBundle found by id, which has improper value in selected KeywordBundle");
+                    Timber.e("No GroupBundle found by id, which has improper value in selected KeywordBundle");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get GroupBundle by id");

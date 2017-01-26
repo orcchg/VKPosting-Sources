@@ -170,7 +170,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             public void onFinish(@Nullable KeywordBundle bundle) {
                 long keywordBundleId = getKeywordBundleByIdUseCase.getKeywordBundleId();
                 if (keywordBundleId != Constant.BAD_ID && bundle == null) {
-                    Timber.wtf("KeywordBundle wasn't found by id: %s", keywordBundleId);
+                    Timber.e("KeywordBundle wasn't found by id: %s", keywordBundleId);
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get KeywordBundle by id");
@@ -202,7 +202,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             @DebugLog @Override
             public void onFinish(@Nullable Boolean result) {
                 if (result == null || !result) {
-                    Timber.wtf("Failed to update KeywordBundle in repository - item not found by correct id, as expected");
+                    Timber.e("Failed to update KeywordBundle in repository - item not found by correct id, as expected");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to post KeywordBundle");
@@ -226,7 +226,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             @DebugLog @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
                 if (bundle == null) {
-                    Timber.wtf("Failed to put new KeywordBundle to repository - item not created, as expected");
+                    Timber.e("Failed to put new KeywordBundle to repository - item not created, as expected");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put KeywordBundle");

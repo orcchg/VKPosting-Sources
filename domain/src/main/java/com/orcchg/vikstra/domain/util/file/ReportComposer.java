@@ -7,8 +7,11 @@ import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
 
-import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -28,7 +31,8 @@ public class ReportComposer {
             return false;
         }
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter(path), ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
+            Writer io = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
+            CSVWriter writer = new CSVWriter(io, ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
             String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Members", "Name", "Screen name"};
             writer.writeNext(header);
             int index = 1;
@@ -62,7 +66,8 @@ public class ReportComposer {
             return false;
         }
         try {
-            CSVWriter writer = new CSVWriter(new FileWriter(path), ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
+            Writer io = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
+            CSVWriter writer = new CSVWriter(io, ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
             String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Members", "Name",
                     "Screen name", "Status", "Post ID", "Error code"};
             writer.writeNext(header);

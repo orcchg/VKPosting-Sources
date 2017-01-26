@@ -114,8 +114,9 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         keywordBundles.remove(position);
         listAdapter.remove(position);
 
-        if (keywordBundles.isEmpty() && isViewAttached()) {
-            getView().showEmptyList(getListTag());
+        if (keywordBundles.isEmpty()) {
+            changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
+            if (isViewAttached()) getView().showEmptyList(getListTag());
         }
     }
 
@@ -187,7 +188,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             @DebugLog @Override
             public void onFinish(@Nullable List<KeywordBundle> bundles) {
                 if (bundles == null) {
-                    Timber.wtf("List of KeywordBundle-s must not be null, it could be empty at least");
+                    Timber.e("List of KeywordBundle-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 } else if (bundles.isEmpty()) {
                     Timber.i("Use-Case: succeeded to get list of KeywordBundle-s");

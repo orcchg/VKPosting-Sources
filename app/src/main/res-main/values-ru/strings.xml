@@ -75,6 +75,10 @@
     <string name="keyword_create_snackbar_failed_to_update_post">Не удалось обновить набор слов. Повторите попытку</string>
     <string name="keyword_create_snackbar_keywords_limit_message">Достигнут лимит ключевых слов: %s</string>
     <string name="keyword_create_snackbar_no_keywords_added_message">Вы должны добавить хотя бы одно слово</string>
+    <!-- Keyword list screen -->
+    <string name="keyword_list_empty_data_button_label">Добавить</string>
+    <string name="keyword_list_empty_data_text">Добавьте новые слова</string>
+    <string name="keyword_list_screen_title">Слова</string>
     <!-- Main screen -->
     <string name="main_button_label_new_keywords">Добавить слова</string>
     <string name="main_dialog_authorization_failed">Авторизация не пройдена</string>
@@ -91,7 +95,13 @@
     <string name="post_create_snackbar_media_attach_limit_message">Достигнут лимит прикрепленных изображений: %s</string>
     <string name="post_create_text_description_hint">Введите текст публикации&#8230;</string>
     <!-- Post list screen -->
+    <string name="post_list_empty_data_button_label">Создать</string>
+    <string name="post_list_empty_data_text">Создайте первый пост</string>
     <string name="post_list_screen_title">Все публикации</string>
+    <!-- Post single grid screen -->
+    <string name="post_single_grid_empty_data_button_label">Создать</string>
+    <string name="post_single_grid_empty_data_text">Создайте первый пост</string>
+    <string name="post_single_grid_screen_title">Публикации</string>
     <!-- Post view screen -->
     <string name="post_view_screen_title">Публикация</string>
     <!-- Report screen -->

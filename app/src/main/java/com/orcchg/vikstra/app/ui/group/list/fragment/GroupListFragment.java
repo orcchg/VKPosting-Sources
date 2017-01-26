@@ -219,7 +219,7 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
                     ParentViewHolder pvh = (ParentViewHolder) viewHolder;
                     presenter.removeParentListItem(pvh.getParentAdapterPosition());
                 } else {
-                    Timber.wtf("Removing item neither child not parent item.");
+                    Timber.e("Removing item neither child not parent item.");
                     throw new ProgramException();
                 }
             }

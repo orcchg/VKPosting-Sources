@@ -110,7 +110,7 @@ public class VkontakteEndpoint extends Endpoint {
             @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<VKApiCommunityArray>> values) {
                 if (values == null) {
-                    Timber.wtf("List of VKApiCommunityArray-s must not be null, it could be empty at least");
+                    Timber.e("List of VKApiCommunityArray-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get Group-s by Keyword-s");
@@ -138,7 +138,7 @@ public class VkontakteEndpoint extends Endpoint {
             @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<VKApiCommunityArray>> values) {
                 if (values == null) {
-                    Timber.wtf("List of VKApiCommunityArray-s must not be null, it could be empty at least");
+                    Timber.e("List of VKApiCommunityArray-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get Group-s by Keyword-s (split)");
@@ -288,7 +288,7 @@ public class VkontakteEndpoint extends Endpoint {
             @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<GroupReportEssence>> reports) {
                 if (reports == null) {
-                    Timber.wtf("List of GroupReport-s must not be null, it could be empty at least");
+                    Timber.e("List of GroupReport-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to make wall posting");
@@ -327,7 +327,7 @@ public class VkontakteEndpoint extends Endpoint {
             @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<VKPhotoArray>> photos) {
                 if (photos == null) {
-                    Timber.wtf("List of VKPhotoArray-s must not be null, it could be empty at least");
+                    Timber.e("List of VKPhotoArray-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get upload photos");
@@ -430,7 +430,7 @@ public class VkontakteEndpoint extends Endpoint {
         }
         // Wall posting has been cancelled before obtaining any valid data or error code
         if (!item.cancelled) {
-            Timber.wtf("Wall posting result has no data and error and must have been cancelled, but it hasn't");
+            Timber.e("Wall posting result has no data and error and must have been cancelled, but it hasn't");
             throw new ProgramException();
         }
         return GroupReportEssence.builder()

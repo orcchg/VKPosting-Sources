@@ -85,7 +85,7 @@ public abstract class UseCase<Result> implements Runnable {
         if (threadExecutor == null) {
             String message = "UseCase created using default ctor must only be executed" +
                     " synchronously within some another UseCase !";
-            Timber.wtf(message);
+            Timber.e(message);
             throw new IllegalStateException(message);
         }
         threadExecutor.execute(this);

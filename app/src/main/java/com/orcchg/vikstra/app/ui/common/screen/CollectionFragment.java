@@ -9,6 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseListFragment;
@@ -30,8 +32,12 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
 
     protected @BindView(R.id.swipe_refresh_layout) SwipeRefreshLayout swipeRefreshLayout;
     protected @BindView(R.id.empty_view) View emptyView;
-    protected @BindView(R.id.loading_view) View loadingView;
     protected @BindView(R.id.error_view) View errorView;
+    protected @BindView(R.id.loading_view) View loadingView;
+    protected @BindView(R.id.tv_error) TextView errorTextView;
+    protected @BindView(R.id.tv_empty_data) TextView emptyDataTextView;
+    protected @BindView(R.id.btn_retry) Button errorRetryButton;
+    protected @BindView(R.id.btn_empty_data) Button emptyDataButton;
     protected @OnClick(R.id.btn_empty_data)
     void onEmptyDataClick() {
         if (isGrid()) {

@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="keyword_list_empty_data_button_label">Add</string>
+    <string name="keyword_list_empty_data_text">Add new keywords</string>
     <string name="keyword_list_screen_title">Keywords</string>
 </resources>

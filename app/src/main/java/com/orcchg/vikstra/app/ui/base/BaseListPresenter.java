@@ -60,7 +60,7 @@ public abstract class BaseListPresenter<V extends MvpListView> extends BasePrese
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (listAdapter == null) {
             String message = "Concrete method createListAdapter() must be called from subclass Ctor first!";
-            Timber.wtf(message);
+            Timber.e(message);
             throw new IllegalStateException(message);
         }
         super.onCreate(savedInstanceState);

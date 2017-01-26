@@ -56,6 +56,10 @@
                   android:label="@string/post_list_screen_title"
                   android:theme="@style/AppTheme"/>
 
+        <activity android:name=".app.ui.post.single.PostSingleGridActivity"
+                  android:label="@string/post_single_grid_screen_title"
+                  android:theme="@style/AppTheme"/>
+
         <activity android:name=".app.ui.post.view.PostViewActivity"
                   android:label="@string/post_view_screen_title"
                   android:theme="@style/AppTheme"/>

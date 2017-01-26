@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.common.content.ISwipeToDismiss;
 import com.orcchg.vikstra.app.ui.common.screen.SimpleCollectionFragment;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -41,6 +42,8 @@ public class KeywordListFragment extends SimpleCollectionFragment implements Key
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         createItemTouchHelper().attachToRecyclerView(recyclerView);
+        emptyDataTextView.setText(R.string.keyword_list_empty_data_text);
+        emptyDataButton.setText(R.string.keyword_list_empty_data_button_label);
         return rootView;
     }
 

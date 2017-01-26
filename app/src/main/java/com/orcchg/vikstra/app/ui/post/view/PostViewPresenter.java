@@ -68,7 +68,7 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
             @Override
             public void onFinish(@Nullable Post post) {
                 if (post == null) {
-                    Timber.wtf("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
+                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get Post by id");

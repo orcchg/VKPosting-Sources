@@ -37,7 +37,7 @@ public class GroupDetailPresenter extends BasePresenter<GroupDetailContract.View
             public void onFinish(@Nullable Group group) {
                 Timber.i("Use-Case: succeeded to get Group by id");
                 if (group == null) {
-                    Timber.wtf("Group wasn't found by id: %s", groupId);
+                    Timber.e("Group wasn't found by id: %s", groupId);
                     throw new ProgramException();
                 }
                 if (isViewAttached()) getView().onGroupLoaded(group.link());

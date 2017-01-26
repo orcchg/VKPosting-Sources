@@ -224,7 +224,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 inputPost = post;
                 long postId = getPostByIdUseCase.getPostId();
                 if (postId != Constant.BAD_ID && post == null) {
-                    Timber.wtf("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
+                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get Post by id");
@@ -272,7 +272,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
             @DebugLog @Override
             public void onFinish(@Nullable Boolean result) {
                 if (result == null || !result) {
-                    Timber.wtf("Failed to update Post in repository - item not found by correct id, as expected");
+                    Timber.e("Failed to update Post in repository - item not found by correct id, as expected");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to post Post");
@@ -293,7 +293,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
             @DebugLog @Override
             public void onFinish(@Nullable Post post) {
                 if (post == null) {
-                    Timber.wtf("Failed to put new Post to repository - item not created, as expected");
+                    Timber.e("Failed to put new Post to repository - item not created, as expected");
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put Post");

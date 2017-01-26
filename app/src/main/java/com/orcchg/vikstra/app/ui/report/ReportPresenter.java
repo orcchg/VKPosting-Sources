@@ -198,7 +198,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             @DebugLog @Override
             public void onFinish(@Nullable GroupReportBundle bundle) {
                 if (bundle == null || bundle.groupReports() == null) {
-                    Timber.wtf("GroupReportBundle wasn't found by id [%s], or groupReports property is null",
+                    Timber.e("GroupReportBundle wasn't found by id [%s], or groupReports property is null",
                             getGroupReportBundleByIdUseCase.getGroupReportId());
                     throw new ProgramException();
                 } else if (bundle.groupReports().isEmpty()) {

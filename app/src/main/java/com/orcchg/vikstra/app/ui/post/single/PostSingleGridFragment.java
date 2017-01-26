@@ -1,7 +1,12 @@
 package com.orcchg.vikstra.app.ui.post.single;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.common.screen.SimpleCollectionFragment;
@@ -28,6 +33,16 @@ public class PostSingleGridFragment extends SimpleCollectionFragment implements 
     @Override
     protected boolean autoFit() {
         return true;
+    }
+
+    /* Lifecycle */
+    // ------------------------------------------
+    @Nullable @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        emptyDataTextView.setText(R.string.post_single_grid_empty_data_text);
+        emptyDataButton.setText(R.string.post_single_grid_empty_data_button_label);
+        return view;
     }
 
     /* Contract */
