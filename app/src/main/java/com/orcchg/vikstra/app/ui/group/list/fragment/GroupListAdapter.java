@@ -11,14 +11,18 @@ import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.group.list.OnAllGroupsSelectedListener;
 import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
-import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
-import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildViewHolder;
-import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
-import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentViewHolder;
+import com.orcchg.vikstra.app.ui.group.list.listview.parent.AddNewKeywordParentItem;
+import com.orcchg.vikstra.app.ui.group.list.listview.child.GroupChildItem;
+import com.orcchg.vikstra.app.ui.group.list.listview.child.GroupChildViewHolder;
+import com.orcchg.vikstra.app.ui.group.list.listview.parent.GroupParentItem;
+import com.orcchg.vikstra.app.ui.group.list.listview.parent.GroupParentViewHolder;
+import com.orcchg.vikstra.domain.model.Keyword;
 
 import java.util.List;
 
 public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem, GroupChildItem, GroupParentViewHolder, GroupChildViewHolder> {
+
+    private static final int TYPE_ADD_NEW = 2;
 
     public interface OnCheckedChangeListener {
         void onCheckedChange(GroupChildItem data, boolean isChecked);
@@ -28,6 +32,8 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
     private OnAllGroupsSelectedListener onAllGroupsSelectedListener;
     private CompoundButton.OnCheckedChangeListener childItemSwitcherListener;
     private OnCheckedChangeListener externalChildItemSwitcherListener;
+
+    private boolean isAddingNewItem;
 
     public GroupListAdapter(@NonNull List<GroupParentItem> parentItems,
                             OnGroupClickListener onGroupClickListener,
@@ -40,6 +46,19 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
 
     public void setExternalChildItemSwitcherListener(OnCheckedChangeListener listener) {
         externalChildItemSwitcherListener = listener;
+    }
+
+    public void setAddingNewItem(boolean isAddingNewItem, Keyword keyword) {
+        // TODO: freezed
+//        this.isAddingNewItem = isAddingNewItem;
+//        if (isAddingNewItem) {
+//            GroupParentItem item = new AddNewKeywordParentItem(keyword);
+//            getParentList().add(0, item);
+//            notifyParentInserted(0);
+//        } else {
+//            getParentList().remove(0);
+//            notifyParentRemoved(0);
+//        }
     }
 
     @NonNull @Override
@@ -62,12 +81,14 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
     }
 
     @Override
-    public void onBindParentViewHolder(@NonNull GroupParentViewHolder parentViewHolder, int parentPosition, @NonNull GroupParentItem parent) {
+    public void onBindParentViewHolder(@NonNull GroupParentViewHolder parentViewHolder,
+                                       int parentPosition, @NonNull GroupParentItem parent) {
         parentViewHolder.bind(parent);
     }
 
     @Override
-    public void onBindChildViewHolder(@NonNull GroupChildViewHolder childViewHolder, int parentPosition, int childPosition, @NonNull GroupChildItem child) {
+    public void onBindChildViewHolder(@NonNull GroupChildViewHolder childViewHolder,
+                                      int parentPosition, int childPosition, @NonNull GroupChildItem child) {
         childViewHolder.bind(child);
     }
 
@@ -93,5 +114,12 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
                 externalChildItemSwitcherListener.onCheckedChange(childItem, isChecked);
             }
         };
+    }
+
+    // ------------------------------------------
+    @Override
+    public int getParentViewType(int parentPosition) {
+        if (isAddingNewItem && parentPosition == 0) return TYPE_ADD_NEW;
+        return super.getParentViewType(parentPosition);
     }
 }

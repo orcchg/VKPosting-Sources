@@ -1,18 +1,19 @@
-package com.orcchg.vikstra.app.ui.group.list.listview;
+package com.orcchg.vikstra.app.ui.group.list.listview.parent;
 
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bignerdranch.expandablerecyclerview.ParentViewHolder;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.group.list.OnAllGroupsSelectedListener;
+import com.orcchg.vikstra.app.ui.base.widget.expandable.viewholder.BaseParentViewHolder;
+import com.orcchg.vikstra.app.ui.group.list.listview.child.GroupChildItem;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GroupParentViewHolder extends ParentViewHolder<GroupParentItem, GroupChildItem> {
+public class GroupParentViewHolder extends BaseParentViewHolder<GroupParentItem, GroupChildItem> {
 
     @BindView(R.id.tv_title) TextView titleTextView;
     @BindView(R.id.tv_selected_count) TextView selectedCountTextView;

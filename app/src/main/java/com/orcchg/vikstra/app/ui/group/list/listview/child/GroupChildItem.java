@@ -1,8 +1,9 @@
-package com.orcchg.vikstra.app.ui.group.list.listview;
+package com.orcchg.vikstra.app.ui.group.list.listview.child;
 
+import com.orcchg.vikstra.app.ui.base.widget.expandable.item.BaseChildItem;
 import com.orcchg.vikstra.domain.model.Group;
 
-public class GroupChildItem {
+public class GroupChildItem extends BaseChildItem {
 
     private final Group group;
 

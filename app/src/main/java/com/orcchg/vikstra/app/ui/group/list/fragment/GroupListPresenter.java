@@ -14,8 +14,8 @@ import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
 import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListMediatorComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorModule;
-import com.orcchg.vikstra.app.ui.group.list.listview.GroupChildItem;
-import com.orcchg.vikstra.app.ui.group.list.listview.GroupParentItem;
+import com.orcchg.vikstra.app.ui.group.list.listview.child.GroupChildItem;
+import com.orcchg.vikstra.app.ui.group.list.listview.parent.GroupParentItem;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
@@ -304,6 +304,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         }
 
         newlyAddedKeyword = keyword;
+        listAdapter.setAddingNewItem(true, keyword);
 
         addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
         addKeywordToBundleUseCase.execute();
@@ -312,6 +313,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private void stateAddKeywordFinish(boolean result) {
         setState(StateContainer.ADD_KEYWORD_FINISH);
         // enter ADD_KEYWORD_FINISH state logic
+
+        listAdapter.setAddingNewItem(false, null);
 
         if (result) {
             Timber.d("Adding Keyword and requesting more Group-s from network");

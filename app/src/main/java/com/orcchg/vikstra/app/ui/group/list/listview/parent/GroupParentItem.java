@@ -1,13 +1,14 @@
-package com.orcchg.vikstra.app.ui.group.list.listview;
+package com.orcchg.vikstra.app.ui.group.list.listview.parent;
 
-import com.bignerdranch.expandablerecyclerview.model.Parent;
+import com.orcchg.vikstra.app.ui.base.widget.expandable.item.BaseParentItem;
+import com.orcchg.vikstra.app.ui.group.list.listview.child.GroupChildItem;
 import com.orcchg.vikstra.domain.model.Keyword;
 
 import java.util.List;
 
-public class GroupParentItem implements Parent<GroupChildItem> {
+public class GroupParentItem extends BaseParentItem<GroupChildItem> {
 
-    private Keyword keyword;
+    protected final Keyword keyword;
     private List<GroupChildItem> childItems;
     private int selectedCount;
 
