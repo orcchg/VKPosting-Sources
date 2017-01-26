@@ -4,6 +4,7 @@ public class Constant {
     public static final long BAD_ID = -1;
     public static final long INIT_ID = 0;
     public static final int NO_ERROR = 0;
+    public static final String NO_KEYWORD = "no_keyword";
 
     public static final int KEYWORDS_LIMIT = 7;
     public static final int MEDIA_ATTACH_LIMIT = 7;

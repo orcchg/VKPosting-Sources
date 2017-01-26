@@ -7,22 +7,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
-import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 import com.orcchg.vikstra.R;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.BaseExpandableAdapter;
 import com.orcchg.vikstra.app.ui.group.list.OnAllGroupsSelectedListener;
 import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
-import com.orcchg.vikstra.app.ui.group.list.listview.parent.AddNewKeywordParentItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.child.GroupChildItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.child.GroupChildViewHolder;
+import com.orcchg.vikstra.app.ui.group.list.listview.parent.AddNewKeywordParentViewHolder;
 import com.orcchg.vikstra.app.ui.group.list.listview.parent.GroupParentItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.parent.GroupParentViewHolder;
 import com.orcchg.vikstra.domain.model.Keyword;
 
 import java.util.List;
 
-public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem, GroupChildItem, GroupParentViewHolder, GroupChildViewHolder> {
+import hugo.weaving.DebugLog;
 
-    private static final int TYPE_ADD_NEW = 2;
+public class GroupListAdapter extends BaseExpandableAdapter<GroupParentItem, GroupChildItem, GroupParentViewHolder, GroupChildViewHolder> {
+
+    private static final int TYPE_ADD_NEW = TYPE_FIRST_USER;
 
     public interface OnCheckedChangeListener {
         void onCheckedChange(GroupChildItem data, boolean isChecked);
@@ -48,25 +50,36 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
         externalChildItemSwitcherListener = listener;
     }
 
+    @DebugLog
     public void setAddingNewItem(boolean isAddingNewItem, Keyword keyword) {
-        // TODO: freezed
-//        this.isAddingNewItem = isAddingNewItem;
-//        if (isAddingNewItem) {
-//            GroupParentItem item = new AddNewKeywordParentItem(keyword);
-//            getParentList().add(0, item);
-//            notifyParentInserted(0);
-//        } else {
-//            getParentList().remove(0);
-//            notifyParentRemoved(0);
-//        }
+        boolean oldValue = this.isAddingNewItem;
+        this.isAddingNewItem = isAddingNewItem;
+        if (isAddingNewItem) {
+            GroupParentItem item = new GroupParentItem(keyword);
+            getParentList().add(0, item);
+            notifyParentInserted(0);
+        } else if (oldValue) {  // ignore if it wasn't previously set to TRUE
+            getParentList().remove(0);
+            notifyParentRemoved(0);
+        }
     }
 
     @NonNull @Override
     public GroupParentViewHolder onCreateParentViewHolder(@NonNull ViewGroup parentViewGroup, int viewType) {
         Context context = parentViewGroup.getContext();
-        View itemView = LayoutInflater.from(context).inflate(R.layout.group_list_parent_item, parentViewGroup, false);
-        GroupParentViewHolder viewHolder = new GroupParentViewHolder(itemView);
-        viewHolder.setOnAllGroupsSelectedListener(onAllGroupsSelectedListener);
+        GroupParentViewHolder viewHolder;
+        switch (viewType) {
+            case TYPE_ADD_NEW:
+                View itemView1 = LayoutInflater.from(context).inflate(R.layout.group_list_add_new_keyword_item, parentViewGroup, false);
+                viewHolder = new AddNewKeywordParentViewHolder(itemView1);
+                break;
+            case TYPE_PARENT:
+            default:
+                View itemView2 = LayoutInflater.from(context).inflate(R.layout.group_list_parent_item, parentViewGroup, false);
+                viewHolder = new GroupParentViewHolder(itemView2);
+                viewHolder.setOnAllGroupsSelectedListener(onAllGroupsSelectedListener);
+                break;
+        }
         return viewHolder;
     }
 
@@ -121,5 +134,10 @@ public class GroupListAdapter extends ExpandableRecyclerAdapter<GroupParentItem,
     public int getParentViewType(int parentPosition) {
         if (isAddingNewItem && parentPosition == 0) return TYPE_ADD_NEW;
         return super.getParentViewType(parentPosition);
+    }
+
+    @Override
+    public boolean isParentViewType(int viewType) {
+        return super.isParentViewType(viewType) || viewType == TYPE_ADD_NEW;
     }
 }

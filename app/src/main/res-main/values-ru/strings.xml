@@ -54,6 +54,8 @@
     <string name="group_list_dialog_new_dump_file_hint">Введите имя файла</string>
     <string name="group_list_dialog_new_keyword_title">Новое слово</string>
     <string name="group_list_dialog_new_keyword_hint">Введите новое слово</string>
+    <string name="group_list_empty_keywords_data_button_label">Добавить</string>
+    <string name="group_list_empty_keywords_data_text">Добавьте новые слова</string>
     <string name="group_list_error_add_keyword">Не удалось добавить слово!</string>
     <string name="group_list_fab_label_post">Пост</string>
     <string name="group_list_screen_title">Выберите группы</string>

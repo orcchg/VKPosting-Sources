@@ -30,7 +30,7 @@ public abstract class Group implements Comparable<Group> {
 
     public abstract @External long id();  // id of group in Social Network
     public abstract boolean canPost();
-    public abstract @Nullable Keyword keyword();
+    public abstract Keyword keyword();
     public abstract String link();
     public abstract int membersCount();
     public abstract String name();

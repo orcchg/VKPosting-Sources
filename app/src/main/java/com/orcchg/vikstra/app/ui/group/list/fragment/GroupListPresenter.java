@@ -261,6 +261,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         inputGroupBundle = bundle;  // assign input GroupBundle
 
+        // hide progress list item if it was previously visible after new Keyword's been added
+        listAdapter.setAddingNewItem(false, null);
+
         // fill Child items in expandable list and show it
         fillGroupsList(splitGroups);
 
@@ -298,12 +301,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // enter ADD_KEYWORD_START state logic
 
         // disable swipe-to-refresh while add keyword is in progress
-        if (isViewAttached()) {
-            // TODO: show soft loading during add new keyword
-            getView().enableSwipeToRefresh(false);
-        }
+        if (isViewAttached()) getView().enableSwipeToRefresh(false);
 
         newlyAddedKeyword = keyword;
+
+        // show progress list item while adding new Keyword with Group-s
         listAdapter.setAddingNewItem(true, keyword);
 
         addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
@@ -314,11 +316,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.ADD_KEYWORD_FINISH);
         // enter ADD_KEYWORD_FINISH state logic
 
-        listAdapter.setAddingNewItem(false, null);
-
         if (result) {
             Timber.d("Adding Keyword and requesting more Group-s from network");
-            inputKeywordBundle.keywords().add(newlyAddedKeyword);
+            // add new Keyword to the head of input KeywordBundle to preserve ordering
+            inputKeywordBundle.keywords().add(0, newlyAddedKeyword);
             isKeywordBundleChanged = true;
 
             GroupParentItem item = new GroupParentItem(newlyAddedKeyword);
@@ -413,6 +414,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receiveAskForRetry() {
+        retry();
+    }
+
+    @Override
     public void receivePostHasChangedRequest() {
         refreshPost();
     }
@@ -501,8 +507,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @DebugLog
-    private void addGroupsToList(List<Group> groups, int index) {
-        Timber.i("addGroupsToList: total groups = %s, index = %s", groups.size(), index);
+    private void addGroupsToList(List<Group> groups, int keywordIndex) {
+        Timber.i("addGroupsToList: total groups = %s, index = %s", groups.size(), keywordIndex);
         if (AppConfig.INSTANCE.isAllGroupsSortedByMembersCount()) Collections.sort(groups);
 
         /**
@@ -531,7 +537,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             }
         }
         totalGroups += xTotalGroups;
-        GroupParentItem parentItem = groupParentItems.get(index);
+        GroupParentItem parentItem = groupParentItems.get(keywordIndex);
         parentItem.setSelectedCount(xSelectedCount);
         parentItem.setChildList(childItems);
     }
@@ -567,14 +573,40 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
          * 'splitGroups' trying the first Group in each list and compares it's Keyword with those in
          * Parent item from expandable list. No matching means error in program and leads to exception.
          */
+        int keywordIndex = 0;
+        for (List<Group> item : splitGroups) {
+//            // list of Group-s corresponding to the Keyword
+//            int keywordIndex = -1;
+//            if (!item.isEmpty()) {
+//                Group group = item.get(0);
+//                for (int i = 0; i < groupParentItems.size(); ++i) {
+//                    Keyword keyword = groupParentItems.get(i).getKeyword();  // take each Keyword
+//                    if (keyword.equals(group.keyword())) {
+//                        keywordIndex = i;
+//                        // TODO: found item
+//                        break;  // leave from loop over Keyword-s as Parent items in the list
+//                    }
+//                }
+//                if (keywordIndex < 0) {  // inconsistency between list of Keyword-s and certain set of Group-s
+//                    Timber.e("There is no Keyword Parent item corresponding to the list of Group-s with Keyword: %s", group.keyword());
+//                    throw new ProgramException();
+//                }
+//            } else {
+//                Timber.d("Group-s not found for Keyword: %s", keyword.keyword());
+//            }
+            addGroupsToList(item, keywordIndex++);
+        }
+
         for (int i = 0; i < groupParentItems.size(); ++i) {
             Keyword keyword = groupParentItems.get(i).getKeyword();  // take each Keyword
             List<Group> groups = new ArrayList<>();  // list of Group-s corresponding to the Keyword
             for (List<Group> item : splitGroups) {
-                Group group = item.get(0);
-                if (keyword.equals(group.keyword())) {
-                    groups = item;
-                    break;  // found matching between Keyword and list of Group-s
+                if (!item.isEmpty()) {
+                    Group group = item.get(0);
+                    if (keyword.equals(group.keyword())) {
+                        groups = item;
+                        break;  // found matching between Keyword and list of Group-s
+                    }
                 }
             }
             if (groups.isEmpty()) Timber.d("Group-s not found for Keyword: %s", keyword.keyword());
@@ -715,6 +747,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         groupParentItems.remove(position);
         listAdapter.notifyParentRemoved(position);
+
+        if (groupParentItems.isEmpty() && isViewAttached()) getView().showEmptyList(GroupListFragment.RV_TAG);
     }
 
     /* Callback */

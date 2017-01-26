@@ -1,19 +1,20 @@
 package com.orcchg.vikstra.app.ui.group.list.listview.parent;
 
-import com.orcchg.vikstra.app.ui.base.adapter.expandable.item.BaseParentItem;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.base.BaseParentItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.child.GroupChildItem;
 import com.orcchg.vikstra.domain.model.Keyword;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GroupParentItem extends BaseParentItem<GroupChildItem> {
 
-    protected final Keyword keyword;
+    private final Keyword keyword;
     private List<GroupChildItem> childItems;
     private int selectedCount;
 
     public GroupParentItem(Keyword keyword) {
-        this(keyword, null);
+        this(keyword, new ArrayList<>());
     }
 
     public GroupParentItem(Keyword keyword, List<GroupChildItem> childItems) {
@@ -50,10 +51,5 @@ public class GroupParentItem extends BaseParentItem<GroupChildItem> {
 
     public int getSelectedCount() {
         return selectedCount;
-    }
-
-    @Override
-    public boolean isInitiallyExpanded() {
-        return false;
     }
 }

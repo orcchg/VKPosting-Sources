@@ -36,7 +36,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     public static final int RV_TAG = Constant.ListTag.GROUP_LIST_SCREEN;
 
-    private ItemTouchHelper itemTouchHelper;
     @OnClick(R.id.btn_retry)
     void onRetryClick() {
         presenter.retry();  // override
@@ -88,7 +87,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     // --------------------------------------------------------------------------------------------
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        initItemTouchHelper();
         Bundle args = getArguments();
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
         postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
@@ -100,7 +98,9 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
         swipeRefreshLayout.setOnRefreshListener(() -> presenter.refresh());  // override
-        itemTouchHelper.attachToRecyclerView(recyclerView);
+        createItemTouchHelper().attachToRecyclerView(recyclerView);
+        emptyDataTextView.setText(R.string.group_list_empty_keywords_data_text);
+        emptyDataButton.setText(R.string.group_list_empty_keywords_data_button_label);
         return rootView;
     }
 
@@ -203,8 +203,8 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    private void initItemTouchHelper() {
-        itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+    private ItemTouchHelper createItemTouchHelper() {
+        return new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;

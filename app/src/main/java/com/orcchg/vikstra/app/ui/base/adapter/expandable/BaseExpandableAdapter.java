@@ -3,10 +3,10 @@ package com.orcchg.vikstra.app.ui.base.adapter.expandable;
 import android.support.annotation.NonNull;
 
 import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
-import com.orcchg.vikstra.app.ui.base.adapter.expandable.item.BaseChildItem;
-import com.orcchg.vikstra.app.ui.base.adapter.expandable.item.BaseParentItem;
-import com.orcchg.vikstra.app.ui.base.adapter.expandable.viewholder.BaseChildViewHolder;
-import com.orcchg.vikstra.app.ui.base.adapter.expandable.viewholder.BaseParentViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.base.BaseChildItem;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.base.BaseParentItem;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.base.BaseChildViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.base.BaseParentViewHolder;
 
 import java.util.List;
 

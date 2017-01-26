@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
+import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.group.list.activity.injection.DaggerGroupListComponent;
@@ -40,7 +41,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GroupListActivity extends BasePermissionActivity<GroupListContract.View, GroupListContract.Presenter>
-        implements GroupListContract.View, ShadowHolder {
+        implements GroupListContract.View, IScrollList, ShadowHolder {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
@@ -289,6 +290,22 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     @Override
     public void updateSelectedGroupsCounter(int count, int total) {
         selectedGroupsCountView.setText(String.format(Locale.ENGLISH, INFO_TITLE, count, total));
+    }
+
+    // ------------------------------------------
+    @Override
+    public void retryList() {
+        presenter.retry();
+    }
+
+    @Override
+    public void onEmptyList() {
+        openAddKeywordDialog();
+    }
+
+    @Override
+    public void onScrollList(int itemsLeftToEnd) {
+        // TODO: on scroll list
     }
 
     /* Resources */

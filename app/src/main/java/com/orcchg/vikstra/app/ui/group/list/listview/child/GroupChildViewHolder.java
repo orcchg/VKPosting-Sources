@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
-import com.orcchg.vikstra.app.ui.base.adapter.expandable.viewholder.BaseChildViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.base.BaseChildViewHolder;
 
 import java.util.Locale;
 
@@ -37,6 +37,7 @@ public class GroupChildViewHolder extends BaseChildViewHolder<GroupChildItem> {
         if (switcher != null) switcher.setOnCheckedChangeListener(switcherListener);
     }
 
+    @Override
     public void bind(GroupChildItem model) {
         titleTextView.setText(model.getName());
         countTextView.setText(String.format(Locale.ENGLISH, "%s", model.getCount()));

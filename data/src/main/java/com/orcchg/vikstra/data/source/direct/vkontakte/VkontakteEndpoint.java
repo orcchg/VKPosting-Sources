@@ -83,7 +83,7 @@ public class VkontakteEndpoint extends Endpoint {
             public void onFinish(@Nullable VKApiCommunityArray vkGroup) {
                 Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get Group by id");
                 if (callback != null) {
-                    Group group = vkGroup != null ? convert(null, vkGroup.get(0)) : null;  // null means no such group found by id
+                    Group group = vkGroup != null ? convert(Keyword.empty(), vkGroup.get(0)) : null;  // null means no such group found by id
                     callback.onFinish(group);  // pass found group further: in case of null value destination screen will handle it
                 }
             }

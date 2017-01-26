@@ -41,6 +41,7 @@ interface GroupListContract {
         void onFabClick();
         void onTitleChanged(String text);
         void performDumping(String path);
+        void retry();
 
         @DebugSake
         void setPostingTimeout(int timeout);

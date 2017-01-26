@@ -15,6 +15,9 @@
         <item name="keywords_flow_layout_blob_passive_color">@drawable/keywords_blob_passive_bg</item>
         <item name="keywords_flow_layout_blob_more_color">@drawable/keywords_blob_more_selector</item>
         <item name="keywords_flow_layout_blob_more_text_color">@drawable/keywords_blob_more_text_selector</item>
+
+        <item name="spbStyle">@style/SmoothProgressBar</item>
+        <item name="cpbStyle">@style/CircularThemeProgressBar</item>
     </style>
 
     <style name="CircularThemeProgressBar" parent="android:Widget.Holo.ProgressBar">
