@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.base.widget;
+package com.orcchg.vikstra.app.ui.base.adapter;
 
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -7,10 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.BaseViewHolder;
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.ErrorViewHolder;
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.LoadingViewHolder;
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.NormalViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.viewholder.BaseViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.viewholder.ErrorViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.viewholder.LoadingViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.viewholder.NormalViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -13,7 +13,7 @@ import android.view.View;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
-import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.content.ISwipeToDismiss;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.DaggerKeywordListComponent;

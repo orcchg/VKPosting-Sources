@@ -2,8 +2,8 @@ package com.orcchg.vikstra.app.ui.post.single.viewholder;
 
 import android.view.View;
 
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.BaseViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.viewholder.BaseViewHolder;
 
 import butterknife.ButterKnife;
 

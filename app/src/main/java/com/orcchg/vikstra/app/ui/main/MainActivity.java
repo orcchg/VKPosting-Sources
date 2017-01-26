@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.MvpListView;
-import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.content.ISwipeToDismiss;

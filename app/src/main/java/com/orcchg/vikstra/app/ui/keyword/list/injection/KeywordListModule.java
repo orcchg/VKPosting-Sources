@@ -1,7 +1,7 @@
 package com.orcchg.vikstra.app.ui.keyword.list.injection;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
-import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.injection.ListModule;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.KeywordBundleToVoMapper;

@@ -1,8 +1,8 @@
-package com.orcchg.vikstra.app.ui.base.widget.viewholder;
+package com.orcchg.vikstra.app.ui.base.adapter.viewholder;
 
 import android.view.View;
 
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
 
 public abstract class NormalViewHolder<Model> extends BaseViewHolder {
 

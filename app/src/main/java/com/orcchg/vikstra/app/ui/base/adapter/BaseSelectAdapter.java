@@ -1,8 +1,8 @@
-package com.orcchg.vikstra.app.ui.base.widget;
+package com.orcchg.vikstra.app.ui.base.adapter;
 
 import android.support.annotation.IntDef;
 
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.NormalViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.viewholder.NormalViewHolder;
 import com.orcchg.vikstra.app.ui.common.content.ISelectableModel;
 
 import java.lang.annotation.Retention;

@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.NormalViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.viewholder.NormalViewHolder;
 import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
 import com.orcchg.vikstra.domain.model.GroupReport;
 

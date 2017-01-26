@@ -1,6 +1,6 @@
-package com.orcchg.vikstra.app.ui.base.widget.expandable.item.stub;
+package com.orcchg.vikstra.app.ui.base.adapter.expandable.item.stub;
 
-import com.orcchg.vikstra.app.ui.base.widget.expandable.item.BaseParentItem;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.item.BaseParentItem;
 
 import java.util.ArrayList;
 import java.util.List;

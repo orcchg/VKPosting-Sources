@@ -5,7 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
-import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.post.single.injection.DaggerPostSingleGridComponent;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridComponent;

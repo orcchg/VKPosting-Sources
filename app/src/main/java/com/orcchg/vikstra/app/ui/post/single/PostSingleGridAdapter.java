@@ -6,9 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
-import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.BaseViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.orcchg.vikstra.app.ui.post.single.viewholder.NewPostSingleGridViewHolder;
 import com.orcchg.vikstra.app.ui.post.single.viewholder.PostSingleGridViewHolder;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;

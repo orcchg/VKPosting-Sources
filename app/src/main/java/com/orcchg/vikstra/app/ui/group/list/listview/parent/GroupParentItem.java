@@ -1,6 +1,6 @@
 package com.orcchg.vikstra.app.ui.group.list.listview.parent;
 
-import com.orcchg.vikstra.app.ui.base.widget.expandable.item.BaseParentItem;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.item.BaseParentItem;
 import com.orcchg.vikstra.app.ui.group.list.listview.child.GroupChildItem;
 import com.orcchg.vikstra.domain.model.Keyword;
 

@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.NormalViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.viewholder.NormalViewHolder;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 

@@ -2,7 +2,7 @@ package com.orcchg.vikstra.app.ui.group.list.listview.parent;
 
 import android.view.View;
 
-import com.orcchg.vikstra.app.ui.base.widget.expandable.viewholder.stub.SimpleBaseParentViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.viewholder.stub.SimpleBaseParentViewHolder;
 
 public class AddNewParentViewHolder extends SimpleBaseParentViewHolder {
 

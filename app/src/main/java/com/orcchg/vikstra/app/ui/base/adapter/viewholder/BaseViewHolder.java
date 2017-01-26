@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.base.widget.viewholder;
+package com.orcchg.vikstra.app.ui.base.adapter.viewholder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;

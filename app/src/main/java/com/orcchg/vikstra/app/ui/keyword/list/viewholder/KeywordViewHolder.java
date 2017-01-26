@@ -4,9 +4,9 @@ import android.view.View;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AppConfig;
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
-import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
-import com.orcchg.vikstra.app.ui.base.widget.viewholder.NormalViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.viewholder.NormalViewHolder;
 import com.orcchg.vikstra.app.ui.common.view.KeywordsFlowLayout;
 import com.orcchg.vikstra.app.ui.common.view.TitledFlowView;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListAdapter;

@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.base.widget.expandable.item;
+package com.orcchg.vikstra.app.ui.base.adapter.expandable.item;
 
 import com.bignerdranch.expandablerecyclerview.model.Parent;
 

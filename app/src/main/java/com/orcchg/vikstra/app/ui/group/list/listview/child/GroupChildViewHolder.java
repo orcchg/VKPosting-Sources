@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
-import com.orcchg.vikstra.app.ui.base.widget.expandable.viewholder.BaseChildViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.viewholder.BaseChildViewHolder;
 
 import java.util.Locale;
 

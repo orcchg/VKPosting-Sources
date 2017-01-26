@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.base.widget.expandable.viewholder;
+package com.orcchg.vikstra.app.ui.base.adapter.expandable.viewholder;
 
 import android.view.View;
 

@@ -1,6 +1,6 @@
 package com.orcchg.vikstra.app.ui.common.injection;
 
-import com.orcchg.vikstra.app.ui.base.widget.BaseSelectAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
 
 import dagger.Module;
 

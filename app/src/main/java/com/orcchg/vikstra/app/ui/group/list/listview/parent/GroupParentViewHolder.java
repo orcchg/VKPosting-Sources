@@ -6,7 +6,7 @@ import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.group.list.OnAllGroupsSelectedListener;
-import com.orcchg.vikstra.app.ui.base.widget.expandable.viewholder.BaseParentViewHolder;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.viewholder.BaseParentViewHolder;
 import com.orcchg.vikstra.app.ui.group.list.listview.child.GroupChildItem;
 
 import butterknife.BindView;

@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
 import com.orcchg.vikstra.app.ui.report.viewholder.ReportViewHolder;
 import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
 

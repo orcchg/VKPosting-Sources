@@ -6,7 +6,7 @@ import android.text.TextUtils;
 
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
-import com.orcchg.vikstra.app.ui.base.widget.BaseAdapter;
+import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportEssenceToVoMapper;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportToVoMapper;

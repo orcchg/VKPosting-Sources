@@ -1,6 +1,6 @@
 package com.orcchg.vikstra.app.ui.group.list.listview.child;
 
-import com.orcchg.vikstra.app.ui.base.widget.expandable.item.BaseChildItem;
+import com.orcchg.vikstra.app.ui.base.adapter.expandable.item.BaseChildItem;
 import com.orcchg.vikstra.domain.model.Group;
 
 public class GroupChildItem extends BaseChildItem {
