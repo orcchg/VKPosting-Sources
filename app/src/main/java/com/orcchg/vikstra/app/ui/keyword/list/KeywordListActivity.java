@@ -133,6 +133,12 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
 
     // ------------------------------------------
     @Override
+    public boolean isContentViewVisible(int tag) {
+        KeywordListFragment fragment = getFragment();
+        return fragment == null || fragment.isContentViewVisible(tag);
+    }
+
+    @Override
     public void showContent(int tag, boolean isEmpty) {
         showKeywords(isEmpty);
     }

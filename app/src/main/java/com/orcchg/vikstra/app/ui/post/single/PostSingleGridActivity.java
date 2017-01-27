@@ -64,6 +64,12 @@ public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.
 
     // ------------------------------------------
     @Override
+    public boolean isContentViewVisible(int tag) {
+        PostSingleGridFragment fragment = getFragment();
+        return fragment == null || fragment.isContentViewVisible(tag);
+    }
+
+    @Override
     public void showContent(int tag, boolean isEmpty) {
         showPosts(isEmpty);
     }

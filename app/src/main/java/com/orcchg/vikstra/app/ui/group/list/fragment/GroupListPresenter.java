@@ -330,7 +330,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // enter ADD_KEYWORD_START state logic
 
         // disable swipe-to-refresh while add keyword is in progress
-        if (isViewAttached()) getView().enableSwipeToRefresh(false);
+        if (isViewAttached()) {
+            getView().enableSwipeToRefresh(false);
+            // make expandable list view visible while adding new Parent list item, if it has been previously hidden
+            if (!getView().isContentViewVisible(GroupListFragment.RV_TAG)) {
+                getView().showContent(GroupListFragment.RV_TAG, false);
+            }
+        }
 
         newlyAddedKeyword = keyword;
 

@@ -219,6 +219,19 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     // ------------------------------------------
     @Override
+    public boolean isContentViewVisible(int tag) {
+        switch (tag) {
+            case KeywordListFragment.RV_TAG:
+                KeywordListFragment fragment = getKeywordListFragment();
+                if (fragment != null) return fragment.isContentViewVisible(tag);
+            case PostSingleGridFragment.RV_TAG:
+                PostSingleGridFragment fragment1 = getPostGridFragment();
+                if (fragment1 != null) return fragment1.isContentViewVisible(tag);
+        }
+        return true;  // must be unreachable state
+    }
+
+    @Override
     public void showContent(int tag, boolean isEmpty) {
         switch (tag) {
             case KeywordListFragment.RV_TAG:

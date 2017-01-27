@@ -23,6 +23,7 @@ import com.orcchg.vikstra.app.ui.common.screen.CollectionFragment;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListModule;
+import com.orcchg.vikstra.app.ui.group.list.listview.parent.AddNewKeywordParentViewHolder;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -205,6 +206,16 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     // --------------------------------------------------------------------------------------------
     private ItemTouchHelper createItemTouchHelper() {
         return new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+                /**
+                 * Here we disable swipe-to-dismiss behavior for certain kinds of ViewHolders.
+                 * {@see http://stackoverflow.com/questions/30713121/disable-swipe-for-position-in-recyclerview-using-itemtouchhelper-simplecallback}
+                 */
+                if (AddNewKeywordParentViewHolder.class.isInstance(viewHolder)) return 0;
+                return super.getSwipeDirs(recyclerView, viewHolder);
+            }
+
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;

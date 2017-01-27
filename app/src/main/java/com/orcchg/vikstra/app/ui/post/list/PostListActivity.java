@@ -117,6 +117,12 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
 
     // ------------------------------------------
     @Override
+    public boolean isContentViewVisible(int tag) {
+        PostListFragment fragment = getFragment();
+        return fragment == null || fragment.isContentViewVisible(tag);
+    }
+
+    @Override
     public void showContent(int tag, boolean isEmpty) {
         showPosts(isEmpty);
     }

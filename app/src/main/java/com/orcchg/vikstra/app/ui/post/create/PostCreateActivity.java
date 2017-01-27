@@ -257,6 +257,11 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
 
     // ------------------------------------------
     @Override
+    public boolean isContentViewVisible(int tag) {
+        return true;  // always visible
+    }
+
+    @Override
     public void showContent(int tag, boolean isEmpty) {
         container.setVisibility(View.VISIBLE);
         loadingView.setVisibility(View.GONE);

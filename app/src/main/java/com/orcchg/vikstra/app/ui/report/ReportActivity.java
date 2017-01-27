@@ -34,8 +34,6 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.orcchg.vikstra.R.id.view;
-
 public class ReportActivity extends BasePermissionActivity<ReportContract.View, ReportContract.Presenter>
         implements ReportContract.View, IScrollList {
     private static final String FRAGMENT_TAG = "report_fragment_tag";
@@ -246,6 +244,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     // ------------------------------------------
+    @Override
+    public boolean isContentViewVisible(int tag) {
+        ReportFragment fragment = getFragment();
+        return fragment == null || fragment.isContentViewVisible(tag);
+    }
+
     @Override
     public void showContent(int tag, boolean isEmpty) {
         showGroupReports(isEmpty);

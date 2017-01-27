@@ -112,8 +112,13 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
     }
 
     @Override
+    public boolean isContentViewVisible(int tag) {
+        return UiUtility.isVisible(recyclerView);
+    }
+
+    @Override
     public void showContent(int tag, boolean isEmpty) {
-        if (!isEmpty && recyclerView.getVisibility() == View.VISIBLE) {
+        if (!isEmpty && UiUtility.isVisible(recyclerView)) {
             Timber.v("List items are already visible");
             return;
         }
