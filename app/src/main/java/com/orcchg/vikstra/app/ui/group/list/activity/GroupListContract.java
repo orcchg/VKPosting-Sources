@@ -42,6 +42,7 @@ interface GroupListContract {
         void onTitleChanged(String text);
         void performDumping(String path);
         void retry();
+        void retryPost();
 
         @DebugSake
         void setPostingTimeout(int timeout);

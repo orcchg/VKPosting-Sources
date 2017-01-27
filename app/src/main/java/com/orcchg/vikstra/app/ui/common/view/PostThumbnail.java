@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class PostThumbnail extends FrameLayout {
 
@@ -29,6 +31,14 @@ public class PostThumbnail extends FrameLayout {
     @BindView(R.id.media_container_root) ViewGroup mediaContainerRoot;
     @BindView(R.id.iv_media) ImageView mediaView;
     @BindView(R.id.tv_media_count) TextView mediaCountView;
+    @BindView(R.id.ll_error_container) ViewGroup errorContainer;
+    @BindView(R.id.btn_retry) ImageButton errorRetryButton;
+    @OnClick(R.id.btn_retry)
+    void onRetryClick() {
+        if (retryClickListener != null) retryClickListener.onClick(errorRetryButton);
+    }
+
+    private OnClickListener retryClickListener;
 
     public PostThumbnail(Context context) {
         this(context, null);
@@ -99,8 +109,19 @@ public class PostThumbnail extends FrameLayout {
         }
     }
 
+    // ------------------------------------------
+    public void setErrorRetryButtonClickListener(OnClickListener listener) {
+        retryClickListener = listener;
+    }
+
     public void showError(boolean isVisible) {
-        // TODO: show error with button
+        // TODO: make proper showError, handle visibility of other elements
+//        errorContainer.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+//
+//        if (UiUtility.isVisible(emptyDataView)) emptyDataView.setVisibility(isVisible ? View.GONE : View.VISIBLE);
+//        if (UiUtility.isVisible(titleView)) titleView.setVisibility(isVisible ? View.GONE : View.VISIBLE);
+//        if (UiUtility.isVisible(descriptionView)) descriptionView.setVisibility(isVisible ? View.GONE : View.VISIBLE);
+//        if (UiUtility.isVisible(mediaContainerRoot)) mediaContainerRoot.setVisibility(isVisible ? View.GONE : View.VISIBLE);
     }
 
     /* View */

@@ -429,6 +429,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receiveAskForRetryPost() {
+        refreshPost();
+    }
+
+    @Override
     public void receivePostHasChangedRequest() {
         refreshPost();
     }

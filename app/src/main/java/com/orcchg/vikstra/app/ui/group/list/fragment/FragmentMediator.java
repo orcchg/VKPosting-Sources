@@ -13,6 +13,7 @@ public interface FragmentMediator {
         void receiveAddKeywordRequest(Keyword keyword);
         long receiveAskForGroupBundleIdToDump();
         void receiveAskForRetry();
+        void receiveAskForRetryPost();
         void receivePostHasChangedRequest();
         void receivePostToGroupsRequest();
 

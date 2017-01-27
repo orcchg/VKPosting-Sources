@@ -187,6 +187,12 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         freshStart();
     }
 
+    @Override
+    public void retryPost() {
+        Timber.i("retryPost");
+        getPostByIdUseCase.execute();
+    }
+
     /* List */
     // ------------------------------------------
     @Override

@@ -34,6 +34,8 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.orcchg.vikstra.R.id.view;
+
 public class ReportActivity extends BasePermissionActivity<ReportContract.View, ReportContract.Presenter>
         implements ReportContract.View, IScrollList {
     private static final String FRAGMENT_TAG = "report_fragment_tag";
@@ -115,6 +117,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // --------------------------------------------------------------------------------------------
     private void initView() {
         postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostViewScreen(this, postId));
+        postThumbnail.setErrorRetryButtonClickListener((view) -> presenter.retryPost());
         updatePostedCounters(0, 0);
 
         FragmentManager fm = getSupportFragmentManager();

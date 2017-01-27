@@ -38,6 +38,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendAskForRetryPost() {
+        clientSecond.receiveAskForRetryPost();
+    }
+
+    @Override
     public void sendPostHasChangedRequest() {
         clientSecond.receivePostHasChangedRequest();
     }

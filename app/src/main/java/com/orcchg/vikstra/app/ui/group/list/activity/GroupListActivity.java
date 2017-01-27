@@ -129,6 +129,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     private void initView() {
         fab.hide();  // hide fab at fresh start before post fetched
         postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostCreateScreen(this, postId));
+        postThumbnail.setErrorRetryButtonClickListener((view) -> presenter.retryPost());
         updateSelectedGroupsCounter(0, 0);
 
         FragmentManager fm = getSupportFragmentManager();

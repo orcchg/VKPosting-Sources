@@ -5,8 +5,6 @@ import com.orcchg.vikstra.domain.util.DebugSake;
 public enum AppConfig {
     INSTANCE;
 
-    // TODO: list configuration on application start
-
     /* Group */
     // ------------------------------------------
     private boolean isAllGroupsSelected = true;
@@ -31,5 +29,18 @@ public enum AppConfig {
 
     public boolean shouldInterceptKeywordClickOnVH() {
         return interceptKeywordClickOnVH;
+    }
+
+    /* Log */
+    // ------------------------------------------
+    @Override
+    public String toString() {
+        return new StringBuilder("AppConfig: ")
+                .append("isAllGroupsSelected=").append(isAllGroupsSelected)
+                .append(", isAllGroupsSortedByMembersCount=").append(isAllGroupsSortedByMembersCount)
+                .append(", showSettingsMenuOnGroupListScreen=").append(showSettingsMenuOnGroupListScreen)
+                .append(", useInteractiveReportScreen=").append(useInteractiveReportScreen)
+                .append(", interceptKeywordClickOnVH=").append(interceptKeywordClickOnVH)
+                .toString();
     }
 }

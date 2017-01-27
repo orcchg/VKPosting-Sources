@@ -17,6 +17,7 @@
     <string name="error_external_screen_not_found_gallery">Gallery application was not found on device!</string>
     <string name="error_text">Data error</string>
     <string name="error_text_extended">An error has occurred.</string>
+    <string name="error_text_short">Error</string>
 
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>

@@ -118,6 +118,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         sendAskForRetry();
     }
 
+    @Override
+    public void retryPost() {
+        Timber.i("retryPost");
+        sendAskForRetryPost();
+    }
+
     /* Debugging */
     // ------------------------------------------
     @DebugSake @Override
@@ -201,6 +207,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void sendAskForRetry() {
         mediatorComponent.mediator().sendAskForRetry();
+    }
+
+    @Override
+    public void sendAskForRetryPost() {
+        mediatorComponent.mediator().sendAskForRetryPost();
     }
 
     @Override

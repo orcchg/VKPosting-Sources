@@ -44,7 +44,7 @@
 
                     <com.orcchg.vikstra.app.ui.common.view.PostThumbnail
                         android:id="@+id/post_thumbnail"
-                        android:layout_width="match_parent"
+                        android:layout_width="@dimen/standard_thumbnail_size"
                         android:layout_height="@dimen/standard_thumbnail_size"
                         android:layout_gravity="center"/>
                 </FrameLayout>

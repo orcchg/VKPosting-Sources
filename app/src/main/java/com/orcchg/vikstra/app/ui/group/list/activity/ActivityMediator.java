@@ -28,6 +28,7 @@ public interface ActivityMediator {
         void sendAddKeywordRequest(Keyword keyword);
         long sendAskForGroupBundleIdToDump();
         void sendAskForRetry();
+        void sendAskForRetryPost();
         void sendPostHasChangedRequest();
         void sendPostToGroupsRequest();
 

@@ -8,6 +8,7 @@ import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.injection.component.DaggerApplicationComponent;
 import com.orcchg.vikstra.app.injection.module.ApplicationModule;
 import com.orcchg.vikstra.data.injection.remote.CloudModule;
+import com.orcchg.vikstra.domain.DomainConfig;
 import com.squareup.leakcanary.LeakCanary;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
@@ -30,12 +31,21 @@ public class AndroidApplication extends Application {
         initializeLogger();
         initializeRealmEngine();
         initializeVkontakteSdk();
+
+        printConfigs();  // after logger initialization
     }
 
     public ApplicationComponent getApplicationComponent() {
         return applicationComponent;
     }
 
+    private void printConfigs() {
+        Timber.i("%s", DomainConfig.INSTANCE.toString());
+        Timber.i("%s", AppConfig.INSTANCE.toString());
+    }
+
+    /* Initialization */
+    // --------------------------------------------------------------------------------------------
     private void initializeInjector() {
         applicationComponent = DaggerApplicationComponent.builder()
                 .cloudModule(new CloudModule(this))

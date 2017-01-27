@@ -18,6 +18,38 @@
         android:textSize="@dimen/standard_subdesc_text_size"
         android:visibility="gone"/>
 
+    <LinearLayout
+        android:id="@+id/ll_error_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/standard_side_padding"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="@string/error_text_short"
+            android:textColor="@color/textError"
+            android:textSize="@dimen/standard_subdesc_text_size"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+
+            <ImageButton
+                android:id="@+id/btn_retry"
+                android:layout_width="@dimen/standard_icon_size"
+                android:layout_height="@dimen/standard_icon_size"
+                android:layout_gravity="center"
+                android:background="?selectableItemBackgroundBorderless"
+                android:tint="@color/black_40_opacity"
+                android:src="@drawable/ic_refresh_white_24dp"/>
+        </FrameLayout>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"

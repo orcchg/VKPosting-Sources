@@ -15,6 +15,7 @@
     <string name="error_external_screen_not_found_gallery">Приложение для Галереи не было найдено на устройстве!</string>
     <string name="error_text">Произошла ошибка</string>
     <string name="error_text_extended">Произошла ошибка.</string>
+    <string name="error_text_short">Ошибка</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Отмена</string>
     <string name="button_close">Закрыть</string>

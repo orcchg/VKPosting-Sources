@@ -37,5 +37,6 @@ public interface ReportContract {
         void interruptPostingAndClose();
         void performDumping(String path);
         void retry();
+        void retryPost();
     }
 }
