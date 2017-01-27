@@ -24,12 +24,14 @@
                 android:id="@+id/fl_top"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1"
+                android:layout_marginTop="@dimen/post_single_grid_item_spacing"/>
 
             <View
                 android:id="@+id/separator_line"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
+                android:layout_marginTop="@dimen/post_single_grid_item_spacing"
                 android:layout_marginBottom="4dp"
                 android:background="@color/list_line_separator"/>
 

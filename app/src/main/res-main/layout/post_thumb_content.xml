@@ -11,7 +11,7 @@
         android:layout_marginTop="@dimen/standard_side_padding"
         android:drawableTint="@color/black_40_opacity"
         android:drawableTop="@drawable/ic_search_white_24dp"
-        android:drawablePadding="8dp"
+        android:drawablePadding="@dimen/standard_side_padding_small"
         android:gravity="center"
         android:text="@string/empty_data_short"
         android:textColor="@color/textSecondary"
@@ -37,7 +37,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="@dimen/standard_side_padding_small">
 
             <ImageButton
                 android:id="@+id/btn_retry"
@@ -86,6 +86,7 @@
         android:layout_marginStart="@dimen/post_single_grid_item_margin_side"
         android:layout_marginRight="@dimen/post_single_grid_item_margin_side"
         android:layout_marginEnd="@dimen/post_single_grid_item_margin_side"
+        android:layout_marginTop="@dimen/standard_side_padding_small"
         android:layout_marginBottom="@dimen/standard_side_padding_mini">
 
         <ImageView
