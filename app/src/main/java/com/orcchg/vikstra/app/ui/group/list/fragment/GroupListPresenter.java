@@ -568,49 +568,26 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // TODO: batch by 20 groups and load-more
 
         /**
+         * @Deprecated
          * Restore correspondence between the order of Keyword-s in expandable list and the order
          * of lists of Group-s in 'splitGroups' parameter. This algorithm loops over all lists in
          * 'splitGroups' trying the first Group in each list and compares it's Keyword with those in
          * Parent item from expandable list. No matching means error in program and leads to exception.
+         *
+         * @Updated
+         * Here we fill each Parent item with Group-s corresponding to the Keyword of this Parent item.
+         * We rely on strong correspondence between order of Keyword-s in list and input KeywordBundle
+         * and the order of sub-lists in the 'splitGroups' parameter: each sub-list at position 'k'
+         * strongly corresponds to the Keyword (and Parent item) at the same position 'k'. This is
+         * quite stable suggestion because we add new Parent list items (and Keyword-s) on top of the
+         * existing expandable list (and input KeywordBundle) and store these item in ordered collection
+         * {@link java.util.List} instead of unordered {@link java.util.Collection}, and on the other hand
+         * the order of sub-lists in 'splitGroups' retrieved from the endpoint or repository strongly
+         * coincides with the order of input Keyword-s as a parameter or request.
          */
         int keywordIndex = 0;
         for (List<Group> item : splitGroups) {
-//            // list of Group-s corresponding to the Keyword
-//            int keywordIndex = -1;
-//            if (!item.isEmpty()) {
-//                Group group = item.get(0);
-//                for (int i = 0; i < groupParentItems.size(); ++i) {
-//                    Keyword keyword = groupParentItems.get(i).getKeyword();  // take each Keyword
-//                    if (keyword.equals(group.keyword())) {
-//                        keywordIndex = i;
-//                        // TODO: found item
-//                        break;  // leave from loop over Keyword-s as Parent items in the list
-//                    }
-//                }
-//                if (keywordIndex < 0) {  // inconsistency between list of Keyword-s and certain set of Group-s
-//                    Timber.e("There is no Keyword Parent item corresponding to the list of Group-s with Keyword: %s", group.keyword());
-//                    throw new ProgramException();
-//                }
-//            } else {
-//                Timber.d("Group-s not found for Keyword: %s", keyword.keyword());
-//            }
             addGroupsToList(item, keywordIndex++);
-        }
-
-        for (int i = 0; i < groupParentItems.size(); ++i) {
-            Keyword keyword = groupParentItems.get(i).getKeyword();  // take each Keyword
-            List<Group> groups = new ArrayList<>();  // list of Group-s corresponding to the Keyword
-            for (List<Group> item : splitGroups) {
-                if (!item.isEmpty()) {
-                    Group group = item.get(0);
-                    if (keyword.equals(group.keyword())) {
-                        groups = item;
-                        break;  // found matching between Keyword and list of Group-s
-                    }
-                }
-            }
-            if (groups.isEmpty()) Timber.d("Group-s not found for Keyword: %s", keyword.keyword());
-            addGroupsToList(groups, i);
         }
 
         listAdapter.notifyParentDataSetChanged(false);
