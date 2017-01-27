@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.domain.model.Keyword;
-import com.orcchg.vikstra.domain.model.KeywordBundle;
 
 import java.util.Collection;
 
@@ -88,11 +87,6 @@ public class TitledFlowView extends FrameLayout {
 
     public void setKeywords(@NonNull Collection<Keyword> keywords) {
         if (keywordsFlowLayout != null) keywordsFlowLayout.setKeywords(keywords);
-    }
-
-    public void setKeywords(@NonNull KeywordBundle bundle) {
-        setTitle(bundle.title());
-        setKeywords(bundle.keywords());
     }
 
     /* Listener */
