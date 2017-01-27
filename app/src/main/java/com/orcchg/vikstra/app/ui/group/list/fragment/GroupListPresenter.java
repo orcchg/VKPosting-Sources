@@ -184,6 +184,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
      * Go to ERROR_LOAD state, when some critical data was not loaded
      */
     private void stateErrorLoad() {
+        Timber.i("stateErrorLoad");
         setState(StateContainer.ERROR_LOAD);
         // enter ERROR_LOAD state logic
 
@@ -195,6 +196,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
      * Go to START state, drop all previous values and prepare to fresh start
      */
     private void stateStart() {
+        Timber.i("stateStart");
         setState(StateContainer.START);
         // enter START state logic
 
@@ -229,6 +231,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
      * Go to KEYWORDS_LOADED state, assign input KeywordBundle and make Parent items in expandable list
      */
     private void stateKeywordsLoaded(@NonNull KeywordBundle bundle) {
+        Timber.i("stateKeywordsLoaded");
         setState(StateContainer.KEYWORDS_LOADED);
         // enter KEYWORDS_LOADED state logic
 
@@ -256,6 +259,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
      * Go to GROUPS_LOADED state, assign input GroupBundle and fill expandable list with Child items
      */
     private void stateGroupsLoaded(@NonNull GroupBundle bundle, List<List<Group>> splitGroups) {
+        Timber.i("stateGroupsLoaded, splitGroups size: %s", splitGroups.size());
         setState(StateContainer.GROUPS_LOADED);
         // enter GROUPS_LOADED state logic
 
@@ -273,7 +277,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // enable swipe-to-refresh after all Group-s loaded, show Group-s in expandable list
         if (isViewAttached()) {
             getView().enableSwipeToRefresh(true);
-            getView().showGroups(splitGroups.isEmpty());
+            /**
+             * Decide, when to show empty stub instead of list items. The only case when empty stub
+             * is shown is when there is no Parent items in the list (i.e. no Keyword-s).
+             *
+             * 'splitGroups' list could be empty when GroupBundle is fetched from repository and
+             * doesn't contain any Group-s, so {@link GroupBundle#splitGroupsByKeywords()} returns
+             * zero sub-lists. But there could be Parent list items from the KeywordBundle which
+             * corresponds to this GroupBundle, and KeywordBundle may contain at least one Keyword.
+             * But no Group-s were actually found for such Keyword-s. Anyway, we must show Parent list
+             * items, no matter whether they are empty (no Group-s inside them) or not.
+             *
+             * Seems, that checking 'groupParentItems.isEmpty()' is quite enough.
+             */
+            getView().showGroups(splitGroups.isEmpty() && groupParentItems.isEmpty());
         }
 
         sendShowPostingButtonRequest(true);  // show posting button when Group-s loaded
@@ -285,6 +302,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
      * Go to REFRESHING state, reloading GroupBundle by existing Keyword-s
      */
     private void stateRefreshing() {
+        Timber.i("stateRefreshing");
         setState(StateContainer.REFRESHING);
         // enter REFRESHING state logic
 
@@ -307,6 +325,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     // ------------------------------------------
     private void stateAddKeywordStart(Keyword keyword) {
+        Timber.i("stateAddKeywordStart");
         setState(StateContainer.ADD_KEYWORD_START);
         // enter ADD_KEYWORD_START state logic
 
@@ -323,6 +342,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     private void stateAddKeywordFinish(boolean result) {
+        Timber.i("stateAddKeywordFinish: %s", result);
         setState(StateContainer.ADD_KEYWORD_FINISH);
         // enter ADD_KEYWORD_FINISH state logic
 
@@ -624,7 +644,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             if (groups != null) addGroupsToList(groups, i);
         }
 
-        listAdapter.notifyParentDataSetChanged(false);
+        listAdapter.notifyParentDataSetChanged(true);
     }
 
     // ------------------------------------------
@@ -712,12 +732,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private void removeGroupAtPosition(int position, int keywordPosition) {
         Timber.i("removeGroupAtPosition: %s, %s", position, keywordPosition);
         GroupParentItem item = groupParentItems.get(keywordPosition);
-        --totalSelectedGroups;
+        GroupChildItem childItem = item.getChildList().get(position);
+        if (childItem.isSelected()) --totalSelectedGroups;
         --totalGroups;
         sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
 
         Collection<Group> groupsToRemove = new ArrayList<>();
-        GroupChildItem childItem = item.getChildList().get(position);
         groupsToRemove.add(childItem.getGroup());
         inputGroupBundle.groups().removeAll(groupsToRemove);
         isGroupBundleChanged = true;
@@ -725,8 +745,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         item.getChildList().remove(position);
         item.incrementSelectedCount(childItem.isSelected() ? -1 : 0);
-        listAdapter.notifyParentChanged(keywordPosition);
-        listAdapter.notifyChildRemoved(position, keywordPosition);
+        listAdapter.notifyChildRemoved(keywordPosition, position);
+        listAdapter.notifyParentChanged(keywordPosition);  // must follow 'notifyChildRemoved'
     }
 
     private void removeKeywordAtPosition(int position) {
