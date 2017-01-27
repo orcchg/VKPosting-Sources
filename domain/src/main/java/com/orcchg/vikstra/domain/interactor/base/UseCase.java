@@ -91,6 +91,17 @@ public abstract class UseCase<Result> implements Runnable {
         threadExecutor.execute(this);
     }
 
+    protected boolean checkInterruption() {
+        if (Thread.currentThread().isInterrupted()) {
+            Timber.tag(this.getClass().getSimpleName());
+            Timber.d("Use-Case has been interrupted");
+            return true;
+        }
+        return false;
+    }
+
+    /* Internal */
+    // ------------------------------------------------------------------------
     /**
      * This method must not be called directly despite it's public access modifier.
      */
@@ -108,8 +119,6 @@ public abstract class UseCase<Result> implements Runnable {
         }
     }
 
-    /* Internal */
-    // ------------------------------------------------------------------------
     private Runnable wrapToRunnable(final @Nullable Result result) {
         return new Runnable() {
             @Override

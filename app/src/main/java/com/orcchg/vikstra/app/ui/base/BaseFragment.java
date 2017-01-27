@@ -100,12 +100,14 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
         presenter.detachView();
     }
 
-    /* Internal */
+    /* Component */
     // --------------------------------------------------------------------------------------------
     protected ApplicationComponent getApplicationComponent() {
         return ((AndroidApplication) getActivity().getApplication()).getApplicationComponent();
     }
 
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
     @DebugLog
     protected boolean isStateRestored() {
         return isStateRestored;

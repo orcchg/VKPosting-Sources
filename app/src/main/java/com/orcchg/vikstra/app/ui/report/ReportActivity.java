@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
+import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
@@ -87,6 +88,15 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         initToolbar();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            presenter.onCloseView();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     /* Data */
     // --------------------------------------------------------------------------------------------
     private void initData() {
@@ -117,7 +127,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     private void initToolbar() {
         toolbar.setTitle(R.string.report_screen_title);
-        toolbar.setNavigationOnClickListener((view) -> finish());
+        toolbar.setNavigationOnClickListener((view) -> onBackPressed());
         toolbar.inflateMenu(R.menu.dump);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
@@ -158,8 +168,20 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     @Override
+    public void openCloseWhilePostingDialog() {
+        DialogProvider.showTextDialogTwoButtons(this, R.string.dialog_warning_title,
+                R.string.report_dialog_group_reports_not_ready_to_dump, R.string.button_close, R.string.button_cancel,
+                (dialog, which) -> {
+                    dialog.dismiss();
+                    presenter.interruptPostingAndClose();
+                },
+                (dialog, which) -> dialog.dismiss()).show();
+    }
+
+    @Override
     public void openDumpNotReadyDialog() {
-        DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_group_reports_not_ready_to_dump).show();
+        DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
+                R.string.report_dialog_group_reports_not_ready_to_dump).show();
     }
 
     @Override
@@ -180,7 +202,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void showDumpSuccess(String path) {
-        UiUtility.showSnackbar(this, String.format(Locale.ENGLISH, SNACKBAR_DUMP_SUCCESS, FileUtility.refineExternalPath(path)), Snackbar.LENGTH_LONG);
+        UiUtility.showSnackbar(this, String.format(Locale.ENGLISH, SNACKBAR_DUMP_SUCCESS,
+                FileUtility.refineExternalPath(path)), Snackbar.LENGTH_LONG);
     }
 
     @Override
@@ -203,6 +226,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         reportTextView.setText(String.format(Locale.ENGLISH, INFO_TITLE, posted, total));
         reportIndicatorView.setMax(total);
         reportIndicatorView.setProgress(posted);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void closeView() {
+        finish();
     }
 
     // ------------------------------------------

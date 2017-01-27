@@ -144,6 +144,8 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         ThreadPoolExecutor threadExecutor = createHighloadThreadPoolExecutor();  // could be overriden in sub-classes
 
         for (int i = 0; i < total; ++i) {
+            if (checkInterruption()) return preparedResults(results);
+
             Timber.tag(this.getClass().getSimpleName());
             Timber.v("Request [%s / %s]", i + 1, total);
             final int index = i;
@@ -267,7 +269,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
          * and output results.
          */
         synchronized (lock) {
-            while (!ValueUtility.isAllTrue(doneFlags)) {
+            while (!ValueUtility.isAllTrue(doneFlags) && !checkInterruption()) {
                 try {
                     lock.wait();  // waiting all tasks to finish
 
@@ -290,14 +292,18 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
             }
         });
 
-        Timber.tag(this.getClass().getSimpleName());
-        Timber.v("Multi Use-Case: total results: %s", results.size());
-        Collections.sort(results);  // sort results to correspond to each use-case
-        return results;
+        return preparedResults(results);
     }
 
     private synchronized void addToResults(List<Ordered<Result>> results, @Nullable Ordered<Result> result) {
         if (result != null) results.add(result);
+    }
+
+    private List<Ordered<Result>> preparedResults(List<Ordered<Result>> results) {
+        Timber.tag(this.getClass().getSimpleName());
+        Timber.v("Multi Use-Case: total results: %s", results.size());
+        Collections.sort(results);  // sort results to correspond to each use-case
+        return results;
     }
 
     /* Thread pool */

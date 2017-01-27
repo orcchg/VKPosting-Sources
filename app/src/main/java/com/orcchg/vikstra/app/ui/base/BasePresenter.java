@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.navigation.Navigator;
 
 import java.lang.ref.WeakReference;
@@ -115,5 +116,21 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
         Timber.tag(this.getClass().getSimpleName());
         Timber.i("onDestroy");
         // to override
+    }
+
+    /* Component */
+    // --------------------------------------------------------------------------------------------
+    @Nullable
+    protected ApplicationComponent getApplicationComponent() {
+        V view = getView();
+        if (BaseActivity.class.isInstance(view)) {
+            return ((BaseActivity) view).getApplicationComponent();
+        }
+        if (BaseFragment.class.isInstance(view)) {
+            return ((BaseFragment) view).getApplicationComponent();
+        }
+        Timber.tag(this.getClass().getSimpleName());
+        Timber.d("Application component is null - either view is not attached or it is not an instance of Base* class");
+        return null;
     }
 }

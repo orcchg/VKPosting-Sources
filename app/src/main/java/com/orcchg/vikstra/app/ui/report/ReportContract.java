@@ -12,6 +12,7 @@ public interface ReportContract {
 
         void onPostingCancel();
         void onPostingFinished(int posted, int total);
+        void openCloseWhilePostingDialog();
         void openDumpNotReadyDialog();
         void openEditDumpFileNameDialog();
 
@@ -21,6 +22,8 @@ public interface ReportContract {
         void showErrorPost();
         void showPost(PostSingleGridItemVO viewObject);
         void updatePostedCounters(int posted, int total);
+
+        void closeView();
     }
 
     interface SubView extends LceView, MvpListView {
@@ -29,7 +32,9 @@ public interface ReportContract {
     }
 
     interface Presenter extends MvpPresenter<View>, ListPresenter {
+        void onCloseView();
         void onDumpPressed();
+        void interruptPostingAndClose();
         void performDumping(String path);
         void retry();
     }

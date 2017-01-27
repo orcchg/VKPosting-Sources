@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.orcchg.vikstra.app.AppConfig;
+import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
 import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
@@ -58,7 +59,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private int postedWithSuccess = 0;
     private int totalForPosting = 0;
 
-            @Inject
+    @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
                     DumpGroupReports dumpGroupReportsUseCase, GroupReportToVoMapper groupReportToVoMapper,
                     GroupReportEssenceToVoMapper groupReportEssenceToVoMapper,
@@ -120,15 +121,15 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void retry() {
-        Timber.i("retry");
-        postedWithSuccess = 0;  // drop counter
-        postedWithFailure = 0;  // drop counter
-        isFinishedPosting = false;
-        storedReports.clear();
-        listAdapter.clear();
-        dropListStat();
-        freshStart();
+    public void onCloseView() {
+        Timber.i("onCloseView");
+        if (isViewAttached()) {
+            if (AppConfig.INSTANCE.useInteractiveReportScreen() && !isFinishedPosting) {
+                getView().openCloseWhilePostingDialog();
+            } else {
+                getView().closeView();
+            }
+        }
     }
 
     @Override
@@ -158,10 +159,32 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     }
 
     @Override
+    public void interruptPostingAndClose() {
+        Timber.i("interruptPostingAndClose");
+        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            ApplicationComponent component = getApplicationComponent();
+            if (component != null) component.threadExecutor().shutdownNow();
+        }
+        if (isViewAttached()) getView().closeView();
+    }
+
+    @Override
     public void performDumping(String path) {
         Timber.i("performDumping: %s", path);
         dumpGroupReportsUseCase.setPath(path);
         dumpGroupReportsUseCase.execute();
+    }
+
+    @Override
+    public void retry() {
+        Timber.i("retry");
+        postedWithSuccess = 0;  // drop counter
+        postedWithFailure = 0;  // drop counter
+        isFinishedPosting = false;
+        storedReports.clear();
+        listAdapter.clear();
+        dropListStat();
+        freshStart();
     }
 
     /* List */

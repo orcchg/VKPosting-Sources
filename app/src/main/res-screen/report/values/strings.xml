@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="report_dialog_close_while_posting">Posting is in progress. Do you want to interrupt it and close Application?</string>
     <string name="report_dialog_group_reports_not_ready_to_dump">Group reports not ready or available yet to dump</string>
     <string name="report_dialog_new_dump_file_title">New dump file</string>
     <string name="report_dialog_new_dump_file_hint">Enter file name</string>
