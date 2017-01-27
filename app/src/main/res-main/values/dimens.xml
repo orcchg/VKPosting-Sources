@@ -7,6 +7,7 @@
     <dimen name="standard_button_text_size">16dp</dimen>
     <dimen name="standard_description_text_size">16dp</dimen>
     <dimen name="standard_icon_size">24dp</dimen>
+    <dimen name="standard_icon_big_size">48dp</dimen>
     <dimen name="standard_icon_large_size">36dp</dimen>
     <dimen name="standard_icon_micro_size">8dp</dimen>
     <dimen name="standard_icon_small_size">18dp</dimen>

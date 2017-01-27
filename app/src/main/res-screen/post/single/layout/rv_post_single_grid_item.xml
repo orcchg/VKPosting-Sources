@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/post_single_grid_item_size"
-    android:layout_height="@dimen/post_single_grid_item_size"
+    android:layout_height="match_parent"
     android:layout_margin="@dimen/post_single_grid_item_margin_up"
-    android:background="@color/grey_bg">
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
 
-    <com.orcchg.vikstra.app.ui.common.view.PostThumbnail
-        android:id="@+id/post_thumbnail"
+    <RelativeLayout
+        android:id="@+id/rl_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:background="@color/grey_bg">
 
-    <ImageView
-        android:id="@+id/iv_selection"
-        android:layout_width="@dimen/standard_icon_size"
-        android:layout_height="@dimen/standard_icon_size"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_check_white_24dp"
-        android:contentDescription="@null"
-        android:visibility="invisible"/>
-</RelativeLayout>
+        <com.orcchg.vikstra.app.ui.common.view.PostThumbnail
+            android:id="@+id/post_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <ImageView
+            android:id="@+id/iv_selection"
+            android:layout_width="@dimen/standard_icon_size"
+            android:layout_height="@dimen/standard_icon_size"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_check_white_24dp"
+            android:contentDescription="@null"
+            android:visibility="invisible"/>
+    </RelativeLayout>
+</FrameLayout>

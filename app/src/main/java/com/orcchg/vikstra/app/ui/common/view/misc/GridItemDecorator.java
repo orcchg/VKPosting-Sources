@@ -11,10 +11,10 @@ import android.view.View;
  * Decorates grid item.
  */
 public class GridItemDecorator extends RecyclerView.ItemDecoration {
-    private int mItemOffset;
+    private int itemOffset;
 
     public GridItemDecorator(int itemOffset) {
-        mItemOffset = itemOffset;
+        this.itemOffset = itemOffset;
     }
 
     public GridItemDecorator(@NonNull Context context, @DimenRes int itemOffsetId) {
@@ -24,6 +24,6 @@ public class GridItemDecorator extends RecyclerView.ItemDecoration {
     @Override
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
-        outRect.set(mItemOffset, mItemOffset, mItemOffset, mItemOffset);
+        outRect.set(itemOffset, itemOffset, itemOffset, itemOffset);
     }
 }

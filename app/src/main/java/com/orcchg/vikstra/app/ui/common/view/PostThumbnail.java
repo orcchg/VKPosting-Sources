@@ -1,6 +1,8 @@
 package com.orcchg.vikstra.app.ui.common.view;
 
 import android.content.Context;
+import android.support.annotation.ColorInt;
+import android.support.annotation.ColorRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.text.TextUtils;
@@ -31,6 +33,7 @@ public class PostThumbnail extends FrameLayout {
     @BindView(R.id.media_container_root) ViewGroup mediaContainerRoot;
     @BindView(R.id.iv_media) ImageView mediaView;
     @BindView(R.id.tv_media_count) TextView mediaCountView;
+    @BindView(R.id.media_overlay) View mediaOverlay;
     @BindView(R.id.ll_error_container) ViewGroup errorContainer;
     @BindView(R.id.btn_retry) ImageButton errorRetryButton;
     @OnClick(R.id.btn_retry)
@@ -67,6 +70,10 @@ public class PostThumbnail extends FrameLayout {
         titleView.setText(resId);
     }
 
+    public void setTitleTextColor(@ColorRes int resId) {
+        titleView.setTextColor(getTextColorByRes(resId));
+    }
+
     public void setDescription(String description) {
         if (UiUtility.isVisible(emptyDataView)) emptyDataView.setVisibility(TextUtils.isEmpty(description) ? View.VISIBLE : View.GONE);
         descriptionView.setVisibility(TextUtils.isEmpty(description) ? View.GONE : View.VISIBLE);
@@ -77,6 +84,10 @@ public class PostThumbnail extends FrameLayout {
         if (UiUtility.isVisible(emptyDataView)) emptyDataView.setVisibility(resId <= 0 ? View.VISIBLE : View.GONE);
         descriptionView.setVisibility(resId <= 0 ? View.GONE : View.VISIBLE);
         descriptionView.setText(resId);
+    }
+
+    public void setDescriptionTextColor(@ColorRes int resId) {
+        descriptionView.setTextColor(getTextColorByRes(resId));
     }
 
     public void setMedia(String url) {
@@ -95,6 +106,10 @@ public class PostThumbnail extends FrameLayout {
         } else {
             mediaCountView.setVisibility(View.GONE);
         }
+    }
+
+    public void showMediaOverlay(boolean isVisible) {
+        mediaOverlay.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 
     public void setPost(@Nullable PostSingleGridItemVO viewObject) {
@@ -130,5 +145,12 @@ public class PostThumbnail extends FrameLayout {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         rootView = inflater.inflate(R.layout.post_thumb_content, this, true);
         ButterKnife.bind(rootView);
+    }
+
+    @ColorInt
+    private int getTextColorByRes(@ColorRes int resId) {
+        @ColorInt int color = getResources().getColor(R.color.textSecondary);
+        if (resId > 0) color = getResources().getColor(resId);
+        return color;
     }
 }

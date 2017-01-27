@@ -97,6 +97,13 @@
             android:scaleType="centerCrop"
             android:contentDescription="@null"/>
 
+        <View
+            android:id="@+id/media_overlay"
+            android:layout_width="@dimen/post_single_grid_item_image_size"
+            android:layout_height="@dimen/post_single_grid_item_image_size"
+            android:background="@color/black_60_opacity"
+            android:visibility="invisible"/>
+
         <TextView
             android:id="@+id/tv_media_count"
             android:layout_width="wrap_content"

@@ -11,13 +11,16 @@
     <color name="colorAccent">#4CAF50</color>
     <color name="colorAccentSemitransparent">#884CAF50</color>
     <color name="colorAccentOverlay">#334CAF50</color>
+    <color name="white">#ffffff</color>
 
     <color name="semitransparent">#88000000</color>
     <color name="grey_bg">#adadad</color>
     <color name="light_grey_bg">#ededed</color>
     <color name="light_line_separator">#1f000000</color>
     <color name="list_line_separator">#42000000</color>
+    <color name="black_20_opacity">#33000000</color>
     <color name="black_40_opacity">#66000000</color>
+    <color name="black_60_opacity">#99000000</color>
     <color name="white_60_opacity">#99FFFFFF</color>
 
     <color name="textPrimary">#212121</color>
