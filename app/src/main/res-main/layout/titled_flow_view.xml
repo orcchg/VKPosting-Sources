@@ -8,7 +8,7 @@
         android:id="@+id/block_root_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/standard_top_padding"
+        android:paddingTop="@dimen/standard_top_padding_mini"
         android:paddingLeft="@dimen/standard_side_padding"
         android:paddingStart="@dimen/standard_side_padding"
         android:orientation="vertical">
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="@dimen/standard_side_padding"
             android:layout_marginEnd="@dimen/standard_side_padding"
-            android:layout_marginBottom="@dimen/standard_bottom_padding"
+            android:layout_marginBottom="@dimen/standard_bottom_padding_mini"
             android:orientation="horizontal">
 
             <FrameLayout
@@ -100,7 +100,7 @@
                     android:layout_height="1dp"
                     android:layout_marginLeft="@dimen/standard_side_padding_small"
                     android:layout_marginStart="@dimen/standard_side_padding_small"
-                    android:layout_marginTop="@dimen/standard_top_padding"
+                    android:layout_marginTop="@dimen/standard_top_padding_mini"
                     android:background="@color/light_line_separator"/>
             </LinearLayout>
         </LinearLayout>

@@ -6,6 +6,8 @@
     <dimen name="keyword_blob_radius">10dp</dimen>
 
     <dimen name="standard_bottom_padding">16dp</dimen>
+    <dimen name="standard_bottom_padding_mini">8dp</dimen>
+    <dimen name="standard_bottom_padding_small">12dp</dimen>
     <dimen name="standard_button_text_size">16dp</dimen>
     <dimen name="standard_description_text_size">16dp</dimen>
     <dimen name="standard_icon_size">24dp</dimen>
@@ -29,6 +31,8 @@
     <dimen name="standard_subdesc_text_size">14dp</dimen>
     <dimen name="standard_title_text_size">20dp</dimen>
     <dimen name="standard_top_padding">20dp</dimen>
+    <dimen name="standard_top_padding_mini">8dp</dimen>
+    <dimen name="standard_top_padding_small">12dp</dimen>
 
     <dimen name="dialog_side_margin">20dp</dimen>
 

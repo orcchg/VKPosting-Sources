@@ -100,7 +100,7 @@
                 android:layout_height="1dp"
                 android:layout_marginLeft="@dimen/standard_side_padding_plus_small_space"
                 android:layout_marginStart="@dimen/standard_side_padding_plus_small_space"
-                android:layout_marginTop="@dimen/standard_top_padding"
+                android:layout_marginTop="@dimen/standard_top_padding_small"
                 android:background="@color/light_line_separator"/>
 
             <FrameLayout
