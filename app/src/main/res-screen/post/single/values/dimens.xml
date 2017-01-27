@@ -5,7 +5,7 @@
     <dimen name="post_single_grid_item_margin_up">0dp</dimen>
     <dimen name="post_single_grid_item_margin_side">10dp</dimen>
     <dimen name="post_single_grid_item_media_count_text_size">10dp</dimen>
-    <dimen name="post_single_grid_item_size">110dp</dimen>
+    <dimen name="post_single_grid_item_size">106dp</dimen>
     <dimen name="post_single_grid_item_spacing">2dp</dimen>
     <dimen name="post_single_grid_item_title_text_size">14dp</dimen>
 </resources>
