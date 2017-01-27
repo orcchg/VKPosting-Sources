@@ -115,6 +115,11 @@ dependencies {
 
     compile project(':domain')
     compile project(':data')
+//    debugCompile project(path: ':domain', configuration: "debug")
+//    debugCompile project(path: ':data',   configuration: "debug")
+//
+//    releaseCompile project(path: ':domain', configuration: "release")
+//    releaseCompile project(path: ':data',   configuration: "release")
 
     apt presentationDependencies.autoValue
     apt presentationDependencies.butterKnifeCompiler

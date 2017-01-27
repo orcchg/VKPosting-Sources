@@ -40,6 +40,8 @@ android {
     defaultConfig {
         minSdkVersion globalConfiguration.getAt("androidMinSdkVersion")
         targetSdkVersion globalConfiguration.getAt("androidTargetSdkVersion")
+        defaultPublishConfig 'release'
+        publishNonDefault true
     }
 
 //    compileOptions {
