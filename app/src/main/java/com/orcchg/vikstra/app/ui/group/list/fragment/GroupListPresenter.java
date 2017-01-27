@@ -73,7 +73,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private GroupListAdapter listAdapter;
 
     int totalSelectedGroups, totalGroups;
-    private boolean fetchedInputGroupBundleFromRepo, isAddingNewKeyword;  // state control flags
+    private boolean fetchedInputGroupBundleFromRepo, isAddingNewKeyword, isRefreshing;  // state control flags
     private boolean isKeywordBundleChanged, isGroupBundleChanged;
     private Keyword newlyAddedKeyword;
     private GroupBundle inputGroupBundle;
@@ -217,7 +217,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             getView().showLoading(GroupListFragment.RV_TAG);
         }
 
-        sendShowPostingButtonRequest(false);  // hide posting button
+        sendShowPostingButtonRequest(false);  // hide posting button on start
 
         // fresh start - load input KeywordBundle and Post
         getKeywordBundleByIdUseCase.execute();
@@ -267,11 +267,17 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // fill Child items in expandable list and show it
         fillGroupsList(splitGroups);
 
+        isRefreshing = false;  // drop flag after filling, where it is used
+        isAddingNewKeyword = false;  // don't re-use state control flag
+
         // enable swipe-to-refresh after all Group-s loaded, show Group-s in expandable list
         if (isViewAttached()) {
             getView().enableSwipeToRefresh(true);
             getView().showGroups(splitGroups.isEmpty());
         }
+
+        sendShowPostingButtonRequest(true);  // show posting button when Group-s loaded
+        sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
     }
 
     // ------------------------------------------
@@ -282,11 +288,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.REFRESHING);
         // enter REFRESHING state logic
 
+        isRefreshing = true;
+
         // disable swipe-to-refresh while another refreshing is in progress
         if (isViewAttached()) {
             getView().showLoading(GroupListFragment.RV_TAG);
             getView().enableSwipeToRefresh(false);
         }
+
+        sendShowPostingButtonRequest(false);  // hide posting button while refreshing
 
         totalSelectedGroups = 0;
         totalGroups = 0;
@@ -519,7 +529,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
          * and 'isAllGroupsSelected' configuration must be enabled in both cases.
          */
         boolean shouldSelectAllGroups = AppConfig.INSTANCE.isAllGroupsSelected() &&
-                (!fetchedInputGroupBundleFromRepo || isAddingNewKeyword);
+                (!fetchedInputGroupBundleFromRepo || isAddingNewKeyword || isRefreshing);
 
         int xSelectedCount = 0, xTotalGroups = 0;
         List<GroupChildItem> childItems = new ArrayList<>(groups.size());
@@ -568,13 +578,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // TODO: batch by 20 groups and load-more
 
         /**
-         * @Deprecated
+         * @Updated
          * Restore correspondence between the order of Keyword-s in expandable list and the order
          * of lists of Group-s in 'splitGroups' parameter. This algorithm loops over all lists in
          * 'splitGroups' trying the first Group in each list and compares it's Keyword with those in
          * Parent item from expandable list. No matching means error in program and leads to exception.
          *
-         * @Updated
+         * @Deprecated
          * Here we fill each Parent item with Group-s corresponding to the Keyword of this Parent item.
          * We rely on strong correspondence between order of Keyword-s in list and input KeywordBundle
          * and the order of sub-lists in the 'splitGroups' parameter: each sub-list at position 'k'
@@ -585,14 +595,31 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
          * the order of sub-lists in 'splitGroups' retrieved from the endpoint or repository strongly
          * coincides with the order of input Keyword-s as a parameter or request.
          */
-        int keywordIndex = 0;
-        for (List<Group> item : splitGroups) {
-            addGroupsToList(item, keywordIndex++);
+        for (int i = 0; i < groupParentItems.size(); ++i) {
+            Keyword keyword = groupParentItems.get(i).getKeyword();  // take each Keyword
+            List<Group> groups = null;
+            for (List<Group> item : splitGroups) {
+                if (!item.isEmpty()) {
+                    Group group = item.get(0);
+                    if (keyword.equals(group.keyword())) {
+                        groups = item;
+                        break;
+                    }
+                }
+            }
+            /**
+             * 'null' means no correspondence found between Keyword and sub-list of Group-s.
+             * This is likely the case, when sub-list of Group-s is just empty or we have just
+             * added one single Keyword and have found sub-list corresponding to it, so we don't need
+             * to touch the other Keyword-s and modify their Parent list items.
+             *
+             * If there is a non-empty sub-list but no corresponding Keyword, it is an error in
+             * implementation, but there is no diagnostic logs about it.
+             */
+            if (groups != null) addGroupsToList(groups, i);
         }
 
         listAdapter.notifyParentDataSetChanged(false);
-        sendShowPostingButtonRequest(true);
-        sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
     }
 
     // ------------------------------------------
@@ -914,8 +941,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     isGroupBundleChanged = true;
                     postGroupBundleUpdate();
                 }
-
-                isAddingNewKeyword = false;  // don't re-use state control flag
             }
 
             @DebugLog @Override
