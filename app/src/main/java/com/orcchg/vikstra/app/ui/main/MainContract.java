@@ -1,8 +1,11 @@
 package com.orcchg.vikstra.app.ui.main;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListContract;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridContract;
+import com.orcchg.vikstra.app.ui.viewobject.UserVO;
 import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 
@@ -13,6 +16,7 @@ public interface MainContract {
 
         void openGroupListScreen(long keywordBundleId, long postId);
         void openReportScreen(long groupReportBundleId, long postId);
+        void showCurrentUser(@Nullable UserVO viewObject);
         void showFab(boolean isVisible);
         void updateGroupReportBundleId(long groupReportBundleId);
         void updatePostId(long postId);

@@ -15,6 +15,7 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.vkontakte.GetCurrentUser;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupById;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeywordsList;
 import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPostToGroups;
@@ -23,6 +24,7 @@ import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.Media;
 import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.model.User;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
@@ -32,7 +34,9 @@ import com.orcchg.vikstra.domain.util.ValueUtility;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
 import com.vk.sdk.api.model.VKApiPhoto;
+import com.vk.sdk.api.model.VKApiUserFull;
 import com.vk.sdk.api.model.VKAttachments;
+import com.vk.sdk.api.model.VKList;
 import com.vk.sdk.api.model.VKPhotoArray;
 
 import java.util.ArrayList;
@@ -271,6 +275,30 @@ public class VkontakteEndpoint extends Endpoint {
         makeWallPosts(groups, post, callback, progressCallback, photoUploadProgressCb, photoPrepareProgressCb);
     }
 
+    /* User */
+    // ------------------------------------------
+    public void getCurrentUser(@Nullable final UseCase.OnPostExecuteCallback<User> callback) {
+        GetCurrentUser useCase = new GetCurrentUser(threadExecutor, postExecuteScheduler);
+        useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<VKList<VKApiUserFull>>() {
+            @DebugLog @Override
+            public void onFinish(@Nullable VKList<VKApiUserFull> users) {
+                if (users == null || users.isEmpty()) {
+                    Timber.e("List of VKApiUserFull-s must not be null or empty, it must contain current User info");
+                    throw new ProgramException();
+                }
+                Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get current User");
+                if (callback != null) callback.onFinish(convert(users.get(0)));
+            }
+
+            @DebugLog @Override
+            public void onError(Throwable e) {
+                Timber.e("Use-Case [Vkontakte Endpoint]: failed to get current User");
+                if (callback != null) callback.onError(e);
+            }
+        });
+        useCase.execute();
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @SuppressWarnings("unchecked")
@@ -403,6 +431,16 @@ public class VkontakteEndpoint extends Endpoint {
                 .setName(vkGroup.name)
                 .setScreenName(vkGroup.screen_name)
                 .setWebSite(vkGroup.site)
+                .build();
+    }
+
+    @NonNull
+    private User convert(VKApiUserFull vkUser) {
+        return User.builder()
+                .setId(vkUser.id)
+                .setFirstName(vkUser.first_name)
+                .setLastName(vkUser.last_name)
+                .setPhotoUrl(vkUser.photo_50)
                 .build();
     }
 

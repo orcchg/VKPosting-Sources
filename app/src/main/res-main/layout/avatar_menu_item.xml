@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_avatar"
+        android:layout_width="@dimen/standard_icon_large_size"
+        android:layout_height="@dimen/standard_icon_large_size"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/standard_side_padding_small"
+        android:layout_marginStart="@dimen/standard_side_padding_small"
+        android:layout_marginRight="@dimen/standard_side_padding_avg"
+        android:layout_marginEnd="@dimen/standard_side_padding_avg"
+        android:contentDescription="@null"/>
+</merge>

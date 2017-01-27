@@ -26,6 +26,7 @@
     <string name="button_save">Сохранить</string>
     <string name="button_search">Поиск</string>
     <string name="button_settings">Настройки</string>
+    <string name="button_user">Аккаунт</string>
     <string name="button_view">Просмотр</string>
     <string name="dialog_error_title">Ошибка</string>
     <string name="dialog_input_edit_title">Изменить заголовок</string>

@@ -23,6 +23,7 @@ import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
 import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
+import com.orcchg.vikstra.app.ui.common.view.AvatarMenuItem;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListModule;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
 import com.orcchg.vikstra.app.ui.keyword.list.injection.KeywordListModule;
@@ -31,6 +32,7 @@ import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridFragment;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridModule;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
+import com.orcchg.vikstra.app.ui.viewobject.UserVO;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
@@ -118,7 +120,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private void initToolbar() {
         toolbar.setTitle(R.string.main_screen_title);
         toolbar.setNavigationIcon(null);  // no navigation back from MainScreen
-        toolbar.inflateMenu(R.menu.logout);
+        toolbar.inflateMenu(R.menu.avatar);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.logout:
@@ -127,6 +129,9 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             }
             return false;
         });
+
+        AvatarMenuItem view = (AvatarMenuItem) toolbar.getMenu().findItem(R.id.avatar).getActionView();
+        if (view != null) view.setOnClickListener((xview) -> openLogoutDialog());
     }
 
     @Override
@@ -183,6 +188,12 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void setCloseViewResult(int result) {
         setResult(result);
+    }
+
+    @Override
+    public void showCurrentUser(@Nullable UserVO viewObject) {
+        AvatarMenuItem view = (AvatarMenuItem) toolbar.getMenu().findItem(R.id.avatar).getActionView();
+        view.setImage(viewObject != null ? viewObject.photoUrl() : "");
     }
 
     @Override

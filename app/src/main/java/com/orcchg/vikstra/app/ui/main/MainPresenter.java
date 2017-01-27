@@ -13,6 +13,8 @@ import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
+import com.orcchg.vikstra.app.ui.viewobject.UserVO;
+import com.orcchg.vikstra.app.ui.viewobject.mapper.UserToVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
@@ -21,6 +23,7 @@ import com.orcchg.vikstra.domain.interactor.group.GetGroupBundleById;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.model.Post;
+import com.orcchg.vikstra.domain.model.User;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.vk.sdk.VKSdk;
 
@@ -39,6 +42,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     private final GetGroupBundleById getGroupBundleByIdUseCase;  // TODO: unused
     private final GetPostById getPostByIdUseCase;
+    private final UserToVoMapper userToVoMapper;
     private final VkontakteEndpoint vkontakteEndpoint;
 
     private boolean isKeywordBundleSelected;  // TODO: save instance state
@@ -55,7 +59,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Inject
     MainPresenter(KeywordListPresenter keywordListPresenter, PostSingleGridPresenter postSingleGridPresenter,
                   GetGroupBundleById getGroupBundleByIdUseCase, GetPostById getPostByIdUseCase,
-                  VkontakteEndpoint vkontakteEndpoint) {
+                  UserToVoMapper userToVoMapper, VkontakteEndpoint vkontakteEndpoint) {
         this.keywordListPresenter = keywordListPresenter;
         this.keywordListPresenter.setExternalValueEmitter(isSelected -> {
             isKeywordBundleSelected = isSelected;
@@ -75,6 +79,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
         this.getGroupBundleByIdUseCase.setPostExecuteCallback(createGetGroupBundleByIdCallback());
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
+        this.userToVoMapper = userToVoMapper;
         this.vkontakteEndpoint = vkontakteEndpoint;
     }
 
@@ -154,10 +159,33 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @Override
-    protected void freshStart() {}
+    protected void freshStart() {
+        vkontakteEndpoint.getCurrentUser(createGetCurrentUserCallback());
+    }
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
+    private UseCase.OnPostExecuteCallback<User> createGetCurrentUserCallback() {
+        return new UseCase.OnPostExecuteCallback<User>() {
+            @Override
+            public void onFinish(@Nullable User user) {
+                if (user == null) {
+                    Timber.e("Current user wasn't found, which is not possible once access token is valid");
+                    throw new ProgramException();
+                }
+                Timber.i("Use-Case: succeeded to get current User");
+                UserVO viewObject = userToVoMapper.map(user);
+                if (isViewAttached()) getView().showCurrentUser(viewObject);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get current User");
+                if (isViewAttached()) getView().showCurrentUser(null);
+            }
+        };
+    }
+
     private UseCase.OnPostExecuteCallback<GroupBundle> createGetGroupBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<GroupBundle>() {
             @DebugLog @Override

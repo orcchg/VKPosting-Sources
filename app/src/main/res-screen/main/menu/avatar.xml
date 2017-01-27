@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/avatar"
+        android:title="@string/button_user"
+        app:actionViewClass="com.orcchg.vikstra.app.ui.common.view.AvatarMenuItem"
+        app:showAsAction="always"/>
+</menu>
