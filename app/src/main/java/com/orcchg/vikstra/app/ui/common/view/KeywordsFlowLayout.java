@@ -100,7 +100,6 @@ public class KeywordsFlowLayout extends AbstractFlowLayout {
     /* Internal */
     // ------------------------------------------
     private void addKeyword(@NonNull Keyword keyword, LayoutInflater inflater) {
-        // TODO: use passive view, if need
         @LayoutRes int resId = isEditable() ? R.layout.keywords_blob_active_edit : R.layout.keywords_blob_active;
         TextView blob = (TextView) inflater.inflate(resId, null, false);
         blob.setText(keyword.keyword());

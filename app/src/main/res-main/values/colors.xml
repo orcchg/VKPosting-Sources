@@ -23,6 +23,12 @@
     <color name="black_60_opacity">#99000000</color>
     <color name="white_60_opacity">#99FFFFFF</color>
 
+    <color name="keyword_blob_active_color">#ffa726</color>
+    <color name="keyword_blob_passive_color">#99ffe0b2</color>
+    <color name="keyword_blob_text_color">#ffffff</color>
+    <color name="keyword_blob_text_more_color">#44B300</color>
+    <color name="keyword_blob_text_more_color_pressed">#ff9802</color>
+
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#757575</color>
     <color name="textDivider">#BDBDBD</color>

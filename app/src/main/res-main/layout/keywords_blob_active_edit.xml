@@ -2,7 +2,7 @@
 <TextView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:background="?attr/keywords_flow_layout_blob_active_edit_color"
-    android:textColor="#ffffffff"
+    android:textColor="@color/keyword_blob_text_color"
     android:paddingRight="4dp"
     android:paddingEnd="4dp"
     android:drawableRight="?attr/keywords_flow_layout_blob_active_edit_cross"

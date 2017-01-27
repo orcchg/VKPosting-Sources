@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <solid android:color="#99ffe0b2" />
+            <solid android:color="@color/keyword_blob_passive_color" />
         </shape>
     </item>
 
@@ -10,6 +10,6 @@
         android:id="@+id/icon">
         <bitmap
             android:src="@drawable/ic_clear_white_18dp"
-            android:tint="#ffa726" />
+            android:tint="@color/keyword_blob_active_color" />
     </item>
 </layer-list>

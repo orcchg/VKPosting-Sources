@@ -3,6 +3,8 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">8dp</dimen>
 
+    <dimen name="keyword_blob_radius">10dp</dimen>
+
     <dimen name="standard_bottom_padding">16dp</dimen>
     <dimen name="standard_button_text_size">16dp</dimen>
     <dimen name="standard_description_text_size">16dp</dimen>
