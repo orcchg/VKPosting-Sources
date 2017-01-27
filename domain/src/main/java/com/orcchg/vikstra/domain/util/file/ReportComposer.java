@@ -31,7 +31,7 @@ public class ReportComposer {
             return false;
         }
         try {
-            Writer io = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
+            Writer io = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "KOI8_R"));
             CSVWriter writer = new CSVWriter(io, ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
             String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Members", "Name", "Screen name"};
             writer.writeNext(header);
@@ -66,7 +66,7 @@ public class ReportComposer {
             return false;
         }
         try {
-            Writer io = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "UTF-8"));
+            Writer io = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "KOI8_R"));
             CSVWriter writer = new CSVWriter(io, ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
             String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Members", "Name",
                     "Screen name", "Status", "Post ID", "Error code"};
