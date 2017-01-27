@@ -229,6 +229,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                 (dialog, which, text) -> {
                     toolbar.setTitle(text);
                     presenter.onTitleChanged(text);
+                    dialog.dismiss();
                 });
     }
 
