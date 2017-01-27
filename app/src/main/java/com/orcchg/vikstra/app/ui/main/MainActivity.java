@@ -367,7 +367,10 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private void openLogoutDialog() {
         DialogProvider.showTextDialogTwoButtons(this, R.string.main_dialog_logout_title,
                 R.string.main_dialog_logout_description, R.string.button_logout, R.string.button_cancel,
-                (dialog, which) -> presenter.logout(),
-                (dialog, which) -> dialog.dismiss()).show();
+                (dialog, which) -> {
+                    dialog.dismiss();
+                    presenter.logout();
+                },
+                (dialog, which) -> dialog.dismiss());
     }
 }

@@ -204,7 +204,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
                 (dialog, which, text) -> {
                     if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text));
-                }).show();
+                });
     }
 
     @Override
@@ -214,7 +214,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                     String path = FileUtility.makeDumpFileName(this, text, true /* external */);
                     presenter.performDumping(path);
                     dialog.dismiss();
-                }).show();
+                });
     }
 
     @Override
@@ -228,7 +228,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                 (dialog, which, text) -> {
                     toolbar.setTitle(text);
                     presenter.onTitleChanged(text);
-                }).show();
+                });
     }
 
     // ------------------------------------------

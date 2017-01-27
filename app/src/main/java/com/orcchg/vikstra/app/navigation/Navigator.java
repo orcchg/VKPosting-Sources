@@ -63,7 +63,7 @@ public class Navigator {
             context.startActivity(Intent.createChooser(intent, title));
         } catch (android.content.ActivityNotFoundException ex) {
             Timber.e("No Activity was found to send an email !");
-            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_email).show();
+            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_email);
         }
     }
 
@@ -83,7 +83,7 @@ public class Navigator {
                 context.startActivity(intent);
             } else {
                 Timber.e("No Activity was found to open Browser !");
-                DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_browser).show();
+                DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_browser);
             }
         } else {
             Timber.e("Input url [%s] is invalid !", url);
@@ -139,7 +139,7 @@ public class Navigator {
             context.startActivityForResult(intent, Constant.RequestCode.EXTERNAL_SCREEN_GALLERY);
         } else {
             Timber.e("No Activity was found to open Gallery !");
-            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_gallery).show();
+            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_gallery);
         }
     }
 
@@ -161,7 +161,7 @@ public class Navigator {
             context.startActivityForResult(intent, Constant.RequestCode.EXTERNAL_SCREEN_CAMERA);
         } else {
             Timber.e("No Activity was found to open Camera !");
-            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_camera).show();
+            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_camera);
         }
     }
 

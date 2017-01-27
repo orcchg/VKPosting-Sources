@@ -189,7 +189,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
                     presenter.onTitleChanged(text);
                     dialog.dismiss();
                     if (saveAfter) presenter.onSavePressed();
-                }).show();
+                });
     }
 
     @Override
@@ -203,7 +203,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
                 (dialog, which) -> {
                     dialog.dismiss();
                     closeView(Activity.RESULT_CANCELED);
-                }).show();
+                });
     }
 
     @Override

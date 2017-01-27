@@ -46,7 +46,7 @@ public class StartActivity extends SimpleBaseActivity {
             @DebugLog @Override
             public void onError(VKError error) {
                 Timber.e("Authorization has failed: %s", error.toString());
-                AlertDialog dialog = DialogProvider.showTextDialog(StartActivity.this, R.string.dialog_error_title,
+                AlertDialog dialog = DialogProvider.getTextDialog(StartActivity.this, R.string.dialog_error_title,
                         R.string.main_dialog_authorization_failed, (xdialog, which) -> finish());
                 dialog.setCancelable(false);
                 dialog.setCanceledOnTouchOutside(false);

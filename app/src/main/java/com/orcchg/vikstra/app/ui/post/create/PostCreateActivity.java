@@ -180,7 +180,7 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
 
     @Override
     public void openMediaLoadDialog() {
-        DialogProvider.showUploadPhotoDialog(this).show();
+        DialogProvider.showUploadPhotoDialog(this);
     }
 
     @Override
@@ -194,7 +194,7 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
                 (dialog, which) -> {
                     dialog.dismiss();
                     closeView(Activity.RESULT_CANCELED);
-                }).show();
+                });
     }
 
     // ------------------------------------------

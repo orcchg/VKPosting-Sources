@@ -20,28 +20,30 @@ public class DialogProvider {
 
     /* Text */
     // --------------------------------------------------------------------------------------------
-    public static AlertDialog showTextDialog(Activity activity, @StringRes int title, @StringRes int description) {
-        return showTextDialog(activity, title, description, null);
+    /* Get */
+    // ------------------------------------------
+    public static AlertDialog getTextDialog(Activity activity, @StringRes int title, @StringRes int description) {
+        return getTextDialog(activity, title, description, null);
     }
 
-    public static AlertDialog showTextDialog(Activity activity, @StringRes int title, String description) {
+    public static AlertDialog getTextDialog(Activity activity, @StringRes int title, String description) {
         String xtitle = activity.getResources().getString(title);
-        return showTextDialog(activity, xtitle, description, null);
+        return getTextDialog(activity, xtitle, description, null);
     }
 
-    public static AlertDialog showTextDialog(Activity activity, @StringRes int title, @StringRes int description,
-                                             DialogInterface.OnClickListener listener) {
+    public static AlertDialog getTextDialog(Activity activity, @StringRes int title, @StringRes int description,
+                                            DialogInterface.OnClickListener listener) {
         String xtitle = activity.getResources().getString(title);
         String xdescription = activity.getResources().getString(description);
-        return showTextDialog(activity, xtitle, xdescription, listener);
+        return getTextDialog(activity, xtitle, xdescription, listener);
     }
 
-    public static AlertDialog showTextDialog(Activity activity, String title, String description) {
-        return showTextDialog(activity, title, description, null);
+    public static AlertDialog getTextDialog(Activity activity, String title, String description) {
+        return getTextDialog(activity, title, description, null);
     }
 
-    public static AlertDialog showTextDialog(Activity activity, String title, String description,
-                                             DialogInterface.OnClickListener listener) {
+    public static AlertDialog getTextDialog(Activity activity, String title, String description,
+                                            DialogInterface.OnClickListener listener) {
         return new AlertDialog.Builder(activity)
                 .setTitle(title)
                 .setMessage(description)
@@ -49,22 +51,51 @@ public class DialogProvider {
                 .create();
     }
 
+    /* Show */
     // ------------------------------------------
-    public static AlertDialog showTextDialogTwoButtons(Activity activity, @StringRes int title, @StringRes int description,
-                                                       @StringRes int yesLabel, @StringRes int noLabel,
-                                                       DialogInterface.OnClickListener yesListener,
-                                                       DialogInterface.OnClickListener noListener) {
+    public static void showTextDialog(Activity activity, @StringRes int title, @StringRes int description) {
+        if (!activity.isFinishing()) getTextDialog(activity, title, description, null).show();
+    }
+
+    public static void showTextDialog(Activity activity, @StringRes int title, String description) {
+        String xtitle = activity.getResources().getString(title);
+        if (!activity.isFinishing()) getTextDialog(activity, xtitle, description, null).show();
+    }
+
+    public static void showTextDialog(Activity activity, @StringRes int title, @StringRes int description,
+                                      DialogInterface.OnClickListener listener) {
+        String xtitle = activity.getResources().getString(title);
+        String xdescription = activity.getResources().getString(description);
+        if (!activity.isFinishing()) getTextDialog(activity, xtitle, xdescription, listener).show();
+    }
+
+    public static void showTextDialog(Activity activity, String title, String description) {
+        if (!activity.isFinishing()) getTextDialog(activity, title, description, null).show();
+    }
+
+    public static void showTextDialog(Activity activity, String title, String description,
+                                      DialogInterface.OnClickListener listener) {
+        if (!activity.isFinishing()) getTextDialog(activity, title, description, listener).show();
+    }
+
+    // --------------------------------------------------------------------------------------------
+    /* Get */
+    // ------------------------------------------
+    public static AlertDialog getTextDialogTwoButtons(Activity activity, @StringRes int title, @StringRes int description,
+                                                      @StringRes int yesLabel, @StringRes int noLabel,
+                                                      DialogInterface.OnClickListener yesListener,
+                                                      DialogInterface.OnClickListener noListener) {
         String xtitle = activity.getResources().getString(title);
         String xdescription = activity.getResources().getString(description);
         String xyesLabel = activity.getResources().getString(yesLabel);
         String xnoLabel = activity.getResources().getString(noLabel);
-        return showTextDialogTwoButtons(activity, xtitle, xdescription, xyesLabel, xnoLabel, yesListener, noListener);
+        return getTextDialogTwoButtons(activity, xtitle, xdescription, xyesLabel, xnoLabel, yesListener, noListener);
     }
 
-    public static AlertDialog showTextDialogTwoButtons(Activity activity, String title, String description,
-                                                       String yesLabel, String noLabel,
-                                                       DialogInterface.OnClickListener yesListener,
-                                                       DialogInterface.OnClickListener noListener) {
+    public static AlertDialog getTextDialogTwoButtons(Activity activity, String title, String description,
+                                                      String yesLabel, String noLabel,
+                                                      DialogInterface.OnClickListener yesListener,
+                                                      DialogInterface.OnClickListener noListener) {
         return new AlertDialog.Builder(activity)
                 .setTitle(title)
                 .setMessage(description)
@@ -73,14 +104,32 @@ public class DialogProvider {
                 .create();
     }
 
+    /* Show */
+    // ------------------------------------------
+    public static void showTextDialogTwoButtons(Activity activity, @StringRes int title, @StringRes int description,
+                                                @StringRes int yesLabel, @StringRes int noLabel,
+                                                DialogInterface.OnClickListener yesListener,
+                                                DialogInterface.OnClickListener noListener) {
+        if (!activity.isFinishing()) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
+    }
+
+    public static void showTextDialogTwoButtons(Activity activity, String title, String description,
+                                                String yesLabel, String noLabel,
+                                                DialogInterface.OnClickListener yesListener,
+                                                DialogInterface.OnClickListener noListener) {
+        if (!activity.isFinishing()) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
+    }
+
     /* Edit text */
     // --------------------------------------------------------------------------------------------
     public interface OnEditTextDialogOkPressed {
         void onClick(DialogInterface dialog, int which, String text);
     }
 
-    public static AlertDialog showEditTextDialog(Activity activity, String title, String hint,
-                                                 @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
+    /* Get */
+    // ------------------------------------------
+    public static AlertDialog getEditTextDialog(Activity activity, String title, String hint,
+                                                @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
         View view = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null, false);
         EditText input = (EditText) view.findViewById(R.id.et_input);
         init = TextUtils.isEmpty(init) ? "" : init;
@@ -107,9 +156,18 @@ public class DialogProvider {
         return alertDialog;
     }
 
+    /* Show */
+    // ------------------------------------------
+    public static void showEditTextDialog(Activity activity, String title, String hint,
+                                          @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
+        if (!activity.isFinishing()) getEditTextDialog(activity, title, hint, init, okListener).show();
+    }
+
     /* Photo */
     // --------------------------------------------------------------------------------------------
-    public static AlertDialog showUploadPhotoDialog(BaseActivity activity) {
+    /* Get */
+    // ------------------------------------------
+    public static AlertDialog getUploadPhotoDialog(BaseActivity activity) {
         return new AlertDialog.Builder(activity)
                 .setTitle(R.string.dialog_upload_photo_title)
                 .setSingleChoiceItems(R.array.dialog_upload_photo_variants, -1, (dialog, which) -> {
@@ -131,5 +189,11 @@ public class DialogProvider {
                     }
                     dialog.dismiss();
                 }).create();
+    }
+
+    /* Show */
+    // ------------------------------------------
+    public static void showUploadPhotoDialog(BaseActivity activity) {
+        if (!activity.isFinishing()) getUploadPhotoDialog(activity).show();
     }
 }

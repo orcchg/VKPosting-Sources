@@ -158,13 +158,14 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // ------------------------------------------
     @Override
     public void onPostingCancel() {
-        DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_posting_was_cancelled_daily_limit_reached).show();
+        DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
+                R.string.report_dialog_posting_was_cancelled_daily_limit_reached);
     }
 
     @Override
     public void onPostingFinished(int posted, int total) {
         String text = String.format(Locale.ENGLISH, SNACKBAR_POSTING_FINISHED, posted, total);
-        DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text).show();
+        DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text);
     }
 
     @Override
@@ -175,13 +176,13 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
                     dialog.dismiss();
                     presenter.interruptPostingAndClose();
                 },
-                (dialog, which) -> dialog.dismiss()).show();
+                (dialog, which) -> dialog.dismiss());
     }
 
     @Override
     public void openDumpNotReadyDialog() {
         DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
-                R.string.report_dialog_group_reports_not_ready_to_dump).show();
+                R.string.report_dialog_group_reports_not_ready_to_dump);
     }
 
     @Override
@@ -191,7 +192,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
                     String path = FileUtility.makeDumpFileName(this, text, true /* external */);
                     presenter.performDumping(path);
                     dialog.dismiss();
-                }).show();
+                });
     }
 
     // ------------------------------------------
