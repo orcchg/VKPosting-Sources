@@ -4,7 +4,9 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.common.IdParameters;
 import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.repository.IGroupRepository;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -43,5 +45,10 @@ public class GetGroupBundleById extends UseCase<GroupBundle> {
     @Nullable @Override
     protected GroupBundle doAction() {
         return groupRepository.groups(id);
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return new IdParameters(id);
     }
 }

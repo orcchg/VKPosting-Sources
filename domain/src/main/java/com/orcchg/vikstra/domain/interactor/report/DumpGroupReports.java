@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
@@ -19,7 +20,7 @@ import javax.inject.Inject;
 
 public class DumpGroupReports extends UseCase<String> {
 
-    public static class Parameters {
+    public static class Parameters implements IParameters {
         private long groupReportBundleId;  // has priority over collection of Report-s
         private Collection<GroupReport> reports;
 
@@ -66,5 +67,10 @@ public class DumpGroupReports extends UseCase<String> {
         }
         FileUtility.createFileByPath(path);  // create file or throw IOException
         return reportComposer.writeGroupReportsToCsv(parameters.reports, path) ? path : null;
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }

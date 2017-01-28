@@ -1,8 +1,11 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte.batch;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPostToGroups;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -65,5 +68,10 @@ public class MakeWallPostToGroupsBatch extends VkBatchUseCase<GroupReportEssence
             list.add(item);
         }
         return list;
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }

@@ -4,7 +4,9 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.common.IdParameters;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -33,5 +35,10 @@ public class DeleteKeywordBundle extends UseCase<Boolean> {
     @Nullable @Override
     protected Boolean doAction() {
         return keywordRepository.deleteKeywords(id);
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return new IdParameters(id);
     }
 }

@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.common.ListParameters;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
@@ -47,5 +48,10 @@ public class GetKeywordBundles extends UseCase<List<KeywordBundle>> {
         int limit = parameters.limit();
         int offset = parameters.offset();
         return keywordRepository.keywords(limit, offset);
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }

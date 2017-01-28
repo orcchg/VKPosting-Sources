@@ -1,8 +1,11 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -19,7 +22,7 @@ import timber.log.Timber;
 
 public class MakeWallPost extends VkUseCase<GroupReportEssence> {
 
-    public static class Parameters {
+    public static class Parameters implements IParameters {
         VKAttachments attachments;
         Group group;
         String message;
@@ -111,5 +114,10 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
                 .setGroup(parameters.getGroup())
                 .setWallPostId(data.post_id)
                 .build();
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }

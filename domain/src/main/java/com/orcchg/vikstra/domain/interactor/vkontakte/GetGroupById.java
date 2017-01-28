@@ -1,7 +1,11 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
+import com.orcchg.vikstra.domain.interactor.common.IdParameters;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
@@ -33,5 +37,10 @@ public class GetGroupById extends VkUseCase<VKApiCommunityArray> {
     protected VKApiCommunityArray parseVkResponse() {
 //        return new Gson().fromJson(vkResponse.responseString, VKApiCommunityArray.class);
         return (VKApiCommunityArray) vkResponse.parsedModel;
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return new IdParameters(vkGroupId);
     }
 }

@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.common.ListParameters;
 import com.orcchg.vikstra.domain.model.Post;
@@ -47,5 +48,10 @@ public class GetPosts extends UseCase<List<Post>> {
         int limit = parameters.limit();
         int offset = parameters.offset();
         return postRepository.posts(limit, offset);
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }

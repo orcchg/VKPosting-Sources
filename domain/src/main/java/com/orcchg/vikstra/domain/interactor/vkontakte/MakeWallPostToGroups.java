@@ -1,10 +1,13 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api220VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -25,7 +28,7 @@ import timber.log.Timber;
 
 public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<Ordered<GroupReportEssence>>> {
 
-    public static class Parameters {
+    public static class Parameters implements IParameters {
         VKAttachments attachments;
         List<Group> groups;
         String message;
@@ -107,6 +110,11 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
             useCases.add(useCase);
         }
         return useCases;
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 
     /* Thread pool */

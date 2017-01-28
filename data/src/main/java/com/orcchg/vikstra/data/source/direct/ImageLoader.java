@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.bumptech.glide.RequestManager;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -98,6 +99,25 @@ public class ImageLoader extends Endpoint {
             }
             return null;
         }
+
+        /* Parameters */
+        // --------------------------------------
+        private class Parameters implements IParameters {
+            private final Media media;
+
+            private Parameters(Media media) {
+                this.media = media;
+            }
+
+            public Media media() {
+                return media;
+            }
+        }
+
+        @Nullable @Override
+        protected IParameters getInputParameters() {
+            return new Parameters(media);
+        }
     }
 
     private static class LoadPhotos extends MultiUseCase<Bitmap, List<Ordered<Bitmap>>> {
@@ -119,6 +139,25 @@ public class ImageLoader extends Endpoint {
                 useCases.add(useCase);
             }
             return useCases;
+        }
+
+        /* Parameters */
+        // --------------------------------------
+        private class Parameters implements IParameters {
+            private final List<Media> media;
+
+            private Parameters(List<Media> media) {
+                this.media = media;
+            }
+
+            public List<Media> media() {
+                return media;
+            }
+        }
+
+        @Nullable @Override
+        protected IParameters getInputParameters() {
+            return new Parameters(media);
         }
     }
 }

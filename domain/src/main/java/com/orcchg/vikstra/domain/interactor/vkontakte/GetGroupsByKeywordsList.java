@@ -1,8 +1,11 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -34,5 +37,24 @@ public class GetGroupsByKeywordsList extends MultiUseCase<VKApiCommunityArray, L
             useCases.add(useCase);
         }
         return useCases;
+    }
+
+    /* Parameters */
+    // --------------------------------------------------------------------------------------------
+    public static class Parameters implements IParameters {
+        private final List<Keyword> keywords;
+
+        private Parameters(List<Keyword> keywords) {
+            this.keywords = keywords;
+        }
+
+        public List<Keyword> keywords() {
+            return keywords;
+        }
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return new Parameters(keywords);
     }
 }

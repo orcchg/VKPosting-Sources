@@ -19,7 +19,6 @@ import com.orcchg.vikstra.app.ui.group.list.listview.parent.GroupParentItem;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
-import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.group.GetGroupBundleById;
@@ -685,7 +684,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             if (isViewAttached()) {
                 if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
                     Timber.d("Open ReportScreen in interactive mode showing posting progress");
-                    ContentUtility.InMemoryStorage.setSelectedGroupsForPosting(new ArrayList<>(selectedGroups));  // preserve ordering
                     getView().openInteractiveReportScreen(currentPost.id());
                     // TODO: report screen could subscribe for posting-progress callback
                     // TODO:        too late, missing some early reports

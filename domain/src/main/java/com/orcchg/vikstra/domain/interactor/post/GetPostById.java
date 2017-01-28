@@ -4,7 +4,9 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.common.IdParameters;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.repository.IPostRepository;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -35,5 +37,10 @@ public class GetPostById extends UseCase<Post> {
     @Nullable @Override
     protected Post doAction() {
         return postRepository.post(id);
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return new IdParameters(id);
     }
 }

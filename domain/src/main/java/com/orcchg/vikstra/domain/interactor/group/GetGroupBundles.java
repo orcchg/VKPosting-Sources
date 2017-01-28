@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.common.ListParameters;
 import com.orcchg.vikstra.domain.model.GroupBundle;
@@ -43,5 +44,10 @@ public class GetGroupBundles extends UseCase<List<GroupBundle>> {
         int limit = parameters.limit();
         int offset = parameters.offset();
         return groupRepository.groups(limit, offset);
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }

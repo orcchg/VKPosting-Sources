@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
@@ -13,7 +14,7 @@ import javax.inject.Inject;
 
 public class PostKeywordBundle extends UseCase<Boolean> {
 
-    public static class Parameters {
+    public static class Parameters implements IParameters {
         KeywordBundle keywords;
 
         public Parameters(KeywordBundle keywords) {
@@ -39,5 +40,10 @@ public class PostKeywordBundle extends UseCase<Boolean> {
     protected Boolean doAction() {
         if (parameters == null) throw new NoParametersException();
         return keywordRepository.updateKeywords(parameters.keywords);
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }

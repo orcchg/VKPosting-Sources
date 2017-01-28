@@ -1,8 +1,11 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte.batch;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.vkontakte.media.UploadPhotos;
 import com.orcchg.vikstra.domain.util.vkontakte.VkUtility;
 import com.vk.sdk.api.VKApi;
@@ -54,5 +57,10 @@ public class UploadPhotosBatch extends VkBatchUseCase<VKPhotoArray, List<VKPhoto
             list.add(data);
         }
         return list;
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }

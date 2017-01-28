@@ -1,6 +1,8 @@
 package com.orcchg.vikstra.domain.interactor.common;
 
-public class ListParameters {
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
+
+public class ListParameters implements IParameters {
     protected int limit = -1;
     protected int offset = 0;
 

@@ -1,7 +1,10 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
@@ -27,5 +30,10 @@ public class GetCurrentUser extends VkUseCase<VKList<VKApiUserFull>> {
     @Override @SuppressWarnings("unchecked")
     protected VKList<VKApiUserFull> parseVkResponse() {
         return (VKList<VKApiUserFull>) vkResponse.parsedModel;
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return null;
     }
 }

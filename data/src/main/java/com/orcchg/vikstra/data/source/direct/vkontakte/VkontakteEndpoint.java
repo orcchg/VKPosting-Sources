@@ -325,6 +325,28 @@ public class VkontakteEndpoint extends Endpoint {
                 List<GroupReportEssence> refinedReports = new ArrayList<>();
                 // loop over all available results (there could a bit cancelled ones)
                 for (Ordered<GroupReportEssence> item : reports) {
+                    /**
+                     * @Less_Reliable_Suggestion
+                     * Order of resulting 'reports' strongly corresponds to the order of Group-s in
+                     * input parameters of the use-case {@link MakeWallPostToGroups}, because it is
+                     * {@link MultiUseCase} which returns results preserving the order of it's internal
+                     * use-cases, which in turn are ordered according to the order of Group-s in parameters.
+                     *
+                     * This is less reliable suggestion, because ordering would probably change in future by mistake.
+                     *
+                     * @Stable_Suggestion
+                     * This code is equivalent to the following variant:
+                     *
+                     *      MakeWallPost.Parameters params = (MakeWallPost.Parameters) item.parameters;
+                     *      Group group = params.getGroup();
+                     *
+                     * Here we obtain input parameters, containing Group, for each single use-case
+                     * {@link com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost} inside the
+                     * main use-case {@link MakeWallPostToGroups}, which results are eventually delivered
+                     * here in this callback.
+                     *
+                     * This is stable suggestion, because we use parameters corresponding to the item under consideration.
+                     */
                     Group group = parameters.getGroups().get(index);
                     refinedReports.add(refineModel(item, group, useCase.getTerminalErrors()));
                     ++index;

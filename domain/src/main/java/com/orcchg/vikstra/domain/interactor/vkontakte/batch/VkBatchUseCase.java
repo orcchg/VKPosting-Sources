@@ -74,6 +74,7 @@ public abstract class VkBatchUseCase<Result, L extends List<Result>> extends Use
             public void onComplete(VKResponse[] responses) {
                 super.onComplete(responses);
                 synchronized (mLock) {
+                    Timber.tag(getClass().getSimpleName());
                     Timber.i("Successfully received batch response: %s", responsesToString(responses));
                     vkBatchResponse = responses;
                     mDoneCondition = true;
@@ -85,8 +86,10 @@ public abstract class VkBatchUseCase<Result, L extends List<Result>> extends Use
             public void onError(VKError error) {
                 super.onError(error);
                 synchronized (mLock) {
+                    Timber.tag(getClass().getSimpleName());
                     Timber.e("Failed to receive response: %s", error.toString());
                     if (error.apiError.errorCode == 6) {
+                        Timber.tag(getClass().getSimpleName());
                         Timber.d("Throwing Vk use-case retry exception");
                         vkException = new VkUseCaseRetryException();
                     } else {

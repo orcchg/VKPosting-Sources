@@ -22,6 +22,7 @@ import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.DumpGroupReports;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
+import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
@@ -301,7 +302,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private MultiUseCase.ProgressCallback<GroupReportEssence> createPostingProgressCallback() {
         return (index, total, item) -> {
             Timber.v("Posting progress: %s / %s", index + 1, total);
-            Group group = ContentUtility.InMemoryStorage.getSelectedGroupsForPosting().get(index);
+            MakeWallPost.Parameters params = (MakeWallPost.Parameters) item.parameters;
+            Group group = params.getGroup();  // null parameters are impossible because this is checked inside the use-case
             Timber.v("%s", group.toString());
             // TODO: use terminal error from proper UseCase instead of hardcoded one
             GroupReportEssence model = VkontakteEndpoint.refineModel(item, group, Api220VkUseCaseException.class);

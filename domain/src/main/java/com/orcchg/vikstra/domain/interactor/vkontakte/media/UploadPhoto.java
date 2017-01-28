@@ -1,10 +1,12 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte.media;
 
 import android.graphics.Bitmap;
+import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.vkontakte.VkUseCase;
 import com.orcchg.vikstra.domain.util.vkontakte.VkUtility;
 import com.vk.sdk.api.VKApi;
@@ -17,7 +19,7 @@ import javax.inject.Inject;
 
 public class UploadPhoto extends VkUseCase<VKPhotoArray> {
 
-    public static class Parameters {
+    public static class Parameters implements IParameters {
         Bitmap bitmap;
 
         public Parameters(Bitmap bitmap) {
@@ -51,5 +53,10 @@ public class UploadPhoto extends VkUseCase<VKPhotoArray> {
     protected VKPhotoArray parseVkResponse() {
 //        return new Gson().fromJson(vkResponse.responseString, VKPhotoArray.class);
         return (VKPhotoArray) vkResponse.parsedModel;
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }

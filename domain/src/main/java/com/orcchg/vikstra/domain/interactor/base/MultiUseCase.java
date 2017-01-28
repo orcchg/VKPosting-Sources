@@ -176,6 +176,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                             Timber.v("Performing request [%s] at time %s", index + 1, ValueUtility.time());
                             UseCase<Result> useCase = useCases.size() == 1 ? useCases.get(0) : useCases.get(index);
                             result.orderId = useCase.getOrderId();
+                            result.parameters = useCase.getInputParameters();  // supply input parameters of use-case
                             result.data = useCase.doAction();  // perform use-case synchronously
                             progressCallbackScheduler.post(new Runnable() {
                                 @Override

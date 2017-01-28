@@ -75,6 +75,14 @@ public abstract class UseCase<Result> implements Runnable {
     protected abstract Result doAction();
 
     /**
+     * Get input parameters this {@link UseCase} is executing with.
+     *
+     * @return concrete input parameters.
+     */
+    @Nullable
+    protected abstract IParameters getInputParameters();
+
+    /**
      * Execute this {@link UseCase} in it's {@link UseCase#threadExecutor} and
      * observe the result in it's {@link UseCase#postExecuteScheduler} via it's
      * {@link UseCase#postExecuteCallback}.

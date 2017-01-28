@@ -1,11 +1,13 @@
 package com.orcchg.vikstra.domain.interactor.vkontakte.media;
 
 import android.graphics.Bitmap;
+import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -20,7 +22,7 @@ import timber.log.Timber;
 
 public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<Ordered<VKPhotoArray>>> {
 
-    public static class Parameters {
+    public static class Parameters implements IParameters {
         List<Bitmap> bitmaps;
 
         public Parameters(List<Bitmap> bitmaps) {
@@ -56,5 +58,10 @@ public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<Ordered<VKPhot
             useCases.add(useCase);
         }
         return useCases;
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }

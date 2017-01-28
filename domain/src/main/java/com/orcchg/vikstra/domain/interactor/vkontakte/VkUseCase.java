@@ -44,6 +44,7 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
+                Timber.tag(getClass().getSimpleName());
                 Timber.i("Successfully received response: %s", response.responseString);
                 vkResponse = response;
             }
@@ -51,8 +52,10 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
             @Override
             public void onError(VKError error) {
                 super.onError(error);
+                Timber.tag(getClass().getSimpleName());
                 Timber.e("Failed to receive response: %s", error.toString());
                 if (error.apiError.errorCode == 6) {
+                    Timber.tag(getClass().getSimpleName());
                     Timber.d("Throwing Vk use-case retry exception");
                     vkException = new VkUseCaseRetryException();
                 } else {

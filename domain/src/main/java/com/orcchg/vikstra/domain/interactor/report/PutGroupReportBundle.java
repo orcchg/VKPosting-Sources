@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
@@ -16,7 +17,7 @@ import javax.inject.Inject;
 
 public class PutGroupReportBundle extends UseCase<GroupReportBundle> {
 
-    public static class Parameters {
+    public static class Parameters implements IParameters {
         List<GroupReportEssence> essences;
 
         public Parameters(List<GroupReportEssence> essences) {
@@ -42,5 +43,10 @@ public class PutGroupReportBundle extends UseCase<GroupReportBundle> {
     protected GroupReportBundle doAction() {
         if (parameters == null) throw new NoParametersException();
         return reportRepository.addGroupReports(parameters.essences);
+    }
+
+    @Nullable @Override
+    protected IParameters getInputParameters() {
+        return parameters;
     }
 }
