@@ -300,7 +300,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @SuppressWarnings("unchecked")
     private MultiUseCase.ProgressCallback<GroupReportEssence> createPostingProgressCallback() {
         return (index, total, item) -> {
+            Timber.v("Posting progress: %s / %s", index + 1, total);
             Group group = ContentUtility.InMemoryStorage.getSelectedGroupsForPosting().get(index);
+            Timber.v("%s", group.toString());
             // TODO: use terminal error from proper UseCase instead of hardcoded one
             GroupReportEssence model = VkontakteEndpoint.refineModel(item, group, Api220VkUseCaseException.class);
             if (item.data != null)  ++postedWithSuccess;  // count successful posting
