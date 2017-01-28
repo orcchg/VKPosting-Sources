@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
+import com.orcchg.vikstra.app.ui.common.content.IListReach;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
@@ -41,7 +42,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GroupListActivity extends BasePermissionActivity<GroupListContract.View, GroupListContract.Presenter>
-        implements GroupListContract.View, IScrollList, ShadowHolder {
+        implements GroupListContract.View, IListReach, IScrollList, ShadowHolder {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
@@ -57,6 +58,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     @BindView(R.id.tv_info_title) TextView selectedGroupsCountView;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
     @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.fab_label) TextView fabLabel;
     @OnClick(R.id.fab)
     void onPostFabClick() {
         presenter.onFabClick();
@@ -127,7 +129,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
-        fab.hide();  // hide fab at fresh start before post fetched
+        showFab(false);  // hide fab at fresh start before post fetched
         postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostCreateScreen(this, postId));
         postThumbnail.setErrorRetryButtonClickListener((view) -> presenter.retryPost());
         updateSelectedGroupsCounter(0, 0);
@@ -257,7 +259,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     @Override
     public void showEmptyPost() {
-        fab.hide();
+        showFab(false);
         postThumbnail.setPost(null);
     }
 
@@ -273,11 +275,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     @Override
     public void showPostingButton(boolean isVisible) {
-        if (isVisible) {
-            fab.show();
-        } else {
-            fab.hide();
-        }
+        showFab(isVisible);
     }
 
     @Override
@@ -292,6 +290,17 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     @Override
     public void updateSelectedGroupsCounter(int count, int total) {
         selectedGroupsCountView.setText(String.format(Locale.ENGLISH, INFO_TITLE, count, total));
+    }
+
+    // ------------------------------------------
+    @Override
+    public void hasReachedTop(boolean reached) {
+        showFab(true);
+    }
+
+    @Override
+    public void hasReachedBottom(boolean reached) {
+        showFab(!reached);
     }
 
     // ------------------------------------------
@@ -323,5 +332,15 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         INFO_TITLE = resources.getString(R.string.group_list_selected_groups_total_count);
         SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.group_list_snackbar_groups_dump_succeeded);
         SNACKBAR_KEYWORDS_LIMIT = resources.getString(R.string.group_list_snackbar_keywords_limit_message);
+    }
+
+    private void showFab(boolean isVisible) {
+        if (isVisible) {
+            fab.show();
+            fabLabel.setVisibility(View.VISIBLE);
+        } else {
+            fab.hide();
+            fabLabel.setVisibility(View.INVISIBLE);
+        }
     }
 }

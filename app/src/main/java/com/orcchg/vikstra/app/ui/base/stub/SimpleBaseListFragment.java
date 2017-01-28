@@ -28,4 +28,9 @@ public class SimpleBaseListFragment extends BaseListFragment<StubMvpView, BasePr
     protected void onScroll(int itemsLeftToEnd) {
         // override in subclass
     }
+
+    @Override
+    protected void onScrollTop() {
+        // override in subclass
+    }
 }

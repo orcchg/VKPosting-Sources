@@ -80,9 +80,28 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
         super.onSaveInstanceState(outState);
     }
 
+    /* List helpers */
+    // --------------------------------------------------------------------------------------------
     @DebugLog @Override
     public RecyclerView getListView(int tag) {
         return recyclerView;
+    }
+
+    // {@see http://stackoverflow.com/questions/27841740/how-to-know-whether-a-recyclerview-linearlayoutmanager-is-scrolled-to-top-or-b/33515549#33515549}
+    // ------------------------------------------
+    protected boolean isListReachedTop() {
+        int position = layoutManager.findFirstVisibleItemPosition();
+        return position == 0 && layoutManager.findViewByPosition(position).getTop() == 0;
+    }
+
+    protected boolean isListReachedBottom() {
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if (adapter != null) {
+            int totalItems = adapter.getItemCount();
+            return layoutManager.findLastVisibleItemPosition() == totalItems - 1;
+        }
+        Timber.w("Adapter must be supplied for the list to check whether bottom has been reached properly !");
+        return false;
     }
 
     /* Internal */
@@ -91,6 +110,7 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
 
     void processListScroll(RecyclerView recyclerView, int dx, int dy) {
         if (dy <= 0) {
+            onScrollTop();
             return;  // skip scroll up
         }
 
@@ -105,4 +125,5 @@ public abstract class BaseListFragment<V extends MvpView, P extends MvpPresenter
     }
 
     protected abstract void onScroll(int itemsLeftToEnd);
+    protected abstract void onScrollTop();
 }

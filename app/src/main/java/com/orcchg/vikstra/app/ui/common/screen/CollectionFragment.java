@@ -16,6 +16,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseListFragment;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.base.MvpView;
+import com.orcchg.vikstra.app.ui.common.content.IListReach;
 import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
@@ -55,6 +56,7 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
         }
     }
 
+    protected IListReach iListReach;
     protected IScrollGrid iScrollGrid;
     protected IScrollList iScrollList;
     protected ShadowHolder shadowHolder;
@@ -69,15 +71,10 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (IScrollGrid.class.isInstance(context)) {
-            iScrollGrid = (IScrollGrid) context;
-        }
-        if (IScrollList.class.isInstance(context)) {
-            iScrollList = (IScrollList) context;
-        }
-        if (ShadowHolder.class.isInstance(context)) {
-            shadowHolder = (ShadowHolder) context;
-        }
+        if (IListReach.class.isInstance(context))   iListReach   = (IListReach) context;
+        if (IScrollGrid.class.isInstance(context))  iScrollGrid  = (IScrollGrid) context;
+        if (IScrollList.class.isInstance(context))  iScrollList  = (IScrollList) context;
+        if (ShadowHolder.class.isInstance(context)) shadowHolder = (ShadowHolder) context;
     }
 
     @DebugLog @Nullable @Override
@@ -109,6 +106,12 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
         } else {
             if (iScrollList != null) iScrollList.onScrollList(itemsLeftToEnd);
         }
+        if (iListReach != null) iListReach.hasReachedBottom(isListReachedBottom());
+    }
+
+    @Override
+    protected void onScrollTop() {
+        if (iListReach != null) iListReach.hasReachedTop(isListReachedTop());
     }
 
     @Override
