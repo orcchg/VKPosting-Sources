@@ -19,6 +19,12 @@ public class AvatarMenuItem extends FrameLayout {
 
     @BindView(R.id.iv_avatar) ImageView image;
 
+    /**
+     * Note, this ctor is not called directly in code, but it is called indirectly through Android FW
+     * while inflating toolbar menu. Thus, ProGuard strips this ctor and the entire {@link AvatarMenuItem}
+     * class from the release build leading the app to crash at the beginning. So, we use '-keep' rule
+     * for that class in ProGuard property file to avoid such crash.
+     */
     public AvatarMenuItem(Context context) {
         this(context, null);
     }
