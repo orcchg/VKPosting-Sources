@@ -16,6 +16,7 @@
     <string name="error_text">Произошла ошибка</string>
     <string name="error_text_extended">Произошла ошибка.</string>
     <string name="error_text_short">Ошибка</string>
+    <string name="button_about">О программе</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Отмена</string>
     <string name="button_close">Закрыть</string>
@@ -85,6 +86,8 @@
     <string name="keyword_list_screen_title">Слова</string>
     <!-- Main screen -->
     <string name="main_button_label_new_keywords">Добавить слова</string>
+    <string name="main_dialog_about_title">О Приложении</string>
+    <string name="main_dialog_about_description">Автор: Maxim Alov\nEmail: alovmax@yandex.ru\n\nAttribution\nИконка от: Freepik\nhttp://www.flaticon.com/free-icon/vk_145813#term=Vk&#38;page=1&#38;position=1</string>
     <string name="main_dialog_authorization_failed">Авторизация не пройдена</string>
     <string name="main_dialog_logout_title">Выход</string>
     <string name="main_dialog_logout_description">Вы совершите выход из текущего аккаунта Вконтакте</string>

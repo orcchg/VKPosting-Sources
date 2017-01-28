@@ -123,6 +123,9 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         toolbar.inflateMenu(R.menu.avatar);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
+                case R.id.about:
+                    openAboutDialog();
+                    return true;
                 case R.id.logout:
                     openLogoutDialog();
                     return true;
@@ -386,6 +389,10 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private PostSingleGridFragment getPostGridFragment() {
         FragmentManager fm = getSupportFragmentManager();
         return (PostSingleGridFragment) fm.findFragmentByTag(POST_GRID_FRAGMENT_TAG);
+    }
+
+    private void openAboutDialog() {
+        DialogProvider.showTextDialog(this, R.string.main_dialog_about_title, R.string.main_dialog_about_description);
     }
 
     private void openLogoutDialog() {
