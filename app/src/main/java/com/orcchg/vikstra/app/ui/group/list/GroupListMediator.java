@@ -8,6 +8,7 @@ import com.orcchg.vikstra.app.ui.group.list.activity.ActivityMediator;
 import com.orcchg.vikstra.app.ui.group.list.fragment.FragmentMediator;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
 
 import javax.inject.Inject;
@@ -24,99 +25,100 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
 
     @Override
     public void sendAddKeywordRequest(Keyword keyword) {
-        clientSecond.receiveAddKeywordRequest(keyword);
+        if (clientSecond != null) clientSecond.receiveAddKeywordRequest(keyword);
     }
 
     @Override
     public long sendAskForGroupBundleIdToDump() {
-        return clientSecond.receiveAskForGroupBundleIdToDump();
+        if (clientSecond != null) return clientSecond.receiveAskForGroupBundleIdToDump();
+        return Constant.BAD_ID;
     }
 
     @Override
     public void sendAskForRetry() {
-        clientSecond.receiveAskForRetry();
+        if (clientSecond != null) clientSecond.receiveAskForRetry();
     }
 
     @Override
     public void sendAskForRetryPost() {
-        clientSecond.receiveAskForRetryPost();
+        if (clientSecond != null) clientSecond.receiveAskForRetryPost();
     }
 
     @Override
     public void sendPostHasChangedRequest() {
-        clientSecond.receivePostHasChangedRequest();
+        if (clientSecond != null) clientSecond.receivePostHasChangedRequest();
     }
 
     @Override
     public void sendPostToGroupsRequest() {
-        clientSecond.receivePostToGroupsRequest();
+        if (clientSecond != null) clientSecond.receivePostToGroupsRequest();
     }
 
     /* Debugging */
     // ------------------------------------------
     @DebugSake @Override
     public void sendPostingTimeout(int timeout) {
-        clientSecond.receivePostingTimeout(timeout);
+        if (clientSecond != null) clientSecond.receivePostingTimeout(timeout);
     }
 
     // --------------------------------------------------------------------------------------------
     @Override
     public void sendAddKeywordError() {
-        clientFirst.receiveAddKeywordError();
+        if (clientFirst != null) clientFirst.receiveAddKeywordError();
     }
 
     @Override
     public void sendEmptyPost() {
-        clientFirst.receiveEmptyPost();
+        if (clientFirst != null) clientFirst.receiveEmptyPost();
     }
 
     @Override
     public void sendErrorPost() {
-        clientFirst.receiveErrorPost();
+        if (clientFirst != null) clientFirst.receiveErrorPost();
     }
 
     @Override
     public void sendGroupBundleChanged() {
-        clientFirst.receiveGroupBundleChanged();
+        if (clientFirst != null) clientFirst.receiveGroupBundleChanged();
     }
 
     @Override
     public void sendGroupsNotSelected() {
-        clientFirst.receiveGroupsNotSelected();
+        if (clientFirst != null) clientFirst.receiveGroupsNotSelected();
     }
 
     @Override
     public void sendKeywordBundleChanged() {
-        clientFirst.receiveKeywordBundleChanged();
+        if (clientFirst != null) clientFirst.receiveKeywordBundleChanged();
     }
 
     @Override
     public void sendKeywordsLimitReached(int limit) {
-        clientFirst.receiveKeywordsLimitReached(limit);
+        if (clientFirst != null) clientFirst.receiveKeywordsLimitReached(limit);
     }
 
     @Override
     public void sendPost(@Nullable PostSingleGridItemVO viewObject) {
-        clientFirst.receivePost(viewObject);
+        if (clientFirst != null) clientFirst.receivePost(viewObject);
     }
 
     @Override
     public void sendPostNotSelected() {
-        clientFirst.receivePostNotSelected();
+        if (clientFirst != null) clientFirst.receivePostNotSelected();
     }
 
     @Override
     public void sendPostingStartedMessage(boolean isStarted) {
-        clientFirst.receivePostingStartedMessage(isStarted);
+        if (clientFirst != null) clientFirst.receivePostingStartedMessage(isStarted);
     }
 
     @Override
     public void sendShowPostingButtonRequest(boolean isVisible) {
-        clientFirst.receiveShowPostingButtonRequest(isVisible);
+        if (clientFirst != null) clientFirst.receiveShowPostingButtonRequest(isVisible);
     }
 
     @Override
     public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
-        clientFirst.receiveUpdatedSelectedGroupsCounter(newCount, total);
+        if (clientFirst != null) clientFirst.receiveUpdatedSelectedGroupsCounter(newCount, total);
     }
 }
