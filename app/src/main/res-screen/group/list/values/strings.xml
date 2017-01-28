@@ -21,7 +21,7 @@
     <string name="group_list_snackbar_posting_started">Posting has started</string>
     <string name="group_list_snackbar_posting_finished">Posting has finished</string>
 
-    <string-array name="group_list_settings_posting_interval_variants">
+    <string-array name="group_list_settings_posting_interval_variants" translatable="false">
         <item name="group_list_settings_posting_interval_variant_333">333</item>
         <item name="group_list_settings_posting_interval_variant_500">500</item>
         <item name="group_list_settings_posting_interval_variant_700">700</item>
@@ -30,5 +30,5 @@
         <item name="group_list_settings_posting_interval_variant_2000">2000</item>
         <item name="group_list_settings_posting_interval_variant_3000">3000</item>
     </string-array>
-    <string name="group_list_settings_posting_interval_title">Set interval</string>
+    <string name="group_list_settings_posting_interval_title" translatable="false">Set interval</string>
 </resources>
