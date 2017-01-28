@@ -15,6 +15,7 @@ import com.orcchg.vikstra.app.injection.component.NavigationComponent;
 import com.orcchg.vikstra.app.injection.component.PermissionManagerComponent;
 import com.orcchg.vikstra.app.injection.module.PermissionManagerModule;
 import com.orcchg.vikstra.app.navigation.NavigatorHolder;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
@@ -37,7 +38,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.tag(this.getClass().getSimpleName());
-        Timber.i("onCreate");
+        Timber.i("onCreate, smallest width: %s", UiUtility.getSmallestWidth(this));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) injectPermissionManager();
         injectNavigator();
         injectDependencies();

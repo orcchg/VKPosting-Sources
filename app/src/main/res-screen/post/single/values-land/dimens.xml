@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="post_single_grid_item_description_text_size">12dp</dimen>
-    <dimen name="post_single_grid_item_image_size">96dp</dimen>
+    <dimen name="post_single_grid_item_image_size">90dp</dimen>
     <dimen name="post_single_grid_item_margin_up">0dp</dimen>
     <dimen name="post_single_grid_item_margin_side">12dp</dimen>
     <dimen name="post_single_grid_item_media_count_text_size">12dp</dimen>
-    <dimen name="post_single_grid_item_size">106dp</dimen>
+    <dimen name="post_single_grid_item_size">100dp</dimen>
     <dimen name="post_single_grid_item_spacing">4dp</dimen>
     <dimen name="post_single_grid_item_title_text_size">14dp</dimen>
 </resources>

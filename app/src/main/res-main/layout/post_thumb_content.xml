@@ -86,7 +86,7 @@
         android:layout_marginStart="@dimen/post_single_grid_item_margin_side"
         android:layout_marginRight="@dimen/post_single_grid_item_margin_side"
         android:layout_marginEnd="@dimen/post_single_grid_item_margin_side"
-        android:layout_marginTop="@dimen/standard_side_padding_small"
+        android:layout_marginTop="@dimen/standard_side_padding_mini"
         android:layout_marginBottom="@dimen/standard_side_padding_mini">
 
         <ImageView

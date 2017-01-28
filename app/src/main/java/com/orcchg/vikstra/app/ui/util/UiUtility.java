@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -33,6 +34,19 @@ public class UiUtility {
         TypedValue typedValue = new TypedValue();
         context.getTheme().resolveAttribute(attributeId, typedValue, true);
         return context.getResources().getDimension(typedValue.resourceId);
+    }
+
+    // {@see http://stackoverflow.com/questions/15055458/detect-7-inch-and-10-inch-tablet-programmatically}
+    public static float getSmallestWidth(Activity context) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        context.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        int widthPixels = metrics.widthPixels;
+        int heightPixels = metrics.heightPixels;
+        float scaleFactor = metrics.density;
+        float widthDp = widthPixels / scaleFactor;
+        float heightDp = heightPixels / scaleFactor;
+        float smallestWidth = Math.min(widthDp, heightDp);
+        return smallestWidth;
     }
 
     public static Bitmap getScreenshot(View view) {
