@@ -51,6 +51,23 @@ android {
         disable 'InvalidPackage'  // Some libraries have issues with this
         disable 'OldTargetApi'    // Due to Robolectric that modifies the manifest when running tests
     }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            debuggable false
+//            minifyEnabled true
+//            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-gson.pro"
+//            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-project.pro"
+//            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-realm.pro"
+//            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-retrolambda.pro"
+//            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-square-okhttp3.pro"
+//            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-square-retrofit2.pro"
+//            proguardFile 'proguard-rules.pro'
+        }
+    }
 }
 
 dependencies {
@@ -63,10 +80,8 @@ dependencies {
     apt dataDependencies.daggerCompiler
 
     compile dataDependencies.androidAnnotations
-    compile dataDependencies.dagger
-    compile dataDependencies.eventbus
     compile dataDependencies.glide
-    compile dataDependencies.gson
+    compile dataDependencies.dagger
     compile dataDependencies.javaxAnnotation
     compile dataDependencies.javaxInject
     compile dataDependencies.okHttp
@@ -74,10 +89,9 @@ dependencies {
     compile dataDependencies.retrofit
     compile dataDependencies.retrofitConvertGson
     compile dataDependencies.retrofitAdapterRx
-    compile dataDependencies.rxJava
-    compile dataDependencies.rxAndroid
     compile dataDependencies.timber
 
+    provided domainDependencies.autoValue
     provided dataDependencies.javaxAnnotation
 
     testCompile testDependencies.assertj

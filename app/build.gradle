@@ -76,6 +76,24 @@ android {
         debug {
             signingConfig signingConfigs.debug
         }
+        release {
+            debuggable false
+            minifyEnabled true
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-androidannotations.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-butterknife-7.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-glide.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-gson.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-square-okhttp3.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-square-okio.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-project.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-realm.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-retrolambda.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-rx-java.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-square-retrofit2.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-support-v7-appcompat.pro"
+            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-support-v7-cardview.pro"
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
     }
 
     sourceSets {
@@ -129,7 +147,6 @@ dependencies {
     compile presentationDependencies.androidSupportV4
     compile presentationDependencies.androidSupportV7
     compile presentationDependencies.androidSupportV13
-    compile presentationDependencies.autoValue
     compile presentationDependencies.butterKnife
     compile presentationDependencies.cardView
     compile presentationDependencies.circleImageView
@@ -142,16 +159,13 @@ dependencies {
     compile presentationDependencies.javaxAnnotation
     compile presentationDependencies.javaxInject
     compile(presentationDependencies.materialDrawer) { transitive = true }
-    compile presentationDependencies.mosby
-    compile presentationDependencies.mosbyViewState
     compile presentationDependencies.percentLayout
     compile presentationDependencies.progressbar
     compile presentationDependencies.progressbarCircular
     compile presentationDependencies.recyclerView
-    compile presentationDependencies.rxJava
-    compile presentationDependencies.rxAndroid
     compile presentationDependencies.timber
 
+    provided presentationDependencies.autoValue
     provided presentationDependencies.javaxAnnotation
 
     testCompile presentationTestDependencies.junit

@@ -46,3 +46,7 @@ task runUnitTests(dependsOn: ['runDomainUnitTests', 'runDataUnitTests']) {
 task runAcceptanceTests(dependsOn: [':presentation:connectedAndroidTest']) {
     description 'Run application acceptance tests.'
 }
+
+ext {
+    proguardPropertiesPath = "${rootProject.rootDir}/android-proguard-snippets/libraries"
+}

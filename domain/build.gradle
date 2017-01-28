@@ -48,6 +48,19 @@ android {
 //        sourceCompatibility JavaVersion.VERSION_1_8
 //        targetCompatibility JavaVersion.VERSION_1_8
 //    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+        release {
+            debuggable false
+//            minifyEnabled true
+//            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-gson.pro"
+//            proguardFile "${rootProject.ext.proguardPropertiesPath}/proguard-project.pro"
+//            proguardFile 'proguard-rules.pro'
+        }
+    }
 }
 
 dependencies {
@@ -57,15 +70,13 @@ dependencies {
     apt domainDependencies.autoValue
     apt domainDependencies.autoValueParcel
 
-    provided domainDependencies.javaxAnnotation
-
-    compile domainDependencies.autoValue
-    compile domainDependencies.gson
     compile domainDependencies.javaxInject
     compile domainDependencies.openCSV
-    compile domainDependencies.rxJava
     compile domainDependencies.timber
     compile domainDependencies.vkontakteSdk
+
+    provided domainDependencies.autoValue
+    provided domainDependencies.javaxAnnotation
 
     testCompile domainTestDependencies.junit
     testCompile domainTestDependencies.mockito

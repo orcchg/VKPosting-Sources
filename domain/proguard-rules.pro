@@ -15,4 +15,13 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
--keep class com.orcchg.vikstra.data.source.direct.vkontakte.model.VkApiPhotoDBO { *; }
+
+-dontwarn java.beans.**
+-dontwarn java.awt.**
+-dontwarn javax.swing.**
+
+-keep class com.orcchg.vikstra.domain.model.essense.GroupReportEssence { *; }
+-keep class com.orcchg.vikstra.domain.model.essense.PostEssence { *; }
+-keep class com.orcchg.vikstra.domain.model.misc.EmailContent { *; }
+-keep class com.orcchg.vikstra.domain.model.** { *; }
+-keep class com.vk.sdk.api.model.** { *; }
