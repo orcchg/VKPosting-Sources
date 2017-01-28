@@ -173,7 +173,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                     while (elapsed - start < 15_000 && !Thread.currentThread().isInterrupted()) {
                         try {
                             Timber.tag(this.getClass().getSimpleName());
-                            Timber.v("Performing request [%s] at time %s", index, ValueUtility.time());
+                            Timber.v("Performing request [%s] at time %s", index + 1, ValueUtility.time());
                             UseCase<Result> useCase = useCases.size() == 1 ? useCases.get(0) : useCases.get(index);
                             result.orderId = useCase.getOrderId();
                             result.data = useCase.doAction();  // perform use-case synchronously
@@ -202,7 +202,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                                     Thread.currentThread().interrupt();
                                 }
                                 Timber.tag(this.getClass().getSimpleName());
-                                Timber.v("Retrying request [%s]...", index);
+                                Timber.v("Retrying request [%s]...", index + 1);
                             } else {
                                 // test terminal error as soon as possible and proceed
                                 if (ValueUtility.containsClass(e, terminalErrors)) {
