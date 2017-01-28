@@ -930,6 +930,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 List<Group> groups = ValueUtility.merge(splitGroups);
                 if (inputGroupBundle == null || inputGroupBundle.id() == Constant.BAD_ID) {
                     Timber.d("Create new GroupsBundle and put it to repository, update id in associated input KeywordBundle");
+                    if (AppConfig.INSTANCE.isAllGroupsSelected()) {
+                        for (Group group : groups) group.setSelected(true);
+                    }
                     PutGroupBundle.Parameters parameters = new PutGroupBundle.Parameters.Builder()
                             .setGroups(groups)
                             .setKeywordBundleId(inputKeywordBundle.id())
