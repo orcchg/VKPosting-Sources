@@ -338,6 +338,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.ADD_KEYWORD_START);
         // enter ADD_KEYWORD_START state logic
 
+        if (inputKeywordBundle.keywords().contains(keyword)) {
+            Timber.d("Keyword %s has already been added", keyword.keyword());
+            sendAlreadyAddedKeyword(keyword.keyword());
+            return;
+        }
+
         // disable swipe-to-refresh while add keyword is in progress
         if (isViewAttached()) {
             getView().enableSwipeToRefresh(false);
@@ -346,6 +352,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 getView().showContent(GroupListFragment.RV_TAG, false);
             }
         }
+
+        sendEnableAddKeywordButtonRequest(false);  // disable add keyword button while adding new Keyword
 
         newlyAddedKeyword = keyword;
 
@@ -489,6 +497,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void sendAddKeywordError() {
         mediatorComponent.mediator().sendAddKeywordError();
+    }
+
+    @Override
+    public void sendAlreadyAddedKeyword(String keyword) {
+        mediatorComponent.mediator().sendAlreadyAddedKeyword(keyword);
     }
 
     @Override

@@ -12,6 +12,7 @@ import java.util.Collection;
 public interface KeywordCreateContract {
     interface View extends LceView, MvpView {
         void addKeyword(Keyword keyword);
+        void alreadyAddedKeyword(Keyword keyword);
         void clearInputKeyword();
         String getInputKeyword();
         void setInputKeywords(String title, Collection<Keyword> keywords);

@@ -51,7 +51,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     private String ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT,
             DIALOG_TITLE, DIALOG_HINT, EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT,
-            INFO_TITLE, SNACKBAR_DUMP_SUCCESS, SNACKBAR_KEYWORDS_LIMIT;
+            INFO_TITLE, SNACKBAR_KEYWORD_ALREADY_ADDED, SNACKBAR_DUMP_SUCCESS, SNACKBAR_KEYWORDS_LIMIT;
 
     @BindView(R.id.coordinator_root) ViewGroup coordinatorRoot;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -192,6 +192,11 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     @Override
     public void onAddKeywordError() {
         UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_error_add_keyword);
+    }
+
+    @Override
+    public void onAlreadyAddedKeyword(String keyword) {
+        UiUtility.showSnackbar(coordinatorRoot, String.format(Locale.ENGLISH, SNACKBAR_KEYWORD_ALREADY_ADDED, keyword));
     }
 
     @Override
@@ -339,6 +344,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         EDIT_TITLE_DIALOG_HINT = resources.getString(R.string.dialog_input_edit_title_hint);
         INFO_TITLE = resources.getString(R.string.group_list_selected_groups_total_count);
         SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.group_list_snackbar_groups_dump_succeeded);
+        SNACKBAR_KEYWORD_ALREADY_ADDED = resources.getString(R.string.group_list_error_already_added_keyword);
         SNACKBAR_KEYWORDS_LIMIT = resources.getString(R.string.group_list_snackbar_keywords_limit_message);
     }
 

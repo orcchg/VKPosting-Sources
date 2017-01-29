@@ -60,6 +60,7 @@
     <string name="group_list_empty_keywords_data_button_label">Добавить</string>
     <string name="group_list_empty_keywords_data_text">Добавьте новые слова</string>
     <string name="group_list_error_add_keyword">Не удалось добавить слово!</string>
+    <string name="group_list_error_already_added_keyword">Ключевое слово \"%s\" уже было добавлено</string>
     <string name="group_list_fab_label_post">Пост</string>
     <string name="group_list_screen_title">Выберите группы</string>
     <string name="group_list_selected_groups_total_count">Выбранные группы: %1$s &#47; %2$s</string>
@@ -78,6 +79,7 @@
     <string name="keyword_create_screen_title">Новый набор слов</string>
     <string name="keyword_create_snackbar_failed_to_create_post">Не удалось создать набор слов. Повторите попытку</string>
     <string name="keyword_create_snackbar_failed_to_update_post">Не удалось обновить набор слов. Повторите попытку</string>
+    <string name="keyword_create_snackbar_keyword_already_added_message">Ключевое слово \"%s\" уже было добавлено</string>
     <string name="keyword_create_snackbar_keywords_limit_message">Достигнут лимит ключевых слов: %s</string>
     <string name="keyword_create_snackbar_no_keywords_added_message">Вы должны добавить хотя бы одно слово</string>
     <!-- Keyword list screen -->

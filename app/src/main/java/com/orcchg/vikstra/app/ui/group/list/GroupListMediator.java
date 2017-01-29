@@ -68,6 +68,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendAlreadyAddedKeyword(String keyword) {
+        if (clientFirst != null) clientFirst.receiveAlreadyAddedKeyword(keyword);
+    }
+
+    @Override
     public void sendEnableAddKeywordButtonRequest(boolean isEnabled) {
         if (clientFirst != null) clientFirst.receiveEnableAddKeywordButtonRequest(isEnabled);
     }

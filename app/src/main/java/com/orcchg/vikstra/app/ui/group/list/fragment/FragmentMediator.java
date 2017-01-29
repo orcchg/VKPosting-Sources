@@ -23,6 +23,7 @@ public interface FragmentMediator {
 
     interface Sender extends MediatorSender {
         void sendAddKeywordError();
+        void sendAlreadyAddedKeyword(String keyword);
         void sendEnableAddKeywordButtonRequest(boolean isEnabled);
         void sendEmptyPost();
         void sendErrorPost();

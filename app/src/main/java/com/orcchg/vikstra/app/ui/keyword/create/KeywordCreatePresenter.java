@@ -51,16 +51,23 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     @Override
     public void onAddPressed() {
         Timber.i("onAddPressed");
-        if (keywords.size() < Constant.KEYWORDS_LIMIT) {
-            Keyword keyword = Keyword.create(getView().getInputKeyword());
-            keywords.add(keyword);
-            hasKeywordsChanged = true;
-            if (isViewAttached()) {
-                getView().addKeyword(keyword);
-                getView().clearInputKeyword();
+        if (isViewAttached()) {
+            if (keywords.size() < Constant.KEYWORDS_LIMIT) {
+                Keyword keyword = Keyword.create(getView().getInputKeyword());
+                if (keywords.add(keyword)) {
+                    Timber.d("Added new Keyword: %s", keyword.keyword());
+                    hasKeywordsChanged = true;
+                    getView().addKeyword(keyword);
+                    getView().clearInputKeyword();
+                } else {
+                    Timber.d("Keyword %s has already been added", keyword.keyword());
+                    getView().alreadyAddedKeyword(keyword);
+                }
+            } else {
+                getView().onKeywordsLimitReached(Constant.KEYWORDS_LIMIT);
             }
-        } else if (isViewAttached()) {
-            getView().onKeywordsLimitReached(Constant.KEYWORDS_LIMIT);
+        } else {
+            Timber.w("No View is attached");
         }
     }
 
@@ -73,6 +80,8 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             } else {
                 getView().closeView();
             }
+        } else {
+            Timber.w("No View is attached");
         }
     }
 

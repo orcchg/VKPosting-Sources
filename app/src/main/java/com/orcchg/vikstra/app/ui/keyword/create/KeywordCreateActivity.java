@@ -39,7 +39,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     public static final int REQUEST_CODE = Constant.RequestCode.KEYWORD_CREATE_SCREEN;
     public static final int RV_TAG = Constant.ListTag.KEYWORD_CREATE_SCREEN;
 
-    private String DIALOG_TITLE, DIALOG_HINT, SNACKBAR_KEYWORDS_LIMIT;
+    private String DIALOG_TITLE, DIALOG_HINT, SNACKBAR_KEYWORD_ALREADY_ADDED, SNACKBAR_KEYWORDS_LIMIT;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.container) ViewGroup container;
@@ -142,6 +142,11 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     @Override
     public void addKeyword(Keyword keyword) {
         keywordsFlowLayout.addKeyword(keyword);
+    }
+
+    @Override
+    public void alreadyAddedKeyword(Keyword keyword) {
+        UiUtility.showSnackbar(this, String.format(Locale.ENGLISH, SNACKBAR_KEYWORD_ALREADY_ADDED, keyword.keyword()));
     }
 
     @Override
@@ -268,6 +273,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
         Resources resources = getResources();
         DIALOG_TITLE = resources.getString(R.string.dialog_input_edit_title);
         DIALOG_HINT = resources.getString(R.string.dialog_input_edit_title_hint);
+        SNACKBAR_KEYWORD_ALREADY_ADDED = resources.getString(R.string.keyword_create_snackbar_keyword_already_added_message);
         SNACKBAR_KEYWORDS_LIMIT = resources.getString(R.string.keyword_create_snackbar_keywords_limit_message);
     }
 }

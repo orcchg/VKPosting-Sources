@@ -13,6 +13,7 @@ interface GroupListContract {
         void enableAddKeywordButton(boolean isEnabled);
 
         void onAddKeywordError();
+        void onAlreadyAddedKeyword(String keyword);
         void onGroupsNotSelected();
         void onKeywordsLimitReached(int limit);
         void onPostNotSelected();

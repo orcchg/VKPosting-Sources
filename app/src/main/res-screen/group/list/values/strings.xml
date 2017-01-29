@@ -10,6 +10,7 @@
     <string name="group_list_empty_keywords_data_button_label">Add</string>
     <string name="group_list_empty_keywords_data_text">Add new keywords</string>
     <string name="group_list_error_add_keyword">Failed to add new keyword!</string>
+    <string name="group_list_error_already_added_keyword">Keyword \"%s\" has already been added</string>
     <string name="group_list_fab_label_post">Post</string>
     <string name="group_list_screen_title">Choose groups</string>
     <string name="group_list_selected_groups_total_count">Selected groups: %1$s &#47; %2$s</string>

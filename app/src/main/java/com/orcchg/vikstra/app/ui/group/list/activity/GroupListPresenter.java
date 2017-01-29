@@ -139,6 +139,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receiveAlreadyAddedKeyword(String keyword) {
+        if (isViewAttached()) getView().onAlreadyAddedKeyword(keyword);
+    }
+
+    @Override
     public void receiveEnableAddKeywordButtonRequest(boolean isEnabled) {
         if (isViewAttached()) getView().enableAddKeywordButton(isEnabled);
     }
