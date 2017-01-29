@@ -10,6 +10,8 @@ import com.orcchg.vikstra.domain.util.DebugSake;
 
 interface GroupListContract {
     interface View extends MvpView {
+        void enableAddKeywordButton(boolean isEnabled);
+
         void onAddKeywordError();
         void onGroupsNotSelected();
         void onKeywordsLimitReached(int limit);

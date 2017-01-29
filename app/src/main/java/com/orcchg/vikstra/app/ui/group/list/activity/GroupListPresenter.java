@@ -139,6 +139,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receiveEnableAddKeywordButtonRequest(boolean isEnabled) {
+        if (isViewAttached()) getView().enableAddKeywordButton(isEnabled);
+    }
+
+    @Override
     public void receiveEmptyPost() {
         if (isViewAttached()) getView().showEmptyPost();
     }

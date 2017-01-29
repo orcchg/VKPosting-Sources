@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
@@ -56,6 +57,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @BindView(R.id.tv_info_title) TextView selectedGroupsCountView;
+    @BindView(R.id.btn_add_keyword) Button addKeywordButton;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.fab_label) TextView fabLabel;
@@ -181,6 +183,12 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void enableAddKeywordButton(boolean isEnabled) {
+        addKeywordButton.setEnabled(isEnabled);
+    }
+
+    // ------------------------------------------
     @Override
     public void onAddKeywordError() {
         UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_error_add_keyword);

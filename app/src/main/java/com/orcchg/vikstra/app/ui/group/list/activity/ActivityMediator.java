@@ -11,6 +11,7 @@ import com.orcchg.vikstra.domain.util.DebugSake;
 public interface ActivityMediator {
     interface Receiver extends MediatorReceiver {
         void receiveAddKeywordError();
+        void receiveEnableAddKeywordButtonRequest(boolean isEnabled);
         void receiveEmptyPost();
         void receiveErrorPost();
         void receiveGroupBundleChanged();

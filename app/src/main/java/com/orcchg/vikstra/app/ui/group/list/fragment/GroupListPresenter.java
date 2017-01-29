@@ -218,6 +218,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             getView().showLoading(GroupListFragment.RV_TAG);
         }
 
+        sendEnableAddKeywordButtonRequest(false);  // disable add keyword button on start
         sendShowPostingButtonRequest(false);  // hide posting button on start
 
         // fresh start - load input KeywordBundle and Post
@@ -292,6 +293,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             getView().showGroups(splitGroups.isEmpty() && groupParentItems.isEmpty());
         }
 
+        sendEnableAddKeywordButtonRequest(true);  // enable add keyword button when Group-s loaded
         sendShowPostingButtonRequest(true);  // show posting button when Group-s loaded
         sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
     }
@@ -313,6 +315,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             getView().enableSwipeToRefresh(false);
         }
 
+        sendEnableAddKeywordButtonRequest(false);  // disable add keyword button while refreshing
         sendShowPostingButtonRequest(false);  // hide posting button while refreshing
 
         totalSelectedGroups = 0;
@@ -479,6 +482,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void sendAddKeywordError() {
         mediatorComponent.mediator().sendAddKeywordError();
+    }
+
+    @Override
+    public void sendEnableAddKeywordButtonRequest(boolean isEnabled) {
+        mediatorComponent.mediator().sendEnableAddKeywordButtonRequest(isEnabled);
     }
 
     @Override

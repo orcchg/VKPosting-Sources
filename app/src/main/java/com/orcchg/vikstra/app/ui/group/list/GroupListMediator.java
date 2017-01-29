@@ -68,6 +68,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendEnableAddKeywordButtonRequest(boolean isEnabled) {
+        if (clientFirst != null) clientFirst.receiveEnableAddKeywordButtonRequest(isEnabled);
+    }
+
+    @Override
     public void sendEmptyPost() {
         if (clientFirst != null) clientFirst.receiveEmptyPost();
     }
