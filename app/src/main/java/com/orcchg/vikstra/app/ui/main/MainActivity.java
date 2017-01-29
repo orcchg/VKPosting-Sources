@@ -123,9 +123,9 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         toolbar.inflateMenu(R.menu.avatar);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
-                case R.id.about:
-                    openAboutDialog();
-                    return true;
+//                case R.id.about:
+//                    openAboutDialog();
+//                    return true;
                 case R.id.logout:
                     openLogoutDialog();
                     return true;

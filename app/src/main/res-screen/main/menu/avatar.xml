@@ -8,8 +8,10 @@
         app:actionViewClass="com.orcchg.vikstra.app.ui.common.view.AvatarMenuItem"
         app:showAsAction="always"/>
 
+    <!--
     <item
         android:id="@+id/about"
         android:title="@string/button_about"
         app:showAsAction="never"/>
+        -->
 </menu>
