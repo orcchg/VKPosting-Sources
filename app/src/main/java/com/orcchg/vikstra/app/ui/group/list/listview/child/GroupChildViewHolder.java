@@ -6,8 +6,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
 import com.orcchg.vikstra.app.ui.base.adapter.expandable.base.BaseChildViewHolder;
+import com.orcchg.vikstra.app.ui.group.list.OnGroupClickListener;
 
 import java.util.Locale;
 
@@ -46,6 +46,7 @@ public class GroupChildViewHolder extends BaseChildViewHolder<GroupChildItem> {
                 .setModel(getChild())
                 .setParentAdapterPosition(getParentAdapterPosition())
                 .setChildAdapterPosition(getChildAdapterPosition())
+                .setSwitcherListener(switcherListener)
                 .build();
         switcher.setTag(data);
         setCheckedSafe(model.isSelected());
@@ -62,17 +63,20 @@ public class GroupChildViewHolder extends BaseChildViewHolder<GroupChildItem> {
         private GroupChildItem model;
         private int parentAdapterPosition;
         private int childAdapterPosition;
+        private CompoundButton.OnCheckedChangeListener switcherListener;
 
         SupplyData(Builder builder) {
             this.model = builder.model;
             this.parentAdapterPosition = builder.parentAdapterPosition;
             this.childAdapterPosition = builder.childAdapterPosition;
+            this.switcherListener = builder.switcherListener;
         }
 
         static class Builder {
             private GroupChildItem model;
             private int parentAdapterPosition;
             private int childAdapterPosition;
+            private CompoundButton.OnCheckedChangeListener switcherListener;
 
             Builder setModel(GroupChildItem model) {
                 this.model = model;
@@ -86,6 +90,11 @@ public class GroupChildViewHolder extends BaseChildViewHolder<GroupChildItem> {
 
             Builder setChildAdapterPosition(int childAdapterPosition) {
                 this.childAdapterPosition = childAdapterPosition;
+                return this;
+            }
+
+            Builder setSwitcherListener(CompoundButton.OnCheckedChangeListener switcherListener) {
+                this.switcherListener = switcherListener;
                 return this;
             }
 
@@ -104,6 +113,10 @@ public class GroupChildViewHolder extends BaseChildViewHolder<GroupChildItem> {
 
         public int getChildAdapterPosition() {
             return childAdapterPosition;
+        }
+
+        public CompoundButton.OnCheckedChangeListener getSwitcherListener() {
+            return switcherListener;
         }
     }
 

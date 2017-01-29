@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.adapter.expandable.BaseExpandableAdapter;
@@ -21,6 +22,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 import java.util.List;
 
 import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class GroupListAdapter extends BaseExpandableAdapter<GroupParentItem, GroupChildItem, GroupParentViewHolder, GroupChildViewHolder> {
 
@@ -118,13 +120,30 @@ public class GroupListAdapter extends BaseExpandableAdapter<GroupParentItem, Gro
         return (buttonView, isChecked) -> {
             GroupChildViewHolder.SupplyData data = (GroupChildViewHolder.SupplyData) buttonView.getTag();
             int affectedParentItemPosition = data.getParentAdapterPosition();
-            GroupChildItem childItem = data.getModel();
             GroupParentItem parentItem = getParentList().get(affectedParentItemPosition);
-            childItem.setSelected(isChecked);
-            parentItem.incrementSelectedCount(isChecked ? 1 : -1);
-            notifyParentChanged(affectedParentItemPosition);  // re-bind parent and all it's childs
-            if (externalChildItemSwitcherListener != null) {
-                externalChildItemSwitcherListener.onCheckedChange(childItem, isChecked);
+            GroupChildItem childItem = data.getModel();
+            try {
+                childItem.setSelected(isChecked);
+                parentItem.incrementSelectedCount(isChecked ? 1 : -1);
+                notifyParentChanged(affectedParentItemPosition);  // re-bind parent and all it's children
+                if (externalChildItemSwitcherListener != null) {
+                    externalChildItemSwitcherListener.onCheckedChange(childItem, isChecked);
+                }
+            } catch (IndexOutOfBoundsException e) {
+                /**
+                 * Temporary guarding workaround - when user is touching list items while the list
+                 * is changing (for example, new Parent item with the set of child items is being added)
+                 * then {@link com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter#notifyParentChanged(int)}
+                 * might produce {@link IndexOutOfBoundsException}, so we catch it here and revert
+                 * all previously made changes under the list items.
+                 */
+                Timber.e("Index out of bounds - touching list item while list is changing - revert action");
+                Switch switcher = (Switch) buttonView;
+                switcher.setOnCheckedChangeListener(null);
+                switcher.setChecked(!isChecked);
+                switcher.setOnCheckedChangeListener(data.getSwitcherListener());
+                childItem.setSelected(!isChecked);
+                parentItem.incrementSelectedCount(!isChecked ? 1 : -1);
             }
         };
     }
