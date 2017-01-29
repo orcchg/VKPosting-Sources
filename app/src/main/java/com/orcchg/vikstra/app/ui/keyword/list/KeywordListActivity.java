@@ -179,7 +179,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
 
     // ------------------------------------------
     @Override
-    public void onSwipeToDismiss(int position) {
+    public void onSwipeToDismiss(int position, int tag) {
         presenter.removeListItem(position);
     }
 

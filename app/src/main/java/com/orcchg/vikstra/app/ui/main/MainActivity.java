@@ -324,8 +324,15 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     // ------------------------------------------
     @Override
-    public void onSwipeToDismiss(int position) {
-        presenter.removeListItem(position);
+    public void onSwipeToDismiss(int position, int tag) {
+        switch (tag) {
+            case KeywordListFragment.RV_TAG:
+                presenter.removeKeywordListItem(position);;
+                break;
+            case PostSingleGridFragment.RV_TAG:
+                presenter.removePostGridItem(position);;
+                break;
+        }
     }
 
     /* Notification delegate */

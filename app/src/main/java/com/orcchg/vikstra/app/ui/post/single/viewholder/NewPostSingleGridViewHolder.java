@@ -11,15 +11,12 @@ public class NewPostSingleGridViewHolder extends BaseViewHolder {
 
     private BaseAdapter.OnItemClickListener<Object> listener;
 
-    public NewPostSingleGridViewHolder(View view, BaseAdapter.OnItemClickListener<Object> listener) {
+    public NewPostSingleGridViewHolder(View view, BaseAdapter.OnItemClickListener<Object> xlistener) {
         super(view);
         ButterKnife.bind(this, view);
-        this.listener = listener;
-        view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listener != null) listener.onItemClick(view, null, getAdapterPosition());
-            }
+        this.listener = xlistener;
+        view.setOnClickListener((xview) -> {
+            if (listener != null) listener.onItemClick(xview, null, getAdapterPosition());
         });
     }
 }

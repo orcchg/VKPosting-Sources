@@ -7,12 +7,13 @@ import android.support.v7.widget.RecyclerView;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
+import com.orcchg.vikstra.app.ui.common.content.ISwipeToDismiss;
 import com.orcchg.vikstra.app.ui.post.single.injection.DaggerPostSingleGridComponent;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridComponent;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridModule;
 
 public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.View, PostSingleGridContract.Presenter>
-        implements PostSingleGridContract.View, IScrollGrid {
+        implements PostSingleGridContract.View, IScrollGrid, ISwipeToDismiss {
     private static final String FRAGMENT_TAG = "post_single_grid_fragment_tag";
 
     private PostSingleGridComponent postSingleGridComponent;
@@ -106,6 +107,12 @@ public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.
     @Override
     public void onScrollGrid(int itemsLeftToEnd) {
         presenter.onScroll(itemsLeftToEnd);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onSwipeToDismiss(int position, int tag) {
+        presenter.removeListItem(position);
     }
 
     /* Internal */

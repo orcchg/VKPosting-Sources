@@ -16,6 +16,7 @@ public interface PostSingleGridContract {
     }
 
     interface Presenter extends MvpPresenter<View>, ListPresenter {
+        void removeListItem(int position);
         void retry();
     }
 }

@@ -29,7 +29,8 @@ public interface MainContract {
 
         void logout();
 
-        void removeListItem(int position);
+        void removeKeywordListItem(int position);
+        void removePostGridItem(int position);
         void retryKeywords();
         void retryPosts();
     }

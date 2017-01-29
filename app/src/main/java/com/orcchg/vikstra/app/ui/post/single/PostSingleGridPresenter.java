@@ -10,6 +10,7 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.post.DeletePost;
 import com.orcchg.vikstra.domain.interactor.post.GetPosts;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -25,7 +26,9 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         implements PostSingleGridContract.Presenter {
 
     private final GetPosts getPostsUseCase;
+    private final DeletePost deletePostUseCase;
 
+    private List<Post> posts;
     private long selectedPostId = Constant.BAD_ID;
     private final @BaseSelectAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
@@ -33,12 +36,13 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
     @Inject
-    public PostSingleGridPresenter(@BaseSelectAdapter.SelectMode int selectMode,
-           GetPosts getPostsUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+    public PostSingleGridPresenter(@BaseSelectAdapter.SelectMode int selectMode, GetPosts getPostsUseCase,
+                                   DeletePost deletePostUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.selectMode = selectMode;
         this.listAdapter = createListAdapter();
         this.getPostsUseCase = getPostsUseCase;
         this.getPostsUseCase.setPostExecuteCallback(createGetPostsCallback());
+        this.deletePostUseCase = deletePostUseCase;  // no callback - background task
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
     }
 
@@ -69,9 +73,27 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void removeListItem(int position) {
+        Timber.i("removeListItem: %s", position);
+        long postId = posts.get(position).id();
+        deletePostUseCase.setPostId(postId);
+        deletePostUseCase.execute();  // silent delete without callback
+
+        posts.remove(position);
+        listAdapter.remove(position);
+
+        if (posts.isEmpty()) {
+            changeSelectedPostId(Constant.BAD_ID);  // drop selection
+            if (isViewAttached()) getView().showEmptyList(getListTag());
+        }
+    }
+
+    @Override
     public void retry() {
         Timber.i("retry");
         changeSelectedPostId(Constant.BAD_ID);  // drop selection
+        deletePostUseCase.setPostId(Constant.BAD_ID);
+        posts = null;
         listAdapter.clear();
         dropListStat();
         freshStart();
@@ -114,6 +136,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     private UseCase.OnPostExecuteCallback<List<Post>> createGetPostsCallback() {
         return new UseCase.OnPostExecuteCallback<List<Post>>() {
             @DebugLog @Override
@@ -126,6 +149,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     if (isViewAttached()) getView().showEmptyList(getListTag());
                 } else {
                     Timber.i("Use-Case: succeeded to get list of Post-s");
+                    PostSingleGridPresenter.this.posts = posts;
                     List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
                     listAdapter.populate(vos, false);
                     if (isViewAttached()) getView().showPosts(vos == null || vos.isEmpty());

@@ -140,8 +140,15 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     // ------------------------------------------
     @Override
-    public void removeListItem(int position) {
+    public void removeKeywordListItem(int position) {
+        Timber.i("removeKeywordListItem");
         keywordListPresenter.removeListItem(position);
+    }
+
+    @Override
+    public void removePostGridItem(int position) {
+        Timber.i("removePostGridItem");
+        postSingleGridPresenter.removeListItem(position);
     }
 
     @Override

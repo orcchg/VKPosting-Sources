@@ -33,9 +33,7 @@ public class KeywordListFragment extends SimpleCollectionFragment implements Key
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (ISwipeToDismiss.class.isInstance(context)) {
-            iSwipeToDismiss = (ISwipeToDismiss) context;
-        }
+        if (ISwipeToDismiss.class.isInstance(context)) iSwipeToDismiss = (ISwipeToDismiss) context;
     }
 
     @Nullable @Override
@@ -65,7 +63,7 @@ public class KeywordListFragment extends SimpleCollectionFragment implements Key
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                if (iSwipeToDismiss != null) iSwipeToDismiss.onSwipeToDismiss(viewHolder.getAdapterPosition());
+                if (iSwipeToDismiss != null) iSwipeToDismiss.onSwipeToDismiss(viewHolder.getAdapterPosition(), RV_TAG);
             }
         });
     }
