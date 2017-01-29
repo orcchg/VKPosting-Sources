@@ -17,7 +17,8 @@
         <!-- Start -->
         <activity android:name=".app.ui.main.StartActivity"
                   android:label="@string/main_screen_title"
-                  android:theme="@style/AppTheme">
+                  android:theme="@style/AppTheme"
+                  android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
@@ -28,20 +29,24 @@
         <!-- Groups -->
         <activity android:name=".app.ui.group.detail.GroupDetailActivity"
                   android:label="@string/group_detail_screen_title"
-                  android:theme="@style/AppTheme"/>
+                  android:theme="@style/AppTheme"
+                  android:screenOrientation="portrait"/>
 
         <activity android:name=".app.ui.group.list.activity.GroupListActivity"
                   android:label="@string/group_list_screen_title"
-                  android:theme="@style/AppTheme"/>
+                  android:theme="@style/AppTheme"
+                  android:screenOrientation="portrait"/>
 
         <!-- Keywords -->
         <activity android:name=".app.ui.keyword.list.KeywordListActivity"
                   android:label="@string/keyword_list_screen_title"
-                  android:theme="@style/AppTheme"/>
+                  android:theme="@style/AppTheme"
+                  android:screenOrientation="portrait"/>
 
         <activity android:name=".app.ui.keyword.create.KeywordCreateActivity"
                   android:label="@string/keyword_create_screen_title"
-                  android:windowSoftInputMode="adjustResize"/>
+                  android:windowSoftInputMode="adjustResize"
+                  android:screenOrientation="portrait"/>
 
         <!-- Main -->
         <activity android:name=".app.ui.main.MainActivity"
@@ -51,29 +56,35 @@
         <!-- Posts -->
         <activity android:name=".app.ui.post.create.PostCreateActivity"
                   android:label="@string/post_create_screen_title"
-                  android:theme="@style/AppTheme"/>
+                  android:theme="@style/AppTheme"
+                  android:screenOrientation="portrait"/>
 
         <activity android:name=".app.ui.post.list.PostListActivity"
                   android:label="@string/post_list_screen_title"
-                  android:theme="@style/AppTheme"/>
+                  android:theme="@style/AppTheme"
+                  android:screenOrientation="portrait"/>
 
         <activity android:name=".app.ui.post.single.PostSingleGridActivity"
                   android:label="@string/post_single_grid_screen_title"
-                  android:theme="@style/AppTheme"/>
+                  android:theme="@style/AppTheme"
+                  android:screenOrientation="portrait"/>
 
         <activity android:name=".app.ui.post.view.PostViewActivity"
                   android:label="@string/post_view_screen_title"
-                  android:theme="@style/AppTheme"/>
+                  android:theme="@style/AppTheme"
+                  android:screenOrientation="portrait"/>
 
         <!-- Report -->
         <activity android:name=".app.ui.report.ReportActivity"
                   android:label="@string/report_screen_title"
-                  android:theme="@style/AppTheme"/>
+                  android:theme="@style/AppTheme"
+                  android:screenOrientation="portrait"/>
 
         <!-- Status -->
         <activity android:name=".app.ui.status.StatusActivity"
                   android:label="@string/status_screen_title"
-                  android:theme="@style/AppTheme"/>
+                  android:theme="@style/AppTheme"
+                  android:screenOrientation="portrait"/>
 
         <!-- Provider -->
         <provider
