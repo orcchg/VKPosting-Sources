@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:drawableTint="@color/black_40_opacity"
-        android:drawableTop="@drawable/ic_search_black_48dp"
+        android:drawableLeft="@drawable/ic_search_black_48dp"
         android:drawablePadding="8dp"
         android:gravity="center"
         android:text="@string/empty_data"
