@@ -119,11 +119,11 @@ public abstract class UseCase<Result> implements Runnable {
             Result result = doAction();
             Timber.tag(this.getClass().getSimpleName());
             Timber.d("Finished Use-Case execution");
-            postExecuteScheduler.post(wrapToRunnable(result));
+            if (postExecuteScheduler != null) postExecuteScheduler.post(wrapToRunnable(result));
         } catch (Throwable error) {
             Timber.tag(this.getClass().getSimpleName());
             Timber.e(error, "An error has occurred during execution of Use-Case");
-            postExecuteScheduler.post(wrapToRunnable(error));
+            if (postExecuteScheduler != null) postExecuteScheduler.post(wrapToRunnable(error));
         }
     }
 

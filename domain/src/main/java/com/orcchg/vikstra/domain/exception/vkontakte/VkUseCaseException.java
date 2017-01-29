@@ -1,21 +1,29 @@
 package com.orcchg.vikstra.domain.exception.vkontakte;
 
+import android.support.annotation.NonNull;
+
 import com.vk.sdk.api.VKError;
+
+import hugo.weaving.DebugLog;
 
 public class VkUseCaseException extends RuntimeException {
 
-    protected VKError error;
+    protected @NonNull VKError error;
 
-    public VkUseCaseException(VKError error) {
+    @DebugLog
+    public VkUseCaseException(@NonNull VKError error) {
         this.error = error;
     }
 
-    @Override
-    public String toString() {
-        return error.apiError.toString();
+    @DebugLog
+    public int getErrorCode() {
+        if (error.apiError != null) return error.apiError.errorCode;
+        return error.errorCode;
     }
 
-    public int getErrorCode() {
-        return error.apiError.errorCode;
+    @DebugLog @Override
+    public String toString() {
+        if (error.apiError != null) return error.apiError.toString();
+        return error.toString();
     }
 }
