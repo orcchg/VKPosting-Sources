@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VK постинг</string>
+    <string name="app_name">Постинг для ВК</string>
     <string name="str_about_message">Автор: Maxim (Orcchg) Alov\nКонтакт: alovmax@yandex.ru\nСайт: orcchg.wordpress.com\nПриложение для автоматизированного постинга Вконтакте</string>
     <string name="keywords_flow_layout_more">еще %d</string>
     <string name="keywords_flow_layout_more_collapse">свернуть</string>

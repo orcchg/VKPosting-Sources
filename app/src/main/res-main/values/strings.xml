@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">VK posting</string>
+    <string name="app_name">Posting for VK</string>
     <string name="str_about_message">Author: Maxim (Orcchg) Alov\nContact: alovmax@yandex.ru\nWeb: orcchg.wordpress.com\nMusicSquare application for Yandex</string>
 
     <string name="keywords_flow_layout_more">more %d</string>
