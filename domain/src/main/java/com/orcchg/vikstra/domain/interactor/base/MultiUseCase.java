@@ -20,6 +20,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
+/**
+ * A special kind of {@link UseCase} which is designed to execute multiple instances of {@link UseCase}
+ * in parallel and accumulate total results preserving the same order as the input.
+ *
+ * In current implementation {@link MultiUseCase} never falls into {@link OnPostExecuteCallback#onError(Throwable)}
+ * callback, it always finished with {@link OnPostExecuteCallback#onFinish(Object)} passing the list of
+ * {@link Ordered} items which, in turn, could contain either valid data or error.
+ */
 public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> extends UseCase<L> {
     private int BASE_ORDER_ID = 0;
 
