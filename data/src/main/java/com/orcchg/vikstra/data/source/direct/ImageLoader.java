@@ -93,7 +93,7 @@ public class ImageLoader extends Endpoint {
                 } catch (ExecutionException e) {
                     // retry request
                 } catch (InterruptedException e) {
-                    Thread.interrupted();  // retry request
+                    Thread.currentThread().interrupt();  // retry request
                 }
                 elapsed = System.currentTimeMillis();
             }
