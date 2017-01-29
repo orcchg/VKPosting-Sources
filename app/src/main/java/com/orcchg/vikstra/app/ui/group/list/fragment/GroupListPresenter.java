@@ -318,6 +318,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         sendEnableAddKeywordButtonRequest(false);  // disable add keyword button while refreshing
         sendShowPostingButtonRequest(false);  // hide posting button while refreshing
 
+        /**
+         * We don't set input GroupBundle-s field {@link GroupListPresenter#inputGroupBundle} to null
+         * because is will be refreshed when Group-s will be received in {@link GroupListPresenter#createGetGroupsByKeywordsListCallback()}
+         * callback. Null value leads PUT-request to be executed creating a completely new GroupBundle
+         * in repository any time user triggers refreshing, which is not desired behavior.
+         */
+
         totalSelectedGroups = 0;
         totalGroups = 0;
 
