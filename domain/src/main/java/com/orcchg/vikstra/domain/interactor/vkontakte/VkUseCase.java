@@ -16,6 +16,8 @@ import timber.log.Timber;
 public abstract class VkUseCase<Result> extends UseCase<Result> {
 
     protected VKResponse vkResponse;
+    private final Object lock = new Object();
+    private volatile boolean doneCondition;
     private RuntimeException vkException;
 
     protected VkUseCase(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
@@ -34,8 +36,24 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
     // --------------------------------------------------------------------------------------------
     @Nullable @Override
     protected Result doAction() {
-        prepareVkRequest().executeSyncWithListener(createVkResponseListener());
-        if (vkException != null) throw vkException;
+        vkResponse = null;
+        doneCondition = false;
+
+        prepareVkRequest().executeWithListener(createVkResponseListener());
+
+        synchronized (lock) {
+            while (!doneCondition) {
+                try {
+                    lock.wait();
+                    if (vkException != null) {
+                        throw vkException;  // use-case has finished with error - throw exception upwards
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();  // continue executing at interruption
+                }
+            }
+        }
+
         return parseVkResponse();
     }
 
@@ -44,22 +62,31 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
             @Override
             public void onComplete(VKResponse response) {
                 super.onComplete(response);
-                Timber.tag(getClass().getSimpleName());
-                Timber.i("Successfully received response: %s", response.responseString);
-                vkResponse = response;
+                synchronized (lock) {
+                    Timber.tag(getClass().getSimpleName());
+                    Timber.i("Successfully received response: %s", response.responseString);
+                    vkResponse = response;
+                    doneCondition = true;
+                    lock.notify();  // wake-up use-case processing thread
+                }
             }
 
             @Override
             public void onError(VKError error) {
                 super.onError(error);
-                Timber.tag(getClass().getSimpleName());
-                Timber.e("Failed to receive response: %s", error.toString());
-                if (error.apiError.errorCode == 6) {
+                synchronized (lock) {
                     Timber.tag(getClass().getSimpleName());
-                    Timber.d("Throwing Vk use-case retry exception");
-                    vkException = new VkUseCaseRetryException();
-                } else {
-                    vkException = VkUseCaseExceptionFactory.create(error);
+                    Timber.e("Failed to receive response: %s", error.toString());
+                    if (error.apiError != null && error.apiError.errorCode == 6) {
+                        Timber.tag(getClass().getSimpleName());
+                        Timber.d("Throwing Vk use-case retry exception");
+                        vkException = new VkUseCaseRetryException();
+                    } else {
+                        Timber.tag(getClass().getSimpleName());
+                        Timber.d("Throwing other Vk use-case exception");
+                        vkException = VkUseCaseExceptionFactory.create(error);
+                    }
+                    lock.notify();  // wake-up use-case processing thread
                 }
             }
         };
