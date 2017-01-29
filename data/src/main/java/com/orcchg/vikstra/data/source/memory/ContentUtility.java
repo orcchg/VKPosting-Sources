@@ -110,6 +110,6 @@ public final class ContentUtility {
     }
 
     public static String getFileProviderAuthority() {
-        return "com.orcchg.vikstra.fileprovider";  // TODO: get authority from Gradle config
+        return "com.orcchg.dev.maxa.vikstra.fileprovider";  // TODO: get authority from Gradle config
     }
 }

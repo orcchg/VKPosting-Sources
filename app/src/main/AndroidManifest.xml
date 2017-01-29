@@ -78,7 +78,7 @@
         <!-- Provider -->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.orcchg.vikstra.fileprovider"
+            android:authorities="com.orcchg.dev.maxa.vikstra.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
