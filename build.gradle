@@ -18,7 +18,7 @@ allprojects {
     ext {
         androidApplicationId = 'com.orcchg.dev.maxa.vikstra'
         androidVersionCode = 1
-        androidVersionName = "1.0"
+        androidVersionName = "1.0.1"
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         testApplicationId = 'com.orcchg.vikstra.test'
     }
