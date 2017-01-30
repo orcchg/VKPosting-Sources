@@ -61,6 +61,11 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
         getPostByIdUseCase.execute();
     }
 
+    @Override
+    protected void onRestoreState() {
+        freshStart();  // nothing to be restored
+    }
+
     /* Callback */
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {

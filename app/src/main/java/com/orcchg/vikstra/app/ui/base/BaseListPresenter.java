@@ -44,7 +44,7 @@ public abstract class BaseListPresenter<V extends MvpListView> extends BasePrese
         }
     }
 
-    protected Memento memento;
+    protected Memento listMemento;
 
     protected Memento createMemento() {
         return new Memento();
@@ -65,9 +65,9 @@ public abstract class BaseListPresenter<V extends MvpListView> extends BasePrese
         }
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-            memento = restoreMemento(savedInstanceState);
+            listMemento = restoreMemento(savedInstanceState);
         } else {
-            memento = createMemento();
+            listMemento = createMemento();
         }
     }
 
@@ -89,7 +89,7 @@ public abstract class BaseListPresenter<V extends MvpListView> extends BasePrese
     @Override
     public void onScroll(int itemsLeftToEnd) {
         if (isThereMore() && itemsLeftToEnd <= DomainConfig.INSTANCE.loadMoreThreshold) {
-            memento.currentOffset += DomainConfig.INSTANCE.limitItemsPerRequest;
+            listMemento.currentOffset += DomainConfig.INSTANCE.limitItemsPerRequest;
             onLoadMore();
         }
     }
@@ -97,13 +97,13 @@ public abstract class BaseListPresenter<V extends MvpListView> extends BasePrese
     /* Internal */
     // --------------------------------------------------------------------------------------------
     protected void dropListStat() {
-        memento.currentSize = 0;
-        memento.currentOffset = 0;
-        memento.totalItems = 0;
+        listMemento.currentSize = 0;
+        listMemento.currentOffset = 0;
+        listMemento.totalItems = 0;
     }
 
     @DebugLog
     protected boolean isThereMore() {
-        return memento.totalItems > memento.currentSize + memento.currentOffset;
+        return listMemento.totalItems > listMemento.currentSize + listMemento.currentOffset;
     }
 }

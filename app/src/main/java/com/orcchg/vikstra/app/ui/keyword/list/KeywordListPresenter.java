@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.keyword.list;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
@@ -35,14 +36,53 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private final GetKeywordBundles getKeywordBundlesUseCase;
     private final DeleteKeywordBundle deleteKeywordBundleUseCase;
 
-    private List<KeywordBundle> keywordBundles = new ArrayList<>();
-    private long selectedGroupBundleId = Constant.BAD_ID;
-    private long selectedKeywordBundleId = Constant.BAD_ID;
+    private Memento memento = new Memento();
+
     private final @BaseSelectAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
 
     private final KeywordBundleToVoMapper keywordBundleToVoMapper;
 
+    // --------------------------------------------------------------------------------------------
+    private static final class Memento {
+        private static final String BUNDLE_KEY_KEYWORD_BUNDLES = "bundle_key_keyword_bundles";
+        private static final String BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION = "bundle_key_selected_list_item_position";
+        private static final String BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID = "bundle_key_selected_group_bundle_id";
+        private static final String BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID = "bundle_key_selected_keyword_bundle_id";
+        private static final String BUNDLE_KEY_WAS_LIST_ITEM_SELECTED = "bundle_key_was_list_item_selected";
+
+        private List<KeywordBundle> keywordBundles = new ArrayList<>();
+        private int selectedListItemPosition = Constant.BAD_POSITION;
+        private long selectedGroupBundleId = Constant.BAD_ID;
+        private long selectedKeywordBundleId = Constant.BAD_ID;
+        private boolean wasListItemSelected = false;
+
+        private void toBundle(Bundle outState) {
+            if (ArrayList.class.isInstance(keywordBundles)) {
+                outState.putParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES, (ArrayList) keywordBundles);
+            } else {
+                ArrayList<KeywordBundle> copyKeywordBundles = new ArrayList<>(keywordBundles);
+                outState.putParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES, copyKeywordBundles);
+            }
+            outState.putInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, selectedListItemPosition);
+            outState.putLong(BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID, selectedGroupBundleId);
+            outState.putLong(BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID, selectedKeywordBundleId);
+            outState.putBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, wasListItemSelected);
+        }
+
+        private static Memento fromBundle(Bundle savedInstanceState) {
+            Memento memento = new Memento();
+            memento.keywordBundles = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES);
+            if (memento.keywordBundles == null) memento.keywordBundles = new ArrayList<>();
+            memento.selectedListItemPosition = savedInstanceState.getInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, Constant.BAD_POSITION);
+            memento.selectedGroupBundleId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID, Constant.BAD_ID);
+            memento.selectedKeywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+            memento.wasListItemSelected = savedInstanceState.getBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, false);
+            return memento;
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
     @Inject
     public KeywordListPresenter(@BaseSelectAdapter.SelectMode int selectMode,
             GetKeywordBundles getKeywordBundlesUseCase, DeleteKeywordBundle deleteKeywordBundleUseCase,
@@ -63,6 +103,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     protected BaseAdapter createListAdapter() {
         KeywordListAdapter adapter = new KeywordListAdapter(selectMode);
         adapter.setOnItemClickListener((view, viewObject, position) -> {
+            memento.selectedListItemPosition = position;
             long groupBundleId = viewObject.getSelection() ? viewObject.groupBundleId() : Constant.BAD_ID;
             long keywordBundleId = viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID;
             changeSelectedGroupAndKeywordBundleId(groupBundleId, keywordBundleId);
@@ -108,14 +149,14 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @Override
     public void removeListItem(int position) {
         Timber.i("removeListItem: %s", position);
-        long keywordBundleId = keywordBundles.get(position).id();
+        long keywordBundleId = memento.keywordBundles.get(position).id();
         deleteKeywordBundleUseCase.setKeywordBundleId(keywordBundleId);
         deleteKeywordBundleUseCase.execute();  // silent delete without callback
 
-        keywordBundles.remove(position);
+        memento.keywordBundles.remove(position);
         listAdapter.remove(position);
 
-        if (keywordBundles.isEmpty()) {
+        if (memento.keywordBundles.isEmpty()) {
             changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
             if (isViewAttached()) getView().showEmptyList(getListTag());
         }
@@ -126,7 +167,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         Timber.i("retry");
         changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
         deleteKeywordBundleUseCase.setKeywordBundleId(Constant.BAD_ID);
-        keywordBundles.clear();
+        memento.keywordBundles.clear();
         listAdapter.clear();
         dropListStat();
         freshStart();
@@ -148,18 +189,18 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     // --------------------------------------------------------------------------------------------
     @DebugLog
     public long getSelectedGroupBundleId() {
-        return selectedGroupBundleId;
+        return memento.selectedGroupBundleId;
     }
 
     @DebugLog
     public long getSelectedKeywordBundleId() {
-        return selectedKeywordBundleId;
+        return memento.selectedKeywordBundleId;
     }
 
     @DebugLog
     private boolean changeSelectedGroupAndKeywordBundleId(long groupBundleId, long keywordBundleId) {
-        selectedGroupBundleId = groupBundleId;
-        selectedKeywordBundleId = keywordBundleId;
+        memento.selectedGroupBundleId = groupBundleId;
+        memento.selectedKeywordBundleId = keywordBundleId;
         if (externalValueEmitter != null) {
             /**
              * keywordBundleId always differs from {@link Constant.BAD_ID} for valid {@link KeywordBundle}
@@ -176,13 +217,23 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     }
 
     public boolean isEmpty() {
-        return keywordBundles.isEmpty();
+        return memento.keywordBundles.isEmpty();
     }
 
     @Override
     protected void freshStart() {
         if (isViewAttached()) getView().showLoading(getListTag());
         getKeywordBundlesUseCase.execute();
+    }
+
+    @Override
+    protected void onRestoreState() {
+        memento = Memento.fromBundle(savedInstanceState);
+        boolean isEmpty = populateList(memento.keywordBundles);
+        if (!isEmpty) {
+            ((KeywordListAdapter) listAdapter).selectItemAtPosition(memento.selectedListItemPosition, memento.wasListItemSelected);
+        }
+        changeSelectedGroupAndKeywordBundleId(memento.selectedGroupBundleId, memento.selectedKeywordBundleId);
     }
 
     /* Callback */
@@ -201,24 +252,33 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                 } else {
                     Timber.i("Use-Case: succeeded to get list of KeywordBundle-s");
                     Collections.sort(bundles);
-                    keywordBundles = bundles;
-                    memento.currentSize += bundles.size();
-                    List<KeywordListItemVO> vos = keywordBundleToVoMapper.map(bundles);
-                    listAdapter.populate(vos, isThereMore());
-                    if (isViewAttached()) getView().showKeywords(vos == null || vos.isEmpty());
+                    memento.keywordBundles = bundles;
+                    listMemento.currentSize += bundles.size();
+                    boolean isEmpty = populateList(bundles);
                 }
             }
 
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get list of KeywordBundle-s");
-                if (memento.currentSize <= 0) {
+                if (listMemento.currentSize <= 0) {
                     if (isViewAttached()) getView().showError(getListTag());
                 } else {
                     listAdapter.onError(true);
                 }
             }
         };
+    }
+
+    /* Utility */
+    // --------------------------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
+    boolean populateList(List<KeywordBundle> bundles) {
+        List<KeywordListItemVO> vos = keywordBundleToVoMapper.map(bundles);
+        listAdapter.populate(vos, isThereMore());
+        boolean isEmpty = vos == null || vos.isEmpty();
+        if (isViewAttached()) getView().showKeywords(isEmpty);
+        return isEmpty;
     }
 
     // TODO: assign totalItems

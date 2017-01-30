@@ -174,6 +174,11 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         getPostsUseCase.execute();
     }
 
+    @Override
+    protected void onRestoreState() {
+        freshStart();  // nothing to be restored
+    }
+
     /* Callback */
     // --------------------------------------------------------------------------------------------
     @SuppressWarnings("unchecked")
@@ -194,7 +199,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get Post by id");
-                memento.currentSize += 1;
+                listMemento.currentSize += 1;
                 PostSingleGridPresenter.this.posts.add(0, post);  // add post on top of the list
                 PostSingleGridItemVO viewObject = postToSingleGridVoMapper.map(post);
                 listAdapter.addInverse(viewObject);
@@ -222,7 +227,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     if (isViewAttached()) getView().showEmptyList(getListTag());
                 } else {
                     Timber.i("Use-Case: succeeded to get list of Post-s");
-                    memento.currentSize += posts.size();
+                    listMemento.currentSize += posts.size();
                     PostSingleGridPresenter.this.posts = posts;
                     List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
                     listAdapter.populate(vos, false);
@@ -233,7 +238,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get list of Post-s");
-                if (memento.currentSize <= 0) {
+                if (listMemento.currentSize <= 0) {
                     if (isViewAttached()) getView().showError(getListTag());
                 } else {
                     listAdapter.onError(true);

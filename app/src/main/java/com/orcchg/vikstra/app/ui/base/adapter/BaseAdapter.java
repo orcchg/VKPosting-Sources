@@ -107,6 +107,10 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
         }
     }
 
+    public Model get(int position) {
+        return models.get(position);
+    }
+
     public void populate(List<Model> items, boolean isThereMore) {
         isInError = false;
         if (items != null && !items.isEmpty()) {

@@ -166,6 +166,11 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         getKeywordBundleByIdUseCase.execute();
     }
 
+    @Override
+    protected void onRestoreState() {
+        // TODO:
+    }
+
     @DebugLog
     private boolean hasChanges() {
         return hasTitleChanged || hasKeywordsChanged;

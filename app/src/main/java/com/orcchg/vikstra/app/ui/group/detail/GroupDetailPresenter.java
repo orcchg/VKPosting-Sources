@@ -29,6 +29,11 @@ public class GroupDetailPresenter extends BasePresenter<GroupDetailContract.View
         vkontakteEndpoint.getGroupById(groupId, createGetGroupByIdCallback());
     }
 
+    @Override
+    protected void onRestoreState() {
+        // TODO:
+    }
+
     /* Callback */
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<Group> createGetGroupByIdCallback() {

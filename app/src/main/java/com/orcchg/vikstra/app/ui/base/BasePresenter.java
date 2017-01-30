@@ -21,6 +21,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
 
     private boolean isFresh = true;
     private boolean isStateRestored = false;
+    protected Bundle savedInstanceState;
 
     @DebugLog @Override
     public void attachView(V view) {
@@ -47,6 +48,9 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     @DebugLog
     protected abstract void freshStart();  // called only at fresh start in onStart() lifecycle callback
 
+    @DebugLog
+    protected abstract void onRestoreState();  // called only at fresh start after state restoring in onStart()
+
     @DebugLog @Override
     public void detachView() {
         if (viewRef != null) {
@@ -60,6 +64,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
         Timber.tag(getClass().getSimpleName());
         Timber.i("onCreate");
         isStateRestored = savedInstanceState != null;
+        this.savedInstanceState = savedInstanceState;
         // to override
     }
 
@@ -74,14 +79,23 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     public void onStart() {
         Timber.tag(getClass().getSimpleName());
         Timber.i("onStart");
-        if (isStateRestored) {
-
-        }
         if (isFresh) {
-            Timber.tag(getClass().getSimpleName());
-            Timber.i("Fresh start");
+            /**
+             * {@link BasePresenter#isStateRestored} flag is sticky - is doesn't get dropped when the
+             * state of the screen has been restored after configuration change. But we must not call
+             * initialization logic repeatedly in every {@link BasePresenter#onStart()}, we must do this
+             * once at fresh start.
+             */
+            if (isStateRestored) {
+                Timber.tag(getClass().getSimpleName());
+                Timber.i("State restored on fresh start");
+                onRestoreState();
+            } else {
+                Timber.tag(getClass().getSimpleName());
+                Timber.i("Fresh start");
+                freshStart();
+            }
             isFresh = false;
-            freshStart();
         }
         // to override
     }

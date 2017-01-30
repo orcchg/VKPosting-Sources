@@ -229,6 +229,11 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         getPostByIdUseCase.execute();
     }
 
+    @Override
+    protected void onRestoreState() {
+        // TODO:
+    }
+
     /* Callback */
     // --------------------------------------------------------------------------------------------
     @SuppressWarnings("unchecked")

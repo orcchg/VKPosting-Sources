@@ -15,4 +15,8 @@ public class StatusPresenter extends BasePresenter<StatusContract.View> implemen
     @Override
     protected void freshStart() {
     }
+
+    @Override
+    protected void onRestoreState() {
+    }
 }

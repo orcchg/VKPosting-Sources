@@ -239,6 +239,11 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         getPostByIdUseCase.execute();
     }
 
+    @Override
+    protected void onRestoreState() {
+        // TODO:
+    }
+
     @DebugLog
     private boolean hasChanges() {
         if (isViewAttached()) {

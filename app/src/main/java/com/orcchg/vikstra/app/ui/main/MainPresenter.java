@@ -178,6 +178,11 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
         vkontakteEndpoint.getCurrentUser(createGetCurrentUserCallback());
     }
 
+    @Override
+    protected void onRestoreState() {
+        // TODO:
+    }
+
     /* Callback */
     // --------------------------------------------------------------------------------------------
     private UseCase.OnPostExecuteCallback<User> createGetCurrentUserCallback() {

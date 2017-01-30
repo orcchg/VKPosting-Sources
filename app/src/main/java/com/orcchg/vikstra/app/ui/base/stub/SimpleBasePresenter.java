@@ -8,4 +8,9 @@ public class SimpleBasePresenter extends BasePresenter<StubMvpView> {
     protected void freshStart() {
         // empty
     }
+
+    @Override
+    protected void onRestoreState() {
+        // empty
+    }
 }

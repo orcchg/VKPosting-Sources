@@ -32,11 +32,29 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private final DumpGroups dumpGroupsUseCase;
 
-    private @Nullable String title;
-    private boolean hasTitleChanged;
+    private Memento memento = new Memento();
 
     private GroupListMediatorComponent mediatorComponent;
 
+    // --------------------------------------------------------------------------------------------
+    private static final class Memento {
+        private static final String BUNDLE_KEY_TITLE = "bundle_key_title";
+
+        private @Nullable String title;
+        private boolean hasTitleChanged;
+
+        private void toBundle(Bundle outState) {
+            outState.putString(BUNDLE_KEY_TITLE, title);
+        }
+
+        private static Memento fromBundle(Bundle savedInstanceState) {
+            Memento memento = new Memento();
+            memento.title = savedInstanceState.getString(BUNDLE_KEY_TITLE);
+            return memento;
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
     @Inject
     GroupListPresenter(DumpGroups dumpGroupsUseCase) {
         this.dumpGroupsUseCase = dumpGroupsUseCase;
@@ -124,10 +142,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void onTitleChanged(String text) {
         Timber.i("onTitleChanged: %s", text);
-        hasTitleChanged = !text.equals(title);
-        if (hasTitleChanged) {
-            title = text;
-            sendNewTitle(title);
+        memento.hasTitleChanged = !text.equals(memento.title);
+        if (memento.hasTitleChanged) {
+            memento.title = text;
+            sendNewTitle(text);
         }
     }
 
@@ -141,7 +159,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void retry() {
         Timber.i("retry");
-        hasTitleChanged = false;
+        memento.hasTitleChanged = false;
         sendAskForRetry();
         freshStart();
     }
@@ -179,7 +197,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @Override
     public boolean receiveAskForTitleChanged() {
-        return hasTitleChanged;
+        return memento.hasTitleChanged;
     }
 
     @Override
@@ -298,7 +316,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @DebugLog
     private boolean hasChanges() {
-        return hasTitleChanged;
+        return memento.hasTitleChanged;
+    }
+
+    @Override
+    protected void onRestoreState() {
+        memento = Memento.fromBundle(savedInstanceState);
+        // TODO: assign title
+        // TODO: call: getView().setInputGroupsTitle(title);
     }
 
     /* Callback */

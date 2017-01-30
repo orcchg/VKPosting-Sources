@@ -691,6 +691,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         stateStart();
     }
 
+    @Override
+    protected void onRestoreState() {
+        // TODO:
+    }
+
     @DebugLog
     private void addGroupsToList(List<Group> groups, int keywordIndex) {
         Timber.i("addGroupsToList: total groups = %s, index = %s", groups.size(), keywordIndex);

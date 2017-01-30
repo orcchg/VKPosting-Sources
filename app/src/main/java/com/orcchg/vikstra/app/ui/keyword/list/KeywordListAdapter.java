@@ -33,4 +33,10 @@ public class KeywordListAdapter extends BaseSelectAdapter<KeywordViewHolder, Key
         viewHolder.setOnEditClickListener(editClickListener);
         return viewHolder;
     }
+
+    public void selectItemAtPosition(int position, boolean isSelected) {
+        KeywordListItemVO vo = get(position);
+        vo.setSelection(isSelected);
+        notifyItemChanged(position);
+    }
 }
