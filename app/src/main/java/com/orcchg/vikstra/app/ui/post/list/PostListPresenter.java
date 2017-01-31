@@ -4,7 +4,6 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridAdapter;
-import com.orcchg.vikstra.app.ui.post.single.PostSingleGridContract;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.domain.interactor.post.DeletePost;
@@ -12,7 +11,7 @@ import com.orcchg.vikstra.domain.interactor.post.GetPosts;
 
 import javax.inject.Inject;
 
-public class PostListPresenter extends PostSingleGridPresenter implements PostSingleGridContract.Presenter {
+public class PostListPresenter extends PostSingleGridPresenter implements PostListContract.Presenter {
 
     @Inject
     public PostListPresenter(@BaseSelectAdapter.SelectMode int selectMode, GetPosts getPostsUseCase,
@@ -36,5 +35,12 @@ public class PostListPresenter extends PostSingleGridPresenter implements PostSi
     @Override
     protected int getListTag() {
         return PostListFragment.RV_TAG;
+    }
+
+    /* Contract */
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void onSelectPressed() {
+        // TODO:
     }
 }

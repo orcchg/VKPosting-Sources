@@ -26,6 +26,7 @@
     <string name="button_retry">Повторить</string>
     <string name="button_save">Сохранить</string>
     <string name="button_search">Поиск</string>
+    <string name="button_select">Выбрать</string>
     <string name="button_settings">Настройки</string>
     <string name="button_user">Аккаунт</string>
     <string name="button_view">Просмотр</string>

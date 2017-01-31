@@ -27,8 +27,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class PostListActivity extends BaseActivity<PostSingleGridContract.View, PostSingleGridContract.Presenter>
-        implements PostSingleGridContract.View, IScrollGrid, ShadowHolder {
+public class PostListActivity extends BaseActivity<PostSingleGridContract.View, PostListContract.Presenter>
+        implements PostListContract.View, IScrollGrid, ShadowHolder {
     private static final String FRAGMENT_TAG = "post_list_fragment_tag";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_LIST_SCREEN;
 
@@ -47,7 +47,7 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
     }
 
     @NonNull @Override
-    protected PostSingleGridContract.Presenter createPresenter() {
+    protected PostListContract.Presenter createPresenter() {
         return postListComponent.presenter();
     }
 
@@ -90,6 +90,15 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
     private void initToolbar() {
         toolbar.setTitle(R.string.post_list_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());  // close screen with current result
+        toolbar.inflateMenu(R.menu.select);
+        toolbar.setOnMenuItemClickListener((item) -> {
+            switch (item.getItemId()) {
+                case R.id.select:
+                    presenter.onSelectPressed();
+                    return true;
+            }
+            return false;
+        });
     }
 
     @Override
@@ -104,6 +113,15 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
         PostListFragment fragment = getFragment();
         if (fragment != null) return fragment.getListView(tag);
         return null;
+    }
+
+    // ------------------------------------------
+    @Override
+    public void closeView() {
+    }
+
+    @Override
+    public void closeView(int resultCode, long postId) {
     }
 
     // ------------------------------------------
