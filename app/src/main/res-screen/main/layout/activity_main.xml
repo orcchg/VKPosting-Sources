@@ -44,7 +44,8 @@
 
                 <Space
                     android:layout_width="@dimen/standard_space_width"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    android:visibility="gone"/>
 
                 <FrameLayout
                     android:layout_width="wrap_content"
@@ -98,8 +99,8 @@
                 android:id="@+id/underscore"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="@dimen/standard_side_padding_plus_small_space"
-                android:layout_marginStart="@dimen/standard_side_padding_plus_small_space"
+                android:layout_marginLeft="@dimen/standard_side_padding_plus_small"
+                android:layout_marginStart="@dimen/standard_side_padding_plus_small"
                 android:layout_marginTop="@dimen/standard_top_padding_small"
                 android:background="@color/light_line_separator"/>
 

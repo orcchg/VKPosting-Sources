@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.keyword.list.viewholder;
 
+import android.text.TextUtils;
 import android.view.View;
 
 import com.orcchg.vikstra.R;
@@ -45,6 +46,7 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
         flowView.setKeywords(viewObject.keywords());
         flowView.setTitle(viewObject.title());
         flowView.setLabel(label);
+        flowView.setLabelPrefix(!TextUtils.isEmpty(label) ? R.string.main_groups_list_selected_label_prefix : 0);
         flowView.setSelection(isSelectable && viewObject.getSelection());
         flowView.setEditable(editClickListener != null);
         flowView.setOnKeywordItemClickListener(keyListener);

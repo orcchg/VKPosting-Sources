@@ -3,6 +3,7 @@ package com.orcchg.vikstra.app.ui.common.view;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ public class TitledFlowView extends FrameLayout {
     @BindView(R.id.block_icon) ImageView iconView;
     @BindView(R.id.block_title) TextView titleView;
     @BindView(R.id.block_label) TextView labelView;
+    @BindView(R.id.block_label_prefix) TextView labelPrefixView;
     @BindView(R.id.block_edit_button) ImageButton editButton;
     @BindView(R.id.block_container) KeywordsFlowLayout keywordsFlowLayout;
     @BindView(R.id.line_selector) View lineSelectorView;
@@ -79,11 +81,68 @@ public class TitledFlowView extends FrameLayout {
 
     /* Content */
     // --------------------------------------------------------------------------------------------
-    public void setTitle(String text) { if (titleView != null) titleView.setText(text); }
-    public void setTitle(@StringRes int resId) { if (titleView != null) titleView.setText(resId); }
+    public void setTitle(String text) {
+        if (titleView != null) {
+            if (TextUtils.isEmpty(text)) {
+                titleView.setVisibility(View.GONE);
+            } else {
+                titleView.setVisibility(View.VISIBLE);
+                titleView.setText(text);
+            }
+        }
+    }
+    public void setTitle(@StringRes int resId) {
+        if (titleView != null) {
+            if (resId <= 0) {
+                titleView.setVisibility(View.GONE);
+            } else {
+                titleView.setVisibility(View.VISIBLE);
+                titleView.setText(resId);
+            }
+        }
+    }
 
-    public void setLabel(String text) { if (labelView != null) labelView.setText(text); }
-    public void setLabel(@StringRes int resId) { if (labelView != null) labelView.setText(resId); }
+    public void setLabel(String text) {
+        if (labelView != null) {
+            if (TextUtils.isEmpty(text)) {
+                labelView.setVisibility(View.GONE);
+            } else {
+                labelView.setVisibility(View.VISIBLE);
+                labelView.setText(text);
+            }
+        }
+    }
+    public void setLabel(@StringRes int resId) {
+        if (labelView != null) {
+            if (resId <= 0) {
+                labelView.setVisibility(View.GONE);
+            } else {
+                labelView.setVisibility(View.VISIBLE);
+                labelView.setText(resId);
+            }
+        }
+    }
+
+    public void setLabelPrefix(String text) {
+        if (labelPrefixView != null) {
+            if (TextUtils.isEmpty(text)) {
+                labelPrefixView.setVisibility(View.GONE);
+            } else {
+                labelPrefixView.setVisibility(View.VISIBLE);
+                labelPrefixView.setText(text);
+            }
+        }
+    }
+    public void setLabelPrefix(@StringRes int resId) {
+        if (labelPrefixView != null) {
+            if (resId <= 0) {
+                labelPrefixView.setVisibility(View.GONE);
+            } else {
+                labelPrefixView.setVisibility(View.VISIBLE);
+                labelPrefixView.setText(resId);
+            }
+        }
+    }
 
     public void setKeywords(@NonNull Collection<Keyword> keywords) {
         if (keywordsFlowLayout != null) keywordsFlowLayout.setKeywords(keywords);

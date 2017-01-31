@@ -24,7 +24,8 @@
             <FrameLayout
                 android:layout_width="@dimen/standard_space_width"
                 android:layout_height="match_parent"
-                android:layout_marginTop="2dp">
+                android:layout_marginTop="2dp"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/block_icon"
@@ -42,16 +43,9 @@
                 android:layout_weight="1"
                 android:layout_marginLeft="@dimen/standard_side_padding_small"
                 android:layout_marginStart="@dimen/standard_side_padding_small"
+                android:ellipsize="end"
+                android:maxLines="1"
                 style="@style/Block.Title"/>
-
-            <TextView
-                android:id="@+id/block_label"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/standard_side_padding_small"
-                android:layout_marginStart="@dimen/standard_side_padding_small"
-                android:textColor="@color/textSecondary"
-                android:textSize="@dimen/standard_description_text_size"/>
 
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -74,11 +68,39 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/standard_side_padding"
+            android:layout_marginEnd="@dimen/standard_side_padding"
+            android:layout_marginBottom="@dimen/standard_bottom_padding_mini"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/block_label_prefix"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/standard_side_padding_small"
+                android:layout_marginStart="@dimen/standard_side_padding_small"
+                android:textColor="@color/textSecondary"
+                android:textSize="@dimen/standard_description_text_size"/>
+
+            <TextView
+                android:id="@+id/block_label"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/standard_side_padding_small"
+                android:layout_marginStart="@dimen/standard_side_padding_small"
+                android:textColor="@color/textSecondary"
+                android:textSize="@dimen/standard_description_text_size"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Space
                 android:layout_width="@dimen/standard_space_width"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
