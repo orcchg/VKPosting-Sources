@@ -217,6 +217,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         if (isViewAttached()) getView().updateSelectedGroupsCounter(newCount, total);
     }
 
+    @Override
+    public void receiveUpdateTitleRequest(String newTitle) {
+        if (isViewAttached()) getView().setInputGroupsTitle(newTitle);
+    }
+
     // ------------------------------------------
     @Override
     public void sendAddKeywordRequest(Keyword keyword) {

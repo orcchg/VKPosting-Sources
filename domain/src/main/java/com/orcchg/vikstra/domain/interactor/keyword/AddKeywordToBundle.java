@@ -9,6 +9,7 @@ import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
 
@@ -22,7 +23,7 @@ public class AddKeywordToBundle extends UseCase<Boolean> {
         }
     }
 
-    private final long id;
+    private long id = Constant.BAD_ID;
     private final IKeywordRepository keywordRepository;
     private Parameters parameters;
 
@@ -36,6 +37,10 @@ public class AddKeywordToBundle extends UseCase<Boolean> {
 
     public long getKeywordBundleId() {
         return id;
+    }
+
+    public void setKeywordBundleId(long id) {
+        this.id = id;
     }
 
     public void setParameters(Parameters parameters) {

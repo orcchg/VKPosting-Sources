@@ -14,7 +14,7 @@ import javax.inject.Inject;
 
 public class GetKeywordBundleById extends UseCase<KeywordBundle> {
 
-    private final long id;
+    private long id;
     private final IKeywordRepository keywordRepository;
 
     @Inject
@@ -27,6 +27,10 @@ public class GetKeywordBundleById extends UseCase<KeywordBundle> {
 
     public long getKeywordBundleId() {
         return id;
+    }
+
+    public void setKeywordBundleId(long id) {
+        this.id = id;
     }
 
     @Nullable @Override

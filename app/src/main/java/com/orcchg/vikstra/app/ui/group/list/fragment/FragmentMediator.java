@@ -38,5 +38,6 @@ public interface FragmentMediator {
         void sendPostingStartedMessage(boolean isStarted);
         void sendShowPostingButtonRequest(boolean isVisible);
         void sendUpdatedSelectedGroupsCounter(int newCount, int total);
+        void sendUpdateTitleRequest(String newTitle);
     }
 }

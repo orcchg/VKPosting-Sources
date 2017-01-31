@@ -143,4 +143,9 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
         if (clientFirst != null) clientFirst.receiveUpdatedSelectedGroupsCounter(newCount, total);
     }
+
+    @Override
+    public void sendUpdateTitleRequest(String newTitle) {
+        if (clientFirst != null) clientFirst.receiveUpdateTitleRequest(newTitle);
+    }
 }

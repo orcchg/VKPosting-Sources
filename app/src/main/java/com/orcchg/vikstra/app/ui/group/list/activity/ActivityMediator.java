@@ -25,6 +25,7 @@ public interface ActivityMediator {
         void receivePostingStartedMessage(boolean isStarted);
         void receiveShowPostingButtonRequest(boolean isVisible);
         void receiveUpdatedSelectedGroupsCounter(int newCount, int total);
+        void receiveUpdateTitleRequest(String newTitle);
     }
 
     interface Sender extends MediatorSender {

@@ -244,6 +244,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // create new empty KeywordBundle in repository
         PutKeywordBundle.Parameters parameters = new PutKeywordBundle.Parameters.Builder()
                 .setTitle(sendAskForTitle())
+                .setKeywords(new ArrayList<>())  // empty Keyword-s
                 .build();
         putKeywordBundleUseCase.setParameters(parameters);
         putKeywordBundleUseCase.execute();
@@ -260,6 +261,16 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         inputKeywordBundle = bundle;  // initialize input KeywordBundle (empty)
 
+        /**
+         * We are working with newly created KeywordBundle on GroupListScreen instead of a fetched one
+         * from repository. So, we should assign proper id to use-cases, where it's necessary:
+         *
+         * - addition of new Keyword is now goes to new KeywordBundle
+         * - retrying is now tries to re-fetch this new KeywordBundle
+         */
+        addKeywordToBundleUseCase.setKeywordBundleId(bundle.id());
+        getKeywordBundleByIdUseCase.setKeywordBundleId(bundle.id());
+
         // show empty stub with suggestion to add new Keyword to the newly created KeywordBundle
         if (isViewAttached()) getView().showEmptyList(GroupListFragment.RV_TAG);
     }
@@ -274,6 +285,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // enter KEYWORDS_LOADED state logic
 
         inputKeywordBundle = bundle;  // assign input KeywordBundle
+        sendUpdateTitleRequest(bundle.title());  // assign title
 
         // fill Parent items in expandable list
         fillKeywordsList(bundle);
@@ -630,6 +642,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         mediatorComponent.mediator().sendUpdatedSelectedGroupsCounter(newCount, total);
     }
 
+    @Override
+    public void sendUpdateTitleRequest(String newTitle) {
+        mediatorComponent.mediator().sendUpdateTitleRequest(newTitle);
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @Override
@@ -673,8 +690,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         parentItem.setChildList(childItems);
     }
 
+    @DebugLog
     private void addKeyword(Keyword keyword) {
-        Timber.i("addKeyword: %s", keyword.toString());
+        Timber.i("addKeyword: %s", keyword.keyword());
         if (inputKeywordBundle.keywords().size() < Constant.KEYWORDS_LIMIT) {
             stateAddKeywordStart(keyword);
         } else {
@@ -744,6 +762,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     // ------------------------------------------
+    @DebugLog
     private void postToGroups() {
         Timber.i("postToGroups");
         if (currentPost != null) {
