@@ -57,6 +57,11 @@ public class GroupCloud implements IGroupStorage {
         return false;
     }
 
+    @Override
+    public boolean updateGroupsTitle(long id, String newTitle) {
+        return false;
+    }
+
     /* Delete */
     // ------------------------------------------
     @Override

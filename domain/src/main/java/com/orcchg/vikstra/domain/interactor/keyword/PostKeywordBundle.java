@@ -17,8 +17,17 @@ public class PostKeywordBundle extends UseCase<Boolean> {
     public static class Parameters implements IParameters {
         KeywordBundle keywords;
 
+        final long id;
+        String title = "";  // title could be updated separately
+
         public Parameters(KeywordBundle keywords) {
+            this.id = keywords.id();
             this.keywords = keywords;
+        }
+
+        public Parameters(long id, String title) {
+            this.id = id;
+            this.title = title;
         }
     }
 
@@ -39,7 +48,8 @@ public class PostKeywordBundle extends UseCase<Boolean> {
     @Nullable @Override
     protected Boolean doAction() {
         if (parameters == null) throw new NoParametersException();
-        return keywordRepository.updateKeywords(parameters.keywords);
+        if (parameters.keywords != null) return keywordRepository.updateKeywords(parameters.keywords);
+        return keywordRepository.updateKeywordsTitle(parameters.id, parameters.title);
     }
 
     @Nullable @Override

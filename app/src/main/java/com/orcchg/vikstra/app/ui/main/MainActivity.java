@@ -58,7 +58,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
     @OnClick(R.id.btn_new_keywords)
     public void onNewKeywordsClick() {
-        navigationComponent.navigator().openKeywordCreateScreen(this);
+        navigationComponent.navigator().openGroupListScreen(this);
     }
 
     private PostingNotification postingNotification;

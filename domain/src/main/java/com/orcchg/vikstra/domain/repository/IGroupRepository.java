@@ -25,6 +25,7 @@ public interface IGroupRepository {
     /* Update */
     // ------------------------------------------
     boolean updateGroups(@NonNull GroupBundle groups);
+    boolean updateGroupsTitle(long id, String newTitle);
 
     /* Delete */
     // ------------------------------------------

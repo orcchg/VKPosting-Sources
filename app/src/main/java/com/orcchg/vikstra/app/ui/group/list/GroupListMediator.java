@@ -6,6 +6,7 @@ import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.app.ui.base.mediator.BaseMediator;
 import com.orcchg.vikstra.app.ui.group.list.activity.ActivityMediator;
 import com.orcchg.vikstra.app.ui.group.list.fragment.FragmentMediator;
+import com.orcchg.vikstra.app.ui.util.ContextUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -45,6 +46,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendNewTitle(String newTitle) {
+        if (clientSecond != null) clientSecond.receiveNewTitle(newTitle);
+    }
+
+    @Override
     public void sendPostHasChangedRequest() {
         if (clientSecond != null) clientSecond.receivePostHasChangedRequest();
     }
@@ -70,6 +76,12 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     @Override
     public void sendAlreadyAddedKeyword(String keyword) {
         if (clientFirst != null) clientFirst.receiveAlreadyAddedKeyword(keyword);
+    }
+
+    @Override
+    public String sendAskForTitle() {
+        if (clientFirst != null) return clientFirst.receiveAskForTitle();
+        return ContextUtility.defaultTitle();
     }
 
     @Override

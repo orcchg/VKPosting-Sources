@@ -97,8 +97,12 @@ public class Navigator {
         context.startActivity(intent);
     }
 
-    public void openGroupListScreen(@NonNull Activity context, long keywordBunldeId, long postId) {
-        Intent intent = GroupListActivity.getCallingIntent(context, keywordBunldeId, postId);
+    public void openGroupListScreen(@NonNull Activity context) {
+        openGroupListScreen(context, Constant.BAD_ID, Constant.BAD_ID);
+    }
+
+    public void openGroupListScreen(@NonNull Activity context, long keywordBundleId, long postId) {
+        Intent intent = GroupListActivity.getCallingIntent(context, keywordBundleId, postId);
         context.startActivityForResult(intent, GroupListActivity.REQUEST_CODE);
     }
 

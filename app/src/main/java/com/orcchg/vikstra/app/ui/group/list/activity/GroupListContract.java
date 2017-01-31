@@ -23,6 +23,7 @@ interface GroupListContract {
         void openDumpNotReadyDialog();
         void openEditTitleDialog(@Nullable String initTitle);
 
+        String getInputGroupsTitle();
         void setInputGroupsTitle(String title);
         void setCloseViewResult(int result);
 

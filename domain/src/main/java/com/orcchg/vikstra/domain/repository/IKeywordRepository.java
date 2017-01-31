@@ -25,6 +25,7 @@ public interface IKeywordRepository {
     /* Update */
     // ------------------------------------------
     boolean updateKeywords(@NonNull KeywordBundle keywords);
+    boolean updateKeywordsTitle(long id, String newTitle);
 
     /* Delete */
     // ------------------------------------------

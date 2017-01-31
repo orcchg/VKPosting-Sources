@@ -77,6 +77,12 @@ public class GroupRepositoryImpl implements IGroupRepository {
         return localSource.updateGroups(groups);
     }
 
+    @Override
+    public boolean updateGroupsTitle(long id, String newTitle) {
+        // TODO: impl cloudly
+        return localSource.updateGroupsTitle(id, newTitle);
+    }
+
     /* Delete */
     // ------------------------------------------
     @Override

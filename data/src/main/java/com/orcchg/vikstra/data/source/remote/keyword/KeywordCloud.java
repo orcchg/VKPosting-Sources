@@ -58,6 +58,11 @@ public class KeywordCloud implements IKeywordStorage {
         return false;
     }
 
+    @Override
+    public boolean updateGroupsTitle(long id, String newTitle) {
+        return false;
+    }
+
     /* Delete */
     // ------------------------------------------
     @Override

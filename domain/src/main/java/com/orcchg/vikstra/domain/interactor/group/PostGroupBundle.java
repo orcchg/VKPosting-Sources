@@ -17,8 +17,17 @@ public class PostGroupBundle extends UseCase<Boolean> {
     public static class Parameters implements IParameters {
         GroupBundle groups;
 
+        final long id;
+        String title = "";  // title could be updated separately
+
         public Parameters(GroupBundle groups) {
+            this.id = groups.id();
             this.groups = groups;
+        }
+
+        public Parameters(long id, String title) {
+            this.id = id;
+            this.title = title;
         }
     }
 
@@ -39,7 +48,8 @@ public class PostGroupBundle extends UseCase<Boolean> {
     @Nullable @Override
     protected Boolean doAction() {
         if (parameters == null) throw new NoParametersException();
-        return groupRepository.updateGroups(parameters.groups);
+        if (parameters.groups != null) return groupRepository.updateGroups(parameters.groups);
+        return groupRepository.updateGroupsTitle(parameters.id, parameters.title);
     }
 
     @Nullable @Override

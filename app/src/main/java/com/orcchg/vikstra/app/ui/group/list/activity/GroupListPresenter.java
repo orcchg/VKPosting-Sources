@@ -11,6 +11,7 @@ import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListMediatorCom
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorModule;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
+import com.orcchg.vikstra.app.ui.util.ContextUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.group.DumpGroups;
@@ -27,7 +28,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private final DumpGroups dumpGroupsUseCase;
 
-    private String title;  // TODO: set initial title
+    private @Nullable String title;
+    private boolean hasTitleChanged;
 
     private GroupListMediatorComponent mediatorComponent;
 
@@ -102,7 +104,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void onTitleChanged(String text) {
         Timber.i("onTitleChanged: %s", text);
-        title = text;
+        hasTitleChanged = !text.equals(title);
+        if (hasTitleChanged) {
+            title = text;
+            sendNewTitle(title);
+        }
     }
 
     @Override
@@ -115,7 +121,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void retry() {
         Timber.i("retry");
+        hasTitleChanged = false;
         sendAskForRetry();
+        freshStart();
     }
 
     @Override
@@ -141,6 +149,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void receiveAlreadyAddedKeyword(String keyword) {
         if (isViewAttached()) getView().onAlreadyAddedKeyword(keyword);
+    }
+
+    @Override
+    public String receiveAskForTitle() {
+        if (isViewAttached()) return getView().getInputGroupsTitle();
+        return ContextUtility.defaultTitle();
     }
 
     @Override
@@ -225,6 +239,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void sendNewTitle(String newTitle) {
+        mediatorComponent.mediator().sendNewTitle(newTitle);
+    }
+
+    @Override
     public void sendPostHasChangedRequest() {
         mediatorComponent.mediator().sendPostHasChangedRequest();
     }
@@ -247,8 +266,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     protected void freshStart() {
     }
 
-    // TODO: assign title
-    // TODO: call: getView().setInputGroupsTitle(title);
+    @DebugLog
+    private boolean hasChanges() {
+        return hasTitleChanged;
+    }
 
     /* Callback */
     // --------------------------------------------------------------------------------------------

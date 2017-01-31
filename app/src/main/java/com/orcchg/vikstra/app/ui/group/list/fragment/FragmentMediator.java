@@ -14,6 +14,7 @@ public interface FragmentMediator {
         long receiveAskForGroupBundleIdToDump();
         void receiveAskForRetry();
         void receiveAskForRetryPost();
+        void receiveNewTitle(String newTitle);
         void receivePostHasChangedRequest();
         void receivePostToGroupsRequest();
 
@@ -24,6 +25,7 @@ public interface FragmentMediator {
     interface Sender extends MediatorSender {
         void sendAddKeywordError();
         void sendAlreadyAddedKeyword(String keyword);
+        String sendAskForTitle();
         void sendEnableAddKeywordButtonRequest(boolean isEnabled);
         void sendEmptyPost();
         void sendErrorPost();

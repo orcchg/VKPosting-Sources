@@ -24,6 +24,7 @@ public interface IKeywordStorage extends IStorage {
     /* Update */
     // ------------------------------------------
     boolean updateKeywords(@NonNull KeywordBundle bundle);
+    boolean updateKeywordsTitle(long id, String newTitle);
 
     /* Delete */
     // ------------------------------------------

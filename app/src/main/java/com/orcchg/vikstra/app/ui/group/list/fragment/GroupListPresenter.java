@@ -5,6 +5,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 
 import com.orcchg.vikstra.BuildConfig;
 import com.orcchg.vikstra.app.AppConfig;
@@ -27,6 +28,7 @@ import com.orcchg.vikstra.domain.interactor.group.PutGroupBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.keyword.PostKeywordBundle;
+import com.orcchg.vikstra.domain.interactor.keyword.PutKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
 import com.orcchg.vikstra.domain.model.Group;
@@ -61,6 +63,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final GetPostById getPostByIdUseCase;
     private final PostKeywordBundle postKeywordBundleUseCase;
+    private final PutKeywordBundle putKeywordBundleUseCase;
     private final PostGroupBundle postGroupBundleUseCase;
     private final PutGroupBundle putGroupBundleUseCase;
     private final PutGroupReportBundle putGroupReportBundle;
@@ -84,20 +87,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private static final class StateContainer {
         private static final int ERROR_LOAD = -1;
         private static final int START = 0;
-        private static final int KEYWORDS_LOADED = 1;
-        private static final int GROUPS_LOADED = 2;
-        private static final int REFRESHING = 3;
-        private static final int ADD_KEYWORD_START = 4;
-        private static final int ADD_KEYWORD_FINISH = 5;
+        private static final int KEYWORDS_CREATE_START = 1, KEYWORDS_CREATE_FINISH = 2;
+        private static final int KEYWORDS_LOADED = 3;
+        private static final int GROUPS_LOADED = 4;
+        private static final int REFRESHING = 5;
+        private static final int ADD_KEYWORD_START = 6, ADD_KEYWORD_FINISH = 7;
 
         @IntDef({
             ERROR_LOAD,
             START,
+            KEYWORDS_CREATE_START, KEYWORDS_CREATE_FINISH,
             KEYWORDS_LOADED,
             GROUPS_LOADED,
             REFRESHING,
-            ADD_KEYWORD_START,
-            ADD_KEYWORD_FINISH
+            ADD_KEYWORD_START, ADD_KEYWORD_FINISH
         })
         @Retention(RetentionPolicy.SOURCE)
         private @interface State {}
@@ -108,9 +111,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Inject
     GroupListPresenter(AddKeywordToBundle addKeywordToBundleUseCase, GetGroupBundleById getGroupBundleByIdUseCase,
                        GetKeywordBundleById getKeywordBundleByIdUseCase, GetPostById getPostByIdUseCase,
-                       PostKeywordBundle postKeywordBundleUseCase, PostGroupBundle postGroupBundleUseCase,
-                       PutGroupBundle putGroupBundleUseCase, PutGroupReportBundle putGroupReportBundle,
-                       VkontakteEndpoint vkontakteEndpoint, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+                       PostKeywordBundle postKeywordBundleUseCase, PutKeywordBundle putKeywordBundleUseCase,
+                       PostGroupBundle postGroupBundleUseCase, PutGroupBundle putGroupBundleUseCase,
+                       PutGroupReportBundle putGroupReportBundle, VkontakteEndpoint vkontakteEndpoint,
+                       PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
         this.addKeywordToBundleUseCase = addKeywordToBundleUseCase;
         this.addKeywordToBundleUseCase.setPostExecuteCallback(createAddKeywordToBundleCallback());
@@ -121,6 +125,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
         this.postKeywordBundleUseCase = postKeywordBundleUseCase;  // no callback - background task
+        this.putKeywordBundleUseCase = putKeywordBundleUseCase;
+        this.putKeywordBundleUseCase.setPostExecuteCallback(createPutKeywordBundleCallback());
         this.postGroupBundleUseCase = postGroupBundleUseCase;  // no callback - background task
         this.putGroupBundleUseCase = putGroupBundleUseCase;
         this.putGroupBundleUseCase.setPostExecuteCallback(createPutGroupBundleCallback());
@@ -142,14 +148,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     /**
      * State machine:
      *
-     *                           START ----- < ------ ERROR_LOAD  { user retry }
-     *                             |                 |
-     *                             |                 |
-     *                        KEYWORDS_LOADED  or    #
-     *                             |                 |
-     *                             |                 |
-     *                             |                 |
-     *                        GROUPS_LOADED    or    #
+     *                           START ----- < ------ < ----- < ----- < ---- ERROR_LOAD  { user retry }
+     *                             |                                              |
+     *                             |                                              |
+     *                        KEYWORDS_LOADED  or  KEYWORDS_CREATE_START  or      #
+     *                             |                      |                       |
+     *                             |                      |                       |
+     *                             |----- < ---- < -- KEYWORDS_CREATE_FINISH      |
+     *                        GROUPS_LOADED    or                                 #
      *                          |       |
      *                          |       |
      *                          |       |
@@ -224,6 +230,38 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // fresh start - load input KeywordBundle and Post
         getKeywordBundleByIdUseCase.execute();
         getPostByIdUseCase.execute();
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to KEYWORDS_CREATE_START state, initialize input KeywordBundle
+     */
+    private void stateKeywordBundleCreateStart() {
+        Timber.i("stateKeywordBundleCreateStart");
+        setState(StateContainer.KEYWORDS_CREATE_START);
+        // enter KEYWORDS_CREATE_START state logic
+
+        // create new empty KeywordBundle in repository
+        PutKeywordBundle.Parameters parameters = new PutKeywordBundle.Parameters.Builder()
+                .setTitle(sendAskForTitle())
+                .build();
+        putKeywordBundleUseCase.setParameters(parameters);
+        putKeywordBundleUseCase.execute();
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to KEYWORDS_CREATE_FINISH state, show stub with 'add new Keyword' button
+     */
+    private void stateKeywordBundleCreateFinish(@NonNull KeywordBundle bundle) {
+        Timber.i("stateKeywordBundleCreateFinish");
+        setState(StateContainer.KEYWORDS_CREATE_FINISH);
+        // enter KEYWORDS_CREATE_FINISH state logic
+
+        inputKeywordBundle = bundle;  // initialize input KeywordBundle (empty)
+
+        // show empty stub with suggestion to add new Keyword to the newly created KeywordBundle
+        if (isViewAttached()) getView().showEmptyList(GroupListFragment.RV_TAG);
     }
 
     // ------------------------------------------
@@ -333,6 +371,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     // ------------------------------------------
+    /**
+     * Go to ADD_KEYWORD_START state, check possibility to add new Keyword and execute addition
+     */
     private void stateAddKeywordStart(Keyword keyword) {
         Timber.i("stateAddKeywordStart");
         setState(StateContainer.ADD_KEYWORD_START);
@@ -364,6 +405,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         addKeywordToBundleUseCase.execute();
     }
 
+    // ------------------------------------------
+    /**
+     * Go to ADD_KEYWORD_FINISH state, check result and load Group-s corresponding to the newly added Keyword
+     */
     private void stateAddKeywordFinish(boolean result) {
         Timber.i("stateAddKeywordFinish: %s", result);
         setState(StateContainer.ADD_KEYWORD_FINISH);
@@ -477,6 +522,19 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receiveNewTitle(String newTitle) {
+        if (inputKeywordBundle != null) {
+            isKeywordBundleChanged = true;
+            postKeywordBundleTitleUpdate(newTitle);
+        }
+
+        if (inputGroupBundle != null) {
+            isGroupBundleChanged = true;
+            postGroupBundleTitleUpdate(newTitle);
+        }
+    }
+
+    @Override
     public void receivePostHasChangedRequest() {
         refreshPost();
     }
@@ -502,6 +560,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void sendAlreadyAddedKeyword(String keyword) {
         mediatorComponent.mediator().sendAlreadyAddedKeyword(keyword);
+    }
+
+    @Override
+    public String sendAskForTitle() {
+        return mediatorComponent.mediator().sendAskForTitle();
     }
 
     @Override
@@ -731,10 +794,25 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // ------------------------------------------
     private void postGroupBundleUpdate() {
         Timber.i("postGroupBundleUpdate: %s", isGroupBundleChanged);
+        postGroupBundleUpdate(null);
+    }
+
+    private void postGroupBundleTitleUpdate(String title) {
+        Timber.i("postGroupBundleTitleUpdate: %s, changed = %s", title, isGroupBundleChanged);
+        postGroupBundleUpdate(title);
+    }
+
+    private void postGroupBundleUpdate(String title) {
         if (isGroupBundleChanged) {
             Timber.d("Input GroupBundle has been changed, it will be updated in repository");
             isGroupBundleChanged = false;
-            postGroupBundleUseCase.setParameters(new PostGroupBundle.Parameters(inputGroupBundle));
+            PostGroupBundle.Parameters parameters;
+            if (TextUtils.isEmpty(title)) {
+                parameters = new PostGroupBundle.Parameters(inputGroupBundle);
+            } else {
+                parameters = new PostGroupBundle.Parameters(inputGroupBundle.id(), title);
+            }
+            postGroupBundleUseCase.setParameters(parameters);
             postGroupBundleUseCase.execute();  // silent update without callback
             sendGroupBundleChanged();
         } else {
@@ -744,10 +822,25 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     private void postKeywordBundleUpdate() {
         Timber.i("postKeywordBundleUpdate: %s", isKeywordBundleChanged);
+        postKeywordBundleUpdate(null);
+    }
+
+    private void postKeywordBundleTitleUpdate(String title) {
+        Timber.i("postKeywordBundleTitleUpdate: %s, changed = %s", title, isKeywordBundleChanged);
+        postKeywordBundleUpdate(title);
+    }
+
+    private void postKeywordBundleUpdate(String title) {
         if (isKeywordBundleChanged) {
             Timber.d("Input KeywordBundle has been changed, it will be updated in repository");
             isKeywordBundleChanged = false;
-            postKeywordBundleUseCase.setParameters(new PostKeywordBundle.Parameters(inputKeywordBundle));
+            PostKeywordBundle.Parameters parameters;
+            if (TextUtils.isEmpty(title)) {
+                parameters = new PostKeywordBundle.Parameters(inputKeywordBundle);
+            } else {
+                parameters = new PostKeywordBundle.Parameters(inputKeywordBundle.id(), title);
+            }
+            postKeywordBundleUseCase.setParameters(parameters);
             postKeywordBundleUseCase.execute();  // silent update without callback
             sendKeywordBundleChanged();
         } else {
@@ -855,12 +948,19 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
             @DebugLog @Override
             public void onFinish(@Nullable KeywordBundle bundle) {
-                if (bundle == null) {
-                    Timber.e("KeywordBundle wasn't found by id: %s", getKeywordBundleByIdUseCase.getKeywordBundleId());
+                long keywordBundleId = getKeywordBundleByIdUseCase.getKeywordBundleId();
+                if (keywordBundleId != Constant.BAD_ID && bundle == null) {
+                    Timber.e("KeywordBundle wasn't found by id: %s", keywordBundleId);
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get KeywordBundle by id");
-                stateKeywordsLoaded(bundle);
+                if (bundle != null) {
+                    Timber.d("Found existing KeywordBundle with id [%s]", keywordBundleId);
+                    stateKeywordsLoaded(bundle);
+                } else {  // bundle is null and id is BAD
+                    Timber.d("New KeywordBundle instance will be created on GroupListScreen");
+                    stateKeywordBundleCreateStart();
+                }
             }
 
             @DebugLog @Override
@@ -888,6 +988,26 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get Post by id");
                 sendErrorPost();
+            }
+        };
+    }
+
+    private UseCase.OnPostExecuteCallback<KeywordBundle> createPutKeywordBundleCallback() {
+        return new UseCase.OnPostExecuteCallback<KeywordBundle>() {
+            @Override
+            public void onFinish(@Nullable KeywordBundle bundle) {
+                if (bundle == null) {
+                    Timber.e("Failed to put new KeywordBundle to repository - item not created, as expected");
+                    throw new ProgramException();
+                }
+                Timber.i("Use-Case: succeeded to put KeywordBundle");
+                stateKeywordBundleCreateFinish(bundle);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to put KeywordBundle");
+                stateErrorLoad();
             }
         };
     }

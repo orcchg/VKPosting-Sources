@@ -125,6 +125,19 @@ public class KeywordDatabase implements IKeywordStorage {
         return result;
     }
 
+    @DebugLog @Override
+    public boolean updateGroupsTitle(long id, String newTitle) {
+        boolean result = false;
+        Realm realm = Realm.getDefaultInstance();
+        KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
+        if (dbo != null) {
+            realm.executeTransaction((xrealm) -> dbo.title = newTitle);
+            result = true;
+        }
+        realm.close();
+        return result;
+    }
+
     /* Delete */
     // ------------------------------------------
     @DebugLog @Override

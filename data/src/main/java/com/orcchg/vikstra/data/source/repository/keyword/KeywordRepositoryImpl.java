@@ -76,6 +76,12 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         return localSource.updateKeywords(keywords);
     }
 
+    @Override
+    public boolean updateKeywordsTitle(long id, String newTitle) {
+        // TODO: impl cloudly
+        return localSource.updateKeywordsTitle(id, newTitle);
+    }
+
     /* Delete */
     // ------------------------------------------
     @Override

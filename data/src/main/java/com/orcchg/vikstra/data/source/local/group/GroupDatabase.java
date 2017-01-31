@@ -123,6 +123,19 @@ public class GroupDatabase implements IGroupStorage {
         return result;
     }
 
+    @DebugLog @Override
+    public boolean updateGroupsTitle(long id, String newTitle) {
+        boolean result = false;
+        Realm realm = Realm.getDefaultInstance();
+        GroupBundleDBO dbo = realm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, id).findFirst();
+        if (dbo != null) {
+            realm.executeTransaction((xrealm) -> dbo.title = newTitle);
+            result = true;
+        }
+        realm.close();
+        return result;
+    }
+
     /* Delete */
     // ------------------------------------------
     @DebugLog @Override

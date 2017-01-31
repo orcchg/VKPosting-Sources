@@ -12,6 +12,7 @@ public interface ActivityMediator {
     interface Receiver extends MediatorReceiver {
         void receiveAddKeywordError();
         void receiveAlreadyAddedKeyword(String keyword);
+        String receiveAskForTitle();
         void receiveEnableAddKeywordButtonRequest(boolean isEnabled);
         void receiveEmptyPost();
         void receiveErrorPost();
@@ -31,6 +32,7 @@ public interface ActivityMediator {
         long sendAskForGroupBundleIdToDump();
         void sendAskForRetry();
         void sendAskForRetryPost();
+        void sendNewTitle(String newTitle);
         void sendPostHasChangedRequest();
         void sendPostToGroupsRequest();
 

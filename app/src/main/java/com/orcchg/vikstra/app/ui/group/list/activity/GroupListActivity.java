@@ -250,13 +250,19 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     // ------------------------------------------
     @Override
-    public void setCloseViewResult(int result) {
-        setResult(result);
+    public String getInputGroupsTitle() {
+        // TODO: verify title, don't use "Select Groups" as title
+        return toolbar.getTitle().toString();
     }
 
     @Override
     public void setInputGroupsTitle(String title) {
         if (!TextUtils.isEmpty(title)) toolbar.setTitle(title);
+    }
+
+    @Override
+    public void setCloseViewResult(int result) {
+        setResult(result);
     }
 
     // ------------------------------------------
