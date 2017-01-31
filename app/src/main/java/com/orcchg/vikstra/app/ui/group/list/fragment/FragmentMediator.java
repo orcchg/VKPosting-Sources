@@ -15,7 +15,7 @@ public interface FragmentMediator {
         void receiveAskForRetry();
         void receiveAskForRetryPost();
         void receiveNewTitle(String newTitle);
-        void receivePostHasChangedRequest();
+        void receivePostHasChangedRequest(long postId);
         void receivePostToGroupsRequest();
 
         @DebugSake

@@ -35,6 +35,7 @@ import static com.orcchg.vikstra.R.id.view;
 public class PostCreateActivity extends BasePermissionActivity<PostCreateContract.View, PostCreateContract.Presenter>
         implements PostCreateContract.View {
     private static final String EXTRA_POST_ID = "extra_post_id";
+    public static final String OUT_EXTRA_POST_ID = "out_extra_post_id";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_CREATE_SCREEN;
     public static final int RV_TAG = Constant.ListTag.POST_CREATE_SCREEN;
 
@@ -193,7 +194,7 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
                 },
                 (dialog, which) -> {
                     dialog.dismiss();
-                    closeView(Activity.RESULT_CANCELED);
+                    closeView(Activity.RESULT_CANCELED, postId);
                 });
     }
 
@@ -237,8 +238,10 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     }
 
     @Override
-    public void closeView(int resultCode) {
-        setResult(resultCode);
+    public void closeView(int resultCode, long postId) {
+        Intent data = new Intent();
+        data.putExtra(OUT_EXTRA_POST_ID, postId);
+        setResult(resultCode, data);
         finish();
     }
 

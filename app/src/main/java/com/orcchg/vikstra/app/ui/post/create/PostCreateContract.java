@@ -24,7 +24,7 @@ public interface PostCreateContract {
 
         ContentResolver contentResolver();
         void closeView();  // with currently set result
-        void closeView(int resultCode);
+        void closeView(int resultCode, long postId);
 
         void showCreatePostFailure();
         void showUpdatePostFailure();

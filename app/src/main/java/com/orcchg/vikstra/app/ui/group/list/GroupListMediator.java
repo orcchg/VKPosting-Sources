@@ -51,8 +51,8 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
-    public void sendPostHasChangedRequest() {
-        if (clientSecond != null) clientSecond.receivePostHasChangedRequest();
+    public void sendPostHasChangedRequest(long postId) {
+        if (clientSecond != null) clientSecond.receivePostHasChangedRequest(postId);
     }
 
     @Override

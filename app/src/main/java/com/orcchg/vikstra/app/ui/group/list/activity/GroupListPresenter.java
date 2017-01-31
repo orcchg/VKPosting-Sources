@@ -56,9 +56,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case PostCreateActivity.REQUEST_CODE:
-                if (resultCode == Activity.RESULT_OK) {
+                if (resultCode == Activity.RESULT_OK && data != null) {
                     Timber.d("Post has been changed (and should be refreshed) resulting from screen with request code: %s", requestCode);
-                    sendPostHasChangedRequest();
+                    long postId = data.getLongExtra(PostCreateActivity.OUT_EXTRA_POST_ID, Constant.BAD_ID);
+                    if (isViewAttached()) getView().setNewPostId(postId);  // update initial postId on View to work properly further
+                    sendPostHasChangedRequest(postId);
                 }
                 break;
             // TODO: handle result from PostListActivity after new Post selected
@@ -249,8 +251,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
-    public void sendPostHasChangedRequest() {
-        mediatorComponent.mediator().sendPostHasChangedRequest();
+    public void sendPostHasChangedRequest(long postId) {
+        mediatorComponent.mediator().sendPostHasChangedRequest(postId);
     }
 
     @Override

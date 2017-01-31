@@ -265,6 +265,11 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         setResult(result);
     }
 
+    @Override
+    public void setNewPostId(long postId) {
+        this.postId = postId;
+    }
+
     // ------------------------------------------
     @Override
     public void showDumpError() {

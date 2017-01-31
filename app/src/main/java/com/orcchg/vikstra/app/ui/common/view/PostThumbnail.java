@@ -114,6 +114,7 @@ public class PostThumbnail extends FrameLayout {
 
     public void setPost(@Nullable PostSingleGridItemVO viewObject) {
         if (viewObject != null) {
+            if (UiUtility.isVisible(emptyDataView)) emptyDataView.setVisibility(View.GONE);
             setTitle(viewObject.title());
             setDescription(viewObject.description());
             String url = viewObject.hasMedia() ? viewObject.media().url() : "";

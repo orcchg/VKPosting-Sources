@@ -242,7 +242,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 inputPost = post;
                 long postId = getPostByIdUseCase.getPostId();
                 if (postId != Constant.BAD_ID && post == null) {
-                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
+                    Timber.e("Post wasn't found by id: %s", postId);
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get Post by id");
@@ -295,7 +295,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 }
                 Timber.i("Use-Case: succeeded to post Post");
                 hasAttachChanged = false;  // changes has been saved
-                if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
+                if (isViewAttached()) getView().closeView(Activity.RESULT_OK, inputPost.id());
             }
 
             @DebugLog @Override
@@ -316,7 +316,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 }
                 Timber.i("Use-Case: succeeded to put Post");
                 hasAttachChanged = false;  // changes has been saved
-                if (isViewAttached()) getView().closeView(Activity.RESULT_OK);
+                if (isViewAttached()) getView().closeView(Activity.RESULT_OK, post.id());
             }
 
             @DebugLog @Override

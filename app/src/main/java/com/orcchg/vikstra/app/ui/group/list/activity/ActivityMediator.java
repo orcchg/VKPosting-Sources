@@ -34,7 +34,7 @@ public interface ActivityMediator {
         void sendAskForRetry();
         void sendAskForRetryPost();
         void sendNewTitle(String newTitle);
-        void sendPostHasChangedRequest();
+        void sendPostHasChangedRequest(long postId);
         void sendPostToGroupsRequest();
 
         @DebugSake

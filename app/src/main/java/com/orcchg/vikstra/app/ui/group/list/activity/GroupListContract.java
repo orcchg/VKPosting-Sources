@@ -26,6 +26,7 @@ interface GroupListContract {
         String getInputGroupsTitle();
         void setInputGroupsTitle(String title);
         void setCloseViewResult(int result);
+        void setNewPostId(long postId);
 
         void showDumpError();
         void showDumpSuccess(String path);

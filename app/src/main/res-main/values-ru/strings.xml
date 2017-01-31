@@ -105,7 +105,7 @@
     <!-- Post create screen -->
     <string name="post_create_dialog_save_changes_title">Публикация изменена</string>
     <string name="post_create_dialog_save_changes_description">Сохранить все изменения?</string>
-    <string name="post_create_screen_title">Новая публикация</string>
+    <string name="post_create_screen_title">Новый пост</string>
     <string name="post_create_snackbar_failed_to_create_post">Не удалось создать публикацию. Повторите попытку</string>
     <string name="post_create_snackbar_failed_to_update_post">Не удалось изменить публикацию. Повторите попытку</string>
     <string name="post_create_snackbar_media_attach_limit_message">Достигнут лимит прикрепленных изображений: %s</string>

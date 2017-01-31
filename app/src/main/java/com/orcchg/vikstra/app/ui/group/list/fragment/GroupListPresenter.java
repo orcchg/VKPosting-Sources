@@ -547,7 +547,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
-    public void receivePostHasChangedRequest() {
+    public void receivePostHasChangedRequest(long postId) {
+        getPostByIdUseCase.setPostId(postId);
         refreshPost();
     }
 
