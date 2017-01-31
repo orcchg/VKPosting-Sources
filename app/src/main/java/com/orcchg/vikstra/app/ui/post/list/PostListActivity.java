@@ -19,6 +19,7 @@ import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
 import com.orcchg.vikstra.app.ui.post.list.injection.DaggerPostListComponent;
 import com.orcchg.vikstra.app.ui.post.list.injection.PostListComponent;
 import com.orcchg.vikstra.app.ui.post.list.injection.PostListModule;
+import com.orcchg.vikstra.app.ui.post.single.PostSingleGridContract;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -26,8 +27,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class PostListActivity extends BaseActivity<PostListContract.View, PostListContract.Presenter>
-        implements PostListContract.View, IScrollGrid, ShadowHolder {
+public class PostListActivity extends BaseActivity<PostSingleGridContract.View, PostSingleGridContract.Presenter>
+        implements PostSingleGridContract.View, IScrollGrid, ShadowHolder {
     private static final String FRAGMENT_TAG = "post_list_fragment_tag";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_LIST_SCREEN;
 
@@ -46,7 +47,7 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
     }
 
     @NonNull @Override
-    protected PostListContract.Presenter createPresenter() {
+    protected PostSingleGridContract.Presenter createPresenter() {
         return postListComponent.presenter();
     }
 
@@ -54,7 +55,7 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
     protected void injectDependencies() {
         postListComponent = DaggerPostListComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .postListModule(new PostListModule(BaseSelectAdapter.SELECT_MODE_NONE))  // items aren't selectable
+                .postListModule(new PostListModule(BaseSelectAdapter.SELECT_MODE_SINGLE))  // items are selectable
                 .build();
         postListComponent.inject(this);
     }

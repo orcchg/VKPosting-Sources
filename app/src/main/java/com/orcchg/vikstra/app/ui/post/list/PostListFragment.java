@@ -11,9 +11,10 @@ import android.view.ViewGroup;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.common.screen.SimpleCollectionFragment;
 import com.orcchg.vikstra.app.ui.common.view.misc.GridItemDecorator;
+import com.orcchg.vikstra.app.ui.post.single.PostSingleGridContract;
 import com.orcchg.vikstra.domain.util.Constant;
 
-public class PostListFragment extends SimpleCollectionFragment implements PostListContract.SubView {
+public class PostListFragment extends SimpleCollectionFragment implements PostSingleGridContract.SubView {
     public static final int RV_TAG = Constant.ListTag.POST_LIST_SCREEN;
 
     public static PostListFragment newInstance() {

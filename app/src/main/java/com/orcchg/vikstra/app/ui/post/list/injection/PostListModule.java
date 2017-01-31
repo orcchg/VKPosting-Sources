@@ -5,6 +5,7 @@ import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.injection.ListModule;
 import com.orcchg.vikstra.app.ui.post.list.PostListPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
+import com.orcchg.vikstra.domain.interactor.post.DeletePost;
 import com.orcchg.vikstra.domain.interactor.post.GetPosts;
 
 import dagger.Module;
@@ -19,7 +20,7 @@ public class PostListModule extends ListModule {
 
     @Provides @PerActivity
     protected PostListPresenter providePostListPresenter(GetPosts getPostsUseCase,
-             PostToSingleGridVoMapper postToSingleGridVoMapper) {
-        return new PostListPresenter(selectMode, getPostsUseCase, postToSingleGridVoMapper);
+             DeletePost deletePostUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+        return new PostListPresenter(selectMode, getPostsUseCase, deletePostUseCase, postToSingleGridVoMapper);
     }
 }

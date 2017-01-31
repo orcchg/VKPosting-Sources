@@ -30,7 +30,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     private List<Post> posts;
     private long selectedPostId = Constant.BAD_ID;
-    private final @BaseSelectAdapter.SelectMode int selectMode;
+    protected final @BaseSelectAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
 
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
@@ -53,8 +53,13 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     @Override
     protected BaseAdapter createListAdapter() {
         PostSingleGridAdapter adapter = new PostSingleGridAdapter(selectMode, true);
+        prepareAdapter(adapter);
+        return adapter;
+    }
+
+    protected void prepareAdapter(PostSingleGridAdapter adapter) {
         adapter.setOnItemClickListener((view, viewObject, position) ->
-            changeSelectedPostId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID));
+                changeSelectedPostId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID));
         adapter.setOnItemLongClickListener((view, viewObject, position) -> {
             if (isViewAttached()) getView().openPostViewScreen(viewObject.id());
         });
@@ -62,7 +67,6 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             if (isViewAttached()) getView().openPostCreateScreen();
         });
         adapter.setOnErrorClickListener((view) -> retryLoadMore());
-        return adapter;
     }
 
     @Override
@@ -111,7 +115,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         // TODO: on load more
     }
 
-    private void retryLoadMore() {
+    protected void retryLoadMore() {
         listAdapter.onError(false); // show loading more
         // TODO: load more limit-offset
     }
@@ -130,7 +134,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     }
 
     @DebugLog
-    private  boolean changeSelectedPostId(long newId) {
+    protected boolean changeSelectedPostId(long newId) {
         selectedPostId = newId;
         if (externalValueEmitter != null) {
             externalValueEmitter.emit(newId != Constant.BAD_ID);
@@ -142,7 +146,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     /* Callback */
     // --------------------------------------------------------------------------------------------
     @SuppressWarnings("unchecked")
-    private UseCase.OnPostExecuteCallback<List<Post>> createGetPostsCallback() {
+    protected UseCase.OnPostExecuteCallback<List<Post>> createGetPostsCallback() {
         return new UseCase.OnPostExecuteCallback<List<Post>>() {
             @DebugLog @Override
             public void onFinish(@Nullable List<Post> posts) {
@@ -154,6 +158,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     if (isViewAttached()) getView().showEmptyList(getListTag());
                 } else {
                     Timber.i("Use-Case: succeeded to get list of Post-s");
+                    memento.currentSize += posts.size();
                     PostSingleGridPresenter.this.posts = posts;
                     List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
                     listAdapter.populate(vos, false);
@@ -164,8 +169,14 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get list of Post-s");
-                if (isViewAttached()) getView().showError(getListTag());
+                if (memento.currentSize <= 0) {
+                    if (isViewAttached()) getView().showError(getListTag());
+                } else {
+                    listAdapter.onError(true);
+                }
             }
         };
     }
+
+    // TODO: assign totalItems
 }
