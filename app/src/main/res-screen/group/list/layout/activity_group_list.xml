@@ -28,26 +28,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/standard_side_padding"
+                android:layout_marginStart="3dp"
                 android:textColor="@color/textSecondary"
                 android:textSize="@dimen/standard_description_text_size"/>
 
-            <Button
-                android:id="@+id/btn_add_keyword"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_info_title"
                 android:layout_marginTop="@dimen/standard_side_padding"
-                android:text="@string/group_list_button_label_add_keyword"/>
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_change_post"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_info_title"
-                android:layout_toRightOf="@id/btn_add_keyword"
-                android:layout_marginTop="@dimen/standard_side_padding"
-                android:text="@string/group_list_button_label_change_post"
-                android:visibility="gone"/>
+                <Button
+                    android:id="@+id/btn_add_keyword"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/group_list_button_label_add_keyword"/>
+
+                <ImageButton
+                    android:id="@+id/btn_change_post"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_view_module_white_24dp"
+                    android:text="@string/group_list_button_label_change_post"/>
+            </LinearLayout>
 
             <FrameLayout
                 android:layout_width="@dimen/standard_thumbnail_size"
