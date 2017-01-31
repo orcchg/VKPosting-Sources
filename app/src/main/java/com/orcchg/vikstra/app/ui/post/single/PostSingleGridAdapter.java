@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.post.single;
 
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,7 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
 
     @Override
     protected PostSingleGridViewHolder createModelViewHolder(ViewGroup parent) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_post_single_grid_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(getItemLayout(), parent, false);
         PostSingleGridViewHolder viewHolder = new PostSingleGridViewHolder(view);
         viewHolder.setOnItemClickListener(wrappedItemClickListener);
         viewHolder.setOnItemLongClickListener(onItemLongClickListener);
@@ -61,6 +62,11 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
     public int getItemViewType(int position) {
         if (withAddItem && position == 0) return VIEW_TYPE_ADD_NEW;
         return super.getItemViewType(position);
+    }
+
+    @LayoutRes
+    public int getItemLayout() {
+        return R.layout.rv_post_single_grid_item;
     }
 
     /* Data access */

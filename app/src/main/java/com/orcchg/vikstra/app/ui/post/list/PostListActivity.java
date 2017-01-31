@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
@@ -31,6 +33,7 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
+    @BindView(R.id.container) ViewGroup container;
     @OnClick(R.id.fab)
     void onFabClick() {
         openPostCreateScreen();
@@ -70,6 +73,10 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) container.getLayoutParams();
+        int side = getResources().getDimensionPixelSize(R.dimen.post_list_item_spacing);
+        params.setMargins(side, 0, side, 0);
+
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
             PostListFragment fragment = PostListFragment.newInstance();

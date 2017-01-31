@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.post.list;
 
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
@@ -41,7 +42,12 @@ public class PostListPresenter extends BaseListPresenter<PostListContract.View>
 
     @Override
     protected BaseAdapter createListAdapter() {
-        PostSingleGridAdapter adapter = new PostSingleGridAdapter(selectMode, false);
+        PostSingleGridAdapter adapter = new PostSingleGridAdapter(selectMode, false) {
+            @Override
+            public int getItemLayout() {
+                return R.layout.rv_post_list_item;
+            }
+        };
         adapter.setOnItemClickListener((view, viewObject, position) -> {
             if (isViewAttached()) getView().openPostViewScreen(viewObject.id());
         });
