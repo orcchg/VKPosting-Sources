@@ -38,6 +38,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     private final PostPost postPostUseCase;
     private final PutPost putPostUseCase;
 
+    private String attachLink;
     private List<Media> attachMedia = new ArrayList<>();  // TODO: save instance state
     private boolean hasAttachChanged;
 
@@ -114,6 +115,14 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void attachLink(String link) {
+        Timber.i("attachLink: %s", link);
+        attachLink = link;
+        hasAttachChanged = true;
+    }
+
+    // ------------------------------------------
+    @Override
     public void onAttachPressed() {
         Timber.i("onAttachPressed");
         // TODO: onAttachPressed
@@ -129,6 +138,12 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 getView().closeView();
             }
         }
+    }
+
+    @Override
+    public void onLinkPressed() {
+        Timber.i("onLinkPressed");
+        if (isViewAttached()) getView().openEditLinkDialog();
     }
 
     @Override

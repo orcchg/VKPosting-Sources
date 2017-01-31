@@ -64,6 +64,10 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     void onPollButtonClick() {
         presenter.onPollPressed();
     }
+    @OnClick(R.id.ibtn_panel_link)
+    void onLinkButtonClick() {
+        presenter.onLinkPressed();
+    }
     @OnClick(R.id.btn_retry)
     void onRetryClick() {
         presenter.retry();
@@ -179,6 +183,18 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
         UiUtility.showSnackbar(this, String.format(Locale.ENGLISH, SNACKBAR_MEDIA_ATTACH_LIMIT, limit));
     }
 
+    // ------------------------------------------
+    @Override
+    public void openEditLinkDialog() {
+        DialogProvider.showEditTextDialog(this, R.string.post_create_dialog_attach_link_title,
+                R.string.post_create_dialog_attach_link_hint, "",
+                (dialog, which, text) -> {
+                    dialog.dismiss();
+                    // TODO: attach link visually
+                    presenter.attachLink(text);
+                });
+    }
+
     @Override
     public void openMediaLoadDialog() {
         DialogProvider.showUploadPhotoDialog(this);
@@ -189,8 +205,8 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
         DialogProvider.showTextDialogTwoButtons(this, R.string.post_create_dialog_save_changes_title,
                 R.string.post_create_dialog_save_changes_description, R.string.button_save, R.string.button_close,
                 (dialog, which) -> {
-                    presenter.onSavePressed();
                     dialog.dismiss();
+                    presenter.onSavePressed();
                 },
                 (dialog, which) -> {
                     dialog.dismiss();

@@ -190,9 +190,9 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     public void openEditDumpFileNameDialog() {
         DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
                 (dialog, which, text) -> {
+                    dialog.dismiss();
                     String path = FileUtility.makeDumpFileName(this, text, true /* external */);
                     presenter.performDumping(path);
-                    dialog.dismiss();
                 });
     }
 

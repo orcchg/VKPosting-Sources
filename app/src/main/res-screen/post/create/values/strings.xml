@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="post_create_dialog_attach_link_title">Add link</string>
+    <string name="post_create_dialog_attach_link_hint">Enter web&#46;link</string>
     <string name="post_create_dialog_save_changes_title">Post changed</string>
     <string name="post_create_dialog_save_changes_description">Do you want to save changes?</string>
     <string name="post_create_screen_title">Create new post</string>

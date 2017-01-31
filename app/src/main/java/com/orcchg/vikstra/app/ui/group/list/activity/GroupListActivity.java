@@ -161,10 +161,10 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                     new AlertDialog.Builder(this)
                             .setTitle(R.string.group_list_settings_posting_interval_title)
                             .setSingleChoiceItems(variants, chosenSettingVariant, (dialog, which) -> {
+                                dialog.dismiss();
                                 chosenSettingVariant = which;
                                 int timeout = Integer.parseInt(variants[which].toString());
                                 presenter.setPostingTimeout(timeout);
-                                dialog.dismiss();
                             }).show();
                     return true;
             }
@@ -227,9 +227,9 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     public void openEditDumpFileNameDialog() {
         DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
                 (dialog, which, text) -> {
+                    dialog.dismiss();
                     String path = FileUtility.makeDumpFileName(this, text, true /* external */);
                     presenter.performDumping(path);
-                    dialog.dismiss();
                 });
     }
 
@@ -242,9 +242,9 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     public void openEditTitleDialog(@Nullable String initTitle) {
         DialogProvider.showEditTextDialog(this, EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, initTitle,
                 (dialog, which, text) -> {
+                    dialog.dismiss();
                     toolbar.setTitle(text);
                     presenter.onTitleChanged(text);
-                    dialog.dismiss();
                 });
     }
 

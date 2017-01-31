@@ -103,6 +103,8 @@
     <string name="main_groups_list_title">Списки групп</string>
     <string name="main_screen_title">VK постинг</string>
     <!-- Post create screen -->
+    <string name="post_create_dialog_attach_link_title">Добавить ссылку</string>
+    <string name="post_create_dialog_attach_link_hint">Введите веб&#46;ссылку</string>
     <string name="post_create_dialog_save_changes_title">Публикация изменена</string>
     <string name="post_create_dialog_save_changes_description">Сохранить все изменения?</string>
     <string name="post_create_screen_title">Новый пост</string>

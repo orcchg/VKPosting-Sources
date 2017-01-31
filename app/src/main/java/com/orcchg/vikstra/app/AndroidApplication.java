@@ -54,14 +54,14 @@ public class AndroidApplication extends Application {
     }
 
     private void initializeLogger() {
-        if (BuildConfig.DEBUG) {
+//        if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree() {
                 @Override
                 protected String createStackElementTag(StackTraceElement element) {
                     return getPackageName() + ":" + super.createStackElementTag(element) + ":" + element.getLineNumber();
                 }
             });
-        }
+//        }
     }
 
     private void initializeLeakDetection() {

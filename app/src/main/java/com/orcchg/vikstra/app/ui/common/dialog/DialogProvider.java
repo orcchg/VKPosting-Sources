@@ -142,6 +142,19 @@ public class DialogProvider {
 
     /* Get */
     // ------------------------------------------
+    public static AlertDialog getEditTextDialog(Activity activity, @StringRes int title, @StringRes int hint,
+                                                String init, @NonNull OnEditTextDialogOkPressed okListener) {
+        String xtitle = activity.getResources().getString(title);
+        String xhint = activity.getResources().getString(hint);
+        return getEditTextDialog(activity, xtitle, xhint, init, okListener);
+    }
+
+    public static AlertDialog getEditTextDialog(Activity activity, String title, String hint,
+                                                @StringRes int init, @NonNull OnEditTextDialogOkPressed okListener) {
+        String xinit = activity.getResources().getString(init);
+        return getEditTextDialog(activity, title, hint, xinit, okListener);
+    }
+
     public static AlertDialog getEditTextDialog(Activity activity, String title, String hint,
                                                 @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
         View view = LayoutInflater.from(activity).inflate(R.layout.dialog_edit_text, null, false);
@@ -172,6 +185,16 @@ public class DialogProvider {
 
     /* Show */
     // ------------------------------------------
+    public static void showEditTextDialog(Activity activity, @StringRes int title, @StringRes int hint,
+                                          String init, @NonNull OnEditTextDialogOkPressed okListener) {
+        if (!activity.isFinishing()) getEditTextDialog(activity, title, hint, init, okListener).show();
+    }
+
+    public static void showEditTextDialog(Activity activity, String title, String hint,
+                                          @StringRes int init, @NonNull OnEditTextDialogOkPressed okListener) {
+        if (!activity.isFinishing()) getEditTextDialog(activity, title, hint, init, okListener).show();
+    }
+
     public static void showEditTextDialog(Activity activity, String title, String hint,
                                           @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
         if (!activity.isFinishing()) getEditTextDialog(activity, title, hint, init, okListener).show();

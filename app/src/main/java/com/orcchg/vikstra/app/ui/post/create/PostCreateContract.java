@@ -12,6 +12,8 @@ public interface PostCreateContract {
         void addMediaThumbnail(Bitmap bmp);
         void addMediaThumbnail(String filePath);
         void onMediaAttachLimitReached(int limit);
+
+        void openEditLinkDialog();
         void openMediaLoadDialog();
         void openSaveChangesDialog();
 
@@ -31,8 +33,11 @@ public interface PostCreateContract {
     }
 
     interface Presenter extends MvpPresenter<View> {
+        void attachLink(String link);
+
         void onAttachPressed();
         void onBackPressed();
+        void onLinkPressed();
         void onLocationPressed();
         void onMediaPressed();
         void onPollPressed();

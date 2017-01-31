@@ -125,6 +125,22 @@
                     android:src="@drawable/ic_poll_black_24dp"
                     android:tint="@color/white_60_opacity"/>
             </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <ImageButton
+                    android:id="@+id/ibtn_panel_link"
+                    android:layout_width="@dimen/standard_icon_size"
+                    android:layout_height="@dimen/standard_icon_size"
+                    android:layout_gravity="center"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_insert_link_black_24dp"
+                    android:tint="@color/white_60_opacity"
+                    android:visibility="gone"/>
+            </FrameLayout>
         </LinearLayout>
     </LinearLayout>
 
