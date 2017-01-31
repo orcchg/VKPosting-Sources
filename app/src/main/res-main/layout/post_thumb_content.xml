@@ -86,13 +86,13 @@
         android:layout_marginStart="@dimen/post_single_grid_item_margin_side"
         android:layout_marginRight="@dimen/post_single_grid_item_margin_side"
         android:layout_marginEnd="@dimen/post_single_grid_item_margin_side"
-        android:layout_marginTop="@dimen/standard_side_padding_mini"
-        android:layout_marginBottom="@dimen/standard_side_padding_mini">
+        android:layout_marginTop="@dimen/standard_side_padding_small"
+        android:layout_marginBottom="@dimen/standard_side_padding_small">
 
         <ImageView
             android:id="@+id/iv_media"
-            android:layout_width="@dimen/post_single_grid_item_image_size"
-            android:layout_height="@dimen/post_single_grid_item_image_size"
+            android:layout_width="?attr/post_thumbnail_image_size"
+            android:layout_height="?attr/post_thumbnail_image_size"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:scaleType="centerCrop"
@@ -100,8 +100,8 @@
 
         <View
             android:id="@+id/media_overlay"
-            android:layout_width="@dimen/post_single_grid_item_image_size"
-            android:layout_height="@dimen/post_single_grid_item_image_size"
+            android:layout_width="?attr/post_thumbnail_image_size"
+            android:layout_height="?attr/post_thumbnail_image_size"
             android:background="@color/black_60_opacity"
             android:visibility="invisible"/>
 

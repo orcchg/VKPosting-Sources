@@ -61,8 +61,7 @@
 
         <activity android:name=".app.ui.post.list.PostListActivity"
                   android:label="@string/post_list_screen_title"
-                  android:theme="@style/AppTheme"
-                  android:screenOrientation="portrait"/>
+                  android:theme="@style/PostListTheme"/>
 
         <activity android:name=".app.ui.post.single.PostSingleGridActivity"
                   android:label="@string/post_single_grid_screen_title"

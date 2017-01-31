@@ -22,6 +22,9 @@
     <attr name="keywords_flow_layout_blob_more_color"        format="reference" />
     <attr name="keywords_flow_layout_blob_more_text_color"   format="reference" />
 
+    <!-- Post thumbnail -->
+    <attr name="post_thumbnail_image_size" format="dimension"/>
+
     <!-- Title Flow View attrs -->
     <attr name="titled_flow_view_edit_button_bg" format="reference" />
 </resources>

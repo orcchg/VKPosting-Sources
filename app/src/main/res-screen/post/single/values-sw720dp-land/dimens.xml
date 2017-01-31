@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="post_single_grid_item_description_text_size">16dp</dimen>
-    <dimen name="post_single_grid_item_image_size">130dp</dimen>
     <dimen name="post_single_grid_item_media_count_text_size">14dp</dimen>
     <dimen name="post_single_grid_item_size">143dp</dimen>
     <dimen name="post_single_grid_item_spacing">4dp</dimen>

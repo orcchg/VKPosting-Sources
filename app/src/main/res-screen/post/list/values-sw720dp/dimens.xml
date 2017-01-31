@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="post_list_item_margin_up">0dp</dimen>
+    <dimen name="post_list_item_size">234dp</dimen>
+    <dimen name="post_list_item_spacing">12dp</dimen>
+</resources>

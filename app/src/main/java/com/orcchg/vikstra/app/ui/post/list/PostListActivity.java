@@ -73,16 +73,17 @@ public class PostListActivity extends BaseActivity<PostListContract.View, PostLi
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) container.getLayoutParams();
-        int side = getResources().getDimensionPixelSize(R.dimen.post_list_item_spacing);
-        params.setMargins(side, 0, side, 0);
-
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
             PostListFragment fragment = PostListFragment.newInstance();
             fm.beginTransaction().replace(R.id.container, fragment, FRAGMENT_TAG).commit();
             fm.executePendingTransactions();
         }
+
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) container.getLayoutParams();
+        int side = getResources().getDimensionPixelSize(R.dimen.post_list_item_spacing);
+        params.setMargins(side, 0, side, 0);
+        container.setLayoutParams(params);
     }
 
     private void initToolbar() {

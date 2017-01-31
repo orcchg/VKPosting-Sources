@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="PostListTheme" parent="AppTheme">
+        <item name="post_thumbnail_image_size">@dimen/post_list_item_image_size</item>
+    </style>
+</resources>

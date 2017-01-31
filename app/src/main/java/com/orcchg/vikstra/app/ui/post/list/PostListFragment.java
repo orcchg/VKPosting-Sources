@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.common.screen.SimpleCollectionFragment;
+import com.orcchg.vikstra.app.ui.common.view.misc.GridItemDecorator;
 import com.orcchg.vikstra.domain.util.Constant;
 
 public class PostListFragment extends SimpleCollectionFragment implements PostListContract.SubView {
@@ -35,6 +36,7 @@ public class PostListFragment extends SimpleCollectionFragment implements PostLi
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
+        recyclerView.addItemDecoration(new GridItemDecorator(getActivity(), R.dimen.post_list_item_spacing));
         emptyDataTextView.setText(R.string.post_list_empty_data_text);
         emptyDataButton.setText(R.string.post_list_empty_data_button_label);
         return view;

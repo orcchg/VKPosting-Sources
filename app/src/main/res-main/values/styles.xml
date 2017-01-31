@@ -16,6 +16,8 @@
         <item name="keywords_flow_layout_blob_more_color">@drawable/keywords_blob_more_selector</item>
         <item name="keywords_flow_layout_blob_more_text_color">@drawable/keywords_blob_more_text_selector</item>
 
+        <item name="post_thumbnail_image_size">@dimen/post_single_grid_item_image_size</item>
+
         <item name="spbStyle">@style/SmoothProgressBar</item>
         <item name="cpbStyle">@style/CircularThemeProgressBar</item>
     </style>
