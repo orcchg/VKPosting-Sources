@@ -205,6 +205,14 @@ public class Navigator {
         context.startActivity(intent);
     }
 
+    /* Settings */
+    // ------------------------------------------
+    @ExternalScreen
+    public void openSettings(@NonNull Context context) {
+        Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+        context.startActivity(intent);
+    }
+
     /* Status */
     // ------------------------------------------
     public void openStatusDialog(FragmentManager fm, String tag) {

@@ -13,8 +13,9 @@ import javax.inject.Inject;
 import hugo.weaving.DebugLog;
 
 public class PermissionManager {
-    public static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 101;
-    public static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 102;
+    public static final int REQUEST_CODE_BASE = 101;
+    public static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = REQUEST_CODE_BASE;       // 101;
+    public static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = REQUEST_CODE_BASE + 1;  // 102;
 
     private final Context context;
 

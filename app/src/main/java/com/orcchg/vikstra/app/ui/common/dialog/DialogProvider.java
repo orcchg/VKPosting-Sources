@@ -85,11 +85,18 @@ public class DialogProvider {
                                                       @StringRes int yesLabel, @StringRes int noLabel,
                                                       DialogInterface.OnClickListener yesListener,
                                                       DialogInterface.OnClickListener noListener) {
-        String xtitle = activity.getResources().getString(title);
         String xdescription = activity.getResources().getString(description);
+        return getTextDialogTwoButtons(activity, title, xdescription, yesLabel, noLabel, yesListener, noListener);
+    }
+
+    public static AlertDialog getTextDialogTwoButtons(Activity activity, @StringRes int title, String description,
+                                                      @StringRes int yesLabel, @StringRes int noLabel,
+                                                      DialogInterface.OnClickListener yesListener,
+                                                      DialogInterface.OnClickListener noListener) {
+        String xtitle = activity.getResources().getString(title);
         String xyesLabel = activity.getResources().getString(yesLabel);
         String xnoLabel = activity.getResources().getString(noLabel);
-        return getTextDialogTwoButtons(activity, xtitle, xdescription, xyesLabel, xnoLabel, yesListener, noListener);
+        return getTextDialogTwoButtons(activity, xtitle, description, xyesLabel, xnoLabel, yesListener, noListener);
     }
 
     public static AlertDialog getTextDialogTwoButtons(Activity activity, String title, String description,
@@ -107,6 +114,13 @@ public class DialogProvider {
     /* Show */
     // ------------------------------------------
     public static void showTextDialogTwoButtons(Activity activity, @StringRes int title, @StringRes int description,
+                                                @StringRes int yesLabel, @StringRes int noLabel,
+                                                DialogInterface.OnClickListener yesListener,
+                                                DialogInterface.OnClickListener noListener) {
+        if (!activity.isFinishing()) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
+    }
+
+    public static void showTextDialogTwoButtons(Activity activity, @StringRes int title, String description,
                                                 @StringRes int yesLabel, @StringRes int noLabel,
                                                 DialogInterface.OnClickListener yesListener,
                                                 DialogInterface.OnClickListener noListener) {

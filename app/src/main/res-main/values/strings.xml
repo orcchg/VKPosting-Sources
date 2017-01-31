@@ -53,4 +53,11 @@
     <string name="notification_photo_upload_title">Photo uploading</string>
     <string name="notification_photo_upload_description_complete">All photos uploaded</string>
     <string name="notification_photo_upload_description_progress">Photo upload in progress</string>
+
+    <string name="permission_not_granted_message">You should grant \"%s\" permission in application settings.</string>
+    <!-- See {@link PermissionManager} for mapping -->
+    <string-array name="permission_variants">
+        <item name="101">Memory</item>
+        <item name="102">Memory</item>
+    </string-array>
 </resources>

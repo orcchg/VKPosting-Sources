@@ -47,6 +47,12 @@
     <string name="notification_photo_upload_title">Фото загружаются</string>
     <string name="notification_photo_upload_description_complete">Все фото загружены</string>
     <string name="notification_photo_upload_description_progress">Выполняется загрузка фото</string>
+    <string name="permission_not_granted_message">Вы должны дать разрешение \"%s\" в настройках приложения.</string>
+    <!-- See {@link PermissionManager} for mapping -->
+    <string-array name="permission_variants">
+        <item name="101">Память</item>
+        <item name="102">Память</item>
+    </string-array>
     <!-- Group detail screen -->
     <string name="group_detail_screen_title">Информация о группе</string>
     <!-- Group list screen -->

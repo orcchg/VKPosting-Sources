@@ -3,12 +3,15 @@ package com.orcchg.vikstra.app.ui.base.permission;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 
+import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.PermissionManager;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.base.MvpView;
+import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
@@ -31,6 +34,7 @@ public abstract class BasePermissionActivity<V extends MvpView, P extends MvpPre
             }
         } else {
             Timber.w("Permissions [%s] were not granted", Arrays.toString(permissions));
+            if (!shouldShowRequestPermissionRationale(permissions[0])) onPermissionDenied(requestCode);
         }
     }
 
@@ -66,5 +70,24 @@ public abstract class BasePermissionActivity<V extends MvpView, P extends MvpPre
 
     protected void onPermissionGranted_writeExternalStorage() {
         // override in subclasses
+    }
+
+    /* Permission denied */
+    // ------------------------------------------
+    protected void onPermissionDenied(int requestCode) {
+        Timber.i("onPermissionDenied: %s", requestCode);
+        // open warning dialog by default
+        int index = requestCode - PermissionManager.REQUEST_CODE_BASE;
+        String[] permissions = getResources().getStringArray(R.array.permission_variants);
+        String permission = "Unknown code=" + requestCode;
+        if (index >= 0 && index < permissions.length) permission = permissions[index];  // guard from index out of bounds
+        String description = String.format(Locale.ENGLISH, getResources().getString(R.string.permission_not_granted_message), permission);
+        DialogProvider.showTextDialogTwoButtons(this, R.string.dialog_warning_title, description,
+                R.string.button_settings, R.string.button_close,
+                (dialog, which) -> {
+                    dialog.dismiss();
+                    navigationComponent.navigator().openSettings(this);
+                },
+                (dialog, which) -> dialog.dismiss());
     }
 }
