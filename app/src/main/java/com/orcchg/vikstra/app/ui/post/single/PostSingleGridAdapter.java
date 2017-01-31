@@ -65,6 +65,10 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
 
     /* Data access */
     // --------------------------------------------------------------------------------------------
+    public boolean withAddItem() {
+        return withAddItem;
+    }
+
     @Override
     public void clear() {
         super.clear();

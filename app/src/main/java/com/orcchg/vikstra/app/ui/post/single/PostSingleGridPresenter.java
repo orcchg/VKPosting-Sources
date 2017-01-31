@@ -75,11 +75,16 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     @Override
     public void removeListItem(int position) {
         Timber.i("removeListItem: %s", position);
-        long postId = posts.get(position).id();
+        int modelPosition = position;
+        if (PostSingleGridAdapter.class.isInstance(listAdapter)) {
+            // correction to the first element: (add new item)-element
+            if (((PostSingleGridAdapter) listAdapter).withAddItem()) modelPosition -= 1;
+        }
+        long postId = posts.get(modelPosition).id();
         deletePostUseCase.setPostId(postId);
         deletePostUseCase.execute();  // silent delete without callback
 
-        posts.remove(position);
+        posts.remove(modelPosition);
         listAdapter.remove(position);
 
         if (posts.isEmpty()) {
