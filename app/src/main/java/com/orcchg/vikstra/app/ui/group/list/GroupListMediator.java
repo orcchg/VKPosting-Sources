@@ -85,6 +85,12 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public boolean sendAskForTitleChanged() {
+        if (clientFirst != null) return clientFirst.receiveAskForTitleChanged();
+        return false;
+    }
+
+    @Override
     public void sendEnableAddKeywordButtonRequest(boolean isEnabled) {
         if (clientFirst != null) clientFirst.receiveEnableAddKeywordButtonRequest(isEnabled);
     }

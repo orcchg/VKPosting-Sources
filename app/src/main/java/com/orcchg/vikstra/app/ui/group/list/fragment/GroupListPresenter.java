@@ -26,6 +26,7 @@ import com.orcchg.vikstra.domain.interactor.group.GetGroupBundleById;
 import com.orcchg.vikstra.domain.interactor.group.PostGroupBundle;
 import com.orcchg.vikstra.domain.interactor.group.PutGroupBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.AddKeywordToBundle;
+import com.orcchg.vikstra.domain.interactor.keyword.DeleteKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.keyword.PostKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.PutKeywordBundle;
@@ -56,9 +57,12 @@ import javax.inject.Inject;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
+import static android.R.string.no;
+
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
     private final AddKeywordToBundle addKeywordToBundleUseCase;
+    private final DeleteKeywordBundle deleteKeywordBundleUseCase;
     private final GetGroupBundleById getGroupBundleByIdUseCase;
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final GetPostById getPostByIdUseCase;
@@ -75,12 +79,17 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private GroupListAdapter listAdapter;
 
     int totalSelectedGroups, totalGroups;
-    private boolean fetchedInputGroupBundleFromRepo, isAddingNewKeyword, isRefreshing;  // state control flags
     private boolean isKeywordBundleChanged, isGroupBundleChanged;
     private Keyword newlyAddedKeyword;
     private GroupBundle inputGroupBundle;
     private KeywordBundle inputKeywordBundle;
     private Post currentPost;
+
+    // state control flags
+    private boolean isAddingNewKeyword;
+    private boolean isRefreshing;
+    private boolean fetchedInputGroupBundleFromRepo;
+    private boolean wasInputKeywordBundleCreated;
 
     private GroupListMediatorComponent mediatorComponent;
 
@@ -109,15 +118,16 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private @StateContainer.State int state;
 
     @Inject
-    GroupListPresenter(AddKeywordToBundle addKeywordToBundleUseCase, GetGroupBundleById getGroupBundleByIdUseCase,
-                       GetKeywordBundleById getKeywordBundleByIdUseCase, GetPostById getPostByIdUseCase,
-                       PostKeywordBundle postKeywordBundleUseCase, PutKeywordBundle putKeywordBundleUseCase,
-                       PostGroupBundle postGroupBundleUseCase, PutGroupBundle putGroupBundleUseCase,
-                       PutGroupReportBundle putGroupReportBundle, VkontakteEndpoint vkontakteEndpoint,
-                       PostToSingleGridVoMapper postToSingleGridVoMapper) {
+    GroupListPresenter(AddKeywordToBundle addKeywordToBundleUseCase, DeleteKeywordBundle deleteKeywordBundleUseCase,
+                       GetGroupBundleById getGroupBundleByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
+                       GetPostById getPostByIdUseCase, PostKeywordBundle postKeywordBundleUseCase,
+                       PutKeywordBundle putKeywordBundleUseCase, PostGroupBundle postGroupBundleUseCase,
+                       PutGroupBundle putGroupBundleUseCase, PutGroupReportBundle putGroupReportBundle,
+                       VkontakteEndpoint vkontakteEndpoint, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
         this.addKeywordToBundleUseCase = addKeywordToBundleUseCase;
         this.addKeywordToBundleUseCase.setPostExecuteCallback(createAddKeywordToBundleCallback());
+        this.deleteKeywordBundleUseCase = deleteKeywordBundleUseCase;  // no callback - background task
         this.getGroupBundleByIdUseCase = getGroupBundleByIdUseCase;
         this.getGroupBundleByIdUseCase.setPostExecuteCallback(createGetGroupBundleByIdCallback());
         this.getKeywordBundleByIdUseCase = getKeywordBundleByIdUseCase;
@@ -240,6 +250,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         Timber.i("stateKeywordBundleCreateStart");
         setState(StateContainer.KEYWORDS_CREATE_START);
         // enter KEYWORDS_CREATE_START state logic
+
+        wasInputKeywordBundleCreated = true;
 
         // create new empty KeywordBundle in repository
         PutKeywordBundle.Parameters parameters = new PutKeywordBundle.Parameters.Builder()
@@ -475,8 +487,21 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void onStop() {
         super.onStop();
-        postGroupBundleUpdate();    // TODO: not sync with onActivityResult()
-        postKeywordBundleUpdate();  // TODO: not sync with onActivityResult()
+        postGroupBundleUpdate();  // TODO: not sync with onActivityResult()
+
+        boolean shouldDeleteEmptyCreatedKeywordBundle = wasInputKeywordBundleCreated &&
+                !sendAskForTitleChanged() && inputKeywordBundle.keywords().isEmpty();
+
+        if (shouldDeleteEmptyCreatedKeywordBundle) {
+            /**
+             * User is leaving or pausing GroupListScreen w/o any changes performed on newly created
+             * empty KeywordBundle, so it must be deleted from repository.
+             */
+            deleteKeywordBundleUseCase.setKeywordBundleId(inputKeywordBundle.id());
+            deleteKeywordBundleUseCase.execute();  // silent delete without callback
+        } else {
+            postKeywordBundleUpdate();  // TODO: not sync with onActivityResult()
+        }
     }
 
     @Override
@@ -578,6 +603,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public String sendAskForTitle() {
         return mediatorComponent.mediator().sendAskForTitle();
+    }
+
+    @Override
+    public boolean sendAskForTitleChanged() {
+        return mediatorComponent.mediator().sendAskForTitleChanged();
     }
 
     @Override

@@ -26,6 +26,7 @@ public interface FragmentMediator {
         void sendAddKeywordError();
         void sendAlreadyAddedKeyword(String keyword);
         String sendAskForTitle();
+        boolean sendAskForTitleChanged();
         void sendEnableAddKeywordButtonRequest(boolean isEnabled);
         void sendEmptyPost();
         void sendErrorPost();

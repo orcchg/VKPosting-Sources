@@ -13,6 +13,7 @@ public interface ActivityMediator {
         void receiveAddKeywordError();
         void receiveAlreadyAddedKeyword(String keyword);
         String receiveAskForTitle();
+        boolean receiveAskForTitleChanged();
         void receiveEnableAddKeywordButtonRequest(boolean isEnabled);
         void receiveEmptyPost();
         void receiveErrorPost();

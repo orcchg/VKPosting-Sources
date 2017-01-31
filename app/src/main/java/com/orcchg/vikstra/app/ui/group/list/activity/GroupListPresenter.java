@@ -160,6 +160,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public boolean receiveAskForTitleChanged() {
+        return hasTitleChanged;
+    }
+
+    @Override
     public void receiveEnableAddKeywordButtonRequest(boolean isEnabled) {
         if (isViewAttached()) getView().enableAddKeywordButton(isEnabled);
     }
