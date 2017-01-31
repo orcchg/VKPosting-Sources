@@ -59,7 +59,7 @@ public class KeywordCloud implements IKeywordStorage {
     }
 
     @Override
-    public boolean updateGroupsTitle(long id, String newTitle) {
+    public boolean updateKeywordsTitle(long id, String newTitle) {
         return false;
     }
 

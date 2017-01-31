@@ -126,7 +126,7 @@ public class KeywordDatabase implements IKeywordStorage {
     }
 
     @DebugLog @Override
-    public boolean updateGroupsTitle(long id, String newTitle) {
+    public boolean updateKeywordsTitle(long id, String newTitle) {
         boolean result = false;
         Realm realm = Realm.getDefaultInstance();
         KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
