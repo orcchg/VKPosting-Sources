@@ -43,7 +43,7 @@ ext {
     smoothProgressbarVersion = '1.1.0'
     smoothProgressbarCircularVersion = '1.2.0'
     timberVersion = '4.1.1'
-    vkontakteSdkVersion = '1.6.7'
+    vkontakteSdkVersion = '1.6.8'
 
     //Testing
     assertJVersion = '1.7.1'
