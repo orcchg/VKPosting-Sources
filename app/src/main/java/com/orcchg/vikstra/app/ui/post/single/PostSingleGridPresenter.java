@@ -1,16 +1,21 @@
 package com.orcchg.vikstra.app.ui.post.single;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
+import com.orcchg.vikstra.app.ui.post.OutConstants;
+import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.util.ValueEmitter;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.DeletePost;
+import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.post.GetPosts;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -25,6 +30,7 @@ import timber.log.Timber;
 public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridContract.View>
         implements PostSingleGridContract.Presenter {
 
+    private final GetPostById getPostByIdUseCase;
     private final GetPosts getPostsUseCase;
     private final DeletePost deletePostUseCase;
 
@@ -36,10 +42,13 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
     @Inject
-    public PostSingleGridPresenter(@BaseSelectAdapter.SelectMode int selectMode, GetPosts getPostsUseCase,
-                                   DeletePost deletePostUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+    public PostSingleGridPresenter(@BaseSelectAdapter.SelectMode int selectMode, GetPostById getPostByIdUseCase,
+                                   GetPosts getPostsUseCase, DeletePost deletePostUseCase,
+                                   PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.selectMode = selectMode;
         this.listAdapter = createListAdapter();
+        this.getPostByIdUseCase = getPostByIdUseCase;
+        this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
         this.getPostsUseCase = getPostsUseCase;
         this.getPostsUseCase.setPostExecuteCallback(createGetPostsCallback());
         this.deletePostUseCase = deletePostUseCase;  // no callback - background task
@@ -72,6 +81,23 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     @Override
     protected int getListTag() {
         return PostSingleGridFragment.RV_TAG;
+    }
+
+    /* Lifecycle */
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case PostCreateActivity.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    Timber.d("Post has been added resulting from screen with request code: %s", requestCode);
+                    long postId = data.getLongExtra(OutConstants.OUT_EXTRA_POST_ID, Constant.BAD_ID);
+                    getPostByIdUseCase.setPostId(postId);
+                    getPostByIdUseCase.execute();
+                }
+                break;
+        }
     }
 
     /* Contract */
@@ -145,6 +171,38 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
+    protected UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
+        return new UseCase.OnPostExecuteCallback<Post>() {
+            @Override
+            public void onFinish(@Nullable Post post) {
+                if (post == null) {
+                    /**
+                     * Post must not be null and GetPostById should be executed only as the result from
+                     * PostCreateScreen returns and this result is OK and contains an id of newly created
+                     * Post in repository. We then fetch this Post here and it must exists.
+                     *
+                     * If it doesn't exist or GetPostById is executed in any other way - this is actually
+                     * a program error and {@link ProgramException} will be thrown.
+                     */
+                    Timber.e("Post wasn't found by id: %s", getPostByIdUseCase.getPostId());
+                    throw new ProgramException();
+                }
+                Timber.i("Use-Case: succeeded to get Post by id");
+                memento.currentSize += 1;
+                PostSingleGridPresenter.this.posts.add(0, post);  // add post on top of the list
+                PostSingleGridItemVO viewObject = postToSingleGridVoMapper.map(post);
+                listAdapter.addInverse(viewObject);
+                if (isViewAttached()) getView().showPosts(viewObject == null);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to get Post by id");
+                if (isViewAttached()) getView().showCreatePostFailure();
+            }
+        };
+    }
+
     @SuppressWarnings("unchecked")
     protected UseCase.OnPostExecuteCallback<List<Post>> createGetPostsCallback() {
         return new UseCase.OnPostExecuteCallback<List<Post>>() {

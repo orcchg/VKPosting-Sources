@@ -2,5 +2,6 @@
 <resources>
     <string name="post_single_grid_empty_data_button_label">Create</string>
     <string name="post_single_grid_empty_data_text">Create first post</string>
-    <string name="post_single_grid_screen_title">Posts</string>
+    <string name="post_single_grid_screen_title">All Posts</string>
+    <string name="post_single_grid_snackbar_failed_to_create_post">Failed to create new post</string>
 </resources>

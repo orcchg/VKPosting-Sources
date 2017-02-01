@@ -32,6 +32,7 @@ import com.orcchg.vikstra.app.ui.main.injection.MainComponent;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridFragment;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridModule;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.UserVO;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -191,6 +192,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void setCloseViewResult(int result) {
         setResult(result);
+    }
+
+    @Override
+    public void showCreatePostFailure() {
+        UiUtility.showSnackbar(this, R.string.post_single_grid_snackbar_failed_to_create_post);
     }
 
     @Override

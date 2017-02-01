@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.common.content.IScrollGrid;
@@ -11,6 +12,7 @@ import com.orcchg.vikstra.app.ui.common.content.ISwipeToDismiss;
 import com.orcchg.vikstra.app.ui.post.single.injection.DaggerPostSingleGridComponent;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridComponent;
 import com.orcchg.vikstra.app.ui.post.single.injection.PostSingleGridModule;
+import com.orcchg.vikstra.app.ui.util.UiUtility;
 
 public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.View, PostSingleGridContract.Presenter>
         implements PostSingleGridContract.View, IScrollGrid, ISwipeToDismiss {
@@ -54,6 +56,11 @@ public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.
     @Override
     public void openPostViewScreen(long postId) {
         navigationComponent.navigator().openPostViewScreen(this, postId);
+    }
+
+    @Override
+    public void showCreatePostFailure() {
+        UiUtility.showSnackbar(this, R.string.post_single_grid_snackbar_failed_to_create_post);
     }
 
     // ------------------------------------------

@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.app.ui.post.list;
 
+import android.app.Activity;
+
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
@@ -7,6 +9,7 @@ import com.orcchg.vikstra.app.ui.post.single.PostSingleGridAdapter;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.domain.interactor.post.DeletePost;
+import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.post.GetPosts;
 
 import javax.inject.Inject;
@@ -14,9 +17,10 @@ import javax.inject.Inject;
 public class PostListPresenter extends PostSingleGridPresenter implements PostListContract.Presenter {
 
     @Inject
-    public PostListPresenter(@BaseSelectAdapter.SelectMode int selectMode, GetPosts getPostsUseCase,
-                             DeletePost deletePostUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
-        super(selectMode, getPostsUseCase, deletePostUseCase, postToSingleGridVoMapper);
+    public PostListPresenter(@BaseSelectAdapter.SelectMode int selectMode, GetPostById getPostByIdUseCase,
+                             GetPosts getPostsUseCase, DeletePost deletePostUseCase,
+                             PostToSingleGridVoMapper postToSingleGridVoMapper) {
+        super(selectMode, getPostByIdUseCase, getPostsUseCase, deletePostUseCase, postToSingleGridVoMapper);
     }
 
     @Override
@@ -41,6 +45,9 @@ public class PostListPresenter extends PostSingleGridPresenter implements PostLi
     // --------------------------------------------------------------------------------------------
     @Override
     public void onSelectPressed() {
-        // TODO:
+        if (isViewAttached()) {
+            // TODO: arch limitation workaround - cast
+            ((PostListContract.View) getView()).closeView(Activity.RESULT_OK, getSelectedPostId());
+        }
     }
 }

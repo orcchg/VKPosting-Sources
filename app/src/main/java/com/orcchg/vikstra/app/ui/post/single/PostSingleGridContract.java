@@ -9,6 +9,7 @@ public interface PostSingleGridContract {
     interface View extends SubView {
         void openPostCreateScreen();
         void openPostViewScreen(long postId);
+        void showCreatePostFailure();
     }
 
     interface SubView extends LceView, MvpListView {

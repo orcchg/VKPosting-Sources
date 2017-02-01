@@ -58,7 +58,7 @@
     <string name="group_detail_screen_title">Информация о группе</string>
     <!-- Group list screen -->
     <string name="group_list_button_label_add_keyword">Добавить слово</string>
-    <string name="group_list_button_label_change_post">Изменить публикацию</string>
+    <string name="group_list_button_label_change_post">Посты</string>
     <string name="group_list_dialog_groups_not_ready_to_dump">Данные по группам не готовы для выгрузки</string>
     <string name="group_list_dialog_new_dump_file_title">Новый файл выгрузки</string>
     <string name="group_list_dialog_new_dump_file_hint">Введите имя файла</string>
@@ -69,7 +69,7 @@
     <string name="group_list_error_add_keyword">Не удалось добавить слово!</string>
     <string name="group_list_error_already_added_keyword">Ключевое слово \"%s\" уже было добавлено</string>
     <string name="group_list_fab_label_post">Пост</string>
-    <string name="group_list_screen_title">Выберите группы</string>
+    <string name="group_list_screen_title">Новый список</string>
     <string name="group_list_selected_groups_total_count">Выбранные группы: %1$s &#47; %2$s</string>
     <string name="group_list_snackbar_groups_dump_failed">Не удалось выгрузить группы в файл</string>
     <string name="group_list_snackbar_groups_dump_succeeded">Выгружено&#58; %s</string>
@@ -120,7 +120,8 @@
     <!-- Post single grid screen -->
     <string name="post_single_grid_empty_data_button_label">Создать</string>
     <string name="post_single_grid_empty_data_text">Создайте первый пост</string>
-    <string name="post_single_grid_screen_title">Публикации</string>
+    <string name="post_single_grid_screen_title">Все Публикации</string>
+    <string name="post_single_grid_snackbar_failed_to_create_post">Не удалось создать публикацию</string>
     <!-- Post view screen -->
     <string name="post_view_screen_title">Публикация</string>
     <!-- Report screen -->

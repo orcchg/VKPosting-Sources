@@ -18,6 +18,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.view.ThumbView;
+import com.orcchg.vikstra.app.ui.post.OutConstants;
 import com.orcchg.vikstra.app.ui.post.create.injection.DaggerPostCreateComponent;
 import com.orcchg.vikstra.app.ui.post.create.injection.PostCreateComponent;
 import com.orcchg.vikstra.app.ui.post.create.injection.PostCreateModule;
@@ -35,7 +36,6 @@ import static com.orcchg.vikstra.R.id.view;
 public class PostCreateActivity extends BasePermissionActivity<PostCreateContract.View, PostCreateContract.Presenter>
         implements PostCreateContract.View {
     private static final String EXTRA_POST_ID = "extra_post_id";
-    public static final String OUT_EXTRA_POST_ID = "out_extra_post_id";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_CREATE_SCREEN;
     public static final int RV_TAG = Constant.ListTag.POST_CREATE_SCREEN;
 
@@ -256,7 +256,7 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     @Override
     public void closeView(int resultCode, long postId) {
         Intent data = new Intent();
-        data.putExtra(OUT_EXTRA_POST_ID, postId);
+        data.putExtra(OutConstants.OUT_EXTRA_POST_ID, postId);
         setResult(resultCode, data);
         finish();
     }

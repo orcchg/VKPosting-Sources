@@ -10,7 +10,9 @@ import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListMediatorComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorModule;
+import com.orcchg.vikstra.app.ui.post.OutConstants;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
+import com.orcchg.vikstra.app.ui.post.list.PostListActivity;
 import com.orcchg.vikstra.app.ui.util.ContextUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -23,6 +25,8 @@ import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
+
+import static com.orcchg.vikstra.domain.util.Constant.BAD_ID;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
@@ -56,14 +60,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case PostCreateActivity.REQUEST_CODE:
+            case PostListActivity.REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     Timber.d("Post has been changed (and should be refreshed) resulting from screen with request code: %s", requestCode);
-                    long postId = data.getLongExtra(PostCreateActivity.OUT_EXTRA_POST_ID, Constant.BAD_ID);
+                    long postId = data.getLongExtra(OutConstants.OUT_EXTRA_POST_ID, Constant.BAD_ID);
                     if (isViewAttached()) getView().setNewPostId(postId);  // update initial postId on View to work properly further
-                    sendPostHasChangedRequest(postId);
+                    sendPostHasChangedRequest(postId);  // update postId through Mediator to refresh Post via use-case
                 }
                 break;
-            // TODO: handle result from PostListActivity after new Post selected
         }
     }
 
@@ -86,7 +90,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         Timber.i("onDumpPressed");
         long groupBundleId = sendAskForGroupBundleIdToDump();
         if (isViewAttached()) {
-            if (groupBundleId != Constant.BAD_ID) {
+            if (groupBundleId != BAD_ID) {
                 Timber.d("GroupBundle id [%s] is valid, ready to dump", groupBundleId);
                 dumpGroupsUseCase.setParameters(new DumpGroups.Parameters(groupBundleId));
                 getView().openEditDumpFileNameDialog();
