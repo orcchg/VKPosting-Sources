@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.app.ui.base.permission;
 
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 
 import com.orcchg.vikstra.R;
@@ -34,7 +35,9 @@ public abstract class BasePermissionActivity<V extends MvpView, P extends MvpPre
             }
         } else {
             Timber.w("Permissions [%s] were not granted", Arrays.toString(permissions));
-            if (!shouldShowRequestPermissionRationale(permissions[0])) onPermissionDenied(requestCode);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!shouldShowRequestPermissionRationale(permissions[0])) onPermissionDenied(requestCode);
+            }
         }
     }
 
