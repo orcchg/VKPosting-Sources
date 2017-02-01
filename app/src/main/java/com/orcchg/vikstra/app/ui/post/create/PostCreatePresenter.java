@@ -90,6 +90,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     Media media = Media.builder().setId(1000).setUrl(imagePath).build();  // TODO: unique id
                     attachMedia.add(media);
                     hasAttachChanged = true;
+                    cursor.close();
                 } else if (cursor != null) {
                     cursor.close();
                 }
