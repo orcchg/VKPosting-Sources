@@ -285,6 +285,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         // show empty stub with suggestion to add new Keyword to the newly created KeywordBundle
         if (isViewAttached()) getView().showEmptyList(GroupListFragment.RV_TAG);
+
+        sendEnableAddKeywordButtonRequest(true);  // enable add keyword button when KeywordBundle is fresh
     }
 
     // ------------------------------------------
