@@ -54,11 +54,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         presenter.onFabClick();
     }
     @OnClick(R.id.ibtn_see_all_keywords)
-    void onAddNewGroupsClick() {
+    void onSeeAllKeywordsClick() {
         navigationComponent.navigator().openKeywordListScreen(this);
     }
-    @OnClick(R.id.btn_new_keywords)
-    public void onNewKeywordsClick() {
+    @OnClick(R.id.btn_new_lists)
+    public void onNewListsClick() {
         navigationComponent.navigator().openGroupListScreen(this);
     }
 
@@ -304,7 +304,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     @Override
     public void onEmptyList() {
-        navigationComponent.navigator().openKeywordCreateScreen(this);
+        navigationComponent.navigator().openGroupListScreen(this);
     }
 
     @Override
@@ -333,10 +333,10 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     public void onSwipeToDismiss(int position, int tag) {
         switch (tag) {
             case KeywordListFragment.RV_TAG:
-                presenter.removeKeywordListItem(position);;
+                presenter.removeKeywordListItem(position);
                 break;
             case PostSingleGridFragment.RV_TAG:
-                presenter.removePostGridItem(position);;
+                presenter.removePostGridItem(position);
                 break;
         }
     }
