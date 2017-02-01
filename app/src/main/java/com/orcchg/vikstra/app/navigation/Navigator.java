@@ -3,6 +3,8 @@ package com.orcchg.vikstra.app.navigation;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -32,6 +34,7 @@ import com.orcchg.vikstra.domain.util.Constant;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -157,6 +160,17 @@ public class Navigator {
                     ContentUtility.InMemoryStorage.setLastStoredInternalImageUrl(imageFile.getAbsolutePath());
                     Uri uri = FileProvider.getUriForFile(context, ContentUtility.getFileProviderAuthority(), imageFile);
                     intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+
+                    /**
+                     * Grant permissions for {@link FileProvider} to read / write Uri.
+                     *
+                     * {@see http://stackoverflow.com/questions/33650632/fileprovider-not-working-with-camera}
+                     */
+                    List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+                    for (ResolveInfo resolveInfo : resInfoList) {
+                        String packageName = resolveInfo.activityInfo.packageName;
+                        context.grantUriPermission(packageName, uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    }
                 } catch (IOException e) {
                     Timber.e(e, "Failed to create file for internal image !");
                     return;
