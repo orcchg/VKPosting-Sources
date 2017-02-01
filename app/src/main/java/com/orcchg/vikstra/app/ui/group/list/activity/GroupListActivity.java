@@ -132,7 +132,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     // --------------------------------------------------------------------------------------------
     private void initView() {
         showFab(false);  // hide fab at fresh start before post fetched
-        postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostCreateScreen(this, postId));
+        postThumbnail.setOnClickListener((view) -> presenter.onPostThumbnailClick(postId));
         postThumbnail.setErrorRetryButtonClickListener((view) -> presenter.retryPost());
         updateSelectedGroupsCounter(0, 0);
 
@@ -248,10 +248,19 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                 });
     }
 
+    @Override
+    public void openPostCreateScreen(long postId) {
+        navigationComponent.navigator().openPostCreateScreen(this, postId);
+    }
+
+    @Override
+    public void openPostListScreen() {
+        navigationComponent.navigator().openPostListScreen(this);
+    }
+
     // ------------------------------------------
     @Override
     public String getInputGroupsTitle() {
-        // TODO: verify title, don't use "Select Groups" as title
         return toolbar.getTitle().toString();
     }
 

@@ -108,6 +108,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void onPostThumbnailClick(long postId) {
+        Timber.i("onPostThumbnailClick: %s", postId);
+        if (isViewAttached()) {
+            if (postId == Constant.BAD_ID) {
+                // in case of initially empty post - open PostListScreen to choose Post among the existing ones
+                getView().openPostListScreen();
+            } else {
+                // if Post has already been selected - open PostCreateScreen to edit the Post
+                getView().openPostCreateScreen(postId);
+            }
+        }
+    }
+
+    @Override
     public void onTitleChanged(String text) {
         Timber.i("onTitleChanged: %s", text);
         hasTitleChanged = !text.equals(title);

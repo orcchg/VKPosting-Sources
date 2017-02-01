@@ -22,6 +22,8 @@ interface GroupListContract {
         void openEditDumpFileNameDialog();
         void openDumpNotReadyDialog();
         void openEditTitleDialog(@Nullable String initTitle);
+        void openPostCreateScreen(long postId);
+        void openPostListScreen();
 
         String getInputGroupsTitle();
         void setInputGroupsTitle(String title);
@@ -44,6 +46,7 @@ interface GroupListContract {
         void addKeyword(Keyword keyword);
         void onDumpPressed();
         void onFabClick();
+        void onPostThumbnailClick(long postId);
         void onTitleChanged(String text);
         void performDumping(String path);
         void retry();
