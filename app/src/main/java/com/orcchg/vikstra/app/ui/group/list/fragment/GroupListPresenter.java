@@ -452,12 +452,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             // prepare parameters to make new request for Group-s by Keyword
             List<Keyword> keywords = new ArrayList<>();
             keywords.add(newlyAddedKeyword);
-            newlyAddedKeyword = null;  // drop temporary keyword
+            newlyAddedKeyword = null;  // drop temporary Keyword
             isAddingNewKeyword = true;  // to manipulate with newly fetched Group-s properly
+
+            // fetch Group-s by newly added Keyword from the endpoint
             vkontakteEndpoint.getGroupsByKeywordsSplit(keywords, createGetGroupsByKeywordsListCallback());
         } else {
             Timber.d("Failed to add Keyword, but just warn user via popup");
-            sendAddKeywordError();
+            newlyAddedKeyword = null;  // drop temporary Keyword
+            isAddingNewKeyword = false;  // don't re-use state control flag (it is false already)
+
+            // go to standard pipeline, but just assume that no Group-s were loaded
+            stateGroupsLoaded(inputGroupBundle, new ArrayList<List<Group>>());
+
+            sendAddKeywordError();  // notify about failure
         }
     }
 
