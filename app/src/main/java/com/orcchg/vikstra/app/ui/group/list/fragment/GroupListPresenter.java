@@ -57,8 +57,6 @@ import javax.inject.Inject;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
-import static android.R.string.no;
-
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
 
     private final AddKeywordToBundle addKeywordToBundleUseCase;
@@ -498,18 +496,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     public void onStop() {
         super.onStop();
         postGroupBundleUpdate();  // TODO: not sync with onActivityResult()
-
-        boolean shouldDeleteEmptyCreatedKeywordBundle = wasInputKeywordBundleCreated &&
-                !sendAskForTitleChanged() && inputKeywordBundle.keywords().isEmpty();
-
-        if (shouldDeleteEmptyCreatedKeywordBundle) {
-            /**
-             * User is leaving or pausing GroupListScreen w/o any changes performed on newly created
-             * empty KeywordBundle, so it must be deleted from repository.
-             */
-            deleteKeywordBundleUseCase.setKeywordBundleId(inputKeywordBundle.id());
-            deleteKeywordBundleUseCase.execute();  // silent delete without callback
-        } else {
+        if (!shouldDeleteEmptyCreatedKeywordBundle()) {
             postKeywordBundleUpdate();  // TODO: not sync with onActivityResult()
         }
     }
@@ -517,6 +504,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (shouldDeleteEmptyCreatedKeywordBundle()) {
+            /**
+             * User is leaving or pausing GroupListScreen w/o any changes performed on newly created
+             * empty KeywordBundle, so it must be deleted from repository.
+             */
+            deleteKeywordBundleUseCase.setKeywordBundleId(inputKeywordBundle.id());
+            deleteKeywordBundleUseCase.execute();  // silent delete without callback
+        }
+
         mediatorComponent.mediator().detachSecond();
     }
 
@@ -963,6 +959,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         listAdapter.notifyParentRemoved(position);
 
         if (groupParentItems.isEmpty() && isViewAttached()) getView().showEmptyList(GroupListFragment.RV_TAG);
+    }
+
+    // ------------------------------------------
+    private boolean shouldDeleteEmptyCreatedKeywordBundle() {
+        return wasInputKeywordBundleCreated && !sendAskForTitleChanged() && inputKeywordBundle.keywords().isEmpty();
     }
 
     /* Callback */
