@@ -20,6 +20,7 @@ import com.orcchg.vikstra.domain.interactor.post.GetPosts;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,7 +35,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     private final GetPosts getPostsUseCase;
     private final DeletePost deletePostUseCase;
 
-    private List<Post> posts;
+    private List<Post> posts = new ArrayList<>();
     private long selectedPostId = Constant.BAD_ID;
     protected final @BaseSelectAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
@@ -128,7 +129,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         Timber.i("retry");
         changeSelectedPostId(Constant.BAD_ID);  // drop selection
         deletePostUseCase.setPostId(Constant.BAD_ID);
-        posts = null;
+        posts.clear();
         listAdapter.clear();
         dropListStat();
         freshStart();
@@ -171,6 +172,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
     protected UseCase.OnPostExecuteCallback<Post> createGetPostByIdCallback() {
         return new UseCase.OnPostExecuteCallback<Post>() {
             @Override
