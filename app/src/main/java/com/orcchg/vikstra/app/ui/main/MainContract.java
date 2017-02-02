@@ -12,6 +12,7 @@ import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 public interface MainContract {
     interface View extends KeywordListContract.View, PostSingleGridContract.View,
             IPostingNotificationDelegate, IPhotoUploadNotificationDelegate {
+        void notifyBothListsHaveItems();
         void onLoggedOut();
 
         void openGroupListScreen(long keywordBundleId, long postId);

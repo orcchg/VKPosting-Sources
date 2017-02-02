@@ -24,6 +24,8 @@ public class SingleShot {
     public static final int CASE_SELECT_POST = 2;
     public static final int CASE_MAKE_WALL_POSTING = 3;
     public static final int CASE_DUMP_REPORT = 4;
+    public static final int CASE_FILLED_LIST_POSTS = 5;
+    public static final int CASE_FILLED_LIST_KEYWORDS = 6;
     @IntDef({
         CASE_HIDE,
         CASE_NEW_LISTS,
@@ -31,6 +33,8 @@ public class SingleShot {
         CASE_SELECT_POST,
         CASE_MAKE_WALL_POSTING,
         CASE_DUMP_REPORT,
+        CASE_FILLED_LIST_POSTS,
+        CASE_FILLED_LIST_KEYWORDS
     })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ShowCase {}

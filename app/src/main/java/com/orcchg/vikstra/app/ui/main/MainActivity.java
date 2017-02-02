@@ -3,6 +3,8 @@ package com.orcchg.vikstra.app.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -18,6 +20,7 @@ import android.widget.TextView;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
@@ -114,6 +117,10 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         initNotifications();
         initToolbar();
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_NEW_LISTS);
+//        runShowcasePipeline(new int[] {
+//                SingleShot.CASE_FILLED_LIST_POSTS,
+//                SingleShot.CASE_FILLED_LIST_KEYWORDS,
+//                SingleShot.CASE_MAKE_WALL_POSTING});
     }
 
     /* View */
@@ -173,6 +180,16 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     // ------------------------------------------
+    @Override
+    public void notifyBothListsHaveItems() {
+//        if (AppConfig.INSTANCE.useTutorialShowcases()) {
+//            runShowcasePipeline(new int[] {
+//                    SingleShot.CASE_FILLED_LIST_POSTS,
+//                    SingleShot.CASE_FILLED_LIST_KEYWORDS,
+//                    SingleShot.CASE_MAKE_WALL_POSTING});
+//        }
+    }
+
     @Override
     public void onLoggedOut() {
         navigationComponent.navigator().openStartScreen(this);
@@ -442,23 +459,54 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         @StringRes int descriptionId = 0;
         View target = null;
 
-        boolean ok = false;
+        boolean ok = false, sticky = false;
         switch (showcase) {
             case SingleShot.CASE_HIDE:
                 if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
                 return null;
+            case SingleShot.CASE_MAKE_WALL_POSTING:
+                titleId = R.string.main_showcase_make_wall_posting;
+                target = fab;
+                ok = true;
+                sticky = false;
+                break;
             case SingleShot.CASE_NEW_LISTS:
                 titleId = R.string.main_showcase_new_lists_title;
                 target = newListsButton;
                 ok = true;
                 break;
+            case SingleShot.CASE_FILLED_LIST_KEYWORDS:
+                titleId = R.string.main_showcase_filled_list_keywords_title;
+                target = bottomFrameLayout;
+                ok = true;
+                sticky = true;
+                break;
+            case SingleShot.CASE_FILLED_LIST_POSTS:
+                titleId = R.string.main_showcase_filled_list_posts_title;
+                target = topFrameLayout;
+                ok = true;
+                sticky = true;
+                break;
         }
 
         if (ok) {
-            if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
-            return SingleShot.runShowcase(this, target, titleId, descriptionId, showcase, SingleShot.MAIN_SCREEN, this);
+            if (sticky && showcaseView != null) {
+                showcaseView.setShowcase(new ViewTarget(target), true);
+                if (titleId != 0) showcaseView.setContentTitle(getResources().getString(titleId));
+                if (descriptionId != 0) showcaseView.setContentText(getResources().getString(descriptionId));
+            } else {
+                if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
+                showcaseView = SingleShot.runShowcase(this, target, titleId, descriptionId, showcase, SingleShot.MAIN_SCREEN, this);
+            }
         }
-        return null;
+        return showcaseView;
+    }
+
+    private void runShowcasePipeline(@SingleShot.ShowCase int[] showcases) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(() -> runShowcase(showcases[0]), 1500);
+        handler.postDelayed(() -> runShowcase(showcases[1]), 3000);
+        handler.postDelayed(() -> runShowcase(showcases[2]), 4500);
     }
 
     // ------------------------------------------

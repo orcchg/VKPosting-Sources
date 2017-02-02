@@ -20,6 +20,7 @@ import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     private final GetKeywordBundles getKeywordBundlesUseCase;
     private final DeleteKeywordBundle deleteKeywordBundleUseCase;
 
-    private List<KeywordBundle> keywordBundles;
+    private List<KeywordBundle> keywordBundles = new ArrayList<>();
     private long selectedGroupBundleId = Constant.BAD_ID;
     private long selectedKeywordBundleId = Constant.BAD_ID;
     private final @BaseSelectAdapter.SelectMode int selectMode;
@@ -125,7 +126,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         Timber.i("retry");
         changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
         deleteKeywordBundleUseCase.setKeywordBundleId(Constant.BAD_ID);
-        keywordBundles = null;
+        keywordBundles.clear();
         listAdapter.clear();
         dropListStat();
         freshStart();
@@ -155,12 +156,6 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         return selectedKeywordBundleId;
     }
 
-    @Override
-    protected void freshStart() {
-        if (isViewAttached()) getView().showLoading(getListTag());
-        getKeywordBundlesUseCase.execute();
-    }
-
     @DebugLog
     private boolean changeSelectedGroupAndKeywordBundleId(long groupBundleId, long keywordBundleId) {
         selectedGroupBundleId = groupBundleId;
@@ -178,6 +173,16 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             return true;
         }
         return false;
+    }
+
+    public boolean isEmpty() {
+        return keywordBundles.isEmpty();
+    }
+
+    @Override
+    protected void freshStart() {
+        if (isViewAttached()) getView().showLoading(getListTag());
+        getKeywordBundlesUseCase.execute();
     }
 
     /* Callback */

@@ -154,12 +154,6 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         return selectedPostId;
     }
 
-    @Override
-    protected void freshStart() {
-        if (isViewAttached()) getView().showLoading(getListTag());
-        getPostsUseCase.execute();
-    }
-
     @DebugLog
     protected boolean changeSelectedPostId(long newId) {
         selectedPostId = newId;
@@ -168,6 +162,16 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             return true;
         }
         return false;
+    }
+
+    public boolean isEmpty() {
+        return posts.isEmpty();
+    }
+
+    @Override
+    protected void freshStart() {
+        if (isViewAttached()) getView().showLoading(getListTag());
+        getPostsUseCase.execute();
     }
 
     /* Callback */

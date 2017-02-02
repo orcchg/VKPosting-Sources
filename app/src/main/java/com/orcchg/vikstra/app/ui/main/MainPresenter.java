@@ -85,6 +85,14 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (isViewAttached() && !keywordListPresenter.isEmpty() && !postSingleGridPresenter.isEmpty()) {
+            getView().notifyBothListsHaveItems();
+        }
+    }
+
     @DebugLog @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
