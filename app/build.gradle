@@ -202,6 +202,7 @@ dependencies {
     compile presentationDependencies.progressbar
     compile presentationDependencies.progressbarCircular
     compile presentationDependencies.recyclerView
+    compile presentationDependencies.showcaseView
     compile presentationDependencies.timber
 
     provided presentationDependencies.autoValue

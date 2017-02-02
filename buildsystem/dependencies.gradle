@@ -40,6 +40,7 @@ ext {
     retrofitVersion = '2.1.0'
     rxAndroidVersion = '1.2.1'
     rxJavaVersion = '1.1.9'
+    showcaseViewVersion = '5.4.3'
     smoothProgressbarVersion = '1.1.0'
     smoothProgressbarCircularVersion = '1.2.0'
     timberVersion = '4.1.1'
@@ -85,6 +86,7 @@ ext {
             recyclerView:         "com.android.support:recyclerview-v7:${recyclerViewVersion}",
             rxAndroid:            "io.reactivex:rxandroid:${rxAndroidVersion}",
             rxJava:               "io.reactivex:rxjava:${rxJavaVersion}",
+            showcaseView:         "com.github.amlcurran.showcaseview:library:${showcaseViewVersion}",
             timber:               "com.jakewharton.timber:timber:${timberVersion}",
     ]
 
