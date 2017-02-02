@@ -363,7 +363,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
         if (ok) {
             if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
-            return SingleShot.runShowcase(this, target, titleId, descriptionId, showcase, SingleShot.REPORT_SCREEN, this);
+            return SingleShot.runShowcase(this, target, titleId, descriptionId, showcase,
+                    SingleShot.REPORT_SCREEN, R.layout.custom_showcase_button, this);
         }
         return null;
     }

@@ -3,6 +3,7 @@ package com.orcchg.vikstra.app.ui.common.showcase;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.support.annotation.IntDef;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.StringRes;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,15 +71,15 @@ public class SingleShot {
     // ------------------------------------------
     public static ShowcaseView runShowcase(Activity activity, View targetView,
                                            @StringRes int titleId, @StringRes int descriptionId,
-                                           @ShowCase int showcase, @Screen int screen,
+                                           @ShowCase int showcase, @Screen int screen, @LayoutRes int buttonStyle,
                                            OnShowcaseEventListener listener) {
         ViewTarget target = new ViewTarget(targetView);
-        return runShowcase(activity, target, titleId, descriptionId, showcase, screen, listener);
+        return runShowcase(activity, target, titleId, descriptionId, showcase, screen, buttonStyle, listener);
     }
 
     public static ShowcaseView runShowcase(Activity activity, ViewTarget target,
                                            @StringRes int titleId, @StringRes int descriptionId,
-                                           @ShowCase int showcase, @Screen int screen,
+                                           @ShowCase int showcase, @Screen int screen, @LayoutRes int buttonStyle,
                                            OnShowcaseEventListener listener) {
 
         ShowcaseView.Builder svb = new ShowcaseView.Builder(activity)
@@ -87,7 +88,7 @@ public class SingleShot {
                 .setStyle(R.style.CustomShowcaseTheme)
                 .setTarget(target)
 //                .singleShot(screen + showcase)
-                .replaceEndButton(R.layout.custom_showcase_button);
+                .replaceEndButton(buttonStyle);
 
         if (titleId != 0) svb.setContentTitle(titleId);
         if (descriptionId != 0) svb.setContentText(descriptionId);

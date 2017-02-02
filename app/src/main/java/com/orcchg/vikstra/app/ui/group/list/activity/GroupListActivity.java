@@ -429,7 +429,8 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
         if (ok) {
             if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
-            ShowcaseView sv = SingleShot.runShowcase(this, target, titleId, descriptionId, showcase, SingleShot.GROUP_LIST_SCREEN, this);
+            ShowcaseView sv = SingleShot.runShowcase(this, target, titleId, descriptionId, showcase,
+                    SingleShot.GROUP_LIST_SCREEN, R.layout.custom_showcase_button, this);
             sv.setButtonPosition(SingleShot.moveButton(getResources()));
             return sv;
         }

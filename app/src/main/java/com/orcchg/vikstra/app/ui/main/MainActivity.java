@@ -3,8 +3,7 @@ package com.orcchg.vikstra.app.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -117,10 +116,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         initNotifications();
         initToolbar();
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_NEW_LISTS);
-//        runShowcasePipeline(new int[] {
-//                SingleShot.CASE_FILLED_LIST_POSTS,
-//                SingleShot.CASE_FILLED_LIST_KEYWORDS,
-//                SingleShot.CASE_MAKE_WALL_POSTING});
     }
 
     /* View */
@@ -182,12 +177,9 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     // ------------------------------------------
     @Override
     public void notifyBothListsHaveItems() {
-//        if (AppConfig.INSTANCE.useTutorialShowcases()) {
-//            runShowcasePipeline(new int[] {
-//                    SingleShot.CASE_FILLED_LIST_POSTS,
-//                    SingleShot.CASE_FILLED_LIST_KEYWORDS,
-//                    SingleShot.CASE_MAKE_WALL_POSTING});
-//        }
+        if (AppConfig.INSTANCE.useTutorialShowcases()) {
+            showcaseView = runShowcase(SingleShot.CASE_FILLED_LIST_POSTS);
+        }
     }
 
     @Override
@@ -457,6 +449,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private ShowcaseView runShowcase(@SingleShot.ShowCase int showcase) {
         @StringRes int titleId = 0;
         @StringRes int descriptionId = 0;
+        @LayoutRes int buttonStyle = R.layout.custom_showcase_button;
         View target = null;
 
         boolean ok = false, sticky = false;
@@ -465,6 +458,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
                 return null;
             case SingleShot.CASE_MAKE_WALL_POSTING:
+                buttonStyle = R.layout.custom_showcase_button2;
                 titleId = R.string.main_showcase_make_wall_posting;
                 target = fab;
                 ok = true;
@@ -476,12 +470,14 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 ok = true;
                 break;
             case SingleShot.CASE_FILLED_LIST_KEYWORDS:
+                buttonStyle = R.layout.custom_showcase_button2;
                 titleId = R.string.main_showcase_filled_list_keywords_title;
                 target = bottomFrameLayout;
                 ok = true;
                 sticky = true;
                 break;
             case SingleShot.CASE_FILLED_LIST_POSTS:
+                buttonStyle = R.layout.custom_showcase_button2;
                 titleId = R.string.main_showcase_filled_list_posts_title;
                 target = topFrameLayout;
                 ok = true;
@@ -494,19 +490,15 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 showcaseView.setShowcase(new ViewTarget(target), true);
                 if (titleId != 0) showcaseView.setContentTitle(getResources().getString(titleId));
                 if (descriptionId != 0) showcaseView.setContentText(getResources().getString(descriptionId));
+                showcaseView.overrideButtonClick(stickyShowcaseNextClick());
             } else {
                 if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
-                showcaseView = SingleShot.runShowcase(this, target, titleId, descriptionId, showcase, SingleShot.MAIN_SCREEN, this);
+                showcaseView = SingleShot.runShowcase(this, target, titleId, descriptionId, showcase,
+                        SingleShot.MAIN_SCREEN, buttonStyle, this);
+                if (sticky && showcaseView != null) showcaseView.overrideButtonClick(stickyShowcaseNextClick());
             }
         }
         return showcaseView;
-    }
-
-    private void runShowcasePipeline(@SingleShot.ShowCase int[] showcases) {
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(() -> runShowcase(showcases[0]), 1500);
-        handler.postDelayed(() -> runShowcase(showcases[1]), 3000);
-        handler.postDelayed(() -> runShowcase(showcases[2]), 4500);
     }
 
     // ------------------------------------------
@@ -532,5 +524,22 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     @Override
     public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
+    }
+
+    private View.OnClickListener stickyShowcaseNextClick() {
+        return (view) -> {
+            SingleShot.ShowcaseTag tag = (SingleShot.ShowcaseTag) showcaseView.getTag();
+            switch (tag.showcase()) {
+                case SingleShot.CASE_FILLED_LIST_POSTS:
+                    runShowcase(SingleShot.CASE_FILLED_LIST_KEYWORDS);
+                    break;
+                case SingleShot.CASE_FILLED_LIST_KEYWORDS:
+                    runShowcase(SingleShot.CASE_MAKE_WALL_POSTING);
+                    break;
+                case SingleShot.CASE_MAKE_WALL_POSTING:
+                    runShowcase(SingleShot.CASE_HIDE);
+                    break;
+            }
+        };
     }
 }

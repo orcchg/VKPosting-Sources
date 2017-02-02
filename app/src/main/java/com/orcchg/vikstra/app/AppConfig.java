@@ -11,7 +11,7 @@ public enum AppConfig {
     private boolean isAllGroupsSortedByMembersCount = true;
     private @DebugSake boolean showSettingsMenuOnGroupListScreen = true;  // for DEBUG
     private boolean useInteractiveReportScreen = true;  // show ReportScreen instead of StatusDialog while posting
-    private boolean useTutorialShowcases = true;
+    private boolean useTutorialShowcases = false;
 
     public boolean isAllGroupsSelected() {
         return isAllGroupsSelected;

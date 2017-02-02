@@ -39,7 +39,7 @@
     </style>
 
     <style name="CustomShowcaseTheme" parent="ShowcaseView.Light">
-        <item name="sv_backgroundColor">#aa424242</item>
+        <item name="sv_backgroundColor">#9900796B</item>
         <item name="sv_showcaseColor">#00801A</item>
         <item name="sv_buttonText">Hide</item>
         <item name="sv_tintButtonColor">false</item>
