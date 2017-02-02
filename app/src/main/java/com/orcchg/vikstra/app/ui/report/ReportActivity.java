@@ -171,8 +171,9 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void openCloseWhilePostingDialog() {
-        DialogProvider.showTextDialogTwoButtons(this, R.string.dialog_warning_title,
-                R.string.report_dialog_group_reports_not_ready_to_dump, R.string.button_close, R.string.button_cancel,
+        DialogProvider.showTextDialogTwoButtons(this, R.string.report_dialog_interrupt_posting_and_close_title,
+                R.string.report_dialog_interrupt_posting_and_close_description,
+                R.string.button_interrupt,R.string.button_continue,
                 (dialog, which) -> {
                     dialog.dismiss();
                     presenter.interruptPostingAndClose();

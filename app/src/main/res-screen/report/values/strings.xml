@@ -2,6 +2,8 @@
 <resources>
     <string name="report_dialog_close_while_posting">Posting is in progress. Do you want to interrupt it and close Application?</string>
     <string name="report_dialog_group_reports_not_ready_to_dump">Group reports not ready or available yet to dump</string>
+    <string name="report_dialog_interrupt_posting_and_close_title">Interrupt posting</string>
+    <string name="report_dialog_interrupt_posting_and_close_description">Posting is in progress. Do you want to interrupt it?</string>
     <string name="report_dialog_new_dump_file_title">New dump file</string>
     <string name="report_dialog_new_dump_file_hint">Enter file name</string>
     <string name="report_dialog_posting_finished">Posting finished</string>
