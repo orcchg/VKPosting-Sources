@@ -70,7 +70,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         openAddKeywordDialog();
     }
     @OnClick(R.id.btn_change_post)
-    void onChangePost() {
+    void onChangePostClick() {
         navigationComponent.navigator().openPostListScreen(this);
     }
 

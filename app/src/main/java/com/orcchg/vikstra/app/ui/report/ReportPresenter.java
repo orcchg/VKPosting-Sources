@@ -49,16 +49,16 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final GroupReportEssenceToVoMapper groupReportEssenceToVoMapper;
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
-    // used in interactive mode
+    // used in interactive mode {@link InteractiveMode}
     private final MultiUseCase.ProgressCallback<GroupReportEssence> postingProgressCallback;
     private final MultiUseCase.CancelCallback postingCancelledCallback;
     private final MultiUseCase.FinishCallback postingFinishedCallback;
-    private List<GroupReport> storedReports = new ArrayList<>();
-    private boolean isFinishedPosting;
-    private int postedWithCancel = 0;
-    private int postedWithFailure = 0;
-    private int postedWithSuccess = 0;
-    private int totalForPosting = 0;
+    private @InteractiveMode List<GroupReport> storedReports = new ArrayList<>();
+    private @InteractiveMode boolean isFinishedPosting;
+    private @InteractiveMode int postedWithCancel = 0;
+    private @InteractiveMode int postedWithFailure = 0;
+    private @InteractiveMode int postedWithSuccess = 0;
+    private @InteractiveMode int totalForPosting = 0;
 
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
@@ -159,14 +159,21 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         }
     }
 
-    @Override
-    public void interruptPostingAndClose() {
+    @InteractiveMode @Override
+    public void interruptPostingAndClose(boolean shouldClose) {
         Timber.i("interruptPostingAndClose");
         if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            /**
+             * Setting this flag we disable warning popup on back pressed. But this will be set in
+             * anyway in {@link ReportPresenter#createPostingFinishedCallback()} callback.
+             */
+            isFinishedPosting = true;
+
             ApplicationComponent component = getApplicationComponent();
             if (component != null) component.threadExecutor().shutdownNow();
         }
-        if (isViewAttached()) getView().closeView();
+
+        if (shouldClose && isViewAttached()) getView().closeView();
     }
 
     @Override
@@ -298,7 +305,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     }
 
     // ------------------------------------------
-    @SuppressWarnings("unchecked")
+    @InteractiveMode @SuppressWarnings("unchecked")
     private MultiUseCase.ProgressCallback<GroupReportEssence> createPostingProgressCallback() {
         return (index, total, item) -> {
             Timber.v("Posting progress: %s / %s", index + 1, total);
@@ -336,6 +343,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         };
     }
 
+    @DebugLog @InteractiveMode
     private MultiUseCase.CancelCallback createPostingCancelledCallback() {
         return () -> {
             if (isViewAttached()) getView().onPostingCancel();
@@ -343,6 +351,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         };
     }
 
+    @DebugLog @InteractiveMode
     private MultiUseCase.FinishCallback createPostingFinishedCallback() {
         return () -> {
             if (isViewAttached()) getView().onPostingFinished(postedWithSuccess, totalForPosting);

@@ -11,6 +11,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -33,6 +34,7 @@ import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ReportActivity extends BasePermissionActivity<ReportContract.View, ReportContract.Presenter>
         implements ReportContract.View, IScrollList {
@@ -48,6 +50,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @BindView(R.id.report_indicator) ProgressBar reportIndicatorView;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
+    @BindView(R.id.btn_posting_interrupt) Button interruptButton;
+    @OnClick(R.id.btn_posting_interrupt)
+    void onInterruptPostingClick() {
+        presenter.interruptPostingAndClose(false);  // don't close on interruption
+        UiUtility.showSnackbar(this, R.string.report_snackbar_posting_interrupted);
+    }
 
     private ReportComponent reportComponent;
     private long groupReportBundleId = Constant.BAD_ID;  // if BAD_ID will not change later, then update reports interactively
@@ -118,6 +126,10 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         postThumbnail.setErrorRetryButtonClickListener((view) -> presenter.retryPost());
         updatePostedCounters(0, 0);
 
+        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            interruptButton.setVisibility(View.VISIBLE);
+        }
+
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
             ReportFragment fragment = ReportFragment.newInstance();
@@ -176,7 +188,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
                 R.string.button_interrupt,R.string.button_continue,
                 (dialog, which) -> {
                     dialog.dismiss();
-                    presenter.interruptPostingAndClose();
+                    presenter.interruptPostingAndClose(false);  // don't close on interruption
                 },
                 (dialog, which) -> dialog.dismiss());
     }

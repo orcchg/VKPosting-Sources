@@ -34,7 +34,7 @@ public interface ReportContract {
     interface Presenter extends MvpPresenter<View>, ListPresenter {
         void onCloseView();
         void onDumpPressed();
-        void interruptPostingAndClose();
+        void interruptPostingAndClose(boolean shouldClose);
         void performDumping(String path);
         void retry();
         void retryPost();
