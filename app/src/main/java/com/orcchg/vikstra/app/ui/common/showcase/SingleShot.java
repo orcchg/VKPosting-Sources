@@ -1,9 +1,12 @@
 package com.orcchg.vikstra.app.ui.common.showcase;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.support.annotation.IntDef;
 import android.support.annotation.StringRes;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -20,13 +23,22 @@ public class SingleShot {
     public static final int CASE_ADD_KEYWORD = 1;
     public static final int CASE_SELECT_POST = 2;
     public static final int CASE_MAKE_WALL_POSTING = 3;
-    @IntDef({CASE_HIDE, CASE_NEW_LISTS, CASE_ADD_KEYWORD, CASE_SELECT_POST, CASE_MAKE_WALL_POSTING})
+    public static final int CASE_DUMP_REPORT = 4;
+    @IntDef({
+        CASE_HIDE,
+        CASE_NEW_LISTS,
+        CASE_ADD_KEYWORD,
+        CASE_SELECT_POST,
+        CASE_MAKE_WALL_POSTING,
+        CASE_DUMP_REPORT,
+    })
     @Retention(RetentionPolicy.SOURCE)
     public @interface ShowCase {}
 
-    public static final int MAIN_SCREEN = 1026;
-    public static final int GROUP_LIST_SCREEN = 2028;
-    @IntDef({MAIN_SCREEN, GROUP_LIST_SCREEN})
+    public static final int MAIN_SCREEN = 10_005;
+    public static final int GROUP_LIST_SCREEN = 20_005;
+    public static final int REPORT_SCREEN = 30_005;
+    @IntDef({MAIN_SCREEN, GROUP_LIST_SCREEN, REPORT_SCREEN})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Screen {}
 
@@ -56,8 +68,14 @@ public class SingleShot {
                                            @StringRes int titleId, @StringRes int descriptionId,
                                            @ShowCase int showcase, @Screen int screen,
                                            OnShowcaseEventListener listener) {
-
         ViewTarget target = new ViewTarget(targetView);
+        return runShowcase(activity, target, titleId, descriptionId, showcase, screen, listener);
+    }
+
+    public static ShowcaseView runShowcase(Activity activity, ViewTarget target,
+                                           @StringRes int titleId, @StringRes int descriptionId,
+                                           @ShowCase int showcase, @Screen int screen,
+                                           OnShowcaseEventListener listener) {
 
         ShowcaseView.Builder svb = new ShowcaseView.Builder(activity)
                 .withMaterialShowcase()
@@ -76,11 +94,21 @@ public class SingleShot {
             ShowcaseView sv = (ShowcaseView) f.get(svb);
             sv.setTag(new ShowcaseTag(showcase, screen));
         } catch (NoSuchFieldException e) {
-            //
+            // TODO: exc
         } catch (IllegalAccessException e) {
-            //
+            // TODO: exc
         }
 
         return svb.build();
+    }
+
+    // ------------------------------------------
+    public static RelativeLayout.LayoutParams moveButton(Resources resources) {
+        RelativeLayout.LayoutParams lps = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        lps.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        int margin = ((Number) (resources.getDisplayMetrics().density * 12)).intValue();
+        lps.setMargins(margin, margin, margin, margin);
+        return lps;
     }
 }

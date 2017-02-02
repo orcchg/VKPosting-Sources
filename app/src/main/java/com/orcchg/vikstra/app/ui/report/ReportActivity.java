@@ -6,21 +6,29 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
+import com.orcchg.vikstra.app.ui.common.showcase.PositionedViewTarget;
+import com.orcchg.vikstra.app.ui.common.showcase.SingleShot;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.report.injection.DaggerReportComponent;
 import com.orcchg.vikstra.app.ui.report.injection.ReportComponent;
@@ -37,7 +45,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class ReportActivity extends BasePermissionActivity<ReportContract.View, ReportContract.Presenter>
-        implements ReportContract.View, IScrollList {
+        implements ReportContract.View, IScrollList, OnShowcaseEventListener {
     private static final String FRAGMENT_TAG = "report_fragment_tag";
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
@@ -46,6 +54,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
             SNACKBAR_DUMP_SUCCESS, SNACKBAR_POSTING_FINISHED;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.ll_container) ViewGroup container;
     @BindView(R.id.tv_info_title) TextView reportTextView;
     @BindView(R.id.report_indicator) ProgressBar reportIndicatorView;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
@@ -60,6 +69,15 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private ReportComponent reportComponent;
     private long groupReportBundleId = Constant.BAD_ID;  // if BAD_ID will not change later, then update reports interactively
     private long postId = Constant.BAD_ID;
+
+    private @Nullable ShowcaseView showcaseView;
+
+    public static Intent getCallingIntent(@NonNull Context context, long groupReportBundleId, long postId) {
+        Intent intent = new Intent(context, ReportActivity.class);
+        intent.putExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
+        intent.putExtra(EXTRA_POST_ID, postId);
+        return intent;
+    }
 
     @NonNull @Override
     protected ReportContract.Presenter createPresenter() {
@@ -76,13 +94,6 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         reportComponent.inject(this);
     }
 
-    public static Intent getCallingIntent(@NonNull Context context, long groupReportBundleId, long postId) {
-        Intent intent = new Intent(context, ReportActivity.class);
-        intent.putExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
-        intent.putExtra(EXTRA_POST_ID, postId);
-        return intent;
-    }
-
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
     @Override
@@ -94,6 +105,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         initResources();
         initView();
         initToolbar();
+//        if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
     }
 
     @Override
@@ -145,6 +157,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.dump:
+//                    if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_HIDE);
                     askForPermission_writeExternalStorage();
                     return true;
             }
@@ -319,5 +332,51 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         INFO_TITLE = resources.getString(R.string.report_posted_counters);
         SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.report_snackbar_group_reports_dump_succeeded);
         SNACKBAR_POSTING_FINISHED = resources.getString(R.string.report_snackbar_posting_finished);
+    }
+
+    /* Showcase */
+    // --------------------------------------------------------------------------------------------
+    @Nullable
+    private ShowcaseView runShowcase(@SingleShot.ShowCase int showcase) {
+        @StringRes int titleId = 0;
+        @StringRes int descriptionId = 0;
+        ViewTarget target = null;
+
+        boolean ok = false;
+        switch (showcase) {
+            case SingleShot.CASE_HIDE:
+                if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
+                return null;
+            case SingleShot.CASE_DUMP_REPORT:
+                titleId = R.string.report_showcase_report_dump_title;
+                target = new PositionedViewTarget(toolbar, toolbar.getWidth(), toolbar.getHeight());
+                ok = true;
+                break;
+        }
+
+        if (ok) {
+            if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
+            return SingleShot.runShowcase(this, target, titleId, descriptionId, showcase, SingleShot.REPORT_SCREEN, this);
+        }
+        return null;
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+        UiUtility.dimViewCancel(container);
+    }
+
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+        UiUtility.dimView(container);
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
     }
 }

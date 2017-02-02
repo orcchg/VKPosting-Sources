@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.orcchg.vikstra.R;
+import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.MvpListView;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
@@ -70,7 +71,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
     @OnClick(R.id.btn_new_lists)
     public void onNewListsClick() {
-//        showcaseView = runShowcase(SingleShot.CASE_HIDE);
+        if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_HIDE);
         navigationComponent.navigator().openGroupListScreen(this);
     }
 
@@ -112,7 +113,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         initView();
         initNotifications();
         initToolbar();
-//        showcaseView = runShowcase(SingleShot.CASE_NEW_LISTS);
+        if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_NEW_LISTS);
     }
 
     /* View */

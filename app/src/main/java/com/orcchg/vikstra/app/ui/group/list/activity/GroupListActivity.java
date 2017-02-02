@@ -71,7 +71,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     @BindView(R.id.fab_label) TextView fabLabel;
     @OnClick(R.id.fab)
     void onPostFabClick() {
-//        showcaseView = runShowcase(SingleShot.CASE_HIDE);
+        if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_HIDE);
         presenter.onFabClick();
     }
     @OnClick(R.id.btn_add_keyword)
@@ -123,7 +123,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         initResources();
         initView();
         initToolbar();
-//        showcaseView = runShowcase(SingleShot.CASE_ADD_KEYWORD);
+        if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_ADD_KEYWORD);
     }
 
     /* Data */
@@ -145,7 +145,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     private void initView() {
         showFab(false);  // hide fab at fresh start before post fetched
         postThumbnail.setOnClickListener((view) -> {
-//            showcaseView = runShowcase(SingleShot.CASE_MAKE_WALL_POSTING);
+            if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_MAKE_WALL_POSTING);
             presenter.onPostThumbnailClick(postId);
         });
         postThumbnail.setErrorRetryButtonClickListener((view) -> presenter.retryPost());
@@ -235,7 +235,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
                 (dialog, which, text) -> {
                     dialog.dismiss();
-//                    showcaseView = runShowcase(SingleShot.CASE_SELECT_POST);
+                    if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_SELECT_POST);
                     if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text));
                 });
     }
@@ -428,7 +428,9 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
         if (ok) {
             if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
-            return SingleShot.runShowcase(this, target, titleId, descriptionId, showcase, SingleShot.GROUP_LIST_SCREEN, this);
+            ShowcaseView sv = SingleShot.runShowcase(this, target, titleId, descriptionId, showcase, SingleShot.GROUP_LIST_SCREEN, this);
+            sv.setButtonPosition(SingleShot.moveButton(getResources()));
+            return sv;
         }
         return null;
     }

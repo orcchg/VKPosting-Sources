@@ -11,6 +11,7 @@ public enum AppConfig {
     private boolean isAllGroupsSortedByMembersCount = true;
     private @DebugSake boolean showSettingsMenuOnGroupListScreen = true;  // for DEBUG
     private boolean useInteractiveReportScreen = true;  // show ReportScreen instead of StatusDialog while posting
+    private boolean useTutorialShowcases = true;
 
     public boolean isAllGroupsSelected() {
         return isAllGroupsSelected;
@@ -21,7 +22,12 @@ public enum AppConfig {
     @DebugSake public boolean showSettingsMenuOnGroupListScreen() {
         return showSettingsMenuOnGroupListScreen;
     }
-    public boolean useInteractiveReportScreen() { return useInteractiveReportScreen; }
+    public boolean useInteractiveReportScreen() {
+        return useInteractiveReportScreen;
+    }
+    public boolean useTutorialShowcases() {
+        return useTutorialShowcases;
+    }
 
     /* Keyword */
     // ------------------------------------------
