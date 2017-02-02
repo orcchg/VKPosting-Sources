@@ -25,9 +25,12 @@ import com.orcchg.vikstra.domain.util.Constant;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class PostViewActivity extends BaseActivity<PostViewContract.View, PostViewContract.Presenter>
         implements PostViewContract.View {
+    private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -76,7 +79,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        initData();  // init data needed for injected dependencies
+        initData(savedInstanceState);  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_view);
         ButterKnife.bind(this);
@@ -84,10 +87,22 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
         initToolbar();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(BUNDLE_KEY_POST_ID, postId);
+    }
+
     /* Data */
     // --------------------------------------------------------------------------------------------
-    private void initData() {
-        postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+    @DebugLog
+    private void initData(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
+        } else {
+            postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+        }
+        Timber.d("Post id: %s", postId);
     }
 
     /* View */

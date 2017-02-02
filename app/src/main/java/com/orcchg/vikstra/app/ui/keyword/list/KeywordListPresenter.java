@@ -46,15 +46,15 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     // --------------------------------------------------------------------------------------------
     private static final class Memento {
         private static final String BUNDLE_KEY_KEYWORD_BUNDLES = "bundle_key_keyword_bundles";
-        private static final String BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION = "bundle_key_selected_list_item_position";
         private static final String BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID = "bundle_key_selected_group_bundle_id";
         private static final String BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID = "bundle_key_selected_keyword_bundle_id";
+        private static final String BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION = "bundle_key_selected_list_item_position";
         private static final String BUNDLE_KEY_WAS_LIST_ITEM_SELECTED = "bundle_key_was_list_item_selected";
 
         private List<KeywordBundle> keywordBundles = new ArrayList<>();
-        private int selectedListItemPosition = Constant.BAD_POSITION;
         private long selectedGroupBundleId = Constant.BAD_ID;
         private long selectedKeywordBundleId = Constant.BAD_ID;
+        private int selectedListItemPosition = Constant.BAD_POSITION;
         private boolean wasListItemSelected = false;
 
         @DebugLog
@@ -65,9 +65,9 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                 ArrayList<KeywordBundle> copyKeywordBundles = new ArrayList<>(keywordBundles);
                 outState.putParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES, copyKeywordBundles);
             }
-            outState.putInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, selectedListItemPosition);
             outState.putLong(BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID, selectedGroupBundleId);
             outState.putLong(BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID, selectedKeywordBundleId);
+            outState.putInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, selectedListItemPosition);
             outState.putBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, wasListItemSelected);
         }
 
@@ -76,9 +76,9 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             Memento memento = new Memento();
             memento.keywordBundles = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES);
             if (memento.keywordBundles == null) memento.keywordBundles = new ArrayList<>();
-            memento.selectedListItemPosition = savedInstanceState.getInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, Constant.BAD_POSITION);
             memento.selectedGroupBundleId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID, Constant.BAD_ID);
             memento.selectedKeywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+            memento.selectedListItemPosition = savedInstanceState.getInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, Constant.BAD_POSITION);
             memento.wasListItemSelected = savedInstanceState.getBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, false);
             return memento;
         }
@@ -106,6 +106,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         KeywordListAdapter adapter = new KeywordListAdapter(selectMode);
         adapter.setOnItemClickListener((view, viewObject, position) -> {
             memento.selectedListItemPosition = position;
+            memento.wasListItemSelected = viewObject.getSelection();
             long groupBundleId = viewObject.getSelection() ? viewObject.groupBundleId() : Constant.BAD_ID;
             long keywordBundleId = viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID;
             changeSelectedGroupAndKeywordBundleId(groupBundleId, keywordBundleId);

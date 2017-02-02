@@ -69,6 +69,12 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
         return R.layout.rv_post_single_grid_item;
     }
 
+    public void selectItemAtPosition(int position, boolean isSelected) {
+        PostSingleGridItemVO vo = get(position);
+        vo.setSelection(isSelected);
+        notifyItemChanged(position);
+    }
+
     /* Data access */
     // --------------------------------------------------------------------------------------------
     public boolean withAddItem() {

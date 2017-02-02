@@ -30,11 +30,14 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 import static com.orcchg.vikstra.R.id.view;
 
 public class PostCreateActivity extends BasePermissionActivity<PostCreateContract.View, PostCreateContract.Presenter>
         implements PostCreateContract.View {
+    private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_CREATE_SCREEN;
     public static final int RV_TAG = Constant.ListTag.POST_CREATE_SCREEN;
@@ -104,7 +107,7 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        initData();  // init data needed for injected dependencies
+        initData(savedInstanceState);  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post_create);
         ButterKnife.bind(this);
@@ -118,10 +121,22 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
         postDescriptionEditText.requestFocus();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(BUNDLE_KEY_POST_ID, postId);
+    }
+
     /* Data */
     // --------------------------------------------------------------------------------------------
-    private void initData() {
-        postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+    @DebugLog
+    private void initData(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
+        } else {
+            postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+        }
+        Timber.d("Post id: %s", postId);
     }
 
     /* Permissions */

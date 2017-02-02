@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.domain.model;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -8,7 +9,7 @@ import com.google.auto.value.AutoValue;
 import java.util.List;
 
 @AutoValue
-public abstract class Post implements Comparable<Post> {
+public abstract class Post implements Comparable<Post>, Parcelable {
 
     public static Builder builder() {
         return new AutoValue_Post.Builder();

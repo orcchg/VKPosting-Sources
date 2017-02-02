@@ -38,14 +38,48 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     private final PostPost postPostUseCase;
     private final PutPost putPostUseCase;
 
-    private String attachLink;
-    private List<Media> attachMedia = new ArrayList<>();  // TODO: save instance state
-    private boolean hasAttachChanged;
-
-    private @Nullable Post inputPost;
+    private Memento memento = new Memento();
 
     private int thumbnailWidth, thumbnailHeight;
 
+    // --------------------------------------------------------------------------------------------
+    private static final class Memento {
+        private static final String BUNDLE_KEY_ATTACH_LINK = "bundle_key_attach_link";
+        private static final String BUNDLE_KEY_ATTACH_MEDIA = "bundle_key_attach_media";
+        private static final String BUNDLE_KEY_HAS_ATTACH_CHANGED = "bundle_key_has_attach_changed";
+        private static final String BUNDLE_KEY_INPUT_POST = "bundle_key_input_post";
+
+        private String attachLink;
+        private List<Media> attachMedia = new ArrayList<>();
+        private boolean hasAttachChanged;
+        private @Nullable Post inputPost;
+
+        @DebugLog
+        private void toBundle(Bundle outState) {
+            outState.putString(BUNDLE_KEY_ATTACH_LINK, attachLink);
+            if (ArrayList.class.isInstance(attachMedia)) {
+                outState.putParcelableArrayList(BUNDLE_KEY_ATTACH_MEDIA, (ArrayList<Media>) attachMedia);
+            } else {
+                ArrayList<Media> copyAttachMedia = new ArrayList<>(attachMedia);
+                outState.putParcelableArrayList(BUNDLE_KEY_ATTACH_MEDIA, copyAttachMedia);
+            }
+            outState.putBoolean(BUNDLE_KEY_HAS_ATTACH_CHANGED, hasAttachChanged);
+            outState.putParcelable(BUNDLE_KEY_INPUT_POST, inputPost);
+        }
+
+        @DebugLog
+        private static Memento fromBundle(Bundle savedInstanceState) {
+            Memento memento = new Memento();
+            memento.attachLink = savedInstanceState.getString(BUNDLE_KEY_ATTACH_LINK);
+            memento.attachMedia = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_ATTACH_MEDIA);
+            if (memento.attachMedia == null) memento.attachMedia = new ArrayList<>();
+            memento.hasAttachChanged = savedInstanceState.getBoolean(BUNDLE_KEY_HAS_ATTACH_CHANGED);
+            memento.inputPost = savedInstanceState.getParcelable(BUNDLE_KEY_INPUT_POST);
+            return memento;
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
     @Inject
     PostCreatePresenter(GetPostById getPostByIdUseCase, PostPost postPostUseCase, PutPost putPostUseCase) {
         this.getPostByIdUseCase = getPostByIdUseCase;
@@ -88,8 +122,8 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     Timber.d("Selected image from Gallery, url: %s", imagePath);
                     if (isViewAttached()) getView().addMediaThumbnail(imagePath);
                     Media media = Media.builder().setId(1000).setUrl(imagePath).build();  // TODO: unique id
-                    attachMedia.add(media);
-                    hasAttachChanged = true;
+                    memento.attachMedia.add(media);
+                    memento.hasAttachChanged = true;
                     cursor.close();
                 } else if (cursor != null) {
                     cursor.close();
@@ -99,7 +133,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 String url = ContentUtility.InMemoryStorage.getLastStoredInternalImageUrl();
                 ContentUtility.InMemoryStorage.setLastStoredInternalImageUrl(null);  // drop camera image url
                 Timber.i("Received result image from Camera, url: %s", url);
-                Bitmap thumbnail = null;
+                Bitmap thumbnail;
                 if (data != null && data.getExtras() != null) {
                     thumbnail = (Bitmap) data.getExtras().get("data");
                 } else {
@@ -107,10 +141,16 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 }
                 if (isViewAttached()) getView().addMediaThumbnail(thumbnail);
                 Media media = Media.builder().setId(1000).setUrl(url).build();  // TODO: unique id
-                attachMedia.add(media);
-                hasAttachChanged = true;
+                memento.attachMedia.add(media);
+                memento.hasAttachChanged = true;
                 break;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        memento.toBundle(outState);
     }
 
     /* Contract */
@@ -118,8 +158,8 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     @Override
     public void attachLink(String link) {
         Timber.i("attachLink: %s", link);
-        attachLink = link;
-        hasAttachChanged = true;
+        memento.attachLink = link;
+        memento.hasAttachChanged = true;
     }
 
     // ------------------------------------------
@@ -157,7 +197,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     public void onMediaPressed() {
         Timber.i("onMediaPressed");
         if (isViewAttached()) {
-            if (attachMedia.size() < Constant.MEDIA_ATTACH_LIMIT) {
+            if (memento.attachMedia.size() < Constant.MEDIA_ATTACH_LIMIT) {
                 getView().openMediaLoadDialog();
             } else {
                 getView().onMediaAttachLimitReached(Constant.MEDIA_ATTACH_LIMIT);
@@ -174,8 +214,8 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     @Override
     public void onSavePressed() {
         Timber.i("onSavePressed");
-        String description = inputPost != null ? inputPost.description() : "";
-        String title = inputPost != null ? inputPost.title() : "";
+        String description = memento.inputPost != null ? memento.inputPost.description() : "";
+        String title = memento.inputPost != null ? memento.inputPost.title() : "";
         long postId = getPostByIdUseCase.getPostId();
 
         if (isViewAttached()) {
@@ -186,7 +226,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         // TODO: set location, file attach, poll
         PostEssence essence = PostEssence.builder()
                 .setDescription(description)
-                .setMedia(attachMedia)
+                .setMedia(memento.attachMedia)
                 .setTitle(title)
                 .build();
 
@@ -197,7 +237,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
             putPostUseCase.execute();
         } else {
             Timber.d("Input Post id is [%s] - update already existing Post instance in repository", postId);
-            PostEssenceMapper mapper = new PostEssenceMapper(postId, inputPost.timestamp());
+            PostEssenceMapper mapper = new PostEssenceMapper(postId, memento.inputPost.timestamp());
             PostPost.Parameters parameters = new PostPost.Parameters(mapper.map(essence));
             postPostUseCase.setParameters(parameters);
             postPostUseCase.execute();
@@ -208,14 +248,14 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     @Override
     public void removeAttachedMedia(int position) {
         Timber.i("removeAttachedMedia: %s", position);
-        attachMedia.remove(position);
-        hasAttachChanged = true;
+        memento.attachMedia.remove(position);
+        memento.hasAttachChanged = true;
     }
 
     @Override
     public void retry() {
         Timber.i("retry");
-        hasAttachChanged = false;
+        memento.hasAttachChanged = false;
         freshStart();
     }
 
@@ -241,15 +281,16 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     @Override
     protected void onRestoreState() {
-        // TODO:
+        memento = Memento.fromBundle(savedInstanceState);
+        populatePost(memento.inputPost, memento.attachMedia);
     }
 
     @DebugLog
     private boolean hasChanges() {
         if (isViewAttached()) {
-            String description = inputPost != null ? inputPost.description() : "";
+            String description = memento.inputPost != null ? memento.inputPost.description() : "";
             boolean hasTextContentChanged = !getView().getInputText().equals(description);
-            return hasTextContentChanged || hasAttachChanged;
+            return hasTextContentChanged || memento.hasAttachChanged;
         }
         return false;
     }
@@ -260,7 +301,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         return new UseCase.OnPostExecuteCallback<Post>() {
             @DebugLog @Override
             public void onFinish(@Nullable Post post) {
-                inputPost = post;
+                memento.inputPost = post;
                 long postId = getPostByIdUseCase.getPostId();
                 if (postId != Constant.BAD_ID && post == null) {
                     Timber.e("Post wasn't found by id: %s", postId);
@@ -279,19 +320,10 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                          * update (POST) and create (PUT) have their own success-failure pipeline, which
                          * doesn't involve standard retry invocation (and Post re-loading).
                          */
-                        attachMedia.clear();
-                        attachMedia.addAll(media);
+                        memento.attachMedia.clear();
+                        memento.attachMedia.addAll(media);
                     }
-                    // TODO: other fields are needed
-                    // TODO: if updating existing post - fill text field and media attachment view container
-                    if (isViewAttached()) {
-                        // TODO: set title to view
-                        getView().setInputText(post.description());
-                        getView().showContent(PostCreateActivity.RV_TAG, false);
-                        for (Media item : attachMedia) {
-                            getView().addMediaThumbnail(item.url());
-                        }
-                    }
+                    populatePost(post, memento.attachMedia);
                 } else {  // post is null and id is BAD
                     Timber.d("New Post instance will be created on PostCreateScreen");
                     if (isViewAttached()) getView().showEmptyList(PostCreateActivity.RV_TAG);
@@ -315,8 +347,16 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to post Post");
-                hasAttachChanged = false;  // changes has been saved
-                if (isViewAttached()) getView().closeView(Activity.RESULT_OK, inputPost.id());
+                memento.hasAttachChanged = false;  // changes has been saved
+                /**
+                 * Generally, {@link memento.inputPost} can'not be null here in this callback, because
+                 * we are updating an existing {@link Post} recorder to {@link memento.inputPost} field.
+                 * But if it is null - then there is a bug in implementation. But in favor of safety
+                 * we close the view with {@link Activity#RESULT_OK} and {@link Constant.BAD_ID} Post id,
+                 * assuming that receiver will handle it properly.
+                 */
+                long postId = memento.inputPost != null ? memento.inputPost.id() : Constant.BAD_ID;
+                if (isViewAttached()) getView().closeView(Activity.RESULT_OK, postId);
             }
 
             @DebugLog @Override
@@ -336,7 +376,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put Post");
-                hasAttachChanged = false;  // changes has been saved
+                memento.hasAttachChanged = false;  // changes has been saved
                 if (isViewAttached()) getView().closeView(Activity.RESULT_OK, post.id());
             }
 
@@ -346,5 +386,25 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                 if (isViewAttached()) getView().showCreatePostFailure();
             }
         };
+    }
+
+    /* Utility */
+    // --------------------------------------------------------------------------------------------
+    /**
+     * {@param Post} has actually the same {@param media} data inside, but we use this as an additional
+     * method parameter just because we don't want to check it for null.
+     */
+    private boolean populatePost(Post post, List<Media> media) {
+        // TODO: other fields are needed
+        // TODO: if updating existing post - fill text field and media attachment view container
+        if (isViewAttached()) {
+            // TODO: set title to view
+            getView().setInputText(post.description());
+            getView().showContent(PostCreateActivity.RV_TAG, false);
+            for (Media item : media) {
+                getView().addMediaThumbnail(item.url());
+            }
+        }
+        return true;
     }
 }

@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.post.single;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
@@ -35,13 +36,51 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     private final GetPosts getPostsUseCase;
     private final DeletePost deletePostUseCase;
 
-    private List<Post> posts = new ArrayList<>();
-    private long selectedPostId = Constant.BAD_ID;
+    private Memento memento = new Memento();
+
     protected final @BaseSelectAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
 
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
+    // --------------------------------------------------------------------------------------------
+    private static final class Memento {
+        private static final String BUNDLE_KEY_POSTS = "bundle_key_posts";
+        private static final String BUNDLE_KEY_SELECTED_POST_ID = "bundle_key_selected_post_id";
+        private static final String BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION = "bundle_key_selected_list_item_position";
+        private static final String BUNDLE_KEY_WAS_LIST_ITEM_SELECTED = "bundle_key_was_list_item_selected";
+
+        private List<Post> posts = new ArrayList<>();
+        private long selectedPostId = Constant.BAD_ID;
+        private int selectedListItemPosition = Constant.BAD_POSITION;
+        private boolean wasListItemSelected = false;
+
+        @DebugLog
+        private void toBundle(Bundle outState) {
+            if (ArrayList.class.isInstance(posts)) {
+                outState.putParcelableArrayList(BUNDLE_KEY_POSTS, (ArrayList<Post>) posts);
+            } else {
+                ArrayList<Post> copyPosts = new ArrayList<>(posts);
+                outState.putParcelableArrayList(BUNDLE_KEY_POSTS, copyPosts);
+            }
+            outState.putLong(BUNDLE_KEY_SELECTED_POST_ID, selectedPostId);
+            outState.putInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, selectedListItemPosition);
+            outState.putBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, wasListItemSelected);
+        }
+
+        @DebugLog
+        private static Memento fromBundle(Bundle savedInstanceState) {
+            Memento memento = new Memento();
+            memento.posts = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_POSTS);
+            if (memento.posts == null) memento.posts = new ArrayList<>();
+            memento.selectedPostId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_POST_ID, Constant.BAD_ID);
+            memento.selectedListItemPosition = savedInstanceState.getInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, Constant.BAD_POSITION);
+            memento.wasListItemSelected = savedInstanceState.getBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, false);
+            return memento;
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
     @Inject
     public PostSingleGridPresenter(@BaseSelectAdapter.SelectMode int selectMode, GetPostById getPostByIdUseCase,
                                    GetPosts getPostsUseCase, DeletePost deletePostUseCase,
@@ -101,6 +140,12 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        memento.toBundle(outState);
+    }
+
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
@@ -111,14 +156,14 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             // correction to the first element: (add new item)-element
             if (((PostSingleGridAdapter) listAdapter).withAddItem()) modelPosition -= 1;
         }
-        long postId = posts.get(modelPosition).id();
+        long postId = memento.posts.get(modelPosition).id();
         deletePostUseCase.setPostId(postId);
         deletePostUseCase.execute();  // silent delete without callback
 
-        posts.remove(modelPosition);
+        memento.posts.remove(modelPosition);
         listAdapter.remove(position);
 
-        if (posts.isEmpty()) {
+        if (memento.posts.isEmpty()) {
             changeSelectedPostId(Constant.BAD_ID);  // drop selection
             if (isViewAttached()) getView().showEmptyList(getListTag());
         }
@@ -129,7 +174,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         Timber.i("retry");
         changeSelectedPostId(Constant.BAD_ID);  // drop selection
         deletePostUseCase.setPostId(Constant.BAD_ID);
-        posts.clear();
+        memento.posts.clear();
         listAdapter.clear();
         dropListStat();
         freshStart();
@@ -151,12 +196,12 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     // --------------------------------------------------------------------------------------------
     @DebugLog
     public long getSelectedPostId() {
-        return selectedPostId;
+        return memento.selectedPostId;
     }
 
     @DebugLog
     protected boolean changeSelectedPostId(long newId) {
-        selectedPostId = newId;
+        memento.selectedPostId = newId;
         if (externalValueEmitter != null) {
             externalValueEmitter.emit(newId != Constant.BAD_ID);
             return true;
@@ -165,7 +210,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     }
 
     public boolean isEmpty() {
-        return posts.isEmpty();
+        return memento.posts.isEmpty();
     }
 
     @Override
@@ -176,7 +221,12 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     @Override
     protected void onRestoreState() {
-        freshStart();  // nothing to be restored
+        memento = Memento.fromBundle(savedInstanceState);
+        boolean isEmpty = populateList(memento.posts);
+        if (!isEmpty) {
+            ((PostSingleGridAdapter) listAdapter).selectItemAtPosition(memento.selectedListItemPosition, memento.wasListItemSelected);
+        }
+        changeSelectedPostId(memento.selectedPostId);
     }
 
     /* Callback */
@@ -199,8 +249,8 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get Post by id");
+                memento.posts.add(0, post);  // add post on top of the list
                 listMemento.currentSize += 1;
-                PostSingleGridPresenter.this.posts.add(0, post);  // add post on top of the list
                 PostSingleGridItemVO viewObject = postToSingleGridVoMapper.map(post);
                 listAdapter.addInverse(viewObject);
                 if (isViewAttached()) getView().showPosts(viewObject == null);
@@ -227,11 +277,9 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     if (isViewAttached()) getView().showEmptyList(getListTag());
                 } else {
                     Timber.i("Use-Case: succeeded to get list of Post-s");
+                    memento.posts = posts;
                     listMemento.currentSize += posts.size();
-                    PostSingleGridPresenter.this.posts = posts;
-                    List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
-                    listAdapter.populate(vos, false);
-                    if (isViewAttached()) getView().showPosts(vos == null || vos.isEmpty());
+                    populateList(posts);
                 }
             }
 
@@ -245,6 +293,17 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                 }
             }
         };
+    }
+
+    /* Utility */
+    // --------------------------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
+    private boolean populateList(List<Post> posts) {
+        List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
+        listAdapter.populate(vos, false);
+        boolean isEmpty = vos == null || vos.isEmpty();
+        if (isViewAttached()) getView().showPosts(isEmpty);
+        return isEmpty;
     }
 
     // TODO: assign totalItems

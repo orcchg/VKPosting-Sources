@@ -1,9 +1,11 @@
 package com.orcchg.vikstra.domain.model;
 
+import android.os.Parcelable;
+
 import com.google.auto.value.AutoValue;
 
 @AutoValue
-public abstract class Media {
+public abstract class Media implements Parcelable {
 
     public static Builder builder() {
         return new AutoValue_Media.Builder();
