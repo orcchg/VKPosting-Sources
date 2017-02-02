@@ -41,6 +41,7 @@ public class ReportViewHolder extends NormalViewHolder<ReportListItemVO> {
     public void bind(ReportListItemVO viewObject) {
         titleTextView.setText(viewObject.groupName());
         countTextView.setText(String.format(Locale.ENGLISH, "%s", viewObject.membersCount()));
+        itemView.setOnClickListener(createOnItemClickListener(viewObject));
 
         @GroupReport.Status int status = viewObject.reportStatus();
         switch (status) {
@@ -57,5 +58,13 @@ public class ReportViewHolder extends NormalViewHolder<ReportListItemVO> {
                 statusView.setColorFilter(sFailureColor);
                 break;
         }
+    }
+
+    /* Callback */
+    // --------------------------------------------------------------------------------------------
+    private View.OnClickListener createOnItemClickListener(ReportListItemVO viewObject) {
+        return (view) -> {
+            if (listener != null) listener.onItemClick(view, viewObject, getAdapterPosition());
+        };
     }
 }

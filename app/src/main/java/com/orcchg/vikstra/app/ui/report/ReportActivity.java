@@ -20,14 +20,12 @@ import android.widget.TextView;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
-import com.orcchg.vikstra.app.ui.common.showcase.PositionedViewTarget;
 import com.orcchg.vikstra.app.ui.common.showcase.SingleShot;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.report.injection.DaggerReportComponent;
@@ -59,6 +57,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @BindView(R.id.report_indicator) ProgressBar reportIndicatorView;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
+    @BindView(R.id.anchor_view) View achorView;
     @BindView(R.id.btn_posting_interrupt) Button interruptButton;
     @OnClick(R.id.btn_posting_interrupt)
     void onInterruptPostingClick() {
@@ -105,7 +104,6 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         initResources();
         initView();
         initToolbar();
-//        if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
     }
 
     @Override
@@ -157,7 +155,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.dump:
-//                    if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_HIDE);
+                    if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_HIDE);
                     askForPermission_writeExternalStorage();
                     return true;
             }
@@ -184,14 +182,18 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // ------------------------------------------
     @Override
     public void onPostingCancel() {
+        if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
         DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
                 R.string.report_dialog_posting_was_cancelled_daily_limit_reached);
+        interruptButton.setEnabled(false);
     }
 
     @Override
     public void onPostingFinished(int posted, int total) {
+        if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
         String text = String.format(Locale.ENGLISH, SNACKBAR_POSTING_FINISHED, posted, total);
         DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text);
+        interruptButton.setEnabled(false);
     }
 
     @Override
@@ -220,6 +222,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
                     String path = FileUtility.makeDumpFileName(this, text, true /* external */);
                     presenter.performDumping(path);
                 });
+    }
+
+    @Override
+    public void openGroupDetailScreen(long groupId) {
+        navigationComponent.navigator().openGroupDetailScreen(this, groupId);
     }
 
     // ------------------------------------------
@@ -340,7 +347,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private ShowcaseView runShowcase(@SingleShot.ShowCase int showcase) {
         @StringRes int titleId = 0;
         @StringRes int descriptionId = 0;
-        ViewTarget target = null;
+        View target = null;
 
         boolean ok = false;
         switch (showcase) {
@@ -349,7 +356,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
                 return null;
             case SingleShot.CASE_DUMP_REPORT:
                 titleId = R.string.report_showcase_report_dump_title;
-                target = new PositionedViewTarget(toolbar, toolbar.getWidth(), toolbar.getHeight());
+                target = achorView;
                 ok = true;
                 break;
         }

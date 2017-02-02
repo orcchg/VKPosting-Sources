@@ -82,7 +82,7 @@ public class SingleShot {
                 .setShowcaseEventListener(listener)
                 .setStyle(R.style.CustomShowcaseTheme)
                 .setTarget(target)
-                .singleShot(screen + showcase)
+//                .singleShot(screen + showcase)
                 .replaceEndButton(R.layout.custom_showcase_button);
 
         if (titleId != 0) svb.setContentTitle(titleId);

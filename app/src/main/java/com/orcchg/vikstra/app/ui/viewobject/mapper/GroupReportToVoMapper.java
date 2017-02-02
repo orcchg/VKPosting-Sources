@@ -20,6 +20,7 @@ public class GroupReportToVoMapper implements Mapper<GroupReport, ReportListItem
     public ReportListItemVO map(GroupReport object) {
         Group group = object.group();
         return ReportListItemVO.builder()
+                .setGroupId(group.id())
                 .setGroupName(group.name())
                 .setMembersCount(group.membersCount())
                 .setReportStatus(object.status())

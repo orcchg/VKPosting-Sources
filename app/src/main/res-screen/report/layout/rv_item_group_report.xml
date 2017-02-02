@@ -2,10 +2,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/group_list_child_item_height"
-    android:layout_marginLeft="@dimen/group_list_child_item_start_margin"
-    android:layout_marginStart="@dimen/group_list_child_item_start_margin"
-    android:layout_marginRight="@dimen/group_list_child_item_end_margin"
-    android:layout_marginEnd="@dimen/group_list_child_item_end_margin">
+    android:paddingLeft="@dimen/group_list_child_item_start_margin"
+    android:paddingStart="@dimen/group_list_child_item_start_margin"
+    android:paddingRight="@dimen/group_list_child_item_end_margin"
+    android:paddingEnd="@dimen/group_list_child_item_end_margin"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"

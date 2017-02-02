@@ -444,6 +444,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         UiUtility.dimViewCancel(addKeywordButton);
         UiUtility.dimViewCancel(changePostButton);
         UiUtility.dimViewCancel(postThumbnail);
+        UiUtility.dimViewCancel(selectedGroupsCountView);
     }
 
     @Override
@@ -455,6 +456,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         UiUtility.dimView(toolbar);
         UiUtility.dimView(frameLayout);
         UiUtility.dimView(changePostButton);
+        UiUtility.dimView(selectedGroupsCountView);
 
         SingleShot.ShowcaseTag tag = (SingleShot.ShowcaseTag) showcaseView.getTag();
 

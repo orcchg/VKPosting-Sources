@@ -15,6 +15,7 @@ public interface ReportContract {
         void openCloseWhilePostingDialog();
         void openDumpNotReadyDialog();
         void openEditDumpFileNameDialog();
+        void openGroupDetailScreen(long groupId);
 
         void showDumpError();
         void showDumpSuccess(String path);

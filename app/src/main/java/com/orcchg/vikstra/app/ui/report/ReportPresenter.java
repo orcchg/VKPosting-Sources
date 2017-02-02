@@ -84,7 +84,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     protected BaseAdapter createListAdapter() {
         ReportAdapter adapter = new ReportAdapter();
         adapter.setOnItemClickListener((view, viewObject, position) -> {
-            // TODO: click
+            if (isViewAttached()) getView().openGroupDetailScreen(viewObject.groupId());
         });
         adapter.setOnErrorClickListener((view) -> retryLoadMore());
         return adapter;
@@ -161,7 +161,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     @InteractiveMode @Override
     public void interruptPostingAndClose(boolean shouldClose) {
-        Timber.i("interruptPostingAndClose");
+        Timber.i("interruptPostingAndClose: %s", shouldClose);
+        if (isFinishedPosting) return;  // no-op if no posting is in progress
+
         if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
             /**
              * Setting this flag we disable warning popup on back pressed. But this will be set in
@@ -338,7 +340,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             Timber.v("Posting stat: success [%s], failure [%s], cancel [%s], total [%s]",
                     postedWithSuccess, postedWithFailure, postedWithCancel, total);
             // TODO: not properly counted if there are retry-failed use-cases
-            isFinishedPosting = postedWithCancel + postedWithFailure + postedWithSuccess == total;
+            if (!isFinishedPosting) isFinishedPosting = postedWithCancel + postedWithFailure + postedWithSuccess == total;
             totalForPosting = total;  // save counter to use further
         };
     }
@@ -346,6 +348,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @DebugLog @InteractiveMode
     private MultiUseCase.CancelCallback createPostingCancelledCallback() {
         return () -> {
+            Timber.i("Posting has been finished");
             if (isViewAttached()) getView().onPostingCancel();
             isFinishedPosting = true;
         };
@@ -354,6 +357,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @DebugLog @InteractiveMode
     private MultiUseCase.FinishCallback createPostingFinishedCallback() {
         return () -> {
+            Timber.i("Posting has finished");
             if (isViewAttached()) getView().onPostingFinished(postedWithSuccess, totalForPosting);
             isFinishedPosting = true;
         };
