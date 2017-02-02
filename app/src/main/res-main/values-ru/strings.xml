@@ -126,7 +126,7 @@
     <string name="post_view_screen_title">Публикация</string>
     <!-- Report screen -->
     <string name="report_dialog_close_while_posting">Выполняется публикация по группам. Вы уверены, что хотите прервать процесс и выйти из Приложения?</string>
-    <string name="report_dialog_group_reports_not_ready_to_dump">Данный по отчетам не готовы для выгрузки</string>
+    <string name="report_dialog_group_reports_not_ready_to_dump">Данные по отчетам не готовы для выгрузки</string>
     <string name="report_dialog_new_dump_file_title">Новый файл</string>
     <string name="report_dialog_new_dump_file_hint">Введите имя файла</string>
     <string name="report_dialog_posting_finished">Публикация завершилась</string>
