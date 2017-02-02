@@ -9,4 +9,6 @@
     <string name="main_groups_list_selected_label_prefix">Selected groups:</string>
     <string name="main_groups_list_title">Groups lists</string>
     <string name="main_screen_title">Posting for VK</string>
+
+    <string name="main_showcase_new_lists_title">Create new list of groups</string>
 </resources>

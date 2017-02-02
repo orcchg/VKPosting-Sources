@@ -1,10 +1,12 @@
 package com.orcchg.vikstra.app.ui.util;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
@@ -16,6 +18,23 @@ import android.view.inputmethod.InputMethodManager;
 import com.orcchg.vikstra.R;
 
 public class UiUtility {
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static void dimView(View view) {
+        dimView(view, 0.1f);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static void dimViewCancel(View view) {
+        dimView(view, 1.0f);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public static void dimView(View view, float alpha) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            view.setAlpha(alpha);
+        }
+    }
 
     public static int getAttributeColor(Context context, int attributeId) {
         TypedValue typedValue = new TypedValue();

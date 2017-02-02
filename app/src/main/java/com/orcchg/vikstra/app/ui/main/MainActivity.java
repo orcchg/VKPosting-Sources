@@ -3,15 +3,23 @@ package com.orcchg.vikstra.app.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
+import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.MvpListView;
@@ -23,6 +31,7 @@ import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
 import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
+import com.orcchg.vikstra.app.ui.common.showcase.SingleShot;
 import com.orcchg.vikstra.app.ui.common.view.AvatarMenuItem;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListModule;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListFragment;
@@ -36,18 +45,25 @@ import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.UserVO;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity<MainContract.View, MainContract.Presenter>
-        implements MainContract.View, IScrollGrid, IScrollList, ISwipeToDismiss, ShadowHolder {
+        implements MainContract.View, IScrollGrid, IScrollList, ISwipeToDismiss, ShadowHolder,
+        OnShowcaseEventListener {
     private static final String POST_GRID_FRAGMENT_TAG = "post_grid_fragment_tag";
     private static final String KEYW_LIST_FRAGMENT_TAG = "keyw_list_fragment_tag";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
+    @BindView(R.id.fl_top) FrameLayout topFrameLayout;
+    @BindView(R.id.fl_bottom) FrameLayout bottomFrameLayout;
     @BindView(R.id.tv_groups_selection_counter) TextView selectedGroupsTextView;
+    @BindView(R.id.btn_new_lists) Button newListsButton;
     @BindView(R.id.fab) FloatingActionButton fab;
     @OnClick(R.id.fab)
     void onFabClick() {
@@ -98,6 +114,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         initView();
         initNotifications();
         initToolbar();
+        runShowcase(CASE_NEW_LISTS);
     }
 
     /* View */
@@ -416,5 +433,63 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                     presenter.logout();
                 },
                 (dialog, which) -> dialog.dismiss());
+    }
+
+    /* Showcase */
+    // --------------------------------------------------------------------------------------------
+    private static final int CASE_NEW_LISTS = 0;
+
+    @IntDef({CASE_NEW_LISTS})
+    @Retention(RetentionPolicy.SOURCE)
+    @interface ShowCase {}
+
+    private void runShowcase(@ShowCase int showcase) {
+        @StringRes int titleId = 0;
+        @StringRes int descriptionId = 0;
+        ViewTarget target = null;
+
+        switch (showcase) {
+            case CASE_NEW_LISTS:
+                titleId = R.string.main_showcase_new_lists_title;
+                target = new ViewTarget(newListsButton);
+                break;
+        }
+
+        if (target != null) {
+            ShowcaseView.Builder svb = new ShowcaseView.Builder(this)
+                    .withMaterialShowcase()
+                    .setShowcaseEventListener(this)
+                    .setStyle(R.style.CustomShowcaseTheme)
+                    .setTarget(target)
+                    .singleShot(SingleShot.MAIN_SCREEN + showcase)
+                    .replaceEndButton(R.layout.custom_showcase_button);
+
+            if (titleId != 0) svb.setContentTitle(titleId);
+            if (descriptionId != 0) svb.setContentText(descriptionId);
+            svb.build();
+        }
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+        UiUtility.dimViewCancel(toolbar);
+        UiUtility.dimViewCancel(topFrameLayout);
+        UiUtility.dimViewCancel(bottomFrameLayout);
+    }
+
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+        UiUtility.dimView(toolbar);
+        UiUtility.dimView(topFrameLayout);
+        UiUtility.dimView(bottomFrameLayout);
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
     }
 }

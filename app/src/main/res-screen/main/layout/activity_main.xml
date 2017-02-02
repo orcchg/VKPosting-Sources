@@ -2,6 +2,7 @@
 <android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/coordinator_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
@@ -36,6 +37,7 @@
                 android:background="@color/list_line_separator"/>
 
             <LinearLayout
+                android:id="@+id/sub_container"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/main_groups_list_title_height"
                 android:layout_marginRight="@dimen/standard_side_padding_small"

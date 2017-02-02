@@ -30,6 +30,7 @@
     <string name="button_search">Поиск</string>
     <string name="button_select">Выбрать</string>
     <string name="button_settings">Настройки</string>
+    <string name="button_showcase_got_it">Понятно</string>
     <string name="button_user">Аккаунт</string>
     <string name="button_view">Просмотр</string>
     <string name="dialog_error_title">Ошибка</string>
