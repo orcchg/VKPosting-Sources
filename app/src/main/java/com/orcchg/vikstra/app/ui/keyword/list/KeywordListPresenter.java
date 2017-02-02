@@ -57,9 +57,10 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         private long selectedKeywordBundleId = Constant.BAD_ID;
         private boolean wasListItemSelected = false;
 
+        @DebugLog
         private void toBundle(Bundle outState) {
             if (ArrayList.class.isInstance(keywordBundles)) {
-                outState.putParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES, (ArrayList) keywordBundles);
+                outState.putParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES, (ArrayList<KeywordBundle>) keywordBundles);
             } else {
                 ArrayList<KeywordBundle> copyKeywordBundles = new ArrayList<>(keywordBundles);
                 outState.putParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES, copyKeywordBundles);
@@ -70,6 +71,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             outState.putBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, wasListItemSelected);
         }
 
+        @DebugLog
         private static Memento fromBundle(Bundle savedInstanceState) {
             Memento memento = new Memento();
             memento.keywordBundles = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES);
@@ -142,6 +144,12 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        memento.toBundle(outState);
     }
 
     /* Contract */
@@ -254,7 +262,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                     Collections.sort(bundles);
                     memento.keywordBundles = bundles;
                     listMemento.currentSize += bundles.size();
-                    boolean isEmpty = populateList(bundles);
+                    populateList(bundles);
                 }
             }
 
@@ -273,7 +281,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     /* Utility */
     // --------------------------------------------------------------------------------------------
     @SuppressWarnings("unchecked")
-    boolean populateList(List<KeywordBundle> bundles) {
+    private boolean populateList(List<KeywordBundle> bundles) {
         List<KeywordListItemVO> vos = keywordBundleToVoMapper.map(bundles);
         listAdapter.populate(vos, isThereMore());
         boolean isEmpty = vos == null || vos.isEmpty();

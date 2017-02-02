@@ -32,9 +32,12 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.View, KeywordCreateContract.Presenter>
         implements KeywordCreateContract.View {
+    private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     public static final int REQUEST_CODE = Constant.RequestCode.KEYWORD_CREATE_SCREEN;
     public static final int RV_TAG = Constant.ListTag.KEYWORD_CREATE_SCREEN;
@@ -87,7 +90,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        initData();  // init data needed for injected dependencies
+        initData(savedInstanceState);  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_keywords_create);
         ButterKnife.bind(this);
@@ -102,10 +105,22 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
         inputEditText.requestFocus();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
+    }
+
     /* Data */
     // --------------------------------------------------------------------------------------------
-    private void initData() {
-        keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+    @DebugLog
+    private void initData(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+        } else {
+            keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+        }
+        Timber.d("KeywordBundle id: %s", keywordBundleId);
     }
 
     /* View */

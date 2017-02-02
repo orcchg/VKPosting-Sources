@@ -16,9 +16,12 @@ import com.orcchg.vikstra.app.ui.group.detail.injection.GroupDetailModule;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import butterknife.BindView;
+import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class GroupDetailActivity extends BaseActivity<GroupDetailContract.View, GroupDetailContract.Presenter>
         implements GroupDetailContract.View {
+    private static final String BUNDLE_KEY_GROUP_ID = "bundle_key_group_id";
     private static final String EXTRA_GROUP_ID = "extra_group_id";
 
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -51,7 +54,7 @@ public class GroupDetailActivity extends BaseActivity<GroupDetailContract.View, 
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        initData();  // init data needed for injected dependencies
+        initData(savedInstanceState);  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_detail);
 //        ButterKnife.bind(this);
@@ -59,10 +62,22 @@ public class GroupDetailActivity extends BaseActivity<GroupDetailContract.View, 
 //        initToolbar();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(BUNDLE_KEY_GROUP_ID, groupId);
+    }
+
     /* Data */
     // --------------------------------------------------------------------------------------------
-    private void initData() {
-        groupId = getIntent().getLongExtra(EXTRA_GROUP_ID, Constant.BAD_ID);
+    @DebugLog
+    private void initData(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            groupId = savedInstanceState.getLong(BUNDLE_KEY_GROUP_ID, Constant.BAD_ID);
+        } else {
+            groupId = getIntent().getLongExtra(EXTRA_GROUP_ID, Constant.BAD_ID);
+        }
+        Timber.d("Group id: %s", groupId);
     }
 
     /* View */

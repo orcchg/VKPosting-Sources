@@ -31,7 +31,7 @@ public class GroupDetailPresenter extends BasePresenter<GroupDetailContract.View
 
     @Override
     protected void onRestoreState() {
-        // TODO:
+        freshStart();  // repeat request
     }
 
     /* Callback */

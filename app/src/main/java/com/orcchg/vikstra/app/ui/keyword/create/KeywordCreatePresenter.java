@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.app.ui.keyword.create;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -15,6 +16,7 @@ import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -29,12 +31,47 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     private final PostKeywordBundle postKeywordBundleUseCase;
     private final PutKeywordBundle putKeywordBundleUseCase;
 
-    private Set<Keyword> keywords = new TreeSet<>();
-    private boolean hasKeywordsChanged, hasTitleChanged;
+    private Memento memento = new Memento();
 
-    private long timestamp;
-    private @Nullable String title;
+    // --------------------------------------------------------------------------------------------
+    private static final class Memento {
+        private static final String BUNDLE_KEY_KEYWORDS = "bundle_key_keywords";
+        private static final String BUNDLE_KEY_HAS_KEYWORD_CHANGED = "bundle_key_has_keyword_changed";
+        private static final String BUNDLE_KEY_HAS_TITLE_CHANGED = "bundle_key_has_title_changed";
+        private static final String BUNDLE_KEY_TIMESTAMP = "bundle_key_timestamp";
+        private static final String BUNDLE_KEY_TITLE = "bundle_key_title";
 
+        private Set<Keyword> keywords = new TreeSet<>();
+        private boolean hasKeywordsChanged;
+        private boolean hasTitleChanged;
+        private long timestamp;
+        private @Nullable String title;
+
+        @DebugLog @SuppressWarnings("unchecked")
+        private void toBundle(Bundle outState) {
+            ArrayList<Keyword> copyKeywords = new ArrayList<>(keywords);
+            outState.putParcelableArrayList(BUNDLE_KEY_KEYWORDS, copyKeywords);
+            outState.putBoolean(BUNDLE_KEY_HAS_KEYWORD_CHANGED, hasKeywordsChanged);
+            outState.putBoolean(BUNDLE_KEY_HAS_TITLE_CHANGED, hasTitleChanged);
+            outState.putLong(BUNDLE_KEY_TIMESTAMP, timestamp);
+            outState.putString(BUNDLE_KEY_TITLE, title);
+        }
+
+        @DebugLog
+        private static Memento fromBundle(Bundle savedInstanceState) {
+            Memento memento = new Memento();
+            memento.keywords = new TreeSet<>();
+            List<Keyword> list = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_KEYWORDS);
+            if (list != null) memento.keywords.addAll(list);
+            memento.hasKeywordsChanged = savedInstanceState.getBoolean(BUNDLE_KEY_HAS_KEYWORD_CHANGED, false);
+            memento.hasTitleChanged = savedInstanceState.getBoolean(BUNDLE_KEY_HAS_TITLE_CHANGED, false);
+            memento.timestamp = savedInstanceState.getLong(BUNDLE_KEY_TIMESTAMP);
+            memento.title = savedInstanceState.getString(BUNDLE_KEY_TITLE);
+            return memento;
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
     @Inject
     KeywordCreatePresenter(GetKeywordBundleById getKeywordBundleByIdUseCase,
                            PostKeywordBundle postKeywordBundleUseCase, PutKeywordBundle putKeywordBundle) {
@@ -46,17 +83,25 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         this.putKeywordBundleUseCase.setPostExecuteCallback(createPutKeywordBundleCallback());
     }
 
+    /* Lifecycle */
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        memento.toBundle(outState);
+    }
+
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
     public void onAddPressed() {
         Timber.i("onAddPressed");
         if (isViewAttached()) {
-            if (keywords.size() < Constant.KEYWORDS_LIMIT) {
+            if (memento.keywords.size() < Constant.KEYWORDS_LIMIT) {
                 Keyword keyword = Keyword.create(getView().getInputKeyword());
-                if (keywords.add(keyword)) {
+                if (memento.keywords.add(keyword)) {
                     Timber.d("Added new Keyword: %s", keyword.keyword());
-                    hasKeywordsChanged = true;
+                    memento.hasKeywordsChanged = true;
                     getView().addKeyword(keyword);
                     getView().clearInputKeyword();
                 } else {
@@ -88,14 +133,14 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     @Override
     public void onKeywordPressed(Keyword keyword) {
         Timber.i("onKeywordPressed: %s", keyword.toString());
-        keywords.remove(keyword);
-        hasKeywordsChanged = true;
+        memento.keywords.remove(keyword);
+        memento.hasKeywordsChanged = true;
     }
 
     @Override
     public void onSavePressed() {
         Timber.i("onSavePressed");
-        if (keywords.isEmpty()) {
+        if (memento.keywords.isEmpty()) {
             Timber.d("No Keyword-s added - nothing to be saved");
             if (isViewAttached()) {
                 getView().onNoKeywordsAdded();
@@ -106,13 +151,13 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
         }
 
         long keywordBundleId = getKeywordBundleByIdUseCase.getKeywordBundleId();
-        if (TextUtils.isEmpty(title)) {
-            if (isViewAttached()) getView().openEditTitleDialog(title, true);
+        if (TextUtils.isEmpty(memento.title)) {
+            if (isViewAttached()) getView().openEditTitleDialog(memento.title, true);
         } else if (keywordBundleId == Constant.BAD_ID) {
             Timber.d("Input KeywordBundle id is BAD - add new KeywordBundle instance to repository");
             PutKeywordBundle.Parameters parameters = new PutKeywordBundle.Parameters.Builder()
-                    .setTitle(title)
-                    .setKeywords(keywords)  // use unordered collection
+                    .setTitle(memento.title)
+                    .setKeywords(memento.keywords)  // use unordered collection
                     .build();
             putKeywordBundleUseCase.setParameters(parameters);
             putKeywordBundleUseCase.execute();
@@ -120,9 +165,9 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
             Timber.d("Input KeywordBundle id is [%s] - update already existing KeywordBundle instance in repository", keywordBundleId);
             KeywordBundle keywordsBundle = KeywordBundle.builder()
                     .setId(keywordBundleId)
-                    .setKeywords(new ArrayList<>(keywords))  // turn collection into ordered list
-                    .setTimestamp(timestamp)
-                    .setTitle(title)
+                    .setKeywords(new ArrayList<>(memento.keywords))  // turn collection into ordered list
+                    .setTimestamp(memento.timestamp)
+                    .setTitle(memento.title)
                     .build();
             PostKeywordBundle.Parameters parameters = new PostKeywordBundle.Parameters(keywordsBundle);
             postKeywordBundleUseCase.setParameters(parameters);
@@ -133,16 +178,18 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
     @Override
     public void onTitleChanged(String text) {
         Timber.i("onTitleChanged: %s", text);
-        hasTitleChanged = !text.equals(title);
-        title = text;
+        memento.hasTitleChanged = !text.equals(memento.title);
+        memento.title = text;
     }
 
     // ------------------------------------------
     @Override
     public void retry() {
         Timber.i("retry");
-        hasKeywordsChanged = false;
-        hasTitleChanged = false;
+        memento.hasKeywordsChanged = false;
+        memento.hasTitleChanged = false;
+        memento.keywords.clear();
+        memento.title = null;
         freshStart();
     }
 
@@ -168,12 +215,16 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
 
     @Override
     protected void onRestoreState() {
-        // TODO:
+        memento = Memento.fromBundle(savedInstanceState);
+        if (isViewAttached()) {
+            getView().showContent(KeywordCreateActivity.RV_TAG, false);
+            getView().setInputKeywords(memento.title, memento.keywords);
+        }
     }
 
     @DebugLog
     private boolean hasChanges() {
-        return hasTitleChanged || hasKeywordsChanged;
+        return memento.hasTitleChanged || memento.hasKeywordsChanged;
     }
 
     /* Callback */
@@ -190,12 +241,12 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
                 Timber.i("Use-Case: succeeded to get KeywordBundle by id");
                 if (bundle != null) {
                     Timber.d("Existing KeywordBundle with id [%s] will be updated on KeywordCreateScreen", keywordBundleId);
-                    timestamp = bundle.timestamp();
-                    title = bundle.title();
-                    keywords.addAll(bundle.keywords());
+                    memento.keywords.addAll(bundle.keywords());
+                    memento.timestamp = bundle.timestamp();
+                    memento.title = bundle.title();
                     if (isViewAttached()) {
                         getView().showContent(KeywordCreateActivity.RV_TAG, false);
-                        getView().setInputKeywords(title, keywords);
+                        getView().setInputKeywords(memento.title, memento.keywords);
                     }
                 } else {  // bundle is null and id is BAD
                     Timber.d("New KeywordBundle instance will be created on KeywordCreateScreen");
@@ -220,7 +271,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to post KeywordBundle");
-                hasKeywordsChanged = false;  // changes has been saved
+                memento.hasKeywordsChanged = false;  // changes has been saved
                 if (isViewAttached()) {
                     getView().notifyKeywordsUpdated();
                     getView().closeView(Activity.RESULT_OK);
@@ -244,7 +295,7 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put KeywordBundle");
-                hasKeywordsChanged = false;  // changes has been saved
+                memento.hasKeywordsChanged = false;  // changes has been saved
                 if (isViewAttached()) {
                     getView().notifyKeywordsAdded();
                     getView().closeView(Activity.RESULT_OK);

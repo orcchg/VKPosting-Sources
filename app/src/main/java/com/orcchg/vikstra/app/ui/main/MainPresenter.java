@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.main;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BaseCompositePresenter;
@@ -45,9 +46,32 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     private final UserToVoMapper userToVoMapper;
     private final VkontakteEndpoint vkontakteEndpoint;
 
-    private boolean isKeywordBundleSelected;  // TODO: save instance state
-    private boolean isPostSelected;
+    private Memento memento = new Memento();
 
+    // --------------------------------------------------------------------------------------------
+    private static final class Memento {
+        private static final String BUNDLE_KEY_IS_KEYWORD_BUNDLE_SELECTED = "bundle_key_is_keyword_bundle_selected";
+        private static final String BUNDLE_KEY_IS_POST_SELECTED = "bundle_key_is_post_selected";
+
+        private boolean isKeywordBundleSelected;
+        private boolean isPostSelected;
+
+        @DebugLog
+        private void toBundle(Bundle outState) {
+            outState.putBoolean(BUNDLE_KEY_IS_KEYWORD_BUNDLE_SELECTED, isKeywordBundleSelected);
+            outState.putBoolean(BUNDLE_KEY_IS_POST_SELECTED, isPostSelected);
+        }
+
+        @DebugLog
+        private static Memento fromBundle(Bundle savedInstanceState) {
+            Memento memento = new Memento();
+            memento.isKeywordBundleSelected = savedInstanceState.getBoolean(BUNDLE_KEY_IS_KEYWORD_BUNDLE_SELECTED, false);
+            memento.isPostSelected = savedInstanceState.getBoolean(BUNDLE_KEY_IS_POST_SELECTED, false);
+            return memento;
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
     @Override
     protected List<? extends MvpPresenter> providePresenterList() {
         List<MvpPresenter> list = new ArrayList<>();
@@ -62,16 +86,16 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
                   UserToVoMapper userToVoMapper, VkontakteEndpoint vkontakteEndpoint) {
         this.keywordListPresenter = keywordListPresenter;
         this.keywordListPresenter.setExternalValueEmitter(isSelected -> {
-            isKeywordBundleSelected = isSelected;
-            if (isViewAttached()) getView().showFab(isKeywordBundleSelected && isPostSelected);
+            memento.isKeywordBundleSelected = isSelected;
+            if (isViewAttached()) getView().showFab(memento.isKeywordBundleSelected && memento.isPostSelected);
         });
         this.postSingleGridPresenter = postSingleGridPresenter;
         this.postSingleGridPresenter.setExternalValueEmitter(isSelected -> {
-            isPostSelected = isSelected;
+            memento.isPostSelected = isSelected;
             long postId = isSelected ? postSingleGridPresenter.getSelectedPostId() : Constant.BAD_ID;
             ContentUtility.CurrentSession.setLastSelectedPostId(postId);
             if (isViewAttached()) {
-                getView().showFab(isKeywordBundleSelected && isPostSelected);
+                getView().showFab(memento.isKeywordBundleSelected && memento.isPostSelected);
                 getView().updatePostId(postId);
             }
         });
@@ -106,6 +130,12 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
                 if (resultCode == Activity.RESULT_OK) retryPosts();  // refresh posts grid
                 break;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        memento.toBundle(outState);
     }
 
     /* Contract */
@@ -180,7 +210,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     @Override
     protected void onRestoreState() {
-        // TODO:
+        memento = Memento.fromBundle(savedInstanceState);
     }
 
     /* Callback */
