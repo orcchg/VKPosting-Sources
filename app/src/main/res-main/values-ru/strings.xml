@@ -110,6 +110,7 @@
     <string name="main_groups_list_selected_label_prefix">Выбрано групп:</string>
     <string name="main_groups_list_title">Списки групп</string>
     <string name="main_screen_title">VK постинг</string>
+    <string name="main_showcase_new_lists_title">Создайте новый список групп</string>
     <!-- Post create screen -->
     <string name="post_create_dialog_attach_link_title">Добавить ссылку</string>
     <string name="post_create_dialog_attach_link_hint">Введите веб&#46;ссылку</string>
