@@ -91,6 +91,7 @@
     <include layout="@layout/toolbar_dropshadow" />
 
     <FrameLayout
+        android:id="@+id/fl_fab_container"
         android:layout_width="@dimen/floating_action_button_size_normal_borderless"
         android:layout_height="@dimen/floating_action_button_size_normal_borderless"
         android:layout_gravity="bottom|right"

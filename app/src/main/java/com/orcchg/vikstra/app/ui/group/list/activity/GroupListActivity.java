@@ -67,6 +67,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     @BindView(R.id.btn_change_post) Button changePostButton;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
     @BindView(R.id.fl_container) FrameLayout frameLayout;
+    @BindView(R.id.fl_fab_container) FrameLayout fabFrameLayout;
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.fab_label) TextView fabLabel;
     @OnClick(R.id.fab)
@@ -421,7 +422,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                 break;
             case SingleShot.CASE_MAKE_WALL_POSTING:
                 titleId = R.string.group_list_showcase_make_wall_posting;
-                target = fab;
+                target = fabFrameLayout;
                 ok = true;
                 break;
         }
@@ -438,7 +439,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     // ------------------------------------------
     @Override
     public void onShowcaseViewHide(ShowcaseView showcaseView) {
-        UiUtility.dimViewCancel(fab);
+        UiUtility.dimViewCancel(fabFrameLayout);
         UiUtility.dimViewCancel(toolbar);
         UiUtility.dimViewCancel(frameLayout);
         UiUtility.dimViewCancel(addKeywordButton);
@@ -463,17 +464,17 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         switch (tag.showcase()) {
             case SingleShot.CASE_ADD_KEYWORD:
                 UiUtility.dimViewCancel(addKeywordButton);
-                UiUtility.dimView(fab);
+                UiUtility.dimView(fabFrameLayout);
                 UiUtility.dimView(postThumbnail);
                 break;
             case SingleShot.CASE_SELECT_POST:
                 UiUtility.dimView(addKeywordButton);
-                UiUtility.dimView(fab);
+                UiUtility.dimView(fabFrameLayout);
                 UiUtility.dimViewCancel(postThumbnail);
                 break;
             case SingleShot.CASE_MAKE_WALL_POSTING:
                 UiUtility.dimView(addKeywordButton);
-                UiUtility.dimViewCancel(fab);
+                UiUtility.dimViewCancel(fabFrameLayout);
                 UiUtility.dimView(postThumbnail);
                 break;
         }
