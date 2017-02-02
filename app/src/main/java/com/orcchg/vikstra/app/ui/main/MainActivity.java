@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
     @OnClick(R.id.btn_new_lists)
     public void onNewListsClick() {
-        showcaseView = runShowcase(SingleShot.CASE_HIDE);
+//        showcaseView = runShowcase(SingleShot.CASE_HIDE);
         navigationComponent.navigator().openGroupListScreen(this);
     }
 
@@ -112,7 +112,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         initView();
         initNotifications();
         initToolbar();
-        showcaseView = runShowcase(SingleShot.CASE_NEW_LISTS);
+//        showcaseView = runShowcase(SingleShot.CASE_NEW_LISTS);
     }
 
     /* View */
