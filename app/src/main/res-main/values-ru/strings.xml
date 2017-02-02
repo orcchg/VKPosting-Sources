@@ -17,6 +17,7 @@
     <string name="error_text_extended">Произошла ошибка.</string>
     <string name="error_text_short">Ошибка</string>
     <string name="button_about">О программе</string>
+    <string name="button_add">Добавить</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Отмена</string>
     <string name="button_close">Закрыть</string>
@@ -128,6 +129,7 @@
     <string name="post_list_empty_data_button_label">Создать</string>
     <string name="post_list_empty_data_text">Создайте первый пост</string>
     <string name="post_list_screen_title">Все публикации</string>
+    <string name="post_list_snackbar_post_is_empty_message">Вы должны выбрать публикацию</string>
     <!-- Post single grid screen -->
     <string name="post_single_grid_empty_data_button_label">Создать</string>
     <string name="post_single_grid_empty_data_text">Создайте первый пост</string>

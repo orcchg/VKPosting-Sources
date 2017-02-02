@@ -35,12 +35,13 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
     private static final String FRAGMENT_TAG = "post_list_fragment_tag";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_LIST_SCREEN;
 
+    @BindView(R.id.coordinator_root) ViewGroup coordinatorRoot;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @BindView(R.id.container) ViewGroup container;
     @OnClick(R.id.fab)
     void onFabClick() {
-        openPostCreateScreen();
+        presenter.onSelectPressed();
     }
 
     private PostListComponent postListComponent;
@@ -93,11 +94,11 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
     private void initToolbar() {
         toolbar.setTitle(R.string.post_list_screen_title);
         toolbar.setNavigationOnClickListener((view) -> closeView(Activity.RESULT_CANCELED, Constant.BAD_ID));
-        toolbar.inflateMenu(R.menu.select);
+        toolbar.inflateMenu(R.menu.add_new);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
-                case R.id.select:
-                    presenter.onSelectPressed();
+                case R.id.add_new:
+                    openPostCreateScreen();
                     return true;
             }
             return false;
@@ -116,6 +117,12 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
         PostListFragment fragment = getFragment();
         if (fragment != null) return fragment.getListView(tag);
         return null;
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onPostNotSelected() {
+        UiUtility.showSnackbar(coordinatorRoot, R.string.post_list_snackbar_post_is_empty_message);
     }
 
     // ------------------------------------------

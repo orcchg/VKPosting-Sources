@@ -3,4 +3,5 @@
     <string name="post_list_empty_data_button_label">Create</string>
     <string name="post_list_empty_data_text">Create first post</string>
     <string name="post_list_screen_title">All posts</string>
+    <string name="post_list_snackbar_post_is_empty_message">You must select a post</string>
 </resources>

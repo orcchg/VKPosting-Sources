@@ -9,6 +9,7 @@
     android:layout_marginRight="16dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="16dp"
-    android:src="@drawable/ic_add_white_24dp"
+    android:src="@drawable/ic_check_white_24dp"
     android:elevation="6dp"
+    app:layout_behavior="com.orcchg.vikstra.app.ui.common.view.behavior.FabSnackbarHideBehavior"
     app:pressedTranslationZ="12dp"/>

@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/select"
-        android:title="@string/button_select"
+        android:id="@+id/add_new"
+        android:icon="@drawable/ic_add_box_white_24dp"
+        android:title="@string/button_add"
         app:showAsAction="ifRoom"/>
 </menu>

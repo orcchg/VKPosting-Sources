@@ -11,6 +11,7 @@ import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.domain.interactor.post.DeletePost;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.post.GetPosts;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
 
@@ -45,9 +46,12 @@ public class PostListPresenter extends PostSingleGridPresenter implements PostLi
     // --------------------------------------------------------------------------------------------
     @Override
     public void onSelectPressed() {
-        if (isViewAttached()) {
+        long postId = getSelectedPostId();
+        if (postId != Constant.BAD_ID) {
             // TODO: arch limitation workaround - cast
-            ((PostListContract.View) getView()).closeView(Activity.RESULT_OK, getSelectedPostId());
+            if (isViewAttached()) ((PostListContract.View) getView()).closeView(Activity.RESULT_OK, postId);
+        } else {
+            if (isViewAttached()) ((PostListContract.View) getView()).onPostNotSelected();
         }
     }
 }
