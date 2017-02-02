@@ -22,6 +22,11 @@
     <string name="group_list_snackbar_posting_started">Posting has started</string>
     <string name="group_list_snackbar_posting_finished">Posting has finished</string>
 
+    <string name="group_list_showcase_add_keyword_title">Add keywords</string>
+    <string name="group_list_showcase_add_keyword_description">App will look for the most popular groups with open wall relevant to these keywords</string>
+    <string name="group_list_showcase_make_wall_posting">Run wall posting on each selected group</string>
+    <string name="group_list_showcase_select_post_title">Create new post or select existing one</string>
+
     <string-array name="group_list_settings_posting_interval_variants" translatable="false">
         <item name="group_list_settings_posting_interval_variant_333">333</item>
         <item name="group_list_settings_posting_interval_variant_500">500</item>

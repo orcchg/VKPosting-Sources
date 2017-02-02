@@ -6,23 +6,29 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
+import com.github.amlcurran.showcaseview.ShowcaseView;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.content.IListReach;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
+import com.orcchg.vikstra.app.ui.common.showcase.SingleShot;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.group.list.activity.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.activity.injection.GroupListComponent;
@@ -43,7 +49,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class GroupListActivity extends BasePermissionActivity<GroupListContract.View, GroupListContract.Presenter>
-        implements GroupListContract.View, IListReach, IScrollList, ShadowHolder {
+        implements GroupListContract.View, IListReach, IScrollList, ShadowHolder, OnShowcaseEventListener {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
@@ -58,11 +64,14 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @BindView(R.id.tv_info_title) TextView selectedGroupsCountView;
     @BindView(R.id.btn_add_keyword) Button addKeywordButton;
+    @BindView(R.id.btn_change_post) Button changePostButton;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
+    @BindView(R.id.fl_container) FrameLayout frameLayout;
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.fab_label) TextView fabLabel;
     @OnClick(R.id.fab)
     void onPostFabClick() {
+        showcaseView = runShowcase(SingleShot.CASE_HIDE);
         presenter.onFabClick();
     }
     @OnClick(R.id.btn_add_keyword)
@@ -79,6 +88,8 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     private long postId = Constant.BAD_ID;
 
     private @DebugSake int chosenSettingVariant = 0;  // for DEBUG
+
+    private @Nullable ShowcaseView showcaseView;
 
     public static Intent getCallingIntent(@NonNull Context context, long keywordBunldeId, long postId) {
         Intent intent = new Intent(context, GroupListActivity.class);
@@ -112,6 +123,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         initResources();
         initView();
         initToolbar();
+        showcaseView = runShowcase(SingleShot.CASE_ADD_KEYWORD);
     }
 
     /* Data */
@@ -132,14 +144,17 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     // --------------------------------------------------------------------------------------------
     private void initView() {
         showFab(false);  // hide fab at fresh start before post fetched
-        postThumbnail.setOnClickListener((view) -> presenter.onPostThumbnailClick(postId));
+        postThumbnail.setOnClickListener((view) -> {
+            showcaseView = runShowcase(SingleShot.CASE_MAKE_WALL_POSTING);
+            presenter.onPostThumbnailClick(postId);
+        });
         postThumbnail.setErrorRetryButtonClickListener((view) -> presenter.retryPost());
         updateSelectedGroupsCounter(0, 0);
 
         FragmentManager fm = getSupportFragmentManager();
         if (fm.findFragmentByTag(FRAGMENT_TAG) == null) {
             GroupListFragment fragment = GroupListFragment.newInstance(keywordBundleId, postId);
-            fm.beginTransaction().replace(R.id.container, fragment, FRAGMENT_TAG).commit();
+            fm.beginTransaction().replace(R.id.fl_container, fragment, FRAGMENT_TAG).commit();
             fm.executePendingTransactions();
         }
     }
@@ -219,6 +234,8 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     public void openAddKeywordDialog() {
         DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
                 (dialog, which, text) -> {
+                    dialog.dismiss();
+                    showcaseView = runShowcase(SingleShot.CASE_SELECT_POST);
                     if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text));
                 });
     }
@@ -376,5 +393,89 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
             fab.hide();
             fabLabel.setVisibility(View.INVISIBLE);
         }
+    }
+
+    /* Showcase */
+    // --------------------------------------------------------------------------------------------
+    @Nullable
+    private ShowcaseView runShowcase(@SingleShot.ShowCase int showcase) {
+        @StringRes int titleId = 0;
+        @StringRes int descriptionId = 0;
+        View target = null;
+
+        boolean ok = false;
+        switch (showcase) {
+            case SingleShot.CASE_HIDE:
+                if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
+                return null;
+            case SingleShot.CASE_ADD_KEYWORD:
+                titleId = R.string.group_list_showcase_add_keyword_title;
+                descriptionId = R.string.group_list_showcase_add_keyword_description;
+                target = addKeywordButton;
+                ok = true;
+                break;
+            case SingleShot.CASE_SELECT_POST:
+                titleId = R.string.group_list_showcase_select_post_title;
+                target = postThumbnail;
+                ok = true;
+                break;
+            case SingleShot.CASE_MAKE_WALL_POSTING:
+                titleId = R.string.group_list_showcase_make_wall_posting;
+                target = fab;
+                ok = true;
+                break;
+        }
+
+        if (ok) {
+            if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
+            return SingleShot.runShowcase(this, target, titleId, descriptionId, showcase, SingleShot.GROUP_LIST_SCREEN, this);
+        }
+        return null;
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onShowcaseViewHide(ShowcaseView showcaseView) {
+        UiUtility.dimViewCancel(fab);
+        UiUtility.dimViewCancel(toolbar);
+        UiUtility.dimViewCancel(frameLayout);
+        UiUtility.dimViewCancel(addKeywordButton);
+        UiUtility.dimViewCancel(changePostButton);
+        UiUtility.dimViewCancel(postThumbnail);
+    }
+
+    @Override
+    public void onShowcaseViewDidHide(ShowcaseView showcaseView) {
+    }
+
+    @Override
+    public void onShowcaseViewShow(ShowcaseView showcaseView) {
+        UiUtility.dimView(toolbar);
+        UiUtility.dimView(frameLayout);
+        UiUtility.dimView(changePostButton);
+
+        SingleShot.ShowcaseTag tag = (SingleShot.ShowcaseTag) showcaseView.getTag();
+
+        switch (tag.showcase()) {
+            case SingleShot.CASE_ADD_KEYWORD:
+                UiUtility.dimViewCancel(addKeywordButton);
+                UiUtility.dimView(fab);
+                UiUtility.dimView(postThumbnail);
+                break;
+            case SingleShot.CASE_SELECT_POST:
+                UiUtility.dimView(addKeywordButton);
+                UiUtility.dimView(fab);
+                UiUtility.dimViewCancel(postThumbnail);
+                break;
+            case SingleShot.CASE_MAKE_WALL_POSTING:
+                UiUtility.dimView(addKeywordButton);
+                UiUtility.dimViewCancel(fab);
+                UiUtility.dimView(postThumbnail);
+                break;
+        }
+    }
+
+    @Override
+    public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
     }
 }

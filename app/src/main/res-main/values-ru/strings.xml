@@ -81,6 +81,10 @@
     <string name="group_list_snackbar_post_is_empty_message">Вы должны выбрать публикацию</string>
     <string name="group_list_snackbar_posting_started">Началась публикация</string>
     <string name="group_list_snackbar_posting_finished">Публикация завершилась</string>
+    <string name="group_list_showcase_add_keyword_title">Добавьте ключевые слова</string>
+    <string name="group_list_showcase_add_keyword_description">По этим словам приложение найдет самые популярные группы с открытой стеной</string>
+    <string name="group_list_showcase_make_wall_posting">Запустите публикацию по всем выбранным группам</string>
+    <string name="group_list_showcase_select_post_title">Создайте новый пост или выберите существующий</string>
     <!-- Keyword create screen -->
     <string name="keyword_create_bundle_added">Создан новый набор слов</string>
     <string name="keyword_create_bundle_updated">Набор слов был обновлен</string>

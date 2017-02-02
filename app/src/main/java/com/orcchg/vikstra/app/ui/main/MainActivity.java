@@ -3,7 +3,6 @@ package com.orcchg.vikstra.app.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -19,7 +18,6 @@ import android.widget.TextView;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
-import com.github.amlcurran.showcaseview.targets.ViewTarget;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
 import com.orcchg.vikstra.app.ui.base.MvpListView;
@@ -44,9 +42,6 @@ import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.UserVO;
 import com.orcchg.vikstra.domain.util.Constant;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -75,6 +70,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
     @OnClick(R.id.btn_new_lists)
     public void onNewListsClick() {
+        showcaseView = runShowcase(SingleShot.CASE_HIDE);
         navigationComponent.navigator().openGroupListScreen(this);
     }
 
@@ -82,6 +78,8 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private PhotoUploadNotification photoUploadNotification;
 
     private MainComponent mainComponent;
+
+    private @Nullable ShowcaseView showcaseView;
 
     public static Intent getCallingIntent(@NonNull Context context) {
         return new Intent(context, MainActivity.class);
@@ -114,7 +112,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         initView();
         initNotifications();
         initToolbar();
-        runShowcase(CASE_NEW_LISTS);
+        showcaseView = runShowcase(SingleShot.CASE_NEW_LISTS);
     }
 
     /* View */
@@ -437,42 +435,35 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     /* Showcase */
     // --------------------------------------------------------------------------------------------
-    private static final int CASE_NEW_LISTS = 0;
-
-    @IntDef({CASE_NEW_LISTS})
-    @Retention(RetentionPolicy.SOURCE)
-    @interface ShowCase {}
-
-    private void runShowcase(@ShowCase int showcase) {
+    @Nullable
+    private ShowcaseView runShowcase(@SingleShot.ShowCase int showcase) {
         @StringRes int titleId = 0;
         @StringRes int descriptionId = 0;
-        ViewTarget target = null;
+        View target = null;
 
+        boolean ok = false;
         switch (showcase) {
-            case CASE_NEW_LISTS:
+            case SingleShot.CASE_HIDE:
+                if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
+                return null;
+            case SingleShot.CASE_NEW_LISTS:
                 titleId = R.string.main_showcase_new_lists_title;
-                target = new ViewTarget(newListsButton);
+                target = newListsButton;
+                ok = true;
                 break;
         }
 
-        if (target != null) {
-            ShowcaseView.Builder svb = new ShowcaseView.Builder(this)
-                    .withMaterialShowcase()
-                    .setShowcaseEventListener(this)
-                    .setStyle(R.style.CustomShowcaseTheme)
-                    .setTarget(target)
-                    .singleShot(SingleShot.MAIN_SCREEN + showcase)
-                    .replaceEndButton(R.layout.custom_showcase_button);
-
-            if (titleId != 0) svb.setContentTitle(titleId);
-            if (descriptionId != 0) svb.setContentText(descriptionId);
-            svb.build();
+        if (ok) {
+            if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
+            return SingleShot.runShowcase(this, target, titleId, descriptionId, showcase, SingleShot.MAIN_SCREEN, this);
         }
+        return null;
     }
 
     // ------------------------------------------
     @Override
     public void onShowcaseViewHide(ShowcaseView showcaseView) {
+        UiUtility.dimViewCancel(fab);
         UiUtility.dimViewCancel(toolbar);
         UiUtility.dimViewCancel(topFrameLayout);
         UiUtility.dimViewCancel(bottomFrameLayout);
@@ -484,6 +475,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     @Override
     public void onShowcaseViewShow(ShowcaseView showcaseView) {
+        UiUtility.dimView(fab);
         UiUtility.dimView(toolbar);
         UiUtility.dimView(topFrameLayout);
         UiUtility.dimView(bottomFrameLayout);
