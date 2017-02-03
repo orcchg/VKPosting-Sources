@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
@@ -283,7 +284,8 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     @Override
     protected void onRestoreState() {
         memento = Memento.fromBundle(savedInstanceState);
-        populatePost(memento.inputPost, memento.attachMedia);
+        if (memento.inputPost != null) populatePost(memento.inputPost);
+        populateMedia(memento.attachMedia);
     }
 
     @DebugLog
@@ -324,7 +326,8 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                         memento.attachMedia.clear();
                         memento.attachMedia.addAll(media);
                     }
-                    populatePost(post, memento.attachMedia);
+                    populatePost(post);
+                    populateMedia(memento.attachMedia);
                 } else {  // post is null and id is BAD
                     Timber.d("New Post instance will be created on PostCreateScreen");
                     if (isViewAttached()) getView().showEmptyList(PostCreateActivity.RV_TAG);
@@ -395,17 +398,23 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
      * {@param Post} has actually the same {@param media} data inside, but we use this as an additional
      * method parameter just because we don't want to check it for null.
      */
-    private boolean populatePost(Post post, List<Media> media) {
+    private void populatePost(@NonNull Post post) {
         // TODO: other fields are needed
         // TODO: if updating existing post - fill text field and media attachment view container
         if (isViewAttached()) {
             // TODO: set title to view
             getView().setInputText(post.description());
             getView().showContent(PostCreateActivity.RV_TAG, false);
+
+        }
+    }
+
+    private void populateMedia(@NonNull List<Media> media) {
+        Timber.v("Attach media size: %s", memento.attachMedia.size());
+        if (isViewAttached()) {
             for (Media item : media) {
                 getView().addMediaThumbnail(item.url());
             }
         }
-        return true;
     }
 }

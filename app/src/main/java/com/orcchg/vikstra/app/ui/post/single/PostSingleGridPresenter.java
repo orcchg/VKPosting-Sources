@@ -109,9 +109,10 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     protected void prepareAdapter(PostSingleGridAdapter adapter) {
         adapter.setOnItemClickListener((view, viewObject, position) -> {
-                memento.selectedListItemPosition = viewObject.getSelection() ? position : Constant.BAD_POSITION;
-                memento.wasListItemSelected = viewObject.getSelection();
-                changeSelectedPostId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID);
+            int modelPosition = adapter.withAddItem() ? position - 1 : position;
+            memento.selectedListItemPosition = viewObject.getSelection() ? modelPosition : Constant.BAD_POSITION;
+            memento.wasListItemSelected = viewObject.getSelection();
+            changeSelectedPostId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID);
         });
         adapter.setOnItemLongClickListener((view, viewObject, position) -> {
             if (isViewAttached()) getView().openPostViewScreen(viewObject.id());
@@ -129,7 +130,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    @Override
+    @DebugLog @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
@@ -168,7 +169,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         listAdapter.remove(position);
 
         if (memento.posts.isEmpty()) {
-            changeSelectedPostId(Constant.BAD_ID);  // drop selection
+            dropSelection();
             if (isViewAttached()) getView().showEmptyList(getListTag());
         }
     }
@@ -176,11 +177,11 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     @Override
     public void retry() {
         Timber.i("retry");
-        changeSelectedPostId(Constant.BAD_ID);  // drop selection
         deletePostUseCase.setPostId(Constant.BAD_ID);
         memento.posts.clear();
         listAdapter.clear();
         dropListStat();
+        dropSelection();
         freshStart();
     }
 
@@ -211,6 +212,12 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             return true;
         }
         return false;
+    }
+
+    protected void dropSelection() {
+        changeSelectedPostId(Constant.BAD_ID);  // drop selection
+        memento.selectedListItemPosition = Constant.BAD_POSITION;
+        memento.wasListItemSelected = false;
     }
 
     public boolean isEmpty() {
@@ -305,7 +312,8 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     @SuppressWarnings("unchecked")
     private boolean populateList(List<Post> posts) {
         List<PostSingleGridItemVO> vos = postToSingleGridVoMapper.map(posts);
-        listAdapter.populate(vos, false);
+        listAdapter.clearSilent();  // TODO: take load-more into account later
+        listAdapter.populate(vos, isThereMore());
         boolean isEmpty = vos == null || vos.isEmpty();
         if (isViewAttached()) getView().showPosts(isEmpty);
         return isEmpty;

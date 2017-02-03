@@ -14,6 +14,7 @@ import com.orcchg.vikstra.app.ui.keyword.list.KeywordListActivity;
 import com.orcchg.vikstra.app.ui.keyword.list.KeywordListPresenter;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.single.PostSingleGridPresenter;
+import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
 import com.orcchg.vikstra.app.ui.viewobject.UserVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.UserToVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
@@ -127,6 +128,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
                 if (resultCode == Activity.RESULT_OK) retryKeywords();  // refresh keywords list
                 break;
             case PostCreateActivity.REQUEST_CODE:
+            case PostViewActivity.REQUEST_CODE:  // PostViewScreen can update Post indirectly (via PostCreateScreen)
                 if (resultCode == Activity.RESULT_OK) retryPosts();  // refresh posts grid
                 break;
         }

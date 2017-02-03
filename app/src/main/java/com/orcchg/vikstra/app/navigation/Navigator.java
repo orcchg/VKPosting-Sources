@@ -203,9 +203,9 @@ public class Navigator {
         context.startActivityForResult(intent, PostListActivity.REQUEST_CODE);
     }
 
-    public void openPostViewScreen(@NonNull Context context, long postId) {
+    public void openPostViewScreen(@NonNull Activity context, long postId) {
         Intent intent = PostViewActivity.getCallingIntent(context, postId);
-        context.startActivity(intent);
+        context.startActivityForResult(intent, PostCreateActivity.REQUEST_CODE);
     }
 
     /* Report */

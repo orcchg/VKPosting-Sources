@@ -167,7 +167,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         listAdapter.remove(position);
 
         if (memento.keywordBundles.isEmpty()) {
-            changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
+            dropSelection();
             if (isViewAttached()) getView().showEmptyList(getListTag());
         }
     }
@@ -175,11 +175,11 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @Override
     public void retry() {
         Timber.i("retry");
-        changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
         deleteKeywordBundleUseCase.setKeywordBundleId(Constant.BAD_ID);
         memento.keywordBundles.clear();
         listAdapter.clear();
         dropListStat();
+        dropSelection();
         freshStart();
     }
 
@@ -224,6 +224,12 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             return true;
         }
         return false;
+    }
+
+    private void dropSelection() {
+        changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
+        memento.selectedListItemPosition = Constant.BAD_POSITION;
+        memento.wasListItemSelected = false;
     }
 
     public boolean isEmpty() {
@@ -286,6 +292,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @SuppressWarnings("unchecked")
     private boolean populateList(List<KeywordBundle> bundles) {
         List<KeywordListItemVO> vos = keywordBundleToVoMapper.map(bundles);
+        listAdapter.clearSilent();  // TODO: take load-more into account later
         listAdapter.populate(vos, isThereMore());
         boolean isEmpty = vos == null || vos.isEmpty();
         if (isViewAttached()) getView().showKeywords(isEmpty);

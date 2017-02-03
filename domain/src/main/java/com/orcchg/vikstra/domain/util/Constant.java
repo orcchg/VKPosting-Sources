@@ -21,6 +21,7 @@ public class Constant {
         public static final int KEYWORD_LIST_SCREEN = 10011;
         public static final int POST_CREATE_SCREEN = 10020;
         public static final int POST_LIST_SCREEN = 10021;
+        public static final int POST_VIEW_SCREEN = 10022;
     }
 
     public static final class ListTag {

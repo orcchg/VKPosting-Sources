@@ -39,6 +39,7 @@ public class PostViewPresenter extends BasePresenter<PostViewContract.View> impl
             case PostCreateActivity.REQUEST_CODE:  // post could change on PostCreateScreen
                 if (resultCode == Activity.RESULT_OK) {
                     Timber.d("Post has been changed on PostViewScreen resulting from screen with request code: %s", requestCode);
+                    if (isViewAttached()) getView().setResultFromView(Activity.RESULT_OK);
                     retry();  // refresh post
                 }
                 break;

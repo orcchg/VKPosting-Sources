@@ -50,14 +50,18 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
         }
     }
 
-    @Override
+    @Override @SuppressWarnings("unchecked")
     public void onBindViewHolder(BaseViewHolder holder, int position) {
         int type = getItemViewType(position);
         switch (type) {
             case VIEW_TYPE_NORMAL:
-                ((ModelViewHolder) holder).bind(models.get(position));
+                ((ModelViewHolder) holder).bind(getItemAtPosition(position));
                 break;
         }
+    }
+
+    protected Model getItemAtPosition(int position) {
+        return models.get(position);
     }
 
     @Override
@@ -124,6 +128,23 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
         isInError = false;
         models.clear();
         notifyDataSetChanged();
+    }
+
+    /**
+     * This method silently clears internal list of items. The following scenario is quite possible:
+     *
+     * onActivityResult() finishes before onStart() and issues a request for data in repository,
+     * which could also had finished before onStart() will happen. On low-memory old devices such
+     * onActivityResult() could always follows complete destruction-creation cycle and then in onStart()
+     * a stored state of some Presenter could be restored, populating Adapter with some preserved data.
+     * But there is data already in Adapter, so it will be duplicated. To avoid this - such silent
+     * cleaning should be made in such scenario.
+     *
+     * This method should not be called in load-more scenario.
+     */
+    public void clearSilent() {
+        isInError = false;
+        models.clear();
     }
 
     public void remove(int position) {

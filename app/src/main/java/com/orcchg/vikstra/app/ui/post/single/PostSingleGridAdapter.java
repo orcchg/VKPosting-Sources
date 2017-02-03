@@ -13,7 +13,6 @@ import com.orcchg.vikstra.app.ui.base.adapter.viewholder.BaseViewHolder;
 import com.orcchg.vikstra.app.ui.post.single.viewholder.NewPostSingleGridViewHolder;
 import com.orcchg.vikstra.app.ui.post.single.viewholder.PostSingleGridViewHolder;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
-import com.orcchg.vikstra.domain.util.Constant;
 
 import hugo.weaving.DebugLog;
 
@@ -30,7 +29,6 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
         super(selectMode);
         this.withAddItem = withAddItem;
         this.wrappedItemClickListener = createWrappedClickListener();
-        if (withAddItem) addFirstSystemItem();
     }
 
     public void setOnNewItemClickListener(OnItemClickListener<Object> onNewItemClickListener) {
@@ -61,14 +59,25 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
     }
 
     @Override
-    public int getItemViewType(int position) {
-        if (withAddItem && position == 0) return VIEW_TYPE_ADD_NEW;
-        return super.getItemViewType(position);
+    protected PostSingleGridItemVO getItemAtPosition(int position) {
+        int modelPosition = position + (withAddItem ? -1 : 0);
+        return super.getItemAtPosition(modelPosition);
+    }
+
+    @Override
+    public int getItemCount() {
+        return super.getItemCount() + (withAddItem ? 1 : 0);
     }
 
     @LayoutRes
     public int getItemLayout() {
         return R.layout.rv_post_single_grid_item;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (withAddItem && position == 0) return VIEW_TYPE_ADD_NEW;
+        return super.getItemViewType(position);
     }
 
     @DebugLog
@@ -82,20 +91,5 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
     // --------------------------------------------------------------------------------------------
     public boolean withAddItem() {
         return withAddItem;
-    }
-
-    @Override
-    public void clear() {
-        super.clear();
-        if (withAddItem) addFirstSystemItem();
-    }
-
-    /* Internal */
-    // --------------------------------------------------------------------------------------------
-    private void addFirstSystemItem() {
-        models.add(PostSingleGridItemVO.builder()
-                .setId(Constant.BAD_ID)
-                .setMediaCount(0)
-                .build());
     }
 }

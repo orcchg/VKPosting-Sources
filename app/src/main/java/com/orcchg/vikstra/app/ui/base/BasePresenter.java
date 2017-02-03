@@ -21,6 +21,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
 
     private boolean isFresh = true;
     private boolean isStateRestored = false;
+    private boolean wasOnActivityResultHappened = false;
     protected Bundle savedInstanceState;
 
     @DebugLog @Override
@@ -43,6 +44,10 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
 
     protected boolean isStateRestored() {
         return isStateRestored;
+    }
+
+    protected boolean wasOnActivityResultHappened() {
+        return wasOnActivityResultHappened;
     }
 
     @DebugLog
@@ -72,6 +77,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Timber.tag(getClass().getSimpleName());
         Timber.i("onActivityResult");
+        wasOnActivityResultHappened = true;
         // to override
     }
 

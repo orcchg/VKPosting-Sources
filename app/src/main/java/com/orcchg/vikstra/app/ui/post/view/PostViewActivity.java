@@ -32,6 +32,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
         implements PostViewContract.View {
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
+    public static final int REQUEST_CODE = Constant.RequestCode.POST_VIEW_SCREEN;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.scroll_container) ViewGroup scrollContainer;
@@ -123,6 +124,12 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void setResultFromView(int resultCode) {
+        setResult(resultCode);
+    }
+
+    // ------------------------------------------
     @Override
     public void showError() {
         dropshadowView.setVisibility(View.VISIBLE);
