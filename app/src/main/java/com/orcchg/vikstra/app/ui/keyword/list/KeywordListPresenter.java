@@ -49,13 +49,13 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         private static final String BUNDLE_KEY_KEYWORD_BUNDLES = "bundle_key_keyword_bundles_" + PrID;
         private static final String BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID = "bundle_key_selected_group_bundle_id_" + PrID;
         private static final String BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID = "bundle_key_selected_keyword_bundle_id_" + PrID;
-        private static final String BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION = "bundle_key_selected_list_item_position_" + PrID;
+        private static final String BUNDLE_KEY_SELECTED_LIST_MODEL_POSITION = "bundle_key_selected_model_position_" + PrID;
         private static final String BUNDLE_KEY_WAS_LIST_ITEM_SELECTED = "bundle_key_was_list_item_selected_" + PrID;
 
         private List<KeywordBundle> keywordBundles = new ArrayList<>();
         private long selectedGroupBundleId = Constant.BAD_ID;
         private long selectedKeywordBundleId = Constant.BAD_ID;
-        private int selectedListItemPosition = Constant.BAD_POSITION;
+        private int selectedModelPosition = Constant.BAD_POSITION;
         private boolean wasListItemSelected = false;
 
         @DebugLog
@@ -68,7 +68,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             }
             outState.putLong(BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID, selectedGroupBundleId);
             outState.putLong(BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID, selectedKeywordBundleId);
-            outState.putInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, selectedListItemPosition);
+            outState.putInt(BUNDLE_KEY_SELECTED_LIST_MODEL_POSITION, selectedModelPosition);
             outState.putBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, wasListItemSelected);
         }
 
@@ -79,7 +79,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
             if (memento.keywordBundles == null) memento.keywordBundles = new ArrayList<>();
             memento.selectedGroupBundleId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID, Constant.BAD_ID);
             memento.selectedKeywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
-            memento.selectedListItemPosition = savedInstanceState.getInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, Constant.BAD_POSITION);
+            memento.selectedModelPosition = savedInstanceState.getInt(BUNDLE_KEY_SELECTED_LIST_MODEL_POSITION, Constant.BAD_POSITION);
             memento.wasListItemSelected = savedInstanceState.getBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, false);
             return memento;
         }
@@ -106,7 +106,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     protected BaseAdapter createListAdapter() {
         KeywordListAdapter adapter = new KeywordListAdapter(selectMode);
         adapter.setOnItemClickListener((view, viewObject, position) -> {
-            memento.selectedListItemPosition = viewObject.getSelection() ? position : Constant.BAD_POSITION;
+            memento.selectedModelPosition = viewObject.getSelection() ? position : Constant.BAD_POSITION;
             memento.wasListItemSelected = viewObject.getSelection();
             long groupBundleId = viewObject.getSelection() ? viewObject.groupBundleId() : Constant.BAD_ID;
             long keywordBundleId = viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID;
@@ -228,7 +228,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     private void dropSelection() {
         changeSelectedGroupAndKeywordBundleId(Constant.BAD_ID, Constant.BAD_ID);  // drop selection
-        memento.selectedListItemPosition = Constant.BAD_POSITION;
+        memento.selectedModelPosition = Constant.BAD_POSITION;
         memento.wasListItemSelected = false;
     }
 
@@ -245,7 +245,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @Override
     protected void onRestoreState() {
         memento = Memento.fromBundle(savedInstanceState);
-        int position = memento.selectedListItemPosition;
+        int position = memento.selectedModelPosition;
         boolean isEmpty = populateList(memento.keywordBundles);
         if (!isEmpty && position != Constant.BAD_POSITION) {
             ((KeywordListAdapter) listAdapter).selectItemAtPosition(position, memento.wasListItemSelected);

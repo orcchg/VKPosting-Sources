@@ -21,8 +21,15 @@ import dagger.Provides;
 @Module
 public class PostSingleGridModule extends ListModule {
 
+    protected final long selectedPostId;
+
     public PostSingleGridModule(@BaseSelectAdapter.SelectMode int selectMode) {
+        this(selectMode, Constant.BAD_ID);
+    }
+
+    public PostSingleGridModule(@BaseSelectAdapter.SelectMode int selectMode, long selectedPostId) {
         super(selectMode);
+        this.selectedPostId = selectedPostId;
     }
 
     @Provides @PerActivity @Named("PostGridScreen")
@@ -38,6 +45,6 @@ public class PostSingleGridModule extends ListModule {
     @Provides @PerActivity
     protected PostSingleGridPresenter providePostSingleGridPresenter(@Named("PostGridScreen") GetPostById getPostByIdUseCase,
             GetPosts getPostsUseCase, DeletePost deletePostUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
-        return new PostSingleGridPresenter(selectMode, getPostByIdUseCase, getPostsUseCase, deletePostUseCase, postToSingleGridVoMapper);
+        return new PostSingleGridPresenter(selectMode, selectedPostId, getPostByIdUseCase, getPostsUseCase, deletePostUseCase, postToSingleGridVoMapper);
     }
 }

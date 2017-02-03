@@ -199,7 +199,11 @@ public class Navigator {
     }
 
     public void openPostListScreen(@NonNull Activity context) {
-        Intent intent = PostListActivity.getCallingIntent(context);
+        openPostListScreen(context, Constant.BAD_ID);
+    }
+
+    public void openPostListScreen(@NonNull Activity context, long selectedPostId) {
+        Intent intent = PostListActivity.getCallingIntent(context, selectedPostId);
         context.startActivityForResult(intent, PostListActivity.REQUEST_CODE);
     }
 

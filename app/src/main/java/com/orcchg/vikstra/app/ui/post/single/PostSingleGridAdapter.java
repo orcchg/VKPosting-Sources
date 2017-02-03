@@ -37,7 +37,7 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
 
     @Override
     protected PostSingleGridViewHolder createModelViewHolder(ViewGroup parent) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(getItemLayout(), parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(getItemLayout(VIEW_TYPE_NORMAL), parent, false);
         PostSingleGridViewHolder viewHolder = new PostSingleGridViewHolder(view);
         viewHolder.setOnItemClickListener(wrappedItemClickListener);
         viewHolder.setOnItemLongClickListener(onItemLongClickListener);
@@ -45,7 +45,7 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
     }
 
     protected NewPostSingleGridViewHolder createAddNewViewHolder(ViewGroup parent) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.rv_new_post_single_grid_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(getItemLayout(VIEW_TYPE_ADD_NEW), parent, false);
         return new NewPostSingleGridViewHolder(view, onNewItemClickListener);
     }
 
@@ -70,8 +70,13 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
     }
 
     @LayoutRes
-    public int getItemLayout() {
-        return R.layout.rv_post_single_grid_item;
+    public int getItemLayout(int viewType) {
+        switch (viewType) {
+            case VIEW_TYPE_ADD_NEW: return R.layout.rv_new_post_single_grid_item;
+            case VIEW_TYPE_NORMAL:
+            default:  // TODO: support loading / error view-types
+                return R.layout.rv_post_single_grid_item;
+        }
     }
 
     @Override
@@ -81,10 +86,10 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
     }
 
     @DebugLog
-    public void selectItemAtPosition(int position, boolean isSelected) {
-        PostSingleGridItemVO vo = get(position);
+    public void selectItemAtPosition(int modelPosition, boolean isSelected) {
+        PostSingleGridItemVO vo = models.get(modelPosition);
         vo.setSelection(isSelected);
-        notifyItemChanged(position);
+        notifyItemChanged(withAddItem ? modelPosition + 1 : modelPosition);
     }
 
     /* Data access */

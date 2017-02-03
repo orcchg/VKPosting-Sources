@@ -29,10 +29,14 @@ import com.orcchg.vikstra.domain.util.Constant;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 public class PostListActivity extends BaseActivity<PostSingleGridContract.View, PostListContract.Presenter>
         implements PostListContract.View, IScrollGrid, ShadowHolder {
     private static final String FRAGMENT_TAG = "post_list_fragment_tag";
+    private static final String BUNDLE_KEY_SELECTED_POST_ID = "bundle_key_selected_post_id";
+    private static final String EXTRA_SELECTED_POST_ID = "extra_selected_post_id";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_LIST_SCREEN;
 
     @BindView(R.id.coordinator_root) ViewGroup coordinatorRoot;
@@ -45,9 +49,16 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
     }
 
     private PostListComponent postListComponent;
+    private long selectedPostId = Constant.BAD_ID;
 
     public static Intent getCallingIntent(@NonNull Context context) {
-        return new Intent(context, PostListActivity.class);
+        return getCallingIntent(context, Constant.BAD_ID);
+    }
+
+    public static Intent getCallingIntent(@NonNull Context context, long selectedPostId) {
+        Intent intent = new Intent(context, PostListActivity.class);
+        intent.putExtra(EXTRA_SELECTED_POST_ID, selectedPostId);
+        return intent;
     }
 
     @NonNull @Override
@@ -59,7 +70,8 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
     protected void injectDependencies() {
         postListComponent = DaggerPostListComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .postListModule(new PostListModule(BaseSelectAdapter.SELECT_MODE_SINGLE))  // items are selectable
+                // items are selectable
+                .postListModule(new PostListModule(BaseSelectAdapter.SELECT_MODE_SINGLE, selectedPostId))
                 .build();
         postListComponent.inject(this);
     }
@@ -68,11 +80,30 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        initData(savedInstanceState);  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posts_list);
         ButterKnife.bind(this);
         initView();
         initToolbar();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(BUNDLE_KEY_SELECTED_POST_ID, selectedPostId);
+    }
+
+    /* Data */
+    // --------------------------------------------------------------------------------------------
+    @DebugLog
+    private void initData(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            selectedPostId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_POST_ID, Constant.BAD_ID);
+        } else {
+            selectedPostId = getIntent().getLongExtra(EXTRA_SELECTED_POST_ID, Constant.BAD_ID);
+        }
+        Timber.d("Post id: %s", selectedPostId);
     }
 
     /* View */

@@ -19,19 +19,24 @@ public class PostListPresenter extends PostSingleGridPresenter implements PostLi
     private static final int PrID = Constant.PresenterId.POST_LIST_PRESENTER;
 
     @Inject
-    public PostListPresenter(@BaseSelectAdapter.SelectMode int selectMode, GetPostById getPostByIdUseCase,
-                             GetPosts getPostsUseCase, DeletePost deletePostUseCase,
-                             PostToSingleGridVoMapper postToSingleGridVoMapper) {
-        super(selectMode, getPostByIdUseCase, getPostsUseCase, deletePostUseCase, postToSingleGridVoMapper);
+    public PostListPresenter(@BaseSelectAdapter.SelectMode int selectMode, long selectedPostId,
+                             GetPostById getPostByIdUseCase, GetPosts getPostsUseCase,
+                             DeletePost deletePostUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+        super(selectMode, selectedPostId, getPostByIdUseCase, getPostsUseCase, deletePostUseCase, postToSingleGridVoMapper);
     }
 
     @Override
     protected BaseAdapter createListAdapter() {
         // slightly change item layout for this adapter
-        PostSingleGridAdapter adapter = new PostSingleGridAdapter(selectMode, false) {
+        PostSingleGridAdapter adapter = new PostSingleGridAdapter(selectMode, true) {
             @Override
-            public int getItemLayout() {
-                return R.layout.rv_post_list_item;
+            public int getItemLayout(int viewType) {
+                switch (viewType) {
+                    case VIEW_TYPE_ADD_NEW: return R.layout.rv_new_post_list_item;
+                    case VIEW_TYPE_NORMAL:
+                    default:  // TODO: support loading / error view-types
+                        return R.layout.rv_post_list_item;
+                }
             }
         };
         prepareAdapter(adapter);

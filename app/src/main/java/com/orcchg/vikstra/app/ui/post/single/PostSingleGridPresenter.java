@@ -48,12 +48,12 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     private static final class Memento {
         private static final String BUNDLE_KEY_POSTS = "bundle_key_posts_" + PrID;
         private static final String BUNDLE_KEY_SELECTED_POST_ID = "bundle_key_selected_post_id_" + PrID;
-        private static final String BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION = "bundle_key_selected_list_item_position_" + PrID;
+        private static final String BUNDLE_KEY_SELECTED_MODEL_POSITION = "bundle_key_selected_model_position_" + PrID;
         private static final String BUNDLE_KEY_WAS_LIST_ITEM_SELECTED = "bundle_key_was_list_item_selected_" + PrID;
 
         private List<Post> posts = new ArrayList<>();
         private long selectedPostId = Constant.BAD_ID;
-        private int selectedListItemPosition = Constant.BAD_POSITION;
+        private int selectedModelPosition = Constant.BAD_POSITION;
         private boolean wasListItemSelected = false;
 
         @DebugLog
@@ -65,7 +65,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                 outState.putParcelableArrayList(BUNDLE_KEY_POSTS, copyPosts);
             }
             outState.putLong(BUNDLE_KEY_SELECTED_POST_ID, selectedPostId);
-            outState.putInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, selectedListItemPosition);
+            outState.putInt(BUNDLE_KEY_SELECTED_MODEL_POSITION, selectedModelPosition);
             outState.putBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, wasListItemSelected);
         }
 
@@ -75,7 +75,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             memento.posts = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_POSTS);
             if (memento.posts == null) memento.posts = new ArrayList<>();
             memento.selectedPostId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_POST_ID, Constant.BAD_ID);
-            memento.selectedListItemPosition = savedInstanceState.getInt(BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION, Constant.BAD_POSITION);
+            memento.selectedModelPosition = savedInstanceState.getInt(BUNDLE_KEY_SELECTED_MODEL_POSITION, Constant.BAD_POSITION);
             memento.wasListItemSelected = savedInstanceState.getBoolean(BUNDLE_KEY_WAS_LIST_ITEM_SELECTED, false);
             return memento;
         }
@@ -83,10 +83,11 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     // --------------------------------------------------------------------------------------------
     @Inject
-    public PostSingleGridPresenter(@BaseSelectAdapter.SelectMode int selectMode, GetPostById getPostByIdUseCase,
-                                   GetPosts getPostsUseCase, DeletePost deletePostUseCase,
-                                   PostToSingleGridVoMapper postToSingleGridVoMapper) {
+    public PostSingleGridPresenter(@BaseSelectAdapter.SelectMode int selectMode, long selectedPostId,
+                                   GetPostById getPostByIdUseCase, GetPosts getPostsUseCase,
+                                   DeletePost deletePostUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.selectMode = selectMode;
+        this.memento.selectedPostId = selectedPostId;
         this.listAdapter = createListAdapter();
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
@@ -110,7 +111,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     protected void prepareAdapter(PostSingleGridAdapter adapter) {
         adapter.setOnItemClickListener((view, viewObject, position) -> {
             int modelPosition = adapter.withAddItem() ? position - 1 : position;
-            memento.selectedListItemPosition = viewObject.getSelection() ? modelPosition : Constant.BAD_POSITION;
+            memento.selectedModelPosition = viewObject.getSelection() ? modelPosition : Constant.BAD_POSITION;
             memento.wasListItemSelected = viewObject.getSelection();
             changeSelectedPostId(viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID);
         });
@@ -162,6 +163,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
             if (((PostSingleGridAdapter) listAdapter).withAddItem()) modelPosition -= 1;
         }
         long postId = memento.posts.get(modelPosition).id();
+        if (postId == memento.selectedPostId) dropSelection();
         deletePostUseCase.setPostId(postId);
         deletePostUseCase.execute();  // silent delete without callback
 
@@ -216,7 +218,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     protected void dropSelection() {
         changeSelectedPostId(Constant.BAD_ID);  // drop selection
-        memento.selectedListItemPosition = Constant.BAD_POSITION;
+        memento.selectedModelPosition = Constant.BAD_POSITION;
         memento.wasListItemSelected = false;
     }
 
@@ -233,11 +235,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
     @Override
     protected void onRestoreState() {
         memento = Memento.fromBundle(savedInstanceState);
-        int position = memento.selectedListItemPosition;
-        boolean isEmpty = populateList(memento.posts);
-        if (!isEmpty && position != Constant.BAD_POSITION) {
-            ((PostSingleGridAdapter) listAdapter).selectItemAtPosition(memento.selectedListItemPosition, memento.wasListItemSelected);
-        }
+        selectPost();
         changeSelectedPostId(memento.selectedPostId);
     }
 
@@ -261,11 +259,12 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get Post by id");
-                memento.posts.add(0, post);  // add post on top of the list
+                memento.posts.add(post);  // add Post to the end of the list
                 listMemento.currentSize += 1;
                 PostSingleGridItemVO viewObject = postToSingleGridVoMapper.map(post);
                 listAdapter.addInverse(viewObject);
                 if (isViewAttached()) getView().showPosts(viewObject == null);
+                selectInitialPost();  // new Post was added - recalculate selection properly
             }
 
             @Override
@@ -292,6 +291,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     memento.posts = posts;
                     listMemento.currentSize += posts.size();
                     populateList(posts);
+                    selectInitialPost();
                 }
             }
 
@@ -317,6 +317,39 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         boolean isEmpty = vos == null || vos.isEmpty();
         if (isViewAttached()) getView().showPosts(isEmpty);
         return isEmpty;
+    }
+
+    /**
+     * Apply input 'selectedPostId' value as soon as Post-s have been loaded
+     * and added to the list. Then iterate through Post-s list and find position
+     * of selected Post.
+     */
+    private void selectInitialPost() {
+        long selectedPostId = memento.selectedPostId;
+        if (selectedPostId != Constant.BAD_ID) {
+            changeSelectedPostId(selectedPostId);
+            int position = 0;
+            for (Post post : memento.posts) {
+                if (post.id() == selectedPostId) {
+                    memento.selectedModelPosition = position;
+                    memento.wasListItemSelected = true;
+                    selectPost();
+                    break;
+                }
+                ++position;
+            }
+            Timber.d("Post with id [%s] has initially been selected, position: %s", selectedPostId, position);
+        } else {
+            Timber.d("No Post was initially selected");
+        }
+    }
+
+    private void selectPost() {
+        int position = memento.selectedModelPosition;
+        boolean isEmpty = populateList(memento.posts);
+        if (!isEmpty && position != Constant.BAD_POSITION) {
+            ((PostSingleGridAdapter) listAdapter).selectItemAtPosition(position, memento.wasListItemSelected);
+        }
     }
 
     // TODO: assign totalItems

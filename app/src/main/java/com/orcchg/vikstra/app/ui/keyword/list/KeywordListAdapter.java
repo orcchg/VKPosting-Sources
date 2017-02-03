@@ -37,9 +37,9 @@ public class KeywordListAdapter extends BaseSelectAdapter<KeywordViewHolder, Key
     }
 
     @DebugLog
-    public void selectItemAtPosition(int position, boolean isSelected) {
-        KeywordListItemVO vo = get(position);
+    public void selectItemAtPosition(int modelPosition, boolean isSelected) {
+        KeywordListItemVO vo = models.get(modelPosition);
         vo.setSelection(isSelected);
-        notifyItemChanged(position);
+        notifyItemChanged(modelPosition);
     }
 }

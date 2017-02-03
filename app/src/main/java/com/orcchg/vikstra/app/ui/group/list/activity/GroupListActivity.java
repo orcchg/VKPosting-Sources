@@ -81,7 +81,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     }
     @OnClick(R.id.btn_change_post)
     void onChangePostClick() {
-        navigationComponent.navigator().openPostListScreen(this);
+        navigationComponent.navigator().openPostListScreen(this, postId);
     }
 
     private GroupListComponent groupComponent;
@@ -273,7 +273,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     @Override
     public void openPostListScreen() {
-        navigationComponent.navigator().openPostListScreen(this);
+        navigationComponent.navigator().openPostListScreen(this, postId);
     }
 
     // ------------------------------------------

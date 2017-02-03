@@ -21,9 +21,13 @@ public class PostListModule extends PostSingleGridModule {
         super(selectMode);
     }
 
+    public PostListModule(@BaseSelectAdapter.SelectMode int selectMode, long selectedPostId) {
+        super(selectMode, selectedPostId);
+    }
+
     @Provides @PerActivity
-    protected PostListPresenter providePostListPresenter(@Named("PostGridScreen") GetPostById getPostByIdUseCase, GetPosts getPostsUseCase,
-            DeletePost deletePostUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
-        return new PostListPresenter(selectMode, getPostByIdUseCase, getPostsUseCase, deletePostUseCase, postToSingleGridVoMapper);
+    protected PostListPresenter providePostListPresenter(@Named("PostGridScreen") GetPostById getPostByIdUseCase,
+            GetPosts getPostsUseCase, DeletePost deletePostUseCase, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+        return new PostListPresenter(selectMode, selectedPostId, getPostByIdUseCase, getPostsUseCase, deletePostUseCase, postToSingleGridVoMapper);
     }
 }
