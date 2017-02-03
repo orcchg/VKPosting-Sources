@@ -58,6 +58,7 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
+    private static final int PrID = Constant.PresenterId.GROUP_LIST_FRAGMENT_PRESENTER;
 
     private final AddKeywordToBundle addKeywordToBundleUseCase;
     private final DeleteKeywordBundle deleteKeywordBundleUseCase;

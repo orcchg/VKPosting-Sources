@@ -29,6 +29,7 @@ import timber.log.Timber;
 import static com.orcchg.vikstra.domain.util.Constant.BAD_ID;
 
 public class GroupListPresenter extends BasePresenter<GroupListContract.View> implements GroupListContract.Presenter {
+    private static final int PrID = Constant.PresenterId.GROUP_LIST_ACTIVITY_PRESENTER;
 
     private final DumpGroups dumpGroupsUseCase;
 
@@ -38,7 +39,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     // --------------------------------------------------------------------------------------------
     private static final class Memento {
-        private static final String BUNDLE_KEY_TITLE = "bundle_key_title";
+        private static final String BUNDLE_KEY_TITLE = "bundle_key_title_" + PrID;
 
         private @Nullable String title;
         private boolean hasTitleChanged;

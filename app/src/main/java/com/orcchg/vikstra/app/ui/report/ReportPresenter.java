@@ -40,6 +40,7 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class ReportPresenter extends BaseListPresenter<ReportContract.View> implements ReportContract.Presenter {
+    private static final int PrID = Constant.PresenterId.REPORT_PRESENTER;
 
     private final GetGroupReportBundleById getGroupReportBundleByIdUseCase;
     private final GetPostById getPostByIdUseCase;

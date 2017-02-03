@@ -33,6 +33,7 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> implements PostCreateContract.Presenter {
+    private static final int PrID = Constant.PresenterId.POST_CREATE_PRESENTER;
 
     private final GetPostById getPostByIdUseCase;
     private final PostPost postPostUseCase;
@@ -44,10 +45,10 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     // --------------------------------------------------------------------------------------------
     private static final class Memento {
-        private static final String BUNDLE_KEY_ATTACH_LINK = "bundle_key_attach_link";
-        private static final String BUNDLE_KEY_ATTACH_MEDIA = "bundle_key_attach_media";
-        private static final String BUNDLE_KEY_HAS_ATTACH_CHANGED = "bundle_key_has_attach_changed";
-        private static final String BUNDLE_KEY_INPUT_POST = "bundle_key_input_post";
+        private static final String BUNDLE_KEY_ATTACH_LINK = "bundle_key_attach_link_" + PrID;
+        private static final String BUNDLE_KEY_ATTACH_MEDIA = "bundle_key_attach_media_" + PrID;
+        private static final String BUNDLE_KEY_HAS_ATTACH_CHANGED = "bundle_key_has_attach_changed_" + PrID;
+        private static final String BUNDLE_KEY_INPUT_POST = "bundle_key_input_post_" + PrID;
 
         private String attachLink;
         private List<Media> attachMedia = new ArrayList<>();

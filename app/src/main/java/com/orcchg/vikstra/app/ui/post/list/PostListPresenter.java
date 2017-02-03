@@ -16,6 +16,7 @@ import com.orcchg.vikstra.domain.util.Constant;
 import javax.inject.Inject;
 
 public class PostListPresenter extends PostSingleGridPresenter implements PostListContract.Presenter {
+    private static final int PrID = Constant.PresenterId.POST_LIST_PRESENTER;
 
     @Inject
     public PostListPresenter(@BaseSelectAdapter.SelectMode int selectMode, GetPostById getPostByIdUseCase,

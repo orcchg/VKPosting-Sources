@@ -32,6 +32,7 @@ import timber.log.Timber;
 
 public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.View>
         implements KeywordListContract.Presenter {
+    private static final int PrID = Constant.PresenterId.KEYWORD_LIST_PRESENTER;
 
     private final GetKeywordBundles getKeywordBundlesUseCase;
     private final DeleteKeywordBundle deleteKeywordBundleUseCase;
@@ -45,11 +46,11 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     // --------------------------------------------------------------------------------------------
     private static final class Memento {
-        private static final String BUNDLE_KEY_KEYWORD_BUNDLES = "bundle_key_keyword_bundles";
-        private static final String BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID = "bundle_key_selected_group_bundle_id";
-        private static final String BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID = "bundle_key_selected_keyword_bundle_id";
-        private static final String BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION = "bundle_key_selected_list_item_position";
-        private static final String BUNDLE_KEY_WAS_LIST_ITEM_SELECTED = "bundle_key_was_list_item_selected";
+        private static final String BUNDLE_KEY_KEYWORD_BUNDLES = "bundle_key_keyword_bundles_" + PrID;
+        private static final String BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID = "bundle_key_selected_group_bundle_id_" + PrID;
+        private static final String BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID = "bundle_key_selected_keyword_bundle_id_" + PrID;
+        private static final String BUNDLE_KEY_SELECTED_LIST_ITEM_POSITION = "bundle_key_selected_list_item_position_" + PrID;
+        private static final String BUNDLE_KEY_WAS_LIST_ITEM_SELECTED = "bundle_key_was_list_item_selected_" + PrID;
 
         private List<KeywordBundle> keywordBundles = new ArrayList<>();
         private long selectedGroupBundleId = Constant.BAD_ID;
@@ -105,7 +106,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     protected BaseAdapter createListAdapter() {
         KeywordListAdapter adapter = new KeywordListAdapter(selectMode);
         adapter.setOnItemClickListener((view, viewObject, position) -> {
-            memento.selectedListItemPosition = position;
+            memento.selectedListItemPosition = viewObject.getSelection() ? position : Constant.BAD_POSITION;
             memento.wasListItemSelected = viewObject.getSelection();
             long groupBundleId = viewObject.getSelection() ? viewObject.groupBundleId() : Constant.BAD_ID;
             long keywordBundleId = viewObject.getSelection() ? viewObject.id() : Constant.BAD_ID;
@@ -238,9 +239,10 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
     @Override
     protected void onRestoreState() {
         memento = Memento.fromBundle(savedInstanceState);
+        int position = memento.selectedListItemPosition;
         boolean isEmpty = populateList(memento.keywordBundles);
-        if (!isEmpty) {
-            ((KeywordListAdapter) listAdapter).selectItemAtPosition(memento.selectedListItemPosition, memento.wasListItemSelected);
+        if (!isEmpty && position != Constant.BAD_POSITION) {
+            ((KeywordListAdapter) listAdapter).selectItemAtPosition(position, memento.wasListItemSelected);
         }
         changeSelectedGroupAndKeywordBundleId(memento.selectedGroupBundleId, memento.selectedKeywordBundleId);
     }

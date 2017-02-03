@@ -15,6 +15,8 @@ import com.orcchg.vikstra.app.ui.post.single.viewholder.PostSingleGridViewHolder
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import hugo.weaving.DebugLog;
+
 public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewHolder, PostSingleGridItemVO> {
 
     protected static final int VIEW_TYPE_ADD_NEW = 3;
@@ -69,6 +71,7 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
         return R.layout.rv_post_single_grid_item;
     }
 
+    @DebugLog
     public void selectItemAtPosition(int position, boolean isSelected) {
         PostSingleGridItemVO vo = get(position);
         vo.setSelection(isSelected);

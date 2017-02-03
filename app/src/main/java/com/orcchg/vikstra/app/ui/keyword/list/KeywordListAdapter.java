@@ -10,6 +10,8 @@ import com.orcchg.vikstra.app.ui.base.adapter.BaseSelectAdapter;
 import com.orcchg.vikstra.app.ui.keyword.list.viewholder.KeywordViewHolder;
 import com.orcchg.vikstra.app.ui.viewobject.KeywordListItemVO;
 
+import hugo.weaving.DebugLog;
+
 public class KeywordListAdapter extends BaseSelectAdapter<KeywordViewHolder, KeywordListItemVO> {
 
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> wrappedItemClickListener;
@@ -34,6 +36,7 @@ public class KeywordListAdapter extends BaseSelectAdapter<KeywordViewHolder, Key
         return viewHolder;
     }
 
+    @DebugLog
     public void selectItemAtPosition(int position, boolean isSelected) {
         KeywordListItemVO vo = get(position);
         vo.setSelection(isSelected);

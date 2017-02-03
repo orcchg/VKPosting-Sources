@@ -26,6 +26,7 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.View> implements KeywordCreateContract.Presenter {
+    private static final int PrID = Constant.PresenterId.KEYWORD_CREATE_PRESENTER;
 
     private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final PostKeywordBundle postKeywordBundleUseCase;
@@ -35,11 +36,11 @@ public class KeywordCreatePresenter extends BasePresenter<KeywordCreateContract.
 
     // --------------------------------------------------------------------------------------------
     private static final class Memento {
-        private static final String BUNDLE_KEY_KEYWORDS = "bundle_key_keywords";
-        private static final String BUNDLE_KEY_HAS_KEYWORD_CHANGED = "bundle_key_has_keyword_changed";
-        private static final String BUNDLE_KEY_HAS_TITLE_CHANGED = "bundle_key_has_title_changed";
-        private static final String BUNDLE_KEY_TIMESTAMP = "bundle_key_timestamp";
-        private static final String BUNDLE_KEY_TITLE = "bundle_key_title";
+        private static final String BUNDLE_KEY_KEYWORDS = "bundle_key_keywords_" + PrID;
+        private static final String BUNDLE_KEY_HAS_KEYWORD_CHANGED = "bundle_key_has_keyword_changed_" + PrID;
+        private static final String BUNDLE_KEY_HAS_TITLE_CHANGED = "bundle_key_has_title_changed_" + PrID;
+        private static final String BUNDLE_KEY_TIMESTAMP = "bundle_key_timestamp_" + PrID;
+        private static final String BUNDLE_KEY_TITLE = "bundle_key_title_" + PrID;
 
         private Set<Keyword> keywords = new TreeSet<>();
         private boolean hasKeywordsChanged;

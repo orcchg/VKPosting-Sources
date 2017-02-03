@@ -37,4 +37,15 @@ public class Constant {
         public static final int POSTING = 101;
         public static final int PHOTO_UPLOAD = 102;
     }
+
+    public static final class PresenterId {
+        public static final int GROUP_LIST_ACTIVITY_PRESENTER = 10000;
+        public static final int GROUP_LIST_FRAGMENT_PRESENTER = 10001;
+        public static final int KEYWORD_CREATE_PRESENTER = 10010;
+        public static final int KEYWORD_LIST_PRESENTER = 10011;
+        public static final int POST_CREATE_PRESENTER = 10020;
+        public static final int POST_LIST_PRESENTER = 10021;
+        public static final int POST_SINGLE_GRID_PRESENTER = 10022;
+        public static final int REPORT_PRESENTER = 10030;
+    }
 }
