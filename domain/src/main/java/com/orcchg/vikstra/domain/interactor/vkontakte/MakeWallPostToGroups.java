@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api220VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
-import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
+import com.orcchg.vikstra.domain.exception.vkontakte.Api6VkUseCaseException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
@@ -85,7 +85,7 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
     @Inject @SuppressWarnings("unchecked")
     public MakeWallPostToGroups(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(0, threadExecutor, postExecuteScheduler);  // total count will be set later
-        setAllowedErrors(VkUseCaseRetryException.class);
+        setAllowedErrors(Api6VkUseCaseException.class);
         setTerminalErrors(Api5VkUseCaseException.class, Api220VkUseCaseException.class);
     }
 

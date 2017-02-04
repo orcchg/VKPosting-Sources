@@ -3,7 +3,7 @@ package com.orcchg.vikstra.domain.interactor.vkontakte;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
-import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
+import com.orcchg.vikstra.domain.exception.vkontakte.Api6VkUseCaseException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
@@ -27,7 +27,7 @@ public class GetGroupsByKeywordsList extends MultiUseCase<VKApiCommunityArray, L
                                    PostExecuteScheduler postExecuteScheduler) {
         super(keywords.size(), threadExecutor, postExecuteScheduler);
         this.keywords = keywords;
-        setAllowedErrors(VkUseCaseRetryException.class);
+        setAllowedErrors(Api6VkUseCaseException.class);
         setTerminalErrors(Api5VkUseCaseException.class);
     }
 

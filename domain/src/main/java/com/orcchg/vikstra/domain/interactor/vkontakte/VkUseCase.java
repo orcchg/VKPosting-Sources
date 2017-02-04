@@ -3,7 +3,6 @@ package com.orcchg.vikstra.domain.interactor.vkontakte;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseExceptionFactory;
-import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseRetryException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -77,15 +76,7 @@ public abstract class VkUseCase<Result> extends UseCase<Result> {
                 synchronized (lock) {
                     Timber.tag(getClass().getSimpleName());
                     Timber.e("Failed to receive response: %s", error.toString());
-                    if (error.apiError != null && error.apiError.errorCode == 6) {
-                        Timber.tag(getClass().getSimpleName());
-                        Timber.d("Throwing Vk use-case retry exception");
-                        vkException = new VkUseCaseRetryException();
-                    } else {
-                        Timber.tag(getClass().getSimpleName());
-                        Timber.d("Throwing other Vk use-case exception");
-                        vkException = VkUseCaseExceptionFactory.create(error);
-                    }
+                    vkException = VkUseCaseExceptionFactory.create(error);
                     lock.notify();  // wake-up use-case processing thread
                 }
             }
