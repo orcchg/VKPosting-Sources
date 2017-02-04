@@ -25,7 +25,7 @@ public class PermissionManager {
     }
 
     /* Read & Write external storage */
-    // ------------------------------------------
+    // --------------------------------------------------------------------------------------------
     @DebugLog
     public boolean hasReadExternalStoragePermission() {
         return hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE);

@@ -123,7 +123,8 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     String imagePath = cursor.getString(columnIndex);
                     Timber.d("Selected image from Gallery, url: %s", imagePath);
                     if (isViewAttached()) getView().addMediaThumbnail(imagePath);
-                    Media media = Media.builder().setId(1000).setUrl(imagePath).build();  // TODO: unique id
+                    long mediaId = sharedPrefsManagerComponent.sharedPrefsManager().getUniqueMediaId();
+                    Media media = Media.builder().setId(mediaId).setUrl(imagePath).build();
                     memento.attachMedia.add(media);
                     memento.hasAttachChanged = true;
                     cursor.close();

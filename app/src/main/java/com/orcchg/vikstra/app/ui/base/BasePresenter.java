@@ -1,15 +1,16 @@
 package com.orcchg.vikstra.app.ui.base;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
-import com.orcchg.vikstra.app.navigation.Navigator;
+import com.orcchg.vikstra.app.injection.component.DaggerSharedPrefsManagerComponent;
+import com.orcchg.vikstra.app.injection.component.SharedPrefsManagerComponent;
+import com.orcchg.vikstra.app.injection.module.SharedPrefsManagerModule;
 
 import java.lang.ref.WeakReference;
-
-import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
@@ -17,6 +18,7 @@ import timber.log.Timber;
 public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
 
     private WeakReference<V> viewRef;
+    protected SharedPrefsManagerComponent sharedPrefsManagerComponent;
 
     private boolean isFresh = true;
     private boolean isStateRestored = false;
@@ -65,6 +67,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Timber.tag(getClass().getSimpleName());
         Timber.i("onCreate");
+        injectSharedPrefsManager();
         isStateRestored = savedInstanceState != null;
         this.savedInstanceState = savedInstanceState;
         // to override
@@ -152,5 +155,19 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
         Timber.tag(getClass().getSimpleName());
         Timber.d("Application component is null - either view is not attached or it is not an instance of Base* class");
         return null;
+    }
+
+    public SharedPrefsManagerComponent getSharedPrefsManagerComponent() {
+        return sharedPrefsManagerComponent;
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    private void injectSharedPrefsManager() {
+        // app component isn't null, because onCreate() is followed by attachView()
+        Context context = getApplicationComponent().context();
+        sharedPrefsManagerComponent = DaggerSharedPrefsManagerComponent.builder()
+            .sharedPrefsManagerModule(new SharedPrefsManagerModule(context))
+            .build();
     }
 }
