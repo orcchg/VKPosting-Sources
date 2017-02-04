@@ -17,7 +17,6 @@ import timber.log.Timber;
 public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
 
     private WeakReference<V> viewRef;
-    protected @Inject Navigator navigator;
 
     private boolean isFresh = true;
     private boolean isStateRestored = false;
@@ -41,11 +40,9 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     protected boolean isOnFreshStart() {
         return isFresh;
     }
-
     protected boolean isStateRestored() {
         return isStateRestored;
     }
-
     protected boolean wasOnActivityResultHappened() {
         return wasOnActivityResultHappened;
     }
