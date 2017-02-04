@@ -40,17 +40,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     // --------------------------------------------------------------------------------------------
     private static final class Memento {
         private static final String BUNDLE_KEY_TITLE = "bundle_key_title_" + PrID;
+        private static final String BUNDLE_KEY_HAS_TITLE_CHANGED = "bundle_key_has_title_changed_" + PrID;
 
         private @Nullable String title;
         private boolean hasTitleChanged;
 
         private void toBundle(Bundle outState) {
             outState.putString(BUNDLE_KEY_TITLE, title);
+            outState.putBoolean(BUNDLE_KEY_HAS_TITLE_CHANGED, hasTitleChanged);
         }
 
         private static Memento fromBundle(Bundle savedInstanceState) {
             Memento memento = new Memento();
             memento.title = savedInstanceState.getString(BUNDLE_KEY_TITLE);
+            memento.hasTitleChanged = savedInstanceState.getBoolean(BUNDLE_KEY_HAS_TITLE_CHANGED, false);
             return memento;
         }
     }
@@ -88,6 +91,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        memento.toBundle(outState);
     }
 
     @Override
@@ -323,8 +332,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     protected void onRestoreState() {
         memento = Memento.fromBundle(savedInstanceState);
-        // TODO: assign title
-        // TODO: call: getView().setInputGroupsTitle(title);
+        if (isViewAttached()) getView().setInputGroupsTitle(memento.title);
     }
 
     /* Callback */
