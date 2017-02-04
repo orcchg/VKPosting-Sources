@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 import timber.log.Timber;
 
-@AutoValue
+@AutoValue @Heavy
 public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<Group> {
 
     public static Builder builder() {

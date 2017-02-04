@@ -36,6 +36,7 @@ import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
+import com.orcchg.vikstra.domain.model.Heavy;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
@@ -73,27 +74,25 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private final PutGroupBundle putGroupBundleUseCase;
     private final PutGroupReportBundle putGroupReportBundle;
     private final VkontakteEndpoint vkontakteEndpoint;
-
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
-
-    private List<GroupParentItem> groupParentItems = new ArrayList<>();
-    private GroupListAdapter listAdapter;
-
-    int totalSelectedGroups, totalGroups;
-    private boolean isKeywordBundleChanged, isGroupBundleChanged;
-    private Keyword newlyAddedKeyword;
-    private GroupBundle inputGroupBundle;
-    private KeywordBundle inputKeywordBundle;
-    private Post currentPost;
-
-    // state control flags
-    private boolean isAddingNewKeyword;
-    private boolean isRefreshing;
-    private boolean fetchedInputGroupBundleFromRepo;
-    private boolean wasInputKeywordBundleCreated;
 
     private GroupListMediatorComponent mediatorComponent;
 
+    // --------------------------------------------------------------------------------------------
+    private List<GroupParentItem> groupParentItems = new ArrayList<>();
+    private GroupListAdapter listAdapter;
+
+    /**
+     * These fields aren't included in {@link Memento} because this will be refreshed or applied
+     * automatically sometime between {@link GroupListPresenter#onStop()} and {@link GroupListPresenter#onRestoreState()}.
+     */
+    int totalSelectedGroups, totalGroups;
+    private boolean isKeywordBundleChanged, isGroupBundleChanged;
+    private @Heavy GroupBundle inputGroupBundle;  // too heave object to store in Memento - only it's id will be included
+
+    private Memento memento = new Memento();
+
+    // --------------------------------------------------------------------------------------------
     private static final class StateContainer {
         private static final int ERROR_LOAD = -1;
         private static final int START = 0;
@@ -116,8 +115,64 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         private @interface State {}
     }
 
-    private @StateContainer.State int state;
+    // --------------------------------------------------------------------------------------------
+    private static final class Memento {
+        private static final String BUNDLE_KEY_INPUT_GROUP_BUNDLE_ID = "bundle_key_input_group_bundle_id_" + PrID;
+        private static final String BUNDLE_KEY_INPUT_KEYWORD_BUNDLE = "bundle_key_input_keyword_bundle_" + PrID;
+        private static final String BUNDLE_KEY_CURRENT_POST = "bundle_key_current_post_" + PrID;
+        private static final String BUNDLE_KEY_NEWLY_ADDED_KEYWORD = "bundle_key_newly_added_keyword_" + PrID;
+        private static final String BUNDLE_KEY_STATE = "bundle_key_state_" + PrID;
+        private static final String BUNDLE_KEY_FLAG_ADD_KEYWORD_FINISHED_RESULT = "bundle_key_add_keyword_finished_result_" + PrID;
+        private static final String BUNDLE_KEY_FLAG_IS_ADDING_NEW_KEYWORD = "bundle_key_flag_is_adding_new_keyword_" + PrID;
+        private static final String BUNDLE_KEY_FLAG_IS_REFRESHING = "bundle_key_flag_is_refreshing_" + PrID;
+        private static final String BUNDLE_KEY_FLAG_FETCHED_INPUT_GROUP_BUNDLE_FROM_REPO = "bundle_key_flag_fetched_input_group_bundle_from_repo_" + PrID;
+        private static final String BUNDLE_KEY_FLAG_WAS_INPUT_KEYWORD_BUNDLE_CREATED = "bundle_key_flag_was_input_keyword_bundle_created_" + PrID;
 
+        private long inputGroupBundleId = Constant.BAD_ID;
+        private KeywordBundle inputKeywordBundle;
+        private Post currentPost;
+        private Keyword newlyAddedKeyword;
+
+        private @StateContainer.State int state = StateContainer.START;
+        // state control flags
+        private boolean addKeywordFinishedResult;
+        private boolean isAddingNewKeyword;
+        private boolean isRefreshing;
+        private boolean fetchedInputGroupBundleFromRepo;
+        private boolean wasInputKeywordBundleCreated;
+
+        @DebugLog
+        private void toBundle(Bundle outState) {
+            outState.putLong(BUNDLE_KEY_INPUT_GROUP_BUNDLE_ID, inputGroupBundleId);
+            outState.putParcelable(BUNDLE_KEY_INPUT_KEYWORD_BUNDLE, inputKeywordBundle);
+            outState.putParcelable(BUNDLE_KEY_CURRENT_POST, currentPost);
+            outState.putParcelable(BUNDLE_KEY_NEWLY_ADDED_KEYWORD, newlyAddedKeyword);
+            outState.putInt(BUNDLE_KEY_STATE, state);
+            outState.putBoolean(BUNDLE_KEY_FLAG_ADD_KEYWORD_FINISHED_RESULT, addKeywordFinishedResult);
+            outState.putBoolean(BUNDLE_KEY_FLAG_IS_ADDING_NEW_KEYWORD, isAddingNewKeyword);
+            outState.putBoolean(BUNDLE_KEY_FLAG_IS_REFRESHING, isRefreshing);
+            outState.putBoolean(BUNDLE_KEY_FLAG_FETCHED_INPUT_GROUP_BUNDLE_FROM_REPO, fetchedInputGroupBundleFromRepo);
+            outState.putBoolean(BUNDLE_KEY_FLAG_WAS_INPUT_KEYWORD_BUNDLE_CREATED, wasInputKeywordBundleCreated);
+        }
+
+        @DebugLog @SuppressWarnings("ResourceType")
+        private static Memento fromBundle(Bundle savedInstanceState) {
+            Memento memento = new Memento();
+            memento.inputGroupBundleId = savedInstanceState.getLong(BUNDLE_KEY_INPUT_GROUP_BUNDLE_ID, Constant.BAD_ID);
+            memento.inputKeywordBundle = savedInstanceState.getParcelable(BUNDLE_KEY_INPUT_KEYWORD_BUNDLE);
+            memento.currentPost = savedInstanceState.getParcelable(BUNDLE_KEY_CURRENT_POST);
+            memento.newlyAddedKeyword = savedInstanceState.getParcelable(BUNDLE_KEY_NEWLY_ADDED_KEYWORD);
+            memento.state = savedInstanceState.getInt(BUNDLE_KEY_STATE, StateContainer.START);
+            memento.addKeywordFinishedResult = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_ADD_KEYWORD_FINISHED_RESULT, false);
+            memento.isAddingNewKeyword = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_ADDING_NEW_KEYWORD, false);
+            memento.isRefreshing = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_REFRESHING, false);
+            memento.fetchedInputGroupBundleFromRepo = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_FETCHED_INPUT_GROUP_BUNDLE_FROM_REPO, false);
+            memento.wasInputKeywordBundleCreated = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_WAS_INPUT_KEYWORD_BUNDLE_CREATED, false);
+            return memento;
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
     @Inject
     GroupListPresenter(AddKeywordToBundle addKeywordToBundleUseCase, DeleteKeywordBundle deleteKeywordBundleUseCase,
                        GetGroupBundleById getGroupBundleByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
@@ -181,7 +236,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @DebugLog
     private void setState(@StateContainer.State int newState) {
-        @StateContainer.State int previousState = state;
+        @StateContainer.State int previousState = memento.state;
         Timber.i("Previous state [%s], New state: %s", previousState, newState);
 
         // check consistency between state transitions
@@ -192,7 +247,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             throw new IllegalStateException();
         }
 
-        state = newState;
+        memento.state = newState;
     }
 
     // ------------------------------------------
@@ -216,18 +271,26 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.START);
         // enter START state logic
 
-        currentPost = null;
         inputGroupBundle = null;
-        inputKeywordBundle = null;
+        memento.inputGroupBundleId = Constant.BAD_ID;
+        memento.inputKeywordBundle = null;
+        memento.currentPost = null;
+        memento.newlyAddedKeyword = null;
 
         isGroupBundleChanged = false;
         isKeywordBundleChanged = false;
 
+        memento.addKeywordFinishedResult = false;
+        memento.isAddingNewKeyword = false;
+        memento.isRefreshing = false;
+        memento.fetchedInputGroupBundleFromRepo = false;
+        memento.wasInputKeywordBundleCreated = false;
+
         totalSelectedGroups = 0;
         totalGroups = 0;
 
-        groupParentItems.clear();
-        listAdapter.clear();
+        groupParentItems.clear();  // idempotent operation
+        listAdapter.clear();  // idempotent operation
 
         // fresh start - show loading, disable swipe-to-refresh
         if (isViewAttached()) {
@@ -252,7 +315,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.KEYWORDS_CREATE_START);
         // enter KEYWORDS_CREATE_START state logic
 
-        wasInputKeywordBundleCreated = true;
+        memento.wasInputKeywordBundleCreated = true;
 
         // create new empty KeywordBundle in repository
         PutKeywordBundle.Parameters parameters = new PutKeywordBundle.Parameters.Builder()
@@ -272,7 +335,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.KEYWORDS_CREATE_FINISH);
         // enter KEYWORDS_CREATE_FINISH state logic
 
-        inputKeywordBundle = bundle;  // initialize input KeywordBundle (empty)
+        memento.inputKeywordBundle = bundle;  // initialize input KeywordBundle (empty)
 
         /**
          * We are working with newly created KeywordBundle on GroupListScreen instead of a fetched one
@@ -299,23 +362,24 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.KEYWORDS_LOADED);
         // enter KEYWORDS_LOADED state logic
 
-        inputKeywordBundle = bundle;  // assign input KeywordBundle
+        memento.inputKeywordBundle = bundle;  // assign input KeywordBundle
         sendUpdateTitleRequest(bundle.title());  // assign title
 
         // fill Parent items in expandable list
+        groupParentItems.clear();
+        listAdapter.clear();
         fillKeywordsList(bundle);
 
         // decide the way how to load GroupBundle and perform loading
-        long groupBundleId = inputKeywordBundle.getGroupBundleId();
+        long groupBundleId = memento.inputKeywordBundle.getGroupBundleId();
         // TODO: this drops all selection after refresh - fix it
-        fetchedInputGroupBundleFromRepo = groupBundleId != Constant.BAD_ID;
+        memento.fetchedInputGroupBundleFromRepo = groupBundleId != Constant.BAD_ID;
         if (groupBundleId == Constant.BAD_ID) {
-            Timber.d("There is no GroupBundle associated with input KeywordBundle, perform network request");
+            Timber.d("There is no GroupBundle associated with input KeywordBundle, perform endpoint request");
             vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback(), createCancelCallback());
         } else {
             Timber.d("Loading GroupBundle associated with input KeywordBundle from repository");
-            getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
-            getGroupBundleByIdUseCase.execute();
+            restoreLoadedGroups(groupBundleId);  // Group-s are in repository already
         }
     }
 
@@ -329,6 +393,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // enter GROUPS_LOADED state logic
 
         inputGroupBundle = bundle;  // assign input GroupBundle
+        memento.inputGroupBundleId = bundle.id();  // keep id to restore the whole heavy bundle if need
 
         // hide progress list item if it was previously visible after new Keyword's been added
         listAdapter.setAddingNewItem(false, null);
@@ -336,8 +401,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // fill Child items in expandable list and show it
         fillGroupsList(splitGroups);
 
-        isRefreshing = false;  // drop flag after filling, where it is used
-        isAddingNewKeyword = false;  // don't re-use state control flag
+        memento.isRefreshing = false;  // drop flag after filling, where it is used
+        memento.isAddingNewKeyword = false;  // don't re-use state control flag
 
         // enable swipe-to-refresh after all Group-s loaded, show Group-s in expandable list
         if (isViewAttached()) {
@@ -372,7 +437,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.REFRESHING);
         // enter REFRESHING state logic
 
-        isRefreshing = true;
+        memento.isRefreshing = true;
 
         // disable swipe-to-refresh while another refreshing is in progress
         if (isViewAttached()) {
@@ -394,7 +459,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         totalGroups = 0;
 
         // load actual Group-s from Vkontakte endpoint
-        vkontakteEndpoint.getGroupsByKeywordsSplit(inputKeywordBundle.keywords(), createGetGroupsByKeywordsListCallback(), createCancelCallback());
+        vkontakteEndpoint.getGroupsByKeywordsSplit(memento.inputKeywordBundle.keywords(), createGetGroupsByKeywordsListCallback(), createCancelCallback());
     }
 
     // ------------------------------------------
@@ -406,7 +471,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.ADD_KEYWORD_START);
         // enter ADD_KEYWORD_START state logic
 
-        if (inputKeywordBundle.keywords().contains(keyword)) {
+        memento.addKeywordFinishedResult = false;  // drop flag, will be set at finish
+
+        if (memento.inputKeywordBundle.keywords().contains(keyword)) {
             Timber.d("Keyword %s has already been added", keyword.keyword());
             sendAlreadyAddedKeyword(keyword.keyword());
             return;
@@ -423,7 +490,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         sendEnableAddKeywordButtonRequest(false);  // disable add keyword button while adding new Keyword
 
-        newlyAddedKeyword = keyword;
+        memento.newlyAddedKeyword = keyword;
 
         // show progress list item while adding new Keyword with Group-s
         listAdapter.setAddingNewItem(true, keyword);
@@ -441,30 +508,32 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.ADD_KEYWORD_FINISH);
         // enter ADD_KEYWORD_FINISH state logic
 
+        memento.addKeywordFinishedResult = result;  // set result flag to use in 'memento' restoration
+
         if (result) {
             Timber.d("Adding Keyword and requesting more Group-s from network");
             // add new Keyword to the head of input KeywordBundle to preserve ordering
-            inputKeywordBundle.keywords().add(0, newlyAddedKeyword);
+            memento.inputKeywordBundle.keywords().add(0, memento.newlyAddedKeyword);
             isKeywordBundleChanged = true;
 
-            GroupParentItem item = new GroupParentItem(newlyAddedKeyword);
+            GroupParentItem item = new GroupParentItem(memento.newlyAddedKeyword);
             groupParentItems.add(0, item);  // add new item on top of the list
 
             // prepare parameters to make new request for Group-s by Keyword
             List<Keyword> keywords = new ArrayList<>();
-            keywords.add(newlyAddedKeyword);
-            newlyAddedKeyword = null;  // drop temporary Keyword
-            isAddingNewKeyword = true;  // to manipulate with newly fetched Group-s properly
+            keywords.add(memento.newlyAddedKeyword);
+            memento.newlyAddedKeyword = null;  // drop temporary Keyword
+            memento.isAddingNewKeyword = true;  // to manipulate with newly fetched Group-s properly
 
             // fetch Group-s by newly added Keyword from the endpoint
             vkontakteEndpoint.getGroupsByKeywordsSplit(keywords, createGetGroupsByKeywordsListCallback(), createCancelCallback());
         } else {
             Timber.d("Failed to add Keyword, but just warn user via popup");
-            newlyAddedKeyword = null;  // drop temporary Keyword
-            isAddingNewKeyword = false;  // don't re-use state control flag (it is false already)
+            memento.newlyAddedKeyword = null;  // drop temporary Keyword
+            memento.isAddingNewKeyword = false;  // don't re-use state control flag (it is false already)
 
             // go to standard pipeline, but just assume that no Group-s were loaded
-            stateGroupsLoaded(inputGroupBundle, new ArrayList<List<Group>>());
+            stateGroupsLoaded(inputGroupBundle, new ArrayList<>());
 
             sendAddKeywordError();  // notify about failure
         }
@@ -505,6 +574,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        memento.toBundle(outState);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if (shouldDeleteEmptyCreatedKeywordBundle()) {
@@ -512,7 +587,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
              * User is leaving or pausing GroupListScreen w/o any changes performed on newly created
              * empty KeywordBundle, so it must be deleted from repository.
              */
-            deleteKeywordBundleUseCase.setKeywordBundleId(inputKeywordBundle.id());
+            deleteKeywordBundleUseCase.setKeywordBundleId(memento.inputKeywordBundle.id());
             deleteKeywordBundleUseCase.execute();  // silent delete without callback
         }
 
@@ -569,7 +644,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @Override
     public void receiveNewTitle(String newTitle) {
-        if (inputKeywordBundle != null) {
+        if (memento.inputKeywordBundle != null) {
             isKeywordBundleChanged = true;
             postKeywordBundleTitleUpdate(newTitle);
         }
@@ -676,8 +751,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @Override
     public void sendUpdatedSelectedGroupsCounter(int newCount, int total) {
-        inputKeywordBundle.setSelectedGroupsCount(newCount);
-        inputKeywordBundle.setTotalGroupsCount(total);
+        memento.inputKeywordBundle.setSelectedGroupsCount(newCount);
+        memento.inputKeywordBundle.setTotalGroupsCount(total);
         isKeywordBundleChanged = true;  // as counters have been changed
         mediatorComponent.mediator().sendUpdatedSelectedGroupsCounter(newCount, total);
     }
@@ -696,7 +771,46 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @Override
     protected void onRestoreState() {
-        // TODO:
+        memento = Memento.fromBundle(savedInstanceState);
+        applyPost(memento.currentPost);  // restore Post
+
+        Timber.d("Restore to state: %s", memento.state);
+        switch (memento.state) {
+            case StateContainer.ERROR_LOAD:              stateErrorLoad(); break;
+            case StateContainer.START:                   stateStart(); break;
+            case StateContainer.KEYWORDS_CREATE_START:   stateKeywordBundleCreateStart(); break;
+            case StateContainer.KEYWORDS_CREATE_FINISH:  stateKeywordBundleCreateFinish(memento.inputKeywordBundle); break;
+            case StateContainer.KEYWORDS_LOADED:         stateKeywordsLoaded(memento.inputKeywordBundle); break;
+            case StateContainer.GROUPS_LOADED:
+                /**
+                 * First - clear and fill Parent items in expandable list, because it must be ready
+                 * to receive Child items - {@link Group} instances - restored on the next step.
+                 */
+                groupParentItems.clear();  // idempotent operation
+                listAdapter.clear();  // idempotent operation
+                sendUpdateTitleRequest(memento.inputKeywordBundle.title());
+                fillKeywordsList(memento.inputKeywordBundle);
+                /**
+                 * {@link GroupListPresenter#inputGroupBundle} is too heavy to be stored in {@link Bundle},
+                 * but it's id in repository could be used to restore the whole model in memory and then
+                 * fill expandable list with corresponding Child items.
+                 */
+                restoreLoadedGroups(memento.inputGroupBundleId);
+                break;
+            case StateContainer.REFRESHING:              stateRefreshing(); break;
+            case StateContainer.ADD_KEYWORD_START:       stateAddKeywordStart(memento.newlyAddedKeyword); break;
+            case StateContainer.ADD_KEYWORD_FINISH:      stateAddKeywordFinish(memento.addKeywordFinishedResult); break;
+            default:
+                Timber.e("Unreachable state: %s", memento.state);
+                throw new ProgramException();
+        }
+    }
+
+    @DebugLog
+    private void restoreLoadedGroups(long groupBundleId) {
+        Timber.i("restoreLoadedGroups: %s", groupBundleId);
+        getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
+        getGroupBundleByIdUseCase.execute();
     }
 
     @DebugLog
@@ -712,7 +826,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
          * and 'isAllGroupsSelected' configuration must be enabled in both cases.
          */
         boolean shouldSelectAllGroups = AppConfig.INSTANCE.isAllGroupsSelected() &&
-                (!fetchedInputGroupBundleFromRepo || isAddingNewKeyword || isRefreshing);
+                (!memento.fetchedInputGroupBundleFromRepo || memento.isAddingNewKeyword || memento.isRefreshing);
 
         int xSelectedCount = 0, xTotalGroups = 0;
         List<GroupChildItem> childItems = new ArrayList<>(groups.size());
@@ -738,7 +852,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @DebugLog
     private void addKeyword(Keyword keyword) {
         Timber.i("addKeyword: %s", keyword.keyword());
-        if (inputKeywordBundle.keywords().size() < Constant.KEYWORDS_LIMIT) {
+        if (memento.inputKeywordBundle.keywords().size() < Constant.KEYWORDS_LIMIT) {
             stateAddKeywordStart(keyword);
         } else {
             sendKeywordsLimitReached(Constant.KEYWORDS_LIMIT);
@@ -810,7 +924,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @DebugLog
     private void postToGroups() {
         Timber.i("postToGroups");
-        if (currentPost != null) {
+        if (memento.currentPost != null) {
             Timber.d("Selected single Post, start wall posting...");
             // exclude ids duplication
             Set<Group> selectedGroups = new TreeSet<>((lhs, rhs) -> (int) (lhs.id() - rhs.id()));
@@ -833,13 +947,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             }
 
             sendPostingStartedMessage(true);
-            vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, currentPost,
+            vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, memento.currentPost,
                     createMakeWallPostCallback(), getView(), getView());
 
             if (isViewAttached()) {
                 if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
                     Timber.d("Open ReportScreen in interactive mode showing posting progress");
-                    getView().openInteractiveReportScreen(currentPost.id());
+                    getView().openInteractiveReportScreen(memento.currentPost.id());
                     // TODO: report screen could subscribe for posting-progress callback
                     // TODO:        too late, missing some early reports
                 } else {
@@ -900,9 +1014,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             isKeywordBundleChanged = false;
             PostKeywordBundle.Parameters parameters;
             if (TextUtils.isEmpty(title)) {
-                parameters = new PostKeywordBundle.Parameters(inputKeywordBundle);
+                parameters = new PostKeywordBundle.Parameters(memento.inputKeywordBundle);
             } else {
-                parameters = new PostKeywordBundle.Parameters(inputKeywordBundle.id(), title);
+                parameters = new PostKeywordBundle.Parameters(memento.inputKeywordBundle.id(), title);
             }
             postKeywordBundleUseCase.setParameters(parameters);
             postKeywordBundleUseCase.execute();  // silent update without callback
@@ -952,7 +1066,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
          * back to MainScreen or KeywordListScreen.
          */
         Keyword keyword = groupParentItems.get(position).getKeyword();
-        inputKeywordBundle.keywords().remove(keyword);
+        memento.inputKeywordBundle.keywords().remove(keyword);
         postKeywordBundleUpdate();  // refresh now, don't wait till screen closed
 
         Collection<Group> groupsToRemove = new ArrayList<>();
@@ -971,7 +1085,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     // ------------------------------------------
     private boolean shouldDeleteEmptyCreatedKeywordBundle() {
-        return wasInputKeywordBundleCreated && !sendAskForTitleChanged() && inputKeywordBundle.keywords().isEmpty();
+        return memento.wasInputKeywordBundleCreated && !sendAskForTitleChanged() && memento.inputKeywordBundle.keywords().isEmpty();
     }
 
     /* Callback */
@@ -1045,12 +1159,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onFinish(@Nullable Post post) {
                 Timber.i("Use-Case: succeeded to get Post by id");
-                currentPost = post;
-                if (post != null) {
-                    sendPost(postToSingleGridVoMapper.map(post));
-                } else {
-                    sendEmptyPost();
-                }
+                memento.currentPost = post;
+                applyPost(post);
             }
 
             @DebugLog @Override
@@ -1094,7 +1204,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
                 Timber.d("Update input KeywordBundle and associate it with newly created GroupBundle (by setting id)");
                 isKeywordBundleChanged = true;
-                inputKeywordBundle.setGroupBundleId(bundle.id());
+                memento.inputKeywordBundle.setGroupBundleId(bundle.id());
                 getGroupBundleByIdUseCase.setGroupBundleId(bundle.id());  // set proper id
                 postKeywordBundleUpdate();
             }
@@ -1150,14 +1260,14 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     }
                     PutGroupBundle.Parameters parameters = new PutGroupBundle.Parameters.Builder()
                             .setGroups(groups)
-                            .setKeywordBundleId(inputKeywordBundle.id())
+                            .setKeywordBundleId(memento.inputKeywordBundle.id())
                             .setTitle("title")  // TODO: set group-bundle title from Toolbar
                             .build();
                     putGroupBundleUseCase.setParameters(parameters);
                     putGroupBundleUseCase.execute();
                 } else {
                     Timber.d("Refresh already existing GroupBundle in repository");
-                    if (isAddingNewKeyword) {
+                    if (memento.isAddingNewKeyword) {
                         /**
                          * If we are adding new Keyword to list, we should append newly fetched
                          * Group-s to existing ones, otherwise we will wrongly rewrite them and get
@@ -1172,7 +1282,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     GroupBundle bundle = GroupBundle.builder()
                             .setId(inputGroupBundle.id())
                             .setGroups(groups)
-                            .setKeywordBundleId(inputKeywordBundle.id())
+                            .setKeywordBundleId(memento.inputKeywordBundle.id())
                             .setTimestamp(inputGroupBundle.timestamp())
                             .setTitle(inputGroupBundle.title())  // TODO: set group-bundle title from Toolbar
                             .build();
@@ -1185,7 +1295,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                      * corresponding to the newly added Keyword, but the 'bundle' parameter contains
                      * the whole set of Group-s for all available Keyword-s in the input KeywordBundle.
                      */
-                    stateGroupsLoaded(bundle, splitGroups);
+                    stateGroupsLoaded(bundle, splitGroups);  // fetched Group-s from endpoint
 
                     isGroupBundleChanged = true;
                     postGroupBundleUpdate();
@@ -1259,5 +1369,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             sendUpdatedSelectedGroupsCounter(totalSelectedGroups, totalGroups);
             isGroupBundleChanged = true;  // as Group-s 'isSelected' flag has been changed
         };
+    }
+
+    /* Utility */
+    // --------------------------------------------------------------------------------------------
+    private void applyPost(Post post) {
+        if (post != null) {
+            sendPost(postToSingleGridVoMapper.map(post));
+        } else {
+            sendEmptyPost();
+        }
     }
 }

@@ -110,8 +110,10 @@ public class GroupListAdapter extends BaseExpandableAdapter<GroupParentItem, Gro
     /* Data access */
     // --------------------------------------------------------------------------------------------
     public void clear() {
-        getParentList().clear();
-        notifyParentDataSetChanged(false);
+        if (!getParentList().isEmpty()) {
+            getParentList().clear();
+            notifyParentDataSetChanged(false);
+        }
     }
 
     /* Internal */

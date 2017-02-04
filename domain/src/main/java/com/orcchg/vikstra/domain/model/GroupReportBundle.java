@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-@AutoValue
+@AutoValue @Heavy
 public abstract class GroupReportBundle implements Comparable<GroupReportBundle>, Iterable<GroupReport> {
 
     public static Builder builder() {
