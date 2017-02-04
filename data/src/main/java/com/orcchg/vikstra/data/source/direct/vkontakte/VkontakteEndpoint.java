@@ -108,8 +108,10 @@ public class VkontakteEndpoint extends Endpoint {
      */
     @DebugLog
     public void getGroupsByKeywords(final List<Keyword> keywords,
-                                    @Nullable final UseCase.OnPostExecuteCallback<List<Group>> callback) {
+                                    @Nullable final UseCase.OnPostExecuteCallback<List<Group>> callback,
+                                    @Nullable final MultiUseCase.CancelCallback cancelCallback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
+        useCase.setCancelCallback(cancelCallback);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<VKApiCommunityArray>>>() {
             @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<VKApiCommunityArray>> values) {
@@ -131,13 +133,15 @@ public class VkontakteEndpoint extends Endpoint {
     }
 
     /**
-     * Same as {@link VkontakteEndpoint#getGroupsByKeywords(List, UseCase.OnPostExecuteCallback)}, but
-     * splits groups by keywords.
+     * Same as {@link VkontakteEndpoint#getGroupsByKeywords(List, UseCase.OnPostExecuteCallback, MultiUseCase.CancelCallback)},
+     *  but splits groups by keywords.
      */
     @DebugLog
     public void getGroupsByKeywordsSplit(final List<Keyword> keywords,
-                                         @Nullable final UseCase.OnPostExecuteCallback<List<List<Group>>> callback) {
+                                         @Nullable final UseCase.OnPostExecuteCallback<List<List<Group>>> callback,
+                                         @Nullable final MultiUseCase.CancelCallback cancelCallback) {
         GetGroupsByKeywordsList useCase = new GetGroupsByKeywordsList(keywords, threadExecutor, postExecuteScheduler);
+        useCase.setCancelCallback(cancelCallback);
         useCase.setPostExecuteCallback(new UseCase.OnPostExecuteCallback<List<Ordered<VKApiCommunityArray>>>() {
             @DebugLog @Override
             public void onFinish(@Nullable List<Ordered<VKApiCommunityArray>> values) {

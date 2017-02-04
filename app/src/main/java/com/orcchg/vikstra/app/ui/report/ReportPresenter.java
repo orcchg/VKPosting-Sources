@@ -16,6 +16,7 @@ import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api220VkUseCaseException;
+import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -30,6 +31,7 @@ import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.essense.mapper.GroupReportEssenceMapper;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -321,7 +323,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             Group group = params.getGroup();  // null parameters are impossible because this is checked inside the use-case
             Timber.v("%s", group.toString());
             // TODO: use terminal error from proper UseCase instead of hardcoded one
-            GroupReportEssence model = VkontakteEndpoint.refineModel(item, group, Api220VkUseCaseException.class);
+            GroupReportEssence model = VkontakteEndpoint.refineModel(item, group, Api5VkUseCaseException.class, Api220VkUseCaseException.class);
             if (item.data != null)  ++postedWithSuccess;  // count successful posting
             if (item.error != null) ++postedWithFailure;  // count failed posting
             /**
@@ -353,19 +355,26 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     @DebugLog @InteractiveMode
     private MultiUseCase.CancelCallback createPostingCancelledCallback() {
-        return () -> {
-            Timber.i("Posting has been finished");
-            if (isViewAttached()) getView().onPostingCancel();
+        return (reason) -> {
+            Timber.i("Posting has been cancelled");
             isFinishedPosting = true;
+            if (isViewAttached()) {
+                if (EndpointUtility.hasAccessTokenExhausted(reason)) {
+                    Timber.w("Access Token has exhausted !");
+                    getView().onAccessTokenExhausted();
+                } else {
+                    getView().onPostingCancel();
+                }
+            }
         };
     }
 
     @DebugLog @InteractiveMode
     private MultiUseCase.FinishCallback createPostingFinishedCallback() {
         return () -> {
-            Timber.i("Posting has finished");
-            if (isViewAttached()) getView().onPostingFinished(postedWithSuccess, totalForPosting);
+            Timber.i("Posting has been finished");
             isFinishedPosting = true;
+            if (isViewAttached()) getView().onPostingFinished(postedWithSuccess, totalForPosting);
         };
     }
 }

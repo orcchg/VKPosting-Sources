@@ -59,6 +59,7 @@
         <item name="101">Память</item>
         <item name="102">Память</item>
     </string-array>
+    <string name="toast_access_token_has_expired">Ключ доступа устарел. Авторизуйтесь повторно.</string>
     <!-- Group detail screen -->
     <string name="group_detail_screen_title">Информация о группе</string>
     <!-- Group list screen -->

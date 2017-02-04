@@ -41,10 +41,13 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 public class ReportActivity extends BasePermissionActivity<ReportContract.View, ReportContract.Presenter>
         implements ReportContract.View, IScrollList, OnShowcaseEventListener {
     private static final String FRAGMENT_TAG = "report_fragment_tag";
+    private static final String BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID = "bundle_key_group_report_bundle_id";
+    private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
 
@@ -97,7 +100,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        initData();  // init data needed for injected dependencies
+        initData(savedInstanceState);  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
         ButterKnife.bind(this);
@@ -115,11 +118,24 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
+        outState.putLong(BUNDLE_KEY_POST_ID, postId);
+    }
+
     /* Data */
     // --------------------------------------------------------------------------------------------
-    private void initData() {
-        groupReportBundleId = getIntent().getLongExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
-        postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+    private void initData(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            groupReportBundleId = savedInstanceState.getLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
+            postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
+        } else {
+            groupReportBundleId = getIntent().getLongExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
+            postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+        }
+        Timber.d("GroupReportBundle id: %s ; Post id: %s", groupReportBundleId, postId);
     }
 
     /* Permissions */
@@ -165,6 +181,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void onAccessTokenExhausted() {
+        navigationComponent.navigator().openAccessTokenExhaustedDialog(this);
+    }
+
+    // ------------------------------------------
     @Override
     public RecyclerView getListView(int tag) {
         ReportFragment fragment = getFragment();

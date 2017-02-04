@@ -15,6 +15,7 @@ public class VkUseCaseExceptionFactory {
         if (error.apiError != null) {
             Timber.e("API error: %s", error.apiError.toString());
             switch (error.apiError.errorCode) {
+                case 5:   return new Api5VkUseCaseException(error);
                 case 214: return new Api214VkUseCaseException(error);
                 case 220: return new Api220VkUseCaseException(error);
             }

@@ -47,10 +47,14 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 public class GroupListActivity extends BasePermissionActivity<GroupListContract.View, GroupListContract.Presenter>
         implements GroupListContract.View, IListReach, IScrollList, ShadowHolder, OnShowcaseEventListener {
     private static final String FRAGMENT_TAG = "group_list_fragment_tag";
+    private static final String BUNDLE_KEY_CHOSEN_SETTING_VARIANT = "bundle_key_chosen_setting_variant";
+    private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id";
+    private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
     public static final int REQUEST_CODE = Constant.RequestCode.GROUP_LIST_SCREEN;
@@ -117,7 +121,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        initData();  // init data needed for injected dependencies
+        initData(savedInstanceState);  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_list);
         ButterKnife.bind(this);
@@ -127,11 +131,27 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_ADD_KEYWORD);
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(BUNDLE_KEY_CHOSEN_SETTING_VARIANT, chosenSettingVariant);
+        outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
+        outState.putLong(BUNDLE_KEY_POST_ID, postId);
+    }
+
     /* Data */
     // --------------------------------------------------------------------------------------------
-    private void initData() {
-        keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
-        postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+    private void initData(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            chosenSettingVariant = savedInstanceState.getInt(BUNDLE_KEY_CHOSEN_SETTING_VARIANT, 0);
+            keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+            postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
+        } else {
+            chosenSettingVariant = 0;
+            keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+            postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+        }
+        Timber.d("KeywordBundle id: %s ; Post id: %s", keywordBundleId, postId);
     }
 
     /* Permissions */

@@ -67,8 +67,8 @@ public final class ContentUtility {
         }
 
         @DebugLog
-        public static void onPostingCancelled() {
-            if (sCancelCallback != null) sCancelCallback.onCancel();
+        public static void onPostingCancelled(Throwable reason) {
+            if (sCancelCallback != null) sCancelCallback.onCancel(reason);
         }
 
         @DebugLog

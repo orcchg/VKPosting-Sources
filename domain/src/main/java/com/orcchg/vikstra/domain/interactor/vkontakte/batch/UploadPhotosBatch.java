@@ -7,7 +7,7 @@ import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.vkontakte.media.UploadPhotos;
-import com.orcchg.vikstra.domain.util.vkontakte.VkUtility;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKBatchRequest;
 import com.vk.sdk.api.VKRequest;
@@ -44,7 +44,7 @@ public class UploadPhotosBatch extends VkBatchUseCase<VKPhotoArray, List<VKPhoto
         VKRequest[] requests = new VKRequest[size];
         for (int i = 0; i < size; ++i) {
             VKUploadImage image = new VKUploadImage(parameters.getBitmaps().get(i), VKImageParameters.jpgImage(0.9f));
-            requests[i] = VKApi.uploadWallPhotoRequest(image, VkUtility.getCurrentUserId(), 0);
+            requests[i] = VKApi.uploadWallPhotoRequest(image, EndpointUtility.getCurrentUserId(), 0);
         }
         return new VKBatchRequest(requests);
     }

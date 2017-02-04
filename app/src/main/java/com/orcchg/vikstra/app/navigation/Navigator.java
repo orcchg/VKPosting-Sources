@@ -8,6 +8,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
@@ -16,6 +17,7 @@ import android.webkit.URLUtil;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
+import com.orcchg.vikstra.app.ui.dialog.DialogActivity;
 import com.orcchg.vikstra.app.ui.group.detail.GroupDetailActivity;
 import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
 import com.orcchg.vikstra.app.ui.keyword.create.KeywordCreateActivity;
@@ -46,6 +48,25 @@ public class Navigator {
 
     @Inject
     public Navigator() {
+    }
+
+    /* Dialog */
+    // ------------------------------------------
+    public void openAccessTokenExhaustedDialog(@NonNull Context context) {
+        openDialog(context, 0, R.string.toast_access_token_has_expired, R.string.button_logout);
+    }
+
+    public void openDialog(@NonNull Context context, @StringRes int description) {
+        openDialog(context, 0, description, 0);
+    }
+
+    public void openDialog(@NonNull Context context, @StringRes int description, @StringRes int yesLabel) {
+        openDialog(context, 0, description, yesLabel);
+    }
+
+    public void openDialog(@NonNull Context context, @StringRes int title, @StringRes int description, @StringRes int yesLabel) {
+        Intent intent = DialogActivity.getCallingIntent(context, title, description, yesLabel);
+        context.startActivity(intent);
     }
 
     /* Email */
@@ -134,6 +155,7 @@ public class Navigator {
 
     public void openStartScreen(@NonNull Context context) {
         Intent intent = StartActivity.getCallingIntent(context);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);
     }
 

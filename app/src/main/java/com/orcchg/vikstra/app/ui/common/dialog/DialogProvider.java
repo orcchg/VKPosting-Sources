@@ -38,16 +38,30 @@ public class DialogProvider {
         return getTextDialog(activity, xtitle, xdescription, listener);
     }
 
+    public static AlertDialog getTextDialog(Activity activity, @StringRes int title, @StringRes int description,
+                                            @StringRes int yesLabel, DialogInterface.OnClickListener listener) {
+        String xtitle = activity.getResources().getString(title);
+        String xdescription = activity.getResources().getString(description);
+        String xyesLabel = activity.getResources().getString(yesLabel);
+        return getTextDialog(activity, xtitle, xdescription, xyesLabel, listener);
+    }
+
     public static AlertDialog getTextDialog(Activity activity, String title, String description) {
         return getTextDialog(activity, title, description, null);
     }
 
     public static AlertDialog getTextDialog(Activity activity, String title, String description,
                                             DialogInterface.OnClickListener listener) {
+        String xyesLabel = activity.getResources().getString(R.string.button_close);
+        return getTextDialog(activity, title, description, xyesLabel, listener);
+    }
+
+    public static AlertDialog getTextDialog(Activity activity, String title, String description,
+                                            String yesLabel, DialogInterface.OnClickListener listener) {
         return new AlertDialog.Builder(activity)
                 .setTitle(title)
                 .setMessage(description)
-                .setPositiveButton(R.string.button_close, listener)
+                .setPositiveButton(yesLabel, listener)
                 .create();
     }
 

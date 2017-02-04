@@ -17,13 +17,21 @@
         <!-- Start -->
         <activity android:name=".app.ui.main.StartActivity"
                   android:label="@string/main_screen_title"
-                  android:theme="@style/AppTheme">
+                  android:theme="@style/AppTheme"
+                  android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Dialog -->
+        <activity android:name=".app.ui.dialog.DialogActivity"
+                  android:label="@string/dialog_warning_title"
+                  android:theme="@style/Theme.AppCompat.Light.Dialog"
+                  android:excludeFromRecents="true"
+                  android:taskAffinity=".DialogActivity"/>
 
         <!-- Groups -->
         <activity android:name=".app.ui.group.detail.GroupDetailActivity"

@@ -108,15 +108,27 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void onAccessTokenExhausted() {
+        navigationComponent.navigator().openAccessTokenExhaustedDialog(getActivity());
+    }
+
+    // ------------------------------------------
+    @Override
     public void enableSwipeToRefresh(boolean isEnabled) {
         swipeRefreshLayout.setEnabled(isEnabled);
     }
 
+    // ------------------------------------------
     @Override
     public void onReportReady(long groupReportBundleId, long postId) {
         FragmentManager fm = getActivity().getSupportFragmentManager();
         StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
         if (dialog != null) dialog.onReportReady(groupReportBundleId, postId);
+    }
+
+    @Override
+    public void onSearchingGroupsCancel() {
+        // TODO: not implemented - no reason specified, when to cancel searching groups
     }
 
     @Override

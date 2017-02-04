@@ -8,7 +8,7 @@ import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.vkontakte.VkUseCase;
-import com.orcchg.vikstra.domain.util.vkontakte.VkUtility;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKRequest;
 import com.vk.sdk.api.model.VKPhotoArray;
@@ -46,7 +46,7 @@ public class UploadPhoto extends VkUseCase<VKPhotoArray> {
     protected VKRequest prepareVkRequest() {
         if (parameters == null) throw new NoParametersException();
         VKUploadImage image = new VKUploadImage(parameters.bitmap, VKImageParameters.jpgImage(0.9f));
-        return VKApi.uploadWallPhotoRequest(image, VkUtility.getCurrentUserId(), 0);
+        return VKApi.uploadWallPhotoRequest(image, EndpointUtility.getCurrentUserId(), 0);
     }
 
     @Override

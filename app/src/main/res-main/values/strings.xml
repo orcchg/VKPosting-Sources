@@ -66,4 +66,6 @@
         <item name="101">Memory</item>
         <item name="102">Memory</item>
     </string-array>
+
+    <string name="toast_access_token_has_expired">Access token has expired. Repeat authentication.</string>
 </resources>

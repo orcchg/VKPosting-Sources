@@ -11,7 +11,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseActivity;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
-import com.orcchg.vikstra.domain.util.vkontakte.VkUtility;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
 import com.vk.sdk.VKSdk;
@@ -46,11 +46,13 @@ public class StartActivity extends SimpleBaseActivity {
             @DebugLog @Override
             public void onError(VKError error) {
                 Timber.e("Authorization has failed: %s", error.toString());
-                AlertDialog dialog = DialogProvider.getTextDialog(StartActivity.this, R.string.dialog_error_title,
-                        R.string.main_dialog_authorization_failed, (xdialog, which) -> finish());
-                dialog.setCancelable(false);
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
+                if (!isFinishing()) {
+                    AlertDialog dialog = DialogProvider.getTextDialog(StartActivity.this, R.string.dialog_error_title,
+                            R.string.main_dialog_authorization_failed, (xdialog, which) -> finish());
+                    dialog.setCancelable(false);
+                    dialog.setCanceledOnTouchOutside(false);
+                    dialog.show();
+                }
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);
@@ -60,13 +62,14 @@ public class StartActivity extends SimpleBaseActivity {
     /* Data */
     // --------------------------------------------------------------------------------------------
     private void initVkLogin() {
-        long vkUsedId = VkUtility.getCurrentUserId();
-        if (vkUsedId == VkUtility.BAD_VK_USER_ID) {
-            Timber.i("User hasn't been authorized in Vkontakte yet. Starting authorization process...");
-            VKSdk.login(this, VkontakteEndpoint.Scope.PHOTOS, VkontakteEndpoint.Scope.WALL);
-        } else {
+        long vkUsedId = EndpointUtility.getCurrentUserId();
+        if (VKSdk.wakeUpSession(getApplicationContext())) {
             Timber.i("User has already been authorized in Vkontakte, user id: %s", vkUsedId);
             goToMainScreen();
+        } else {
+            Timber.i("User hasn't been authorized in Vkontakte yet. Starting authorization process...");
+            VKSdk.logout();
+            VKSdk.login(this, VkontakteEndpoint.Scope.PHOTOS, VkontakteEndpoint.Scope.WALL);
         }
     }
 

@@ -37,6 +37,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     private Class<? extends Throwable>[] allowedErrors;   // if any of these errors occurs, use-case should retry execution
     private Class<? extends Throwable>[] suspendErrors;   // if any of these errors occurs, any further use-cases should wait until resumed
     private Class<? extends Throwable>[] terminalErrors;  // if any of these errors occurs, any further use-cases should be rejected
+    private Throwable cancellationReason;
 
     private final Object lock = new Object();
     private int sleepInterval = DomainConfig.INSTANCE.multiUseCaseSleepInterval;  // to avoid Captcha error, interval in ms
@@ -61,15 +62,15 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
 
     /* Error sets */
     // --------------------------------------------------------------------------------------------
-    public void setAllowedErrors(Class<? extends Throwable>... allowedErrors) {
+    protected void setAllowedErrors(Class<? extends Throwable>... allowedErrors) {
         this.allowedErrors = allowedErrors;
     }
 
-    public void setSuspendErrors(Class<? extends Throwable>... suspendErrors) {
+    protected void setSuspendErrors(Class<? extends Throwable>... suspendErrors) {
         this.suspendErrors = suspendErrors;
     }
 
-    public void setTerminalErrors(Class<? extends Throwable>... terminalErrors) {
+    protected void setTerminalErrors(Class<? extends Throwable>... terminalErrors) {
         this.terminalErrors = terminalErrors;
     }
 
@@ -103,7 +104,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
 
     // ------------------------------------------
     public interface CancelCallback {
-        void onCancel();
+        void onCancel(Throwable reason);
     }
 
     private CancelCallback cancelCallback;
@@ -216,6 +217,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                                 // test terminal error as soon as possible and proceed
                                 if (ValueUtility.containsClass(e, terminalErrors)) {
                                     isCancelled.getAndSet(true);  // atomic operation
+                                    setCancellationReason(e);  // assign proper reason of cancellation
                                     Timber.tag(getClass().getSimpleName());
                                     Timber.d("Terminal error has occurred - cancel the rest use-cases");
                                 } else if (ValueUtility.containsClass(e, suspendErrors)) {
@@ -297,7 +299,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         if (isCancelled.get()) progressCallbackScheduler.post(new Runnable() {
             @Override
             public void run() {
-                if (cancelCallback != null) cancelCallback.onCancel();
+                if (cancelCallback != null) cancelCallback.onCancel(cancellationReason);
             }
         });
 
@@ -306,6 +308,10 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
 
     private synchronized void addToResults(List<Ordered<Result>> results, @Nullable Ordered<Result> result) {
         if (result != null) results.add(result);
+    }
+
+    private synchronized void setCancellationReason(Throwable reason) {
+        cancellationReason = reason;
     }
 
     private List<Ordered<Result>> preparedResults(List<Ordered<Result>> results) {

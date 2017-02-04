@@ -21,6 +21,7 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.exception.ProgramException;
+import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.group.GetGroupBundleById;
 import com.orcchg.vikstra.domain.interactor.group.PostGroupBundle;
@@ -42,6 +43,7 @@ import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.ValueUtility;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -309,7 +311,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         fetchedInputGroupBundleFromRepo = groupBundleId != Constant.BAD_ID;
         if (groupBundleId == Constant.BAD_ID) {
             Timber.d("There is no GroupBundle associated with input KeywordBundle, perform network request");
-            vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback());
+            vkontakteEndpoint.getGroupsByKeywordsSplit(bundle.keywords(), createGetGroupsByKeywordsListCallback(), createCancelCallback());
         } else {
             Timber.d("Loading GroupBundle associated with input KeywordBundle from repository");
             getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
@@ -392,7 +394,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         totalGroups = 0;
 
         // load actual Group-s from Vkontakte endpoint
-        vkontakteEndpoint.getGroupsByKeywordsSplit(inputKeywordBundle.keywords(), createGetGroupsByKeywordsListCallback());
+        vkontakteEndpoint.getGroupsByKeywordsSplit(inputKeywordBundle.keywords(), createGetGroupsByKeywordsListCallback(), createCancelCallback());
     }
 
     // ------------------------------------------
@@ -455,7 +457,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             isAddingNewKeyword = true;  // to manipulate with newly fetched Group-s properly
 
             // fetch Group-s by newly added Keyword from the endpoint
-            vkontakteEndpoint.getGroupsByKeywordsSplit(keywords, createGetGroupsByKeywordsListCallback());
+            vkontakteEndpoint.getGroupsByKeywordsSplit(keywords, createGetGroupsByKeywordsListCallback(), createCancelCallback());
         } else {
             Timber.d("Failed to add Keyword, but just warn user via popup");
             newlyAddedKeyword = null;  // drop temporary Keyword
@@ -1194,6 +1196,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get list of Group-s by list of Keyword-s");
                 stateErrorLoad();
+            }
+        };
+    }
+
+    private MultiUseCase.CancelCallback createCancelCallback() {
+        return (reason) -> {
+            Timber.i("Searching for Group-s has been cancelled");
+            if (isViewAttached()) {
+                if (EndpointUtility.hasAccessTokenExhausted(reason)) {
+                    Timber.w("Access Token has exhausted !");
+                    getView().onAccessTokenExhausted();
+                } else {
+                    getView().onSearchingGroupsCancel();
+                }
             }
         };
     }
