@@ -83,11 +83,12 @@ public class SingleShot {
                                            OnShowcaseEventListener listener) {
 
         ShowcaseView.Builder svb = new ShowcaseView.Builder(activity)
-                .withMaterialShowcase()
+                .withNewStyleShowcase()
                 .setShowcaseEventListener(listener)
                 .setStyle(R.style.CustomShowcaseTheme)
                 .setTarget(target)
                 .singleShot(screen + showcase)
+                .hideOnTouchOutside()
                 .replaceEndButton(buttonStyle);
 
         if (titleId != 0) svb.setContentTitle(titleId);

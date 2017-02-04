@@ -97,6 +97,12 @@ public abstract class CollectionFragment<V extends MvpView, P extends MvpPresent
         return rootView;
     }
 
+    /* View */
+    // --------------------------------------------------------------------------------------------
+    public View findViewByPosition(int position) {
+        return layoutManager.findViewByPosition(position);
+    }
+
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override

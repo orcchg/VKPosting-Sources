@@ -113,6 +113,7 @@
     <string name="main_groups_list_selected_label_prefix">Выбрано групп:</string>
     <string name="main_groups_list_title">Списки групп</string>
     <string name="main_screen_title">VK постинг</string>
+    <string name="main_snackbar_keywords_and_post_not_selected">Необходимо выбрать пост и ключевые слова</string>
     <string name="main_showcase_make_wall_posting">Перейдите к этапу выбора групп по ключевым словам</string>
     <string name="main_showcase_new_lists_title">Создайте новый список групп</string>
     <string name="main_showcase_filled_list_keywords_title">Выберите один из существующих списков ключевых слов</string>

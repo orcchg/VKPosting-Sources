@@ -62,6 +62,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @BindView(R.id.fl_bottom) FrameLayout bottomFrameLayout;
     @BindView(R.id.tv_groups_selection_counter) TextView selectedGroupsTextView;
     @BindView(R.id.btn_new_lists) Button newListsButton;
+    @BindView(R.id.anchor_view) View anchorView;
     @BindView(R.id.fab) FloatingActionButton fab;
     @OnClick(R.id.fab)
     void onFabClick() {
@@ -83,6 +84,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private MainComponent mainComponent;
 
     private @Nullable ShowcaseView showcaseView;
+    private boolean fabHasShownArtificially = false;
 
     public static Intent getCallingIntent(@NonNull Context context) {
         return new Intent(context, MainActivity.class);
@@ -180,6 +182,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         if (AppConfig.INSTANCE.useTutorialShowcases()) {
             showcaseView = runShowcase(SingleShot.CASE_FILLED_LIST_POSTS);
         }
+    }
+
+    @Override
+    public void onKeywordBundleAndPostNotSelected() {
+        UiUtility.showSnackbar(this, R.string.main_snackbar_keywords_and_post_not_selected);
     }
 
     @Override
@@ -429,6 +436,14 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         return (PostSingleGridFragment) fm.findFragmentByTag(POST_GRID_FRAGMENT_TAG);
     }
 
+    private View getKeywordListViewByPosition(int position) {
+        return getKeywordListFragment().findViewByPosition(position);
+    }
+
+    private View getPostListViewByPosition(int position) {
+        return getPostGridFragment().findViewByPosition(position);
+    }
+
     private void openAboutDialog() {
         DialogProvider.showTextDialog(this, R.string.main_dialog_about_title, R.string.main_dialog_about_description);
     }
@@ -460,7 +475,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             case SingleShot.CASE_MAKE_WALL_POSTING:
                 buttonStyle = R.layout.custom_showcase_button2;
                 titleId = R.string.main_showcase_make_wall_posting;
-                target = fab;
+                target = anchorView;
                 ok = true;
                 sticky = false;
                 break;
@@ -472,14 +487,14 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             case SingleShot.CASE_FILLED_LIST_KEYWORDS:
                 buttonStyle = R.layout.custom_showcase_button2;
                 titleId = R.string.main_showcase_filled_list_keywords_title;
-                target = bottomFrameLayout;
+                target = getKeywordListViewByPosition(0);
                 ok = true;
                 sticky = true;
                 break;
             case SingleShot.CASE_FILLED_LIST_POSTS:
                 buttonStyle = R.layout.custom_showcase_button2;
                 titleId = R.string.main_showcase_filled_list_posts_title;
-                target = topFrameLayout;
+                target = getPostListViewByPosition(0);
                 ok = true;
                 sticky = true;
                 break;
@@ -508,6 +523,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         UiUtility.dimViewCancel(toolbar);
         UiUtility.dimViewCancel(topFrameLayout);
         UiUtility.dimViewCancel(bottomFrameLayout);
+
+        if (fabHasShownArtificially) {  // hide fab after showcase if it shouldn't be visible
+            fabHasShownArtificially = false;
+            showFab(false);
+        }
     }
 
     @Override
@@ -537,6 +557,10 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                     runShowcase(SingleShot.CASE_MAKE_WALL_POSTING);
                     break;
                 case SingleShot.CASE_MAKE_WALL_POSTING:
+                    if (!UiUtility.isVisible(fab)) {  // show fab during showcase if it isn't visible
+                        fabHasShownArtificially = true;
+                        showFab(true);
+                    }
                     runShowcase(SingleShot.CASE_HIDE);
                     break;
             }

@@ -157,7 +157,11 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 //                getGroupBundleByIdUseCase.setGroupBundleId(groupBundleId);  // set proper id
 //                getGroupBundleByIdUseCase.execute();
 //            }
-            getView().openGroupListScreen(keywordBundleId, postId);
+            if (keywordBundleId != Constant.BAD_ID && postId != Constant.BAD_ID) {
+                getView().openGroupListScreen(keywordBundleId, postId);
+            } else {
+                getView().onKeywordBundleAndPostNotSelected();
+            }
         }
     }
 

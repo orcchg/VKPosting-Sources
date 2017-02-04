@@ -9,6 +9,7 @@
     <string name="main_groups_list_selected_label_prefix">Selected groups:</string>
     <string name="main_groups_list_title">Groups lists</string>
     <string name="main_screen_title">Posting for VK</string>
+    <string name="main_snackbar_keywords_and_post_not_selected">You must select Post and Keywords</string>
 
     <string name="main_showcase_make_wall_posting">Go to stage of groups selection by keyword</string>
     <string name="main_showcase_new_lists_title">Create new list of groups</string>

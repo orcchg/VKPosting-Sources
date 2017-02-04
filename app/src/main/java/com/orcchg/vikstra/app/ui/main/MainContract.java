@@ -13,6 +13,7 @@ public interface MainContract {
     interface View extends KeywordListContract.View, PostSingleGridContract.View,
             IPostingNotificationDelegate, IPhotoUploadNotificationDelegate {
         void notifyBothListsHaveItems();
+        void onKeywordBundleAndPostNotSelected();
         void onLoggedOut();
 
         void openGroupListScreen(long keywordBundleId, long postId);
