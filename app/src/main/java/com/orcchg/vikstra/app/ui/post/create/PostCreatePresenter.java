@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
+import com.orcchg.vikstra.data.source.direct.vkontakte.VkAttachLocalCache;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
@@ -39,6 +40,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     private final GetPostById getPostByIdUseCase;
     private final PostPost postPostUseCase;
     private final PutPost putPostUseCase;
+    private final VkAttachLocalCache attachLocalCache;
 
     private Memento memento = new Memento();
 
@@ -83,13 +85,15 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
 
     // --------------------------------------------------------------------------------------------
     @Inject
-    PostCreatePresenter(GetPostById getPostByIdUseCase, PostPost postPostUseCase, PutPost putPostUseCase) {
+    PostCreatePresenter(GetPostById getPostByIdUseCase, PostPost postPostUseCase,
+                        PutPost putPostUseCase, VkAttachLocalCache attachLocalCache) {
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
         this.postPostUseCase = postPostUseCase;
         this.postPostUseCase.setPostExecuteCallback(createPostPostCallback());
         this.putPostUseCase = putPostUseCase;
         this.putPostUseCase.setPostExecuteCallback(createPutPostCallback());
+        this.attachLocalCache = attachLocalCache;
     }
 
     /* Lifecycle */
@@ -123,7 +127,9 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     String imagePath = cursor.getString(columnIndex);
                     Timber.d("Selected image from Gallery, url: %s", imagePath);
                     if (isViewAttached()) getView().addMediaThumbnail(imagePath);
-                    long mediaId = sharedPrefsManagerComponent.sharedPrefsManager().getUniqueMediaId();
+                    // try to find image in cache, if it has already been uploaded and hence - cached with id, assigned by endpoint
+                    long mediaId = attachLocalCache.getIdByPhotoPath(imagePath);  // if BAD_ID - then generate a unique one
+                    if (mediaId == Constant.BAD_ID) mediaId = sharedPrefsManagerComponent.sharedPrefsManager().getUniqueMediaId();
                     Media media = Media.builder().setId(mediaId).setUrl(imagePath).build();
                     memento.attachMedia.add(media);
                     memento.hasAttachChanged = true;
@@ -143,7 +149,8 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     thumbnail = UiUtility.getBitmapFromFile(url, thumbnailWidth, thumbnailHeight);
                 }
                 if (isViewAttached()) getView().addMediaThumbnail(thumbnail);
-                Media media = Media.builder().setId(1000).setUrl(url).build();  // TODO: unique id
+                long mediaId = sharedPrefsManagerComponent.sharedPrefsManager().getUniqueMediaId();
+                Media media = Media.builder().setId(mediaId).setUrl(url).build();
                 memento.attachMedia.add(media);
                 memento.hasAttachChanged = true;
                 break;

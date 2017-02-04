@@ -5,7 +5,7 @@ import io.realm.RealmObject;
 
 public class GroupReportBundleDBO extends RealmObject {
     public static final String COLUMN_ID = "id";
-    public static final String COLUMN_GROUP_REPORTS = "group_reports";
+    public static final String COLUMN_GROUP_REPORTS = "groupReports";
     public static final String COLUMN_TIMESTAMP = "timestamp";
 
     public long id;

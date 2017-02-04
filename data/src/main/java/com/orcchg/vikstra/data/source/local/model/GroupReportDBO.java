@@ -4,10 +4,10 @@ import io.realm.RealmObject;
 
 public class GroupReportDBO extends RealmObject {
     public static final String COLUMN_ID = "id";
-    public static final String COLUMN_ERROR_CODE = "error_code";
+    public static final String COLUMN_ERROR_CODE = "errorCode";
     public static final String COLUMN_GROUP = "group";
     public static final String COLUMN_TIMESTAMP = "timestamp";
-    public static final String COLUMN_WALL_POST_ID = "wall_post_id";
+    public static final String COLUMN_WALL_POST_ID = "wallPostId";
 
     public long id;
     public int errorCode;

@@ -229,7 +229,7 @@ public class VkontakteEndpoint extends Endpoint {
                     UploadPhotos useCase = new UploadPhotos(threadExecutor, postExecuteScheduler);
                     useCase.setParameters(new UploadPhotos.Parameters(ValueUtility.unwrap(bitmaps)));
                     useCase.setProgressCallback(photoUploadProgressCb);
-                    useCase.setPostExecuteCallback(createUploadPhotosCallback(paramsBuilder, callback, progressCallback));
+                    useCase.setPostExecuteCallback(createUploadPhotosCallback(retained, paramsBuilder, callback, progressCallback));
                     useCase.execute();
                 }
 
@@ -374,7 +374,7 @@ public class VkontakteEndpoint extends Endpoint {
      * makes wall posts, as initially intended.
      */
     private UseCase.OnPostExecuteCallback<List<Ordered<VKPhotoArray>>> createUploadPhotosCallback(
-            MakeWallPostToGroups.Parameters.Builder paramsBuilder,
+            List<Media> media, MakeWallPostToGroups.Parameters.Builder paramsBuilder,
             @Nullable UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
             @Nullable MultiUseCase.ProgressCallback progressCallback) {
         return new UseCase.OnPostExecuteCallback<List<Ordered<VKPhotoArray>>>() {
@@ -387,10 +387,11 @@ public class VkontakteEndpoint extends Endpoint {
                 Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to upload photos");
                 VKAttachments attachments = new VKAttachments();
                 List<VKPhotoArray> refinedPhotos = ValueUtility.unwrap(photos);
+                int index = 0;
                 for (VKPhotoArray aPhoto : refinedPhotos) {
                     VKApiPhoto photo = aPhoto.get(0);
                     attachments.add(photo);
-                    attachLocalCache.writePhoto(photo);  // cache uploaded photos
+                    attachLocalCache.writePhoto(media.get(index++).url(), photo);  // cache uploaded photos
                 }
                 paramsBuilder.setAttachments(attachments);
                 makeWallPosts(paramsBuilder.build(), callback, progressCallback);

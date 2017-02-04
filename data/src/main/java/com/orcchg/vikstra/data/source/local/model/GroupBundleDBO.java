@@ -1,6 +1,5 @@
 package com.orcchg.vikstra.data.source.local.model;
 
-import io.realm.RealmCollection;
 import io.realm.RealmList;
 import io.realm.RealmObject;
 
