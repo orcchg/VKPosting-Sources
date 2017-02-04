@@ -84,7 +84,7 @@ public class VkAttachLocalCache {
     /* Write */
     // ------------------------------------------
     @DebugLog
-    void writePhoto(long mediaId, VKApiPhoto vkPhoto) {
+    void writePhoto(VKApiPhoto vkPhoto) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction((xrealm) -> {
             VkApiPhotoDBO dbo = xrealm.createObject(VkApiPhotoDBO.class);

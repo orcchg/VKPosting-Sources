@@ -229,7 +229,7 @@ public class VkontakteEndpoint extends Endpoint {
                     UploadPhotos useCase = new UploadPhotos(threadExecutor, postExecuteScheduler);
                     useCase.setParameters(new UploadPhotos.Parameters(ValueUtility.unwrap(bitmaps)));
                     useCase.setProgressCallback(photoUploadProgressCb);
-                    useCase.setPostExecuteCallback(createUploadPhotosCallback(retained, paramsBuilder, callback, progressCallback));
+                    useCase.setPostExecuteCallback(createUploadPhotosCallback(paramsBuilder, callback, progressCallback));
                     useCase.execute();
                 }
 
@@ -374,7 +374,7 @@ public class VkontakteEndpoint extends Endpoint {
      * makes wall posts, as initially intended.
      */
     private UseCase.OnPostExecuteCallback<List<Ordered<VKPhotoArray>>> createUploadPhotosCallback(
-            List<Media> media, MakeWallPostToGroups.Parameters.Builder paramsBuilder,
+            MakeWallPostToGroups.Parameters.Builder paramsBuilder,
             @Nullable UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
             @Nullable MultiUseCase.ProgressCallback progressCallback) {
         return new UseCase.OnPostExecuteCallback<List<Ordered<VKPhotoArray>>>() {
@@ -384,14 +384,13 @@ public class VkontakteEndpoint extends Endpoint {
                     Timber.e("List of VKPhotoArray-s must not be null, it could be empty at least");
                     throw new ProgramException();
                 }
-                Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get upload photos");
-                int index = 0;
+                Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to upload photos");
                 VKAttachments attachments = new VKAttachments();
                 List<VKPhotoArray> refinedPhotos = ValueUtility.unwrap(photos);
                 for (VKPhotoArray aPhoto : refinedPhotos) {
                     VKApiPhoto photo = aPhoto.get(0);
                     attachments.add(photo);
-                    attachLocalCache.writePhoto(media.get(index++).id(), photo);
+                    attachLocalCache.writePhoto(photo);  // cache uploaded photos
                 }
                 paramsBuilder.setAttachments(attachments);
                 makeWallPosts(paramsBuilder.build(), callback, progressCallback);
@@ -399,7 +398,7 @@ public class VkontakteEndpoint extends Endpoint {
 
             @DebugLog @Override
             public void onError(Throwable e) {
-                Timber.e("Use-Case [Vkontakte Endpoint]: failed to get upload photos");
+                Timber.e("Use-Case [Vkontakte Endpoint]: failed to upload photos");
                 if (callback != null) callback.onError(e);
             }
         };
