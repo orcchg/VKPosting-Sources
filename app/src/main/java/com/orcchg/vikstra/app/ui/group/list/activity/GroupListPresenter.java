@@ -45,11 +45,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         private @Nullable String title;
         private boolean hasTitleChanged;
 
+        @DebugLog
         private void toBundle(Bundle outState) {
             outState.putString(BUNDLE_KEY_TITLE, title);
             outState.putBoolean(BUNDLE_KEY_HAS_TITLE_CHANGED, hasTitleChanged);
         }
 
+        @DebugLog
         private static Memento fromBundle(Bundle savedInstanceState) {
             Memento memento = new Memento();
             memento.title = savedInstanceState.getString(BUNDLE_KEY_TITLE);

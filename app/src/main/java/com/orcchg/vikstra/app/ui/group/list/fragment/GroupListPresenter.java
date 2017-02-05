@@ -72,7 +72,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private final PutKeywordBundle putKeywordBundleUseCase;
     private final PostGroupBundle postGroupBundleUseCase;
     private final PutGroupBundle putGroupBundleUseCase;
-    private final PutGroupReportBundle putGroupReportBundle;
+    private final PutGroupReportBundle putGroupReportBundleUseCase;
     private final VkontakteEndpoint vkontakteEndpoint;
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
@@ -178,7 +178,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                        GetGroupBundleById getGroupBundleByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
                        GetPostById getPostByIdUseCase, PostKeywordBundle postKeywordBundleUseCase,
                        PutKeywordBundle putKeywordBundleUseCase, PostGroupBundle postGroupBundleUseCase,
-                       PutGroupBundle putGroupBundleUseCase, PutGroupReportBundle putGroupReportBundle,
+                       PutGroupBundle putGroupBundleUseCase, PutGroupReportBundle putGroupReportBundleUseCase,
                        VkontakteEndpoint vkontakteEndpoint, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
         this.addKeywordToBundleUseCase = addKeywordToBundleUseCase;
@@ -196,8 +196,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         this.postGroupBundleUseCase = postGroupBundleUseCase;  // no callback - background task
         this.putGroupBundleUseCase = putGroupBundleUseCase;
         this.putGroupBundleUseCase.setPostExecuteCallback(createPutGroupBundleCallback());
-        this.putGroupReportBundle = putGroupReportBundle;
-        this.putGroupReportBundle.setPostExecuteCallback(createPutGroupReportBundleCallback());
+        this.putGroupReportBundleUseCase = putGroupReportBundleUseCase;
+        this.putGroupReportBundleUseCase.setPostExecuteCallback(createPutGroupReportBundleCallback());
         this.vkontakteEndpoint = vkontakteEndpoint;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
     }
@@ -1330,8 +1330,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             public void onFinish(@Nullable List<GroupReportEssence> reports) {
                 Timber.i("Use-Case: succeeded to make wall posting");
                 PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(reports);
-                putGroupReportBundle.setParameters(parameters);
-                putGroupReportBundle.execute();
+                putGroupReportBundleUseCase.setParameters(parameters);
+                putGroupReportBundleUseCase.execute();
             }
 
             @DebugLog @Override
