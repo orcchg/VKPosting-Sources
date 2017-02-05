@@ -230,8 +230,12 @@ public class Navigator {
     }
 
     public void openPostViewScreen(@NonNull Activity context, long postId) {
-        Intent intent = PostViewActivity.getCallingIntent(context, postId);
-        context.startActivityForResult(intent, PostCreateActivity.REQUEST_CODE);
+        openPostViewScreen(context, postId, true);
+    }
+
+    public void openPostViewScreen(@NonNull Activity context, long postId, boolean editable) {
+        Intent intent = PostViewActivity.getCallingIntent(context, postId, editable);
+        context.startActivityForResult(intent, PostViewActivity.REQUEST_CODE);
     }
 
     /* Report */

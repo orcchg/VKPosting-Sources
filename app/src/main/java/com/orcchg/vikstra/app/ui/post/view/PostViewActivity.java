@@ -31,7 +31,9 @@ import timber.log.Timber;
 public class PostViewActivity extends BaseActivity<PostViewContract.View, PostViewContract.Presenter>
         implements PostViewContract.View {
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
+    private static final String BUNDLE_KEY_EDITABLE = "bundle_key_editable";
     private static final String EXTRA_POST_ID = "extra_post_id";
+    private static final String EXTRA_EDITABLE = "extra_editable";
     public static final int REQUEST_CODE = Constant.RequestCode.POST_VIEW_SCREEN;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -55,10 +57,16 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
 
     private PostViewComponent postViewComponent;
     private long postId = Constant.BAD_ID;
+    private boolean isEditable = false;
 
     public static Intent getCallingIntent(@NonNull Context context, long postId) {
+        return getCallingIntent(context, postId, true);
+    }
+
+    public static Intent getCallingIntent(@NonNull Context context, long postId, boolean editable) {
         Intent intent = new Intent(context, PostViewActivity.class);
         intent.putExtra(EXTRA_POST_ID, postId);
+        intent.putExtra(EXTRA_EDITABLE, editable);
         return intent;
     }
 
@@ -100,10 +108,12 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     private void initData(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
+            isEditable = savedInstanceState.getBoolean(BUNDLE_KEY_EDITABLE, false);
         } else {
             postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+            isEditable = getIntent().getBooleanExtra(EXTRA_EDITABLE, false);
         }
-        Timber.d("Post id: %s", postId);
+        Timber.d("Post id: %s ; editable: %s", postId, isEditable);
     }
 
     /* View */
@@ -111,15 +121,17 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     private void initToolbar() {
         toolbar.setTitle(R.string.post_view_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());
-        toolbar.inflateMenu(R.menu.edit);
-        toolbar.setOnMenuItemClickListener((item) -> {
-            switch (item.getItemId()) {
-                case R.id.edit:
-                    navigationComponent.navigator().openPostCreateScreen(this, postId);
-                    return true;
-            }
-            return false;
-        });
+        if (isEditable) {
+            toolbar.inflateMenu(R.menu.edit);
+            toolbar.setOnMenuItemClickListener((item) -> {
+                switch (item.getItemId()) {
+                    case R.id.edit:
+                        navigationComponent.navigator().openPostCreateScreen(this, postId);
+                        return true;
+                }
+                return false;
+            });
+        }
     }
 
     /* Contract */

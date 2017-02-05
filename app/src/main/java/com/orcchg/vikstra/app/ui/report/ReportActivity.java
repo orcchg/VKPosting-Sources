@@ -148,7 +148,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     /* View */
     // --------------------------------------------------------------------------------------------
     private void initView() {
-        postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostViewScreen(this, postId));
+        postThumbnail.setOnClickListener((view) -> navigationComponent.navigator().openPostViewScreen(this, postId, false));  // not editable PostViewScreen
         postThumbnail.setErrorRetryButtonClickListener((view) -> presenter.retryPost());
         updatePostedCounters(0, 0);
 
