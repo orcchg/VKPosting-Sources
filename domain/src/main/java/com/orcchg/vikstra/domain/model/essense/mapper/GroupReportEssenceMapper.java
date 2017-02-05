@@ -19,7 +19,6 @@ public class GroupReportEssenceMapper implements DuplexMapper<GroupReportEssence
     public GroupReportEssenceMapper() {
     }
 
-    @Inject
     public GroupReportEssenceMapper(long groupReportId, long timestamp) {
         this.groupReportId = groupReportId;
         this.timestamp = timestamp;
