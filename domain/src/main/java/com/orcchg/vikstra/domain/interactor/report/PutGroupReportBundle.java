@@ -6,6 +6,7 @@ import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
+import com.orcchg.vikstra.domain.interactor.base.IPutUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
@@ -15,7 +16,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class PutGroupReportBundle extends UseCase<GroupReportBundle> {
+public class PutGroupReportBundle extends UseCase<GroupReportBundle> implements IPutUseCase {
 
     public static class Parameters implements IParameters {
         List<GroupReportEssence> essences;
@@ -48,5 +49,10 @@ public class PutGroupReportBundle extends UseCase<GroupReportBundle> {
     @Nullable @Override
     protected IParameters getInputParameters() {
         return parameters;
+    }
+
+    @Override
+    public long getReservedId() {
+        return reportRepository.getLastId() + 1;
     }
 }

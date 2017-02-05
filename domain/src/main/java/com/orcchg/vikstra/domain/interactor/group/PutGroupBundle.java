@@ -6,6 +6,7 @@ import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
+import com.orcchg.vikstra.domain.interactor.base.IPutUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupBundle;
@@ -15,7 +16,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-public class PutGroupBundle extends UseCase<GroupBundle> {
+public class PutGroupBundle extends UseCase<GroupBundle> implements IPutUseCase {
 
     public static class Parameters implements IParameters {
         Collection<Group> groups;
@@ -77,5 +78,10 @@ public class PutGroupBundle extends UseCase<GroupBundle> {
     @Nullable @Override
     protected IParameters getInputParameters() {
         return parameters;
+    }
+
+    @Override
+    public long getReservedId() {
+        return groupRepository.getLastId() + 1;
     }
 }

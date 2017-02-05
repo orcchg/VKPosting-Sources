@@ -1,8 +1,5 @@
 package com.orcchg.vikstra.domain.interactor.base;
 
-/**
- * Created by DLA on 05.02.2017.
- */
-
-public class IPutUseCase {
+public interface IPutUseCase {
+    long getReservedId();  // id for model to be stored next in repository
 }

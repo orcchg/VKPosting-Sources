@@ -6,6 +6,7 @@ import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
+import com.orcchg.vikstra.domain.interactor.base.IPutUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.PostEssence;
@@ -13,7 +14,7 @@ import com.orcchg.vikstra.domain.repository.IPostRepository;
 
 import javax.inject.Inject;
 
-public class PutPost extends UseCase<Post> {
+public class PutPost extends UseCase<Post> implements IPutUseCase {
 
     public static class Parameters implements IParameters {
         PostEssence essence;
@@ -46,5 +47,10 @@ public class PutPost extends UseCase<Post> {
     @Nullable @Override
     protected IParameters getInputParameters() {
         return parameters;
+    }
+
+    @Override
+    public long getReservedId() {
+        return postRepository.getLastId() + 1;
     }
 }

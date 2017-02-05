@@ -6,6 +6,7 @@ import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
+import com.orcchg.vikstra.domain.interactor.base.IPutUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
@@ -15,7 +16,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
-public class PutKeywordBundle extends UseCase<KeywordBundle> {
+public class PutKeywordBundle extends UseCase<KeywordBundle> implements IPutUseCase {
 
     public static class Parameters implements IParameters {
         String title;
@@ -69,5 +70,10 @@ public class PutKeywordBundle extends UseCase<KeywordBundle> {
     @Nullable @Override
     protected IParameters getInputParameters() {
         return parameters;
+    }
+
+    @Override
+    public long getReservedId() {
+        return keywordRepository.getLastId() + 1;
     }
 }
