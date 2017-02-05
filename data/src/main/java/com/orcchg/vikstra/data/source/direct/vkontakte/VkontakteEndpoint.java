@@ -287,32 +287,60 @@ public class VkontakteEndpoint extends Endpoint {
 
     /* Report */
     // ------------------------------------------
-    public void deleteWallPost(GroupReport report, UseCase.OnPostExecuteCallback<VkSimpleResponseModel> callback) {
+    public void deleteWallPost(GroupReport report, UseCase.OnPostExecuteCallback<Boolean> callback) {
         DeleteWallPost useCase = new DeleteWallPost(threadExecutor, postExecuteScheduler);
         useCase.setParameters(new DeleteWallPost.Parameters(report));
-        useCase.setPostExecuteCallback(callback);
+        useCase.setPostExecuteCallback(wrapCallback(callback));
         useCase.execute();
     }
 
-    public void deleteWallPosts(List<GroupReport> reports, UseCase.OnPostExecuteCallback<List<Ordered<VkSimpleResponseModel>>> callback) {
+    public void deleteWallPosts(List<GroupReport> reports, UseCase.OnPostExecuteCallback<Boolean> callback) {
         DeleteWallPosts useCase = new DeleteWallPosts(threadExecutor, postExecuteScheduler);
         useCase.setParameters(new DeleteWallPosts.Parameters(reports));
-        useCase.setPostExecuteCallback(callback);
+        useCase.setPostExecuteCallback(wrapCallbackForList(callback));
         useCase.execute();
     }
 
-    public void restoreWallPost(GroupReport report, UseCase.OnPostExecuteCallback<VkSimpleResponseModel> callback) {
+    public void restoreWallPost(GroupReport report, UseCase.OnPostExecuteCallback<Boolean> callback) {
         RestoreWallPost useCase = new RestoreWallPost(threadExecutor, postExecuteScheduler);
         useCase.setParameters(new RestoreWallPost.Parameters(report));
-        useCase.setPostExecuteCallback(callback);
+        useCase.setPostExecuteCallback(wrapCallback(callback));
         useCase.execute();
     }
 
-    public void restoreWallPosts(List<GroupReport> reports, UseCase.OnPostExecuteCallback<List<Ordered<VkSimpleResponseModel>>> callback) {
+    public void restoreWallPosts(List<GroupReport> reports, UseCase.OnPostExecuteCallback<Boolean> callback) {
         RestoreWallPosts useCase = new RestoreWallPosts(threadExecutor, postExecuteScheduler);
         useCase.setParameters(new RestoreWallPosts.Parameters(reports));
-        useCase.setPostExecuteCallback(callback);
+        useCase.setPostExecuteCallback(wrapCallbackForList(callback));
         useCase.execute();
+    }
+
+    private UseCase.OnPostExecuteCallback<VkSimpleResponseModel> wrapCallback(final UseCase.OnPostExecuteCallback<Boolean> callback) {
+        return new UseCase.OnPostExecuteCallback<VkSimpleResponseModel>() {
+            @Override
+            public void onFinish(@Nullable VkSimpleResponseModel values) {
+                if (callback != null) callback.onFinish(true);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) callback.onError(e);
+            }
+        };
+    }
+
+    private UseCase.OnPostExecuteCallback<List<Ordered<VkSimpleResponseModel>>> wrapCallbackForList(final UseCase.OnPostExecuteCallback<Boolean> callback) {
+        return new UseCase.OnPostExecuteCallback<List<Ordered<VkSimpleResponseModel>>>() {
+            @Override
+            public void onFinish(@Nullable List<Ordered<VkSimpleResponseModel>> values) {
+                if (callback != null) callback.onFinish(true);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                if (callback != null) callback.onError(e);
+            }
+        };
     }
 
     /* User */

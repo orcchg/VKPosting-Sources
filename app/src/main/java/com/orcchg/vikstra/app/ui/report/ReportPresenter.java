@@ -260,6 +260,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     }
 
     @Override
+    public void performReverting() {
+        Timber.i("performReverting");
+        if (isViewAttached()) getView().onPostRevertingStarted();
+        vkontakteEndpoint.deleteWallPosts(storedReports, createDeleteWallPostsCallback());
+    }
+
+    @Override
     public void retry() {
         Timber.i("retry");
         memento.postedWithSuccess = 0;  // drop counter
@@ -342,14 +349,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
                     /**
                      * Populate {@link ReportPresenter#storedReports} when get GroupReportBundle
-                     * use-case has finished in interactive mode. This is only possible when entire
-                     * ReportScreen is restored after destruction, i.e. {@link ReportPresenter#onRestoreState()}
-                     * is the only place where {@link GetGroupReportBundleById} use-case is executed.
+                     * use-case has finished with data inside. In interactive mode, this is only
+                     * possible when the entire ReportScreen is restored after destruction, i.e.
+                     * {@link ReportPresenter#onRestoreState()} is the only place where
+                     * {@link GetGroupReportBundleById} use-case is executed.
                      */
-                    if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
-                        storedReports.clear();
-                        storedReports.addAll(bundle.groupReports());
-                    }
+                    storedReports.clear();
+                    storedReports.addAll(bundle.groupReports());
                 }
             }
 
@@ -400,6 +406,23 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to dump GroupReport-s");
                 if (isViewAttached()) getView().showDumpError();
+            }
+        };
+    }
+
+    // ------------------------------------------
+    private UseCase.OnPostExecuteCallback<Boolean> createDeleteWallPostsCallback() {
+        return new UseCase.OnPostExecuteCallback<Boolean>() {
+            @Override
+            public void onFinish(@Nullable Boolean result) {
+                Timber.i("Use-Case: succeeded to delete wall Post-s");
+                if (isViewAttached()) getView().onPostRevertingFinished();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to delete wall Post-s");
+                if (isViewAttached()) getView().onPostRevertingError();
             }
         };
     }

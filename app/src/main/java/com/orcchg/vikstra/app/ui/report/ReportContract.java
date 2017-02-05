@@ -13,10 +13,15 @@ public interface ReportContract {
 
         void onPostingCancel();
         void onPostingFinished(int posted, int total);
+        void onPostRevertingStarted();
+        void onPostRevertingError();
+        void onPostRevertingFinished();
+
         void openCloseWhilePostingDialog();
         void openDumpNotReadyDialog();
         void openEditDumpFileNameDialog();
         void openGroupDetailScreen(long groupId);
+        void openRevertAllWarningDialog();
 
         void showDumpError();
         void showDumpSuccess(String path);
@@ -38,6 +43,7 @@ public interface ReportContract {
         void onDumpPressed();
         void interruptPostingAndClose(boolean shouldClose);
         void performDumping(String path);
+        void performReverting();
         void retry();
         void retryPost();
     }

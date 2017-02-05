@@ -27,6 +27,8 @@
     <string name="button_interrupt">Прервать</string>
     <string name="button_logout">Выйти</string>
     <string name="button_retry">Повторить</string>
+    <string name="button_revert">Откатить</string>
+    <string name="button_revert_all">Откатить все</string>
     <string name="button_save">Сохранить</string>
     <string name="button_search">Поиск</string>
     <string name="button_select">Выбрать</string>
@@ -59,6 +61,7 @@
         <item name="101">Память</item>
         <item name="102">Память</item>
     </string-array>
+    <string name="snackbar_error_message">Произошла ошибка</string>
     <string name="toast_access_token_has_expired">Ключ доступа устарел. Авторизуйтесь повторно.</string>
     <!-- Group detail screen -->
     <string name="group_detail_screen_title">Информация о группе</string>
@@ -149,12 +152,15 @@
     <string name="report_dialog_new_dump_file_hint">Введите имя файла</string>
     <string name="report_dialog_posting_finished">Публикация завершилась</string>
     <string name="report_dialog_posting_was_cancelled_daily_limit_reached">Вы достигли суточный лимит публикаций.\nИспользуйте другой аккаунт Вконтакте или продолжите завтра.</string>
+    <string name="report_dialog_revert_all_wall_posting_description">Вы уверены, что хотите откатить все текущие публикации?</string>
     <string name="report_posted_counters">Опубликовано в %1$s из %2$s групп</string>
     <string name="report_screen_title">Отчет</string>
     <string name="report_snackbar_group_reports_dump_failed">Не удалось выгрузить отчеты в файл</string>
     <string name="report_snackbar_group_reports_dump_succeeded">Выгружено&#58; %s</string>
     <string name="report_snackbar_posting_interrupted">Публикация прервана</string>
     <string name="report_snackbar_posting_finished">Публикация успешно завершилась. Опубликовано в %1$s из %2$s группах.</string>
+    <string name="report_snackbar_revert_all_wall_posting_started">Началось удаление всех текущих публикаций</string>
+    <string name="report_snackbar_revert_all_wall_posting_finished">Удаление всех текущих публикаций завершено</string>
     <string name="report_showcase_report_dump_title">Сохраните отчет о выполненных публикациях</string>
     <!-- Status screen -->
     <string name="status_button_report">Отчет</string>

@@ -30,6 +30,8 @@
     <string name="button_interrupt">Interrupt</string>
     <string name="button_logout">Logout</string>
     <string name="button_retry">Retry</string>
+    <string name="button_revert">Revert</string>
+    <string name="button_revert_all">Revert all</string>
     <string name="button_save">Save</string>
     <string name="button_search">Search</string>
     <string name="button_select">Select</string>
@@ -66,6 +68,8 @@
         <item name="101">Memory</item>
         <item name="102">Memory</item>
     </string-array>
+
+    <string name="snackbar_error_message">An error has occurred</string>
 
     <string name="toast_access_token_has_expired">Access token has expired. Repeat authentication.</string>
 </resources>

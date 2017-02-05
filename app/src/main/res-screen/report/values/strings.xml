@@ -8,12 +8,15 @@
     <string name="report_dialog_new_dump_file_hint">Enter file name</string>
     <string name="report_dialog_posting_finished">Posting finished</string>
     <string name="report_dialog_posting_was_cancelled_daily_limit_reached">You\&apos;ve reached daily limit of posting.\nTry another account or continue tomorrow.</string>
+    <string name="report_dialog_revert_all_wall_posting_description">Are you sure, you want to revert all published posts?</string>
     <string name="report_posted_counters">Posted to %1$s of %2$s groups</string>
     <string name="report_screen_title">Report</string>
     <string name="report_snackbar_group_reports_dump_failed">Failed to dump group reports to file</string>
     <string name="report_snackbar_group_reports_dump_succeeded">Dumped&#58; %s</string>
     <string name="report_snackbar_posting_interrupted">Posting has been interrupted</string>
     <string name="report_snackbar_posting_finished">Posting has successfully finished. Published to %1$s of %2$s groups.</string>
+    <string name="report_snackbar_revert_all_wall_posting_started">Started to delete all published posts</string>
+    <string name="report_snackbar_revert_all_wall_posting_finished">Finished deletion all published posts</string>
 
     <string name="report_showcase_report_dump_title">Save report about published posts</string>
 </resources>

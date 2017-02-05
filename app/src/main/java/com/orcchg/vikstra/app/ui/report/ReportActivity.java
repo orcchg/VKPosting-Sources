@@ -62,10 +62,15 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @BindView(R.id.anchor_view) View achorView;
     @BindView(R.id.btn_posting_interrupt) Button interruptButton;
+    @BindView(R.id.btn_posting_revert_all) Button revertAllButton;
     @OnClick(R.id.btn_posting_interrupt)
     void onInterruptPostingClick() {
         presenter.interruptPostingAndClose(false);  // don't close on interruption
         UiUtility.showSnackbar(this, R.string.report_snackbar_posting_interrupted);
+    }
+    @OnClick(R.id.btn_posting_revert_all)
+    void onRevertAllPostingClick() {
+        openRevertAllWarningDialog();
     }
 
     private ReportComponent reportComponent;
@@ -154,6 +159,10 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
         if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
             interruptButton.setVisibility(View.VISIBLE);
+            revertAllButton.setEnabled(false);
+        } else {
+            interruptButton.setVisibility(View.GONE);
+            revertAllButton.setEnabled(true);
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -208,6 +217,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
                 R.string.report_dialog_posting_was_cancelled_daily_limit_reached);
         interruptButton.setEnabled(false);
+        revertAllButton.setEnabled(true);
     }
 
     @Override
@@ -216,8 +226,25 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         String text = String.format(Locale.ENGLISH, SNACKBAR_POSTING_FINISHED, posted, total);
         DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text);
         interruptButton.setEnabled(false);
+        revertAllButton.setEnabled(true);
     }
 
+    @Override
+    public void onPostRevertingStarted() {
+        UiUtility.showSnackbar(this, R.string.report_snackbar_revert_all_wall_posting_started);
+    }
+
+    @Override
+    public void onPostRevertingError() {
+        UiUtility.showSnackbar(this, R.string.snackbar_error_message);
+    }
+
+    @Override
+    public void onPostRevertingFinished() {
+        UiUtility.showSnackbar(this, R.string.report_snackbar_revert_all_wall_posting_finished);
+    }
+
+    // ------------------------------------------
     @Override
     public void openCloseWhilePostingDialog() {
         DialogProvider.showTextDialogTwoButtons(this, R.string.report_dialog_interrupt_posting_and_close_title,
@@ -249,6 +276,18 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @Override
     public void openGroupDetailScreen(long groupId) {
         navigationComponent.navigator().openGroupDetailScreen(this, groupId);
+    }
+
+    @Override
+    public void openRevertAllWarningDialog() {
+        DialogProvider.showTextDialogTwoButtons(this, R.string.dialog_warning_title,
+                R.string.report_dialog_revert_all_wall_posting_description,
+                R.string.button_revert, R.string.button_cancel,
+                (dialog, which) -> {
+                    dialog.dismiss();
+                    presenter.performReverting();
+                },
+                (dialog, which) -> dialog.dismiss());
     }
 
     // ------------------------------------------
