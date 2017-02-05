@@ -50,6 +50,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final GetPostById getPostByIdUseCase;
     private final DumpGroupReports dumpGroupReportsUseCase;
     private final PutGroupReportBundle putGroupReportBundleUseCase;
+    private final VkontakteEndpoint vkontakteEndpoint;
 
     private final GroupReportToVoMapper groupReportToVoMapper;
     private final GroupReportEssenceMapper groupReportEssenceMapper;
@@ -108,6 +109,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
                     DumpGroupReports dumpGroupReportsUseCase, PutGroupReportBundle putGroupReportBundleUseCase,
+                    VkontakteEndpoint vkontakteEndpoint,
                     GroupReportToVoMapper groupReportToVoMapper, GroupReportEssenceMapper groupReportEssenceMapper,
                     GroupReportEssenceToVoMapper groupReportEssenceToVoMapper, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter();
@@ -118,6 +120,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         this.dumpGroupReportsUseCase = dumpGroupReportsUseCase;
         this.dumpGroupReportsUseCase.setPostExecuteCallback(createDumpGroupReportsCallback());
         this.putGroupReportBundleUseCase = putGroupReportBundleUseCase;  // no callback - background task
+        this.vkontakteEndpoint = vkontakteEndpoint;
         this.groupReportToVoMapper = groupReportToVoMapper;
         this.groupReportEssenceMapper = groupReportEssenceMapper;
         this.groupReportEssenceToVoMapper = groupReportEssenceToVoMapper;

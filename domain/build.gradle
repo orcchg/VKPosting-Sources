@@ -70,6 +70,7 @@ dependencies {
     apt domainDependencies.autoValue
     apt domainDependencies.autoValueParcel
 
+    compile domainDependencies.gson
     compile domainDependencies.javaxInject
     compile domainDependencies.openCSV
     compile domainDependencies.timber

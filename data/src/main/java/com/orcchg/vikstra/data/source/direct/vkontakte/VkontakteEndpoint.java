@@ -15,12 +15,18 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.vkontakte.DeleteWallPost;
+import com.orcchg.vikstra.domain.interactor.vkontakte.DeleteWallPosts;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetCurrentUser;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupById;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeywordsList;
 import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPostToGroups;
+import com.orcchg.vikstra.domain.interactor.vkontakte.RestoreWallPost;
+import com.orcchg.vikstra.domain.interactor.vkontakte.RestoreWallPosts;
 import com.orcchg.vikstra.domain.interactor.vkontakte.media.UploadPhotos;
+import com.orcchg.vikstra.domain.interactor.vkontakte.model.VkSimpleResponseModel;
 import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.Media;
 import com.orcchg.vikstra.domain.model.Post;
@@ -277,6 +283,36 @@ public class VkontakteEndpoint extends Endpoint {
         };
 
         makeWallPosts(groups, post, callback, progressCallback, photoUploadProgressCb, photoPrepareProgressCb);
+    }
+
+    /* Report */
+    // ------------------------------------------
+    public void deleteWallPost(GroupReport report, UseCase.OnPostExecuteCallback<VkSimpleResponseModel> callback) {
+        DeleteWallPost useCase = new DeleteWallPost(threadExecutor, postExecuteScheduler);
+        useCase.setParameters(new DeleteWallPost.Parameters(report));
+        useCase.setPostExecuteCallback(callback);
+        useCase.execute();
+    }
+
+    public void deleteWallPosts(List<GroupReport> reports, UseCase.OnPostExecuteCallback<List<Ordered<VkSimpleResponseModel>>> callback) {
+        DeleteWallPosts useCase = new DeleteWallPosts(threadExecutor, postExecuteScheduler);
+        useCase.setParameters(new DeleteWallPosts.Parameters(reports));
+        useCase.setPostExecuteCallback(callback);
+        useCase.execute();
+    }
+
+    public void restoreWallPost(GroupReport report, UseCase.OnPostExecuteCallback<VkSimpleResponseModel> callback) {
+        RestoreWallPost useCase = new RestoreWallPost(threadExecutor, postExecuteScheduler);
+        useCase.setParameters(new RestoreWallPost.Parameters(report));
+        useCase.setPostExecuteCallback(callback);
+        useCase.execute();
+    }
+
+    public void restoreWallPosts(List<GroupReport> reports, UseCase.OnPostExecuteCallback<List<Ordered<VkSimpleResponseModel>>> callback) {
+        RestoreWallPosts useCase = new RestoreWallPosts(threadExecutor, postExecuteScheduler);
+        useCase.setParameters(new RestoreWallPosts.Parameters(reports));
+        useCase.setPostExecuteCallback(callback);
+        useCase.execute();
     }
 
     /* User */

@@ -6,6 +6,7 @@ import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
+import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -84,7 +85,10 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
         super(threadExecutor, postExecuteScheduler);
     }
 
-    protected MakeWallPost() {
+    /**
+     * For internal use within another {@link UseCase} and synchronous calls only
+     */
+    MakeWallPost() {
     }
 
     public void setParameters(Parameters parameters) {
@@ -97,7 +101,7 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
         Timber.d(parameters.toString());
         VKParameters params = new VKParameters();
         // negative id is for Vk Community, positive - for Vk User
-        params.put(VKApiConst.OWNER_ID, Long.toString(-parameters.group.id()));  // destination user / community id
+        params.put(VKApiConst.OWNER_ID, -parameters.group.id());  // destination user / community id
         params.put(VKApiConst.MESSAGE, parameters.message);
         params.put(VKApiConst.ATTACHMENTS, parameters.attachments);
         params.put(VKApiConst.EXTENDED, 1);
