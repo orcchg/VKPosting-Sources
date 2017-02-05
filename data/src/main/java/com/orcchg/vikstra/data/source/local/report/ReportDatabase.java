@@ -3,6 +3,8 @@ package com.orcchg.vikstra.data.source.local.report;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.data.injection.migration.DaggerMigrationComponent;
+import com.orcchg.vikstra.data.injection.migration.MigrationComponent;
 import com.orcchg.vikstra.data.source.local.model.GroupReportBundleDBO;
 import com.orcchg.vikstra.data.source.local.model.GroupReportDBO;
 import com.orcchg.vikstra.data.source.local.model.mapper.GroupReportBundleToDboMapper;
@@ -18,7 +20,6 @@ import javax.inject.Singleton;
 
 import hugo.weaving.DebugLog;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 
 @Singleton
@@ -28,7 +29,7 @@ public class ReportDatabase implements IReportStorage {
     private final GroupReportBundleToDboMapper groupReportBundleToDboMapper;
     private final GroupReportBundleToDboPopulator groupReportBundleToDboPopulator;
 
-    private final RealmConfiguration realmConfiguration;
+    private final MigrationComponent migrationComponent;
 
     @Inject
     ReportDatabase(GroupReportToDboPopulator groupReportToDboPopulator,
@@ -37,17 +38,14 @@ public class ReportDatabase implements IReportStorage {
         this.groupReportToDboPopulator = groupReportToDboPopulator;
         this.groupReportBundleToDboMapper = groupReportBundleToDboMapper;
         this.groupReportBundleToDboPopulator = groupReportBundleToDboPopulator;
-        this.realmConfiguration = new RealmConfiguration.Builder()
-                .schemaVersion(1)  // bumped version up, previous: 0
-                .migration(new ReportMigration())
-                .build();
+        this.migrationComponent = DaggerMigrationComponent.create();
     }
 
     /* Create */
     // ------------------------------------------
     @DebugLog @Override
     public GroupReportBundle addGroupReports(@NonNull GroupReportBundle bundle) {
-        Realm realm = Realm.getInstance(realmConfiguration);
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         realm.executeTransaction((xrealm) -> {
             GroupReportBundleDBO dbo = xrealm.createObject(GroupReportBundleDBO.class);
             groupReportBundleToDboPopulator.populate(bundle, dbo);
@@ -60,7 +58,7 @@ public class ReportDatabase implements IReportStorage {
     public boolean addGroupReportToBundle(long id, GroupReport report) {
         if (id == Constant.BAD_ID) return false;
         boolean result = false;
-        Realm realm = Realm.getInstance(realmConfiguration);
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         GroupReportBundleDBO dbo = realm.where(GroupReportBundleDBO.class).equalTo(GroupReportBundleDBO.COLUMN_ID, id).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> {
@@ -78,7 +76,7 @@ public class ReportDatabase implements IReportStorage {
     // ------------------------------------------
     @DebugLog @Override
     public long getLastId() {
-        Realm realm = Realm.getInstance(realmConfiguration);
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         Number number = realm.where(GroupReportBundleDBO.class).max(GroupReportBundleDBO.COLUMN_ID);
         long lastId = number != null ? number.longValue() : Constant.INIT_ID;
         realm.close();
@@ -88,7 +86,7 @@ public class ReportDatabase implements IReportStorage {
     @DebugLog @Nullable @Override
     public GroupReportBundle groupReports(long id) {
         if (id != Constant.BAD_ID) {
-            Realm realm = Realm.getInstance(realmConfiguration);
+            Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
             GroupReportBundle model = null;
             GroupReportBundleDBO dbo = realm.where(GroupReportBundleDBO.class).equalTo(GroupReportBundleDBO.COLUMN_ID, id).findFirst();
             if (dbo != null) model = groupReportBundleToDboMapper.mapBack(dbo);
@@ -102,7 +100,7 @@ public class ReportDatabase implements IReportStorage {
     // ------------------------------------------
     @DebugLog @Override
     public boolean clear() {
-        Realm realm = Realm.getInstance(realmConfiguration);
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         realm.executeTransaction((xrealm) -> {
             RealmResults<GroupReportBundleDBO> dbos = xrealm.where(GroupReportBundleDBO.class).findAll();
             dbos.deleteAllFromRealm();
@@ -115,7 +113,7 @@ public class ReportDatabase implements IReportStorage {
     public boolean deleteGroupReports(long id) {
         if (id == Constant.BAD_ID) return false;
         boolean result = false;
-        Realm realm = Realm.getInstance(realmConfiguration);
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         GroupReportBundleDBO dbo = realm.where(GroupReportBundleDBO.class).equalTo(GroupReportBundleDBO.COLUMN_ID, id).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> dbo.deleteFromRealm());

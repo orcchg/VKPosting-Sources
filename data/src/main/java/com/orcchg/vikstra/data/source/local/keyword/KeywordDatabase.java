@@ -3,6 +3,8 @@ package com.orcchg.vikstra.data.source.local.keyword;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.data.injection.migration.DaggerMigrationComponent;
+import com.orcchg.vikstra.data.injection.migration.MigrationComponent;
 import com.orcchg.vikstra.data.source.local.model.KeywordBundleDBO;
 import com.orcchg.vikstra.data.source.local.model.KeywordDBO;
 import com.orcchg.vikstra.data.source.local.model.mapper.KeywordBundleToDboMapper;
@@ -31,6 +33,8 @@ public class KeywordDatabase implements IKeywordStorage {
     private final KeywordBundleToDboMapper keywordBundleToDboMapper;
     private final KeywordBundleToDboPopulator keywordBundleToDboPopulator;
 
+    private final MigrationComponent migrationComponent;
+
     @Inject
     KeywordDatabase(KeywordToDboPopulator keywordToDboPopulator,
                     KeywordBundleToDboMapper keywordBundleToDboMapper,
@@ -38,13 +42,14 @@ public class KeywordDatabase implements IKeywordStorage {
         this.keywordToDboPopulator = keywordToDboPopulator;
         this.keywordBundleToDboMapper = keywordBundleToDboMapper;
         this.keywordBundleToDboPopulator = keywordBundleToDboPopulator;
+        this.migrationComponent = DaggerMigrationComponent.create();
     }
 
     /* Create */
     // ------------------------------------------
     @DebugLog @Override
     public KeywordBundle addKeywords(@NonNull KeywordBundle bundle) {
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         realm.executeTransaction((xrealm) -> {
             KeywordBundleDBO dbo = xrealm.createObject(KeywordBundleDBO.class);
             keywordBundleToDboPopulator.populate(bundle, dbo);
@@ -57,7 +62,7 @@ public class KeywordDatabase implements IKeywordStorage {
     public boolean addKeywordToBundle(long id, Keyword keyword) {
         if (id == Constant.BAD_ID) return false;
         boolean result = false;
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> {
@@ -75,7 +80,7 @@ public class KeywordDatabase implements IKeywordStorage {
     // ------------------------------------------
     @DebugLog @Override
     public long getLastId() {
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         Number number = realm.where(KeywordBundleDBO.class).max(KeywordBundleDBO.COLUMN_ID);
         long lastId = number != null ? number.longValue() : Constant.INIT_ID;
         realm.close();
@@ -85,7 +90,7 @@ public class KeywordDatabase implements IKeywordStorage {
     @DebugLog @Nullable @Override
     public KeywordBundle keywords(long id) {
         if (id != Constant.BAD_ID) {
-            Realm realm = Realm.getDefaultInstance();
+            Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
             KeywordBundle model = null;
             KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
             if (dbo != null) model = keywordBundleToDboMapper.mapBack(dbo);
@@ -98,7 +103,7 @@ public class KeywordDatabase implements IKeywordStorage {
     @DebugLog @Override
     public List<KeywordBundle> keywords(int limit, int offset) {
         RepoUtility.checkLimitAndOffset(limit, offset);
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         RealmResults<KeywordBundleDBO> dbos = realm.where(KeywordBundleDBO.class).findAll();
         List<KeywordBundle> models = new ArrayList<>();
         int size = limit < 0 ? dbos.size() : limit;
@@ -115,7 +120,7 @@ public class KeywordDatabase implements IKeywordStorage {
     @DebugLog @Override
     public boolean updateKeywords(@NonNull KeywordBundle bundle) {
         boolean result = false;
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, bundle.id()).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> keywordBundleToDboPopulator.populate(bundle, dbo));
@@ -128,7 +133,7 @@ public class KeywordDatabase implements IKeywordStorage {
     @DebugLog @Override
     public boolean updateKeywordsTitle(long id, String newTitle) {
         boolean result = false;
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> dbo.title = newTitle);
@@ -144,7 +149,7 @@ public class KeywordDatabase implements IKeywordStorage {
     public boolean deleteKeywords(long id) {
         if (id == Constant.BAD_ID) return false;
         boolean result = false;
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         KeywordBundleDBO dbo = realm.where(KeywordBundleDBO.class).equalTo(KeywordBundleDBO.COLUMN_ID, id).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> dbo.deleteFromRealm());

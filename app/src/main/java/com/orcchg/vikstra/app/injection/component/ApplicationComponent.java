@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.bumptech.glide.RequestManager;
 import com.orcchg.vikstra.app.injection.module.ApplicationModule;
+import com.orcchg.vikstra.data.injection.migration.MigrationModule;
 import com.orcchg.vikstra.data.injection.remote.CloudComponent;
 import com.orcchg.vikstra.data.injection.remote.CloudModule;
 import com.orcchg.vikstra.data.source.direct.ImageLoader;
@@ -23,8 +24,8 @@ import dagger.Component;
 /**
  * A component whose lifetime is the life of the application.
  */
-@Singleton // Constraints this component to one-per-application or unscoped bindings.
-@Component(modules = {ApplicationModule.class, CloudModule.class})
+@Singleton  // Constraints this component to one-per-application or unscoped bindings.
+@Component(modules = {ApplicationModule.class, CloudModule.class, MigrationModule.class})
 public interface ApplicationComponent extends CloudComponent {
 
     /* Context */

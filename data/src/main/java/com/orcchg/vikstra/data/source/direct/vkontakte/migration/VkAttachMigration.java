@@ -2,10 +2,14 @@ package com.orcchg.vikstra.data.source.direct.vkontakte.migration;
 
 import com.orcchg.vikstra.data.source.direct.vkontakte.model.VkApiPhotoDBO;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import io.realm.DynamicRealm;
 import io.realm.RealmMigration;
 import io.realm.RealmObjectSchema;
 import io.realm.RealmSchema;
+import timber.log.Timber;
 
 /**
  * Migration for {@link VkApiPhotoDBO} in {@link io.realm.Realm}.
@@ -13,7 +17,13 @@ import io.realm.RealmSchema;
  * Example:
  * {@see https://github.com/realm/realm-java/blob/master/examples/migrationExample/src/main/java/io/realm/examples/realmmigrationexample/model/Migration.java}
  */
+@Singleton
 public class VkAttachMigration implements RealmMigration {
+
+    @Inject
+    public VkAttachMigration() {
+        Timber.d("VkAttachMigration ctor");
+    }
 
     @Override
     public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {

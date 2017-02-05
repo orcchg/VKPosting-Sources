@@ -3,6 +3,8 @@ package com.orcchg.vikstra.data.source.local.group;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.data.injection.migration.DaggerMigrationComponent;
+import com.orcchg.vikstra.data.injection.migration.MigrationComponent;
 import com.orcchg.vikstra.data.source.local.model.GroupBundleDBO;
 import com.orcchg.vikstra.data.source.local.model.GroupDBO;
 import com.orcchg.vikstra.data.source.local.model.mapper.GroupBundleToDboMapper;
@@ -29,6 +31,8 @@ public class GroupDatabase implements IGroupStorage {
     private final GroupBundleToDboMapper groupBundleToDboMapper;
     private final GroupBundleToDboPopulator groupBundleToDboPopulator;
 
+    private final MigrationComponent migrationComponent;
+
     @Inject
     GroupDatabase(GroupToDboPopulator groupToDboPopulator,
                   GroupBundleToDboMapper groupBundleToDboMapper,
@@ -36,13 +40,14 @@ public class GroupDatabase implements IGroupStorage {
         this.groupToDboPopulator = groupToDboPopulator;
         this.groupBundleToDboMapper = groupBundleToDboMapper;
         this.groupBundleToDboPopulator = groupBundleToDboPopulator;
+        this.migrationComponent = DaggerMigrationComponent.create();
     }
 
     /* Create */
     // ------------------------------------------
     @DebugLog @Override
     public GroupBundle addGroups(@NonNull GroupBundle bundle) {
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         realm.executeTransaction((xrealm) -> {
             GroupBundleDBO dbo = xrealm.createObject(GroupBundleDBO.class);
             groupBundleToDboPopulator.populate(bundle, dbo);
@@ -55,7 +60,7 @@ public class GroupDatabase implements IGroupStorage {
     public boolean addGroupToBundle(long id, Group group) {
         if (id == Constant.BAD_ID) return false;
         boolean result = false;
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         GroupBundleDBO dbo = realm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, id).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> {
@@ -73,7 +78,7 @@ public class GroupDatabase implements IGroupStorage {
     // ------------------------------------------
     @DebugLog @Override
     public long getLastId() {
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         Number number = realm.where(GroupBundleDBO.class).max(GroupBundleDBO.COLUMN_ID);
         long lastId = number != null ? number.longValue() : Constant.INIT_ID;
         realm.close();
@@ -83,7 +88,7 @@ public class GroupDatabase implements IGroupStorage {
     @DebugLog @Nullable @Override
     public GroupBundle groups(long id) {
         if (id != Constant.BAD_ID) {
-            Realm realm = Realm.getDefaultInstance();
+            Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
             GroupBundle model = null;
             GroupBundleDBO dbo = realm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, id).findFirst();
             if (dbo != null) model = groupBundleToDboMapper.mapBack(dbo);
@@ -96,7 +101,7 @@ public class GroupDatabase implements IGroupStorage {
     @DebugLog @Override
     public List<GroupBundle> groups(int limit, int offset) {
         RepoUtility.checkLimitAndOffset(limit, offset);
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         RealmResults<GroupBundleDBO> dbos = realm.where(GroupBundleDBO.class).findAll();
         List<GroupBundle> models = new ArrayList<>();
         int size = limit < 0 ? dbos.size() : limit;
@@ -113,7 +118,7 @@ public class GroupDatabase implements IGroupStorage {
     @DebugLog @Override
     public boolean updateGroups(@NonNull GroupBundle bundle) {
         boolean result = false;
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         GroupBundleDBO dbo = realm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, bundle.id()).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> groupBundleToDboPopulator.populate(bundle, dbo));
@@ -126,7 +131,7 @@ public class GroupDatabase implements IGroupStorage {
     @DebugLog @Override
     public boolean updateGroupsTitle(long id, String newTitle) {
         boolean result = false;
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         GroupBundleDBO dbo = realm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, id).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> dbo.title = newTitle);
@@ -142,7 +147,7 @@ public class GroupDatabase implements IGroupStorage {
     public boolean deleteGroups(long id) {
         if (id == Constant.BAD_ID) return false;
         boolean result = false;
-        Realm realm = Realm.getDefaultInstance();
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         GroupBundleDBO dbo = realm.where(GroupBundleDBO.class).equalTo(GroupBundleDBO.COLUMN_ID, id).findFirst();
         if (dbo != null) {
             realm.executeTransaction((xrealm) -> dbo.deleteFromRealm());

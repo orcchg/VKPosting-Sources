@@ -3,7 +3,8 @@ package com.orcchg.vikstra.data.source.direct.vkontakte;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
-import com.orcchg.vikstra.data.source.direct.vkontakte.migration.VkAttachMigration;
+import com.orcchg.vikstra.data.injection.migration.DaggerMigrationComponent;
+import com.orcchg.vikstra.data.injection.migration.MigrationComponent;
 import com.orcchg.vikstra.data.source.direct.vkontakte.model.VkApiPhotoDBO;
 import com.orcchg.vikstra.data.source.direct.vkontakte.model.mapper.VkApiPhotoToDboMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.model.populator.VkApiPhotoToDboPopulator;
@@ -19,7 +20,6 @@ import javax.inject.Singleton;
 
 import hugo.weaving.DebugLog;
 import io.realm.Realm;
-import io.realm.RealmConfiguration;
 
 @Singleton
 public class VkAttachLocalCache {
@@ -27,17 +27,14 @@ public class VkAttachLocalCache {
     private final VkApiPhotoToDboMapper vkApiPhotoToDboMapper;
     private final VkApiPhotoToDboPopulator vkApiPhotoToDboPopulator;
 
-    private final RealmConfiguration realmConfiguration;
+    private final MigrationComponent migrationComponent;
 
     @Inject
     VkAttachLocalCache(VkApiPhotoToDboMapper vkApiPhotoToDboMapper,
                        VkApiPhotoToDboPopulator vkApiPhotoToDboPopulator) {
         this.vkApiPhotoToDboMapper = vkApiPhotoToDboMapper;
         this.vkApiPhotoToDboPopulator = vkApiPhotoToDboPopulator;
-        this.realmConfiguration = new RealmConfiguration.Builder()
-                .schemaVersion(1)  // bumped version up, previous: 0
-                .migration(new VkAttachMigration())
-                .build();
+        this.migrationComponent = DaggerMigrationComponent.create();
     }
 
     /* API */
@@ -59,7 +56,7 @@ public class VkAttachLocalCache {
     @DebugLog
     public long getIdByPhotoPath(String path) {
         if (!TextUtils.isEmpty(path)) {
-            Realm realm = Realm.getInstance(realmConfiguration);
+            Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
             VkApiPhotoDBO dbo = realm.where(VkApiPhotoDBO.class).equalTo(VkApiPhotoDBO.COLUMN_PATH, path).findFirst();
             realm.close();
             if (dbo != null) return dbo.id;
@@ -72,7 +69,7 @@ public class VkAttachLocalCache {
     @DebugLog
     boolean hasPhoto(long mediaId) {
         if (mediaId != Constant.BAD_ID) {
-            Realm realm = Realm.getInstance(realmConfiguration);
+            Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
             VkApiPhotoDBO dbo = realm.where(VkApiPhotoDBO.class).equalTo(VkApiPhotoDBO.COLUMN_ID, mediaId).findFirst();
             realm.close();
             return dbo != null;
@@ -83,7 +80,7 @@ public class VkAttachLocalCache {
     @DebugLog @Nullable
     VKApiPhoto readPhoto(long mediaId) {
         if (mediaId != Constant.BAD_ID) {
-            Realm realm = Realm.getInstance(realmConfiguration);
+            Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
             VKApiPhoto model = null;
             VkApiPhotoDBO dbo = realm.where(VkApiPhotoDBO.class).equalTo(VkApiPhotoDBO.COLUMN_ID, mediaId).findFirst();
             if (dbo != null) model = vkApiPhotoToDboMapper.mapBack(dbo);
@@ -112,7 +109,7 @@ public class VkAttachLocalCache {
      */
     @DebugLog
     void writePhoto(String path, VKApiPhoto vkPhoto) {
-        Realm realm = Realm.getInstance(realmConfiguration);
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         realm.executeTransaction((xrealm) -> {
             VkApiPhotoDBO dbo = xrealm.createObject(VkApiPhotoDBO.class);
             vkApiPhotoToDboPopulator.populate(vkPhoto, dbo);
