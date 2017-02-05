@@ -18,7 +18,7 @@ ext {
     androidAnnotationsVersion = androidSupportLibraryVersion
     androidDesignVersion = androidSupportLibraryVersion
     androidSupportVersion = androidSupportLibraryVersion
-    autoValueVersion = '1.2'
+    autoValueVersion = '1.4-rc2'
     autoValueParcelVersion = '1.0.3'
     butterKnifeVersion = '8.4.0'
     cardViewVersion = '24.2.0'
