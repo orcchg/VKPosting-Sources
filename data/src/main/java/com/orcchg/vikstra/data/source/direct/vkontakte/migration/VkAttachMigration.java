@@ -24,15 +24,15 @@ public class VkAttachMigration implements RealmMigration {
          *
          * Version 0
          * --------------------------------------
-         *     public long id;
-         *     public String attachString;
+         *     long id;
+         *     String attachString;
          *
          *
          * Version 1
          * --------------------------------------
-         *     public long id;
-         *  ++ public String path;
-         *     public String attachString;
+         *     long id;
+         *  ++ String path;
+         *     String attachString;
          */
         if (oldVersion == 0) {
             RealmObjectSchema objectSchema = schema.get("VkApiPhotoDBO");

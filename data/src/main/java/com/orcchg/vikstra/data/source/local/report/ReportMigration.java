@@ -1,8 +1,45 @@
 package com.orcchg.vikstra.data.source.local.report;
 
-/**
- * Created by DLA on 05.02.2017.
- */
+import com.orcchg.vikstra.data.source.local.model.GroupReportDBO;
 
-public class ReportMigration {
+import io.realm.DynamicRealm;
+import io.realm.RealmMigration;
+import io.realm.RealmObjectSchema;
+import io.realm.RealmSchema;
+
+/**
+ * Migration for {@link GroupReportDBO} in {@link io.realm.Realm}.
+ */
+public class ReportMigration implements RealmMigration {
+
+    @Override
+    public void migrate(DynamicRealm realm, long oldVersion, long newVersion) {
+        RealmSchema schema = realm.getSchema();
+
+        /**
+         * {@link GroupReportDBO} schema migration.
+         *
+         * Version 0
+         * --------------------------------------
+         *     long id;
+         *     int errorCode;
+         *     GroupDBO group;
+         *     long timestamp;
+         *     long wallPostId;
+         *
+         * Version 1
+         * --------------------------------------
+         *     long id;
+         *  ++ boolean cancelled;
+         *     int errorCode;
+         *     GroupDBO group;
+         *     long timestamp;
+         *     long wallPostId;
+         */
+        if (oldVersion == 0) {
+            RealmObjectSchema objectSchema = schema.get("GroupReportDBO");
+            objectSchema.addField(GroupReportDBO.COLUMN_CANCELLED, boolean.class);
+            ++oldVersion;
+        }
+    }
 }
