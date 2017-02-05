@@ -58,4 +58,13 @@ public class GroupBundleToDboMapper implements DuplexMapper<GroupBundle, GroupBu
                 .setTitle(object.title)
                 .build();
     }
+
+    @Override
+    public List<GroupBundle> mapBack(List<GroupBundleDBO> list) {
+        List<GroupBundle> mapped = new ArrayList<>();
+        for (GroupBundleDBO item : list) {
+            mapped.add(mapBack(item));
+        }
+        return mapped;
+    }
 }

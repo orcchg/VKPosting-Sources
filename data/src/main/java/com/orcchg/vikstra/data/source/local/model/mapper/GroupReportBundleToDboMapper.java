@@ -56,4 +56,13 @@ public class GroupReportBundleToDboMapper implements DuplexMapper<GroupReportBun
                 .setTimestamp(object.timestamp)
                 .build();
     }
+
+    @Override
+    public List<GroupReportBundle> mapBack(List<GroupReportBundleDBO> list) {
+        List<GroupReportBundle> mapped = new ArrayList<>();
+        for (GroupReportBundleDBO item : list) {
+            mapped.add(mapBack(item));
+        }
+        return mapped;
+    }
 }

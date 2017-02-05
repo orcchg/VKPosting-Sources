@@ -61,4 +61,13 @@ public class KeywordBundleToDboMapper implements DuplexMapper<KeywordBundle, Key
         bundle.setTotalGroupsCount(object.countTotalGroups);
         return bundle;
     }
+
+    @Override
+    public List<KeywordBundle> mapBack(List<KeywordBundleDBO> list) {
+        List<KeywordBundle> mapped = new ArrayList<>();
+        for (KeywordBundleDBO item : list) {
+            mapped.add(mapBack(item));
+        }
+        return mapped;
+    }
 }

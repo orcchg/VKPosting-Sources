@@ -46,4 +46,13 @@ public class MediaToDboMapper implements DuplexMapper<Media, MediaDBO> {
                 .setUrl(object.url)
                 .build();
     }
+
+    @Override
+    public List<Media> mapBack(List<MediaDBO> list) {
+        List<Media> mapped = new ArrayList<>();
+        for (MediaDBO item : list) {
+            mapped.add(mapBack(item));
+        }
+        return mapped;
+    }
 }

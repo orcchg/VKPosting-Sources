@@ -43,4 +43,13 @@ public class KeywordToDboMapper implements DuplexMapper<Keyword, KeywordDBO> {
     public Keyword mapBack(KeywordDBO object) {
         return Keyword.create(object.keyword);
     }
+
+    @Override
+    public List<Keyword> mapBack(List<KeywordDBO> list) {
+        List<Keyword> mapped = new ArrayList<>();
+        for (KeywordDBO item : list) {
+            mapped.add(mapBack(item));
+        }
+        return mapped;
+    }
 }

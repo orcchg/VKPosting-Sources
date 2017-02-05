@@ -43,4 +43,13 @@ public class VkApiPhotoToDboMapper implements DuplexMapper<VKApiPhoto, VkApiPhot
     public VKApiPhoto mapBack(VkApiPhotoDBO object) {
         return new VKApiPhoto(object.attachString);
     }
+
+    @Override
+    public List<VKApiPhoto> mapBack(List<VkApiPhotoDBO> list) {
+        List<VKApiPhoto> mapped = new ArrayList<>();
+        for (VkApiPhotoDBO item : list) {
+            mapped.add(mapBack(item));
+        }
+        return mapped;
+    }
 }

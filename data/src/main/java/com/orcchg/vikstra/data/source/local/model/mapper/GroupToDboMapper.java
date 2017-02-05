@@ -56,4 +56,13 @@ public class GroupToDboMapper implements DuplexMapper<Group, GroupDBO> {
         group.setSelected(object.isSelected);
         return group;
     }
+
+    @Override
+    public List<Group> mapBack(List<GroupDBO> list) {
+        List<Group> mapped = new ArrayList<>();
+        for (GroupDBO item : list) {
+            mapped.add(mapBack(item));
+        }
+        return mapped;
+    }
 }

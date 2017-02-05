@@ -57,4 +57,13 @@ public class PostToDboMapper implements DuplexMapper<Post, PostDBO> {
                 .setTitle(object.title)
                 .build();
     }
+
+    @Override
+    public List<Post> mapBack(List<PostDBO> list) {
+        List<Post> mapped = new ArrayList<>();
+        for (PostDBO item : list) {
+            mapped.add(mapBack(item));
+        }
+        return mapped;
+    }
 }
