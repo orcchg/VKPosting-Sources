@@ -121,9 +121,11 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     // ------------------------------------------
     @Override
     public void onReportReady(long groupReportBundleId, long postId) {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
-        if (dialog != null) dialog.onReportReady(groupReportBundleId, postId);
+        if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
+            if (dialog != null) dialog.onReportReady(groupReportBundleId, postId);
+        }
     }
 
     @Override
@@ -143,8 +145,10 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
 
     @Override
     public void openStatusScreen() {
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        navigationComponent.navigator().openStatusDialog(fm, StatusDialogFragment.DIALOG_TAG);
+        if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            navigationComponent.navigator().openStatusDialog(fm, StatusDialogFragment.DIALOG_TAG);
+        }
     }
 
     // ------------------------------------------
