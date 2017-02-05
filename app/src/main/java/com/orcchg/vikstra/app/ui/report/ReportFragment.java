@@ -28,7 +28,7 @@ public class ReportFragment extends SimpleCollectionFragment implements ReportCo
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        createItemTouchHelper().attachToRecyclerView(recyclerView);
+//        createItemTouchHelper().attachToRecyclerView(recyclerView);
         return rootView;
     }
 
