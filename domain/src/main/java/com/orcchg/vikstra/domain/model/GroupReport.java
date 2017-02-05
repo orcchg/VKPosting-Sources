@@ -25,6 +25,7 @@ public abstract class GroupReport implements Comparable<GroupReport> {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setId(long id);
+        public abstract Builder setCancelled(boolean cancelled);
         public abstract Builder setErrorCode(int errorCode);
         public abstract Builder setGroup(Group group);
         public abstract Builder setTimestamp(long ts);
@@ -33,6 +34,7 @@ public abstract class GroupReport implements Comparable<GroupReport> {
     }
 
     public abstract long id();
+    public abstract boolean cancelled();
     public abstract int errorCode();
     public abstract Group group();
     public abstract long timestamp();
@@ -40,12 +42,14 @@ public abstract class GroupReport implements Comparable<GroupReport> {
 
     @Status
     public int status() {
+        if (cancelled()) return STATUS_CANCEL;
         if (errorCode() == 0) return STATUS_SUCCESS;
         return STATUS_FAILURE;
     }
 
     public String statusString() {
         switch (status()) {
+            case STATUS_CANCEL:   return "Cancelled";
             case STATUS_SUCCESS:  return "Success";
             case STATUS_FAILURE:  return "Failure";
         }

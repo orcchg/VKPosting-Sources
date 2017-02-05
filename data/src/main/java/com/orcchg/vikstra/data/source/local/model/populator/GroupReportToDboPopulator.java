@@ -19,6 +19,7 @@ public class GroupReportToDboPopulator implements Populator<GroupReport, GroupRe
     @Override
     public void populate(GroupReport object, GroupReportDBO dbo) {
         dbo.id = object.id();
+        dbo.cancelled = object.cancelled();
         dbo.errorCode = object.errorCode();
         dbo.group = groupToDboMapper.map(object.group());
         dbo.timestamp = object.timestamp();

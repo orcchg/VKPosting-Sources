@@ -9,12 +9,13 @@ import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.common.IdParameters;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.repository.IReportRepository;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
 
 public class GetGroupReportBundleById extends UseCase<GroupReportBundle> {
 
-    private final long id;
+    private long id = Constant.BAD_ID;
     private final IReportRepository reportRepository;
 
     @Inject
@@ -35,6 +36,10 @@ public class GetGroupReportBundleById extends UseCase<GroupReportBundle> {
 
     public long getGroupReportId() {
         return id;
+    }
+
+    public void setGroupReportId(long id) {
+        this.id = id;
     }
 
     @Nullable @Override
