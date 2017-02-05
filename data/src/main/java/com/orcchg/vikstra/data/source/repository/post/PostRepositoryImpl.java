@@ -26,12 +26,18 @@ public class PostRepositoryImpl implements IPostRepository {
         this.localSource = localSource;
     }
 
+    @Override
+    public long getLastId() {
+        // TODO: impl cloudly
+        return localSource.getLastId();
+    }
+
     /* Create */
     // ------------------------------------------
     @Override
     public Post addPost(PostEssence essence) {
         // TODO: impl cloudly
-        long lastId = localSource.getLastId();
+        long lastId = getLastId();
         PostEssenceMapper mapper = new PostEssenceMapper(++lastId, System.currentTimeMillis());
         return localSource.addPost(mapper.map(essence));
     }

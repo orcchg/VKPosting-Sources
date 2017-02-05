@@ -27,12 +27,18 @@ public class GroupRepositoryImpl implements IGroupRepository {
         this.localSource = localSource;
     }
 
+    @Override
+    public long getLastId() {
+        // TODO: impl cloudly
+        return localSource.getLastId();
+    }
+
     /* Create */
     // ------------------------------------------
     @Override
     public GroupBundle addGroups(String title, long keywordBundleId, Collection<Group> groups) {
         // TODO: impl cloudly
-        long lastId = localSource.getLastId();
+        long lastId = getLastId();
         GroupBundle bundle = GroupBundle.builder()
                 .setId(++lastId)
                 .setGroups(groups)

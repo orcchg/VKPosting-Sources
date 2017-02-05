@@ -28,12 +28,18 @@ public class ReportRepositoryImpl implements IReportRepository {
         this.localSource = localSource;
     }
 
+    @Override
+    public long getLastId() {
+        // TODO: impl cloudly
+        return localSource.getLastId();
+    }
+
     /* Create */
     // ------------------------------------------
     @Override
     public GroupReportBundle addGroupReports(List<GroupReportEssence> many) {
         // TODO: impl cloudly
-        long lastId = localSource.getLastId();
+        long lastId = getLastId();
         List<GroupReport> reports = new ArrayList<>();
         GroupReportBundle bundle = GroupReportBundle.builder()
                 .setId(++lastId)

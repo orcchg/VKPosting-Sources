@@ -9,7 +9,7 @@ import com.orcchg.vikstra.domain.model.KeywordBundle;
 import java.util.Collection;
 import java.util.List;
 
-public interface IKeywordRepository {
+public interface IKeywordRepository extends IRepository {
 
     /* Create */
     // ------------------------------------------

@@ -9,7 +9,7 @@ import com.orcchg.vikstra.domain.model.GroupBundle;
 import java.util.Collection;
 import java.util.List;
 
-public interface IGroupRepository {
+public interface IGroupRepository extends IRepository {
 
     /* Create */
     // ------------------------------------------

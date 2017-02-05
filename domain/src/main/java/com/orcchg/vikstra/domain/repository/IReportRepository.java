@@ -7,7 +7,7 @@ import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 
 import java.util.List;
 
-public interface IReportRepository {
+public interface IReportRepository extends IRepository {
 
     /* Create */
     // ------------------------------------------

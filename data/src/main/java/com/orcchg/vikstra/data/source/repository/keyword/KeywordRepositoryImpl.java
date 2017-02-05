@@ -27,12 +27,18 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
         this.localSource = localSource;
     }
 
+    @Override
+    public long getLastId() {
+        // TODO: impl cloudly
+        return localSource.getLastId();
+    }
+
     /* Create */
     // ------------------------------------------
     @Override
     public KeywordBundle addKeywords(String title, Collection<Keyword> keywords) {
         // TODO: impl cloudly
-        long lastId = localSource.getLastId();
+        long lastId = getLastId();
         KeywordBundle bundle = KeywordBundle.builder()
                 .setId(++lastId)
                 .setKeywords(new ArrayList<>(keywords))  // turn collection into ordered list

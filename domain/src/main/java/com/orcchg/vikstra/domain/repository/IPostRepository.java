@@ -8,7 +8,7 @@ import com.orcchg.vikstra.domain.model.essense.PostEssence;
 
 import java.util.List;
 
-public interface IPostRepository {
+public interface IPostRepository extends IRepository {
 
     /* Create */
     // ------------------------------------------
