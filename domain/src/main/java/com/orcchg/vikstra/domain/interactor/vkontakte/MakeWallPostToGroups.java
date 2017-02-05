@@ -122,7 +122,7 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
     // ------------------------------------------
     @Override
     protected ThreadPoolExecutor createHighloadThreadPoolExecutor() {
-        // completely overriden method
+        // completely overridden method
         BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>();
         ThreadPoolExecutor pool = new ThreadPoolExecutor(10, 10, 3, TimeUnit.SECONDS, queue);
         pool.allowCoreThreadTimeOut(true);

@@ -61,9 +61,7 @@ public class DumpGroupReports extends UseCase<String> {
         if (parameters.groupReportBundleId != Constant.BAD_ID) {
             GetGroupReportBundleById useCase = new GetGroupReportBundleById(parameters.groupReportBundleId, reportRepository);
             GroupReportBundle bundle = useCase.doAction();
-            if (bundle != null) {
-                parameters.reports = bundle.groupReports();
-            }
+            if (bundle != null) parameters.reports = bundle.groupReports();
         }
         FileUtility.createFileByPath(path);  // create file or throw IOException
         return reportComposer.writeGroupReportsToCsv(parameters.reports, path) ? path : null;
