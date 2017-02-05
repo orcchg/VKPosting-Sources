@@ -162,13 +162,14 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            // get id reserved for the item to store in repository next
+            memento.storedReportsId = putGroupReportBundleUseCase.getReservedId();
             // put everything available in 'storedReports' to repository
             List<GroupReportEssence> essences = groupReportEssenceMapper.mapBack(storedReports);  // 'id' and 'timestamp' are ignored
             PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(essences);
             putGroupReportBundleUseCase.setParameters(parameters);
             putGroupReportBundleUseCase.execute();
         }
-        memento.storedReportsId = putGroupReportBundleUseCase.getReservedId();
         memento.toBundle(outState);
     }
 
