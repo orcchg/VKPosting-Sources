@@ -9,6 +9,9 @@ import dagger.Provides;
 @Module
 public class GroupListMediatorModule {
 
+    // TODO: solve singleton problem
+    private static GroupListMediator sGroupListMediator;
+
     /**
      * Per-Activity singleton.
      *
@@ -16,6 +19,9 @@ public class GroupListMediatorModule {
      */
     @Provides @PerActivity
     GroupListMediator provideGroupListMediator() {
-        return new GroupListMediator();
+        if (sGroupListMediator == null) {
+            sGroupListMediator = new GroupListMediator();
+        }
+        return sGroupListMediator;
     }
 }

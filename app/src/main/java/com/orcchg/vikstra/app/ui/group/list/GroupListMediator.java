@@ -15,6 +15,7 @@ import com.orcchg.vikstra.domain.util.DebugSake;
 import javax.inject.Inject;
 
 import hugo.weaving.DebugLog;
+import timber.log.Timber;
 
 @PerActivity
 public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, FragmentMediator.Receiver>
@@ -22,6 +23,7 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
 
     @DebugLog @Inject
     public GroupListMediator() {
+        Timber.d("GroupListMediator ctor");
     }
 
     @Override
