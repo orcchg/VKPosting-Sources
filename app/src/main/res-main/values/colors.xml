@@ -29,6 +29,8 @@
     <color name="keyword_blob_text_more_color">#44B300</color>
     <color name="keyword_blob_text_more_color_pressed">#ff9802</color>
 
+    <color name="red_button">#D32F2F</color>
+
     <color name="textPrimary">#212121</color>
     <color name="textSecondary">#757575</color>
     <color name="textDivider">#BDBDBD</color>

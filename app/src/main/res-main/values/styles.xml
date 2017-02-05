@@ -22,6 +22,12 @@
         <item name="cpbStyle">@style/CircularThemeProgressBar</item>
     </style>
 
+    <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">@color/red_button</item>
+        <item name="android:colorButtonNormal">@color/red_button</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
     <style name="CircularThemeProgressBar" parent="android:Widget.Holo.ProgressBar">
         <item name="cpb_color">@color/cpb_default_color</item>
         <item name="cpb_stroke_width">@dimen/cpb_default_stroke_width</item>
