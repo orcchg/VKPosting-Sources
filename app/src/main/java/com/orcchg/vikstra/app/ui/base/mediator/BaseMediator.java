@@ -14,7 +14,7 @@ public abstract class BaseMediator<FirstClient extends MediatorReceiver, SecondC
     public void attachFirst(FirstClient clientFirst) {
         if (this.clientFirst != null && this.clientFirst != clientFirst) {
             String message = "Attempt to re-attach first client replacing an already existing one!";
-//            throw new MediatorReAttachException(message);
+//            throw new MediatorReAttachException(message);  // TODO: enable and fix floating crash
         }
         this.clientFirst = clientFirst;
     }
@@ -22,7 +22,7 @@ public abstract class BaseMediator<FirstClient extends MediatorReceiver, SecondC
     public void attachSecond(SecondClient clientSecond) {
         if (this.clientSecond != null && this.clientSecond != clientSecond) {
             String message = "Attempt to re-attach second client replacing an already existing one!";
-//            throw new MediatorReAttachException(message);
+//            throw new MediatorReAttachException(message);  // TODO: enable and fix floating crash
         }
         this.clientSecond = clientSecond;
     }
