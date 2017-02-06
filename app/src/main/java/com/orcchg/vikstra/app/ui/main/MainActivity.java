@@ -511,7 +511,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 break;
         }
 
-        if (ok) {
+        if (ok && target != null) {
             if (sticky && showcaseView != null) {
                 showcaseView.setShowcase(new ViewTarget(target), true);
                 if (titleId != 0) showcaseView.setContentTitle(getResources().getString(titleId));
