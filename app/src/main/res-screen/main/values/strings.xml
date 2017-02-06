@@ -12,7 +12,8 @@
     <string name="main_snackbar_keywords_and_post_not_selected">You must select Post and Keywords</string>
 
     <string name="main_showcase_make_wall_posting">Go to stage of groups selection by keyword</string>
-    <string name="main_showcase_new_lists_title">Create new list of groups</string>
+    <string name="main_showcase_new_lists_title">Let\'s start</string>
+    <string name="main_showcase_new_lists_description">Create new list of groups</string>
     <string name="main_showcase_filled_list_keywords_title">Choose one of existing lists of keywords</string>
     <string name="main_showcase_filled_list_posts_title">Choose one of created posts</string>
 </resources>

@@ -42,9 +42,9 @@ public class SingleShot {
     @Retention(RetentionPolicy.SOURCE)
     public @interface ShowCase {}
 
-    public static final int MAIN_SCREEN = 10_005;
-    public static final int GROUP_LIST_SCREEN = 20_005;
-    public static final int REPORT_SCREEN = 30_005;
+    public static final int MAIN_SCREEN = 1_000;
+    public static final int GROUP_LIST_SCREEN = 2_000;
+    public static final int REPORT_SCREEN = 3_000;
     @IntDef({MAIN_SCREEN, GROUP_LIST_SCREEN, REPORT_SCREEN})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Screen {}
@@ -89,7 +89,7 @@ public class SingleShot {
                 .setShowcaseEventListener(listener)
                 .setStyle(R.style.CustomShowcaseTheme)
                 .setTarget(target)
-                .singleShot(screen + showcase)
+//                .singleShot(screen + showcase)
                 .hideOnTouchOutside()
                 .replaceEndButton(buttonStyle);
 

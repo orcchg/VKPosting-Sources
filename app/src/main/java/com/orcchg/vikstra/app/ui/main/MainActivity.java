@@ -49,6 +49,7 @@ import com.orcchg.vikstra.domain.util.Constant;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 public class MainActivity extends BaseActivity<MainContract.View, MainContract.Presenter>
         implements MainContract.View, IScrollGrid, IScrollList, ISwipeToDismiss, ShadowHolder,
@@ -462,9 +463,17 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     // --------------------------------------------------------------------------------------------
     @Nullable
     private ShowcaseView runShowcase(@SingleShot.ShowCase int showcase) {
+        // check single shot
+        if (sharedPrefsManagerComponent.sharedPrefsManager().checkShowcaseSingleShot(showcase, SingleShot.MAIN_SCREEN)) {
+            Timber.i("Showcase [%s] has already been fired on Main Screen", showcase);
+            return null;
+        }
+        sharedPrefsManagerComponent.sharedPrefsManager().notifyShowcaseFired(showcase, SingleShot.MAIN_SCREEN);
+
         @StringRes int titleId = 0;
         @StringRes int descriptionId = 0;
         @LayoutRes int buttonStyle = R.layout.custom_showcase_button;
+        String buttonText = getResources().getString(R.string.button_showcase_got_it);
         View target = null;
 
         boolean ok = false, sticky = false;
@@ -473,7 +482,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
                 return null;
             case SingleShot.CASE_MAKE_WALL_POSTING:
-                buttonStyle = R.layout.custom_showcase_button2;
                 titleId = R.string.main_showcase_make_wall_posting;
                 target = anchorView;
                 ok = true;
@@ -481,11 +489,13 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 break;
             case SingleShot.CASE_NEW_LISTS:
                 titleId = R.string.main_showcase_new_lists_title;
+                descriptionId = R.string.main_showcase_new_lists_description;
                 target = newListsButton;
                 ok = true;
                 break;
             case SingleShot.CASE_FILLED_LIST_KEYWORDS:
                 buttonStyle = R.layout.custom_showcase_button2;
+                buttonText = getResources().getString(R.string.button_showcase_next);
                 titleId = R.string.main_showcase_filled_list_keywords_title;
                 target = getKeywordListViewByPosition(0);
                 ok = true;
@@ -493,6 +503,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 break;
             case SingleShot.CASE_FILLED_LIST_POSTS:
                 buttonStyle = R.layout.custom_showcase_button2;
+                buttonText = getResources().getString(R.string.button_showcase_next);
                 titleId = R.string.main_showcase_filled_list_posts_title;
                 target = getPostListViewByPosition(1);
                 ok = true;
@@ -506,6 +517,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 if (titleId != 0) showcaseView.setContentTitle(getResources().getString(titleId));
                 if (descriptionId != 0) showcaseView.setContentText(getResources().getString(descriptionId));
                 showcaseView.overrideButtonClick(stickyShowcaseNextClick());
+                showcaseView.setButtonText(buttonText);
             } else {
                 if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
                 showcaseView = SingleShot.runShowcase(this, target, titleId, descriptionId, showcase,

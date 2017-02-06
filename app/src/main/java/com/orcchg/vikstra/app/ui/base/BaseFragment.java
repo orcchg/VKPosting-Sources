@@ -9,7 +9,10 @@ import android.support.v4.app.Fragment;
 import com.orcchg.vikstra.app.AndroidApplication;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.injection.component.DaggerNavigationComponent;
+import com.orcchg.vikstra.app.injection.component.DaggerSharedPrefsManagerComponent;
 import com.orcchg.vikstra.app.injection.component.NavigationComponent;
+import com.orcchg.vikstra.app.injection.component.SharedPrefsManagerComponent;
+import com.orcchg.vikstra.app.injection.module.SharedPrefsManagerModule;
 import com.orcchg.vikstra.app.navigation.NavigatorHolder;
 
 import hugo.weaving.DebugLog;
@@ -20,6 +23,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
 
     protected P presenter;
     protected NavigationComponent navigationComponent;
+    protected SharedPrefsManagerComponent sharedPrefsManagerComponent;
 
     private NavigatorHolder navigatorHolder = new NavigatorHolder();
 
@@ -37,6 +41,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
         Timber.i("onCreate");
         isStateRestored = savedInstanceState != null;
         injectNavigator();
+        injectSharedPrefsManager();
         injectDependencies();
         presenter = createPresenter();
         presenter.attachView((V) this);
@@ -106,6 +111,10 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
         return ((AndroidApplication) getActivity().getApplication()).getApplicationComponent();
     }
 
+    public SharedPrefsManagerComponent getSharedPrefsManagerComponent() {
+        return sharedPrefsManagerComponent;
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     @DebugLog
@@ -116,5 +125,11 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     private void injectNavigator() {
         navigationComponent = DaggerNavigationComponent.create();
         navigationComponent.inject(navigatorHolder);
+    }
+
+    private void injectSharedPrefsManager() {
+        sharedPrefsManagerComponent = DaggerSharedPrefsManagerComponent.builder()
+                .sharedPrefsManagerModule(new SharedPrefsManagerModule(getActivity()))
+                .build();
     }
 }

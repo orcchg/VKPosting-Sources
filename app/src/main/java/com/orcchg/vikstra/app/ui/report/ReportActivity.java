@@ -406,6 +406,13 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // --------------------------------------------------------------------------------------------
     @Nullable
     private ShowcaseView runShowcase(@SingleShot.ShowCase int showcase) {
+        // check single shot
+        if (sharedPrefsManagerComponent.sharedPrefsManager().checkShowcaseSingleShot(showcase, SingleShot.REPORT_SCREEN)) {
+            Timber.i("Showcase [%s] has already been fired on Main Screen", showcase);
+            return null;
+        }
+        sharedPrefsManagerComponent.sharedPrefsManager().notifyShowcaseFired(showcase, SingleShot.REPORT_SCREEN);
+
         @StringRes int titleId = 0;
         @StringRes int descriptionId = 0;
         View target = null;

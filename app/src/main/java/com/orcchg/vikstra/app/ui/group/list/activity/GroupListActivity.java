@@ -420,6 +420,13 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     // --------------------------------------------------------------------------------------------
     @Nullable
     private ShowcaseView runShowcase(@SingleShot.ShowCase int showcase) {
+        // check single shot
+        if (sharedPrefsManagerComponent.sharedPrefsManager().checkShowcaseSingleShot(showcase, SingleShot.GROUP_LIST_SCREEN)) {
+            Timber.i("Showcase [%s] has already been fired on Main Screen", showcase);
+            return null;
+        }
+        sharedPrefsManagerComponent.sharedPrefsManager().notifyShowcaseFired(showcase, SingleShot.GROUP_LIST_SCREEN);
+
         @StringRes int titleId = 0;
         @StringRes int descriptionId = 0;
         View target = null;

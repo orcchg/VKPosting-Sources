@@ -10,9 +10,12 @@ import com.orcchg.vikstra.app.AndroidApplication;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.injection.component.DaggerNavigationComponent;
 import com.orcchg.vikstra.app.injection.component.DaggerPermissionManagerComponent;
+import com.orcchg.vikstra.app.injection.component.DaggerSharedPrefsManagerComponent;
 import com.orcchg.vikstra.app.injection.component.NavigationComponent;
 import com.orcchg.vikstra.app.injection.component.PermissionManagerComponent;
+import com.orcchg.vikstra.app.injection.component.SharedPrefsManagerComponent;
 import com.orcchg.vikstra.app.injection.module.PermissionManagerModule;
+import com.orcchg.vikstra.app.injection.module.SharedPrefsManagerModule;
 import com.orcchg.vikstra.app.navigation.NavigatorHolder;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 
@@ -25,6 +28,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     protected P presenter;
     protected NavigationComponent navigationComponent;
     protected PermissionManagerComponent permissionManagerComponent;
+    protected SharedPrefsManagerComponent sharedPrefsManagerComponent;
 
     private NavigatorHolder navigatorHolder = new NavigatorHolder();
 
@@ -38,8 +42,9 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
         super.onCreate(savedInstanceState);
         Timber.tag(getClass().getSimpleName());
         Timber.i("onCreate, smallest width: %s", UiUtility.getSmallestWidth(this));
-        injectPermissionManager();
         injectNavigator();
+        injectPermissionManager();
+        injectSharedPrefsManager();
         injectDependencies();
         presenter = createPresenter();
         presenter.attachView((V) this);
@@ -117,6 +122,10 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
         return permissionManagerComponent;
     }
 
+    public SharedPrefsManagerComponent getSharedPrefsManagerComponent() {
+        return sharedPrefsManagerComponent;
+    }
+
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private void injectPermissionManager() {
@@ -128,5 +137,11 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     private void injectNavigator() {
         navigationComponent = DaggerNavigationComponent.create();
         navigationComponent.inject(navigatorHolder);
+    }
+
+    private void injectSharedPrefsManager() {
+        sharedPrefsManagerComponent = DaggerSharedPrefsManagerComponent.builder()
+                .sharedPrefsManagerModule(new SharedPrefsManagerModule(this))
+                .build();
     }
 }
