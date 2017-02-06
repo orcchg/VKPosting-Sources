@@ -55,3 +55,5 @@
 -keep class com.orcchg.vikstra.app.ui.viewobject.** { *; }
 -keep class com.orcchg.vikstra.app.ui.common.view.** { *; }
 -keep class com.github.amlcurran.showcaseview.** { *; }
+
+-keep class com.vk.sdk.** { *; }
