@@ -355,7 +355,20 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                     Timber.i("Use-Case: succeeded to get GroupReportBundle by id");
                     int[] counters = bundle.statusCount();
                     List<ReportListItemVO> vos = groupReportToVoMapper.map(bundle.groupReports());
-                    listAdapter.populate(vos, false);
+                    if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+                        /**
+                         * In interactive mode items are incoming from the oldest to the recents,
+                         * this order is reverse to the order these items are stored in GroupReportBundle.
+                         *
+                         * We can reach this place in interactive mode only when ReportScreen is restored
+                         * and hence fetched all it's data from repository, where order is direct.
+                         * So, in order to keep user experience, we must populate list with restored
+                         * items in reversed order.
+                         */
+                        listAdapter.populateInverse(vos, false);  // items was restored from repository in interactive mode
+                    } else {
+                        listAdapter.populate(vos, false);
+                    }
                     if (isViewAttached()) {
                         getView().showGroupReports(vos == null || vos.isEmpty());
                         getView().updatePostedCounters(counters[GroupReport.STATUS_SUCCESS], bundle.groupReports().size());
@@ -455,11 +468,11 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             if (item.data == null && item.error == null) ++memento.postedWithCancel;  // count cancelled posting
 
             ReportListItemVO viewObject = groupReportEssenceToVoMapper.map(model);
-            listAdapter.addInverse(viewObject);
+            listAdapter.addInverse(viewObject);  // add items on top of the list
             if (isViewAttached()) {
                 getView().showGroupReports(false);  // idempotent call (no-op if list items are already visible)
                 getView().updatePostedCounters(memento.postedWithSuccess, total);
-                getView().getListView(getListTag()).smoothScrollToPosition(0);
+                getView().getListView(getListTag()).smoothScrollToPosition(0);  // scroll on top of the list as items are incoming
                 // TODO: estimate time to complete posting, use DomainConfig.INSTANCE.multiUseCaseSleepInterval
             }
 

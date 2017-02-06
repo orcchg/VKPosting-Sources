@@ -13,6 +13,7 @@ import com.orcchg.vikstra.app.ui.base.adapter.viewholder.LoadingViewHolder;
 import com.orcchg.vikstra.app.ui.base.adapter.viewholder.NormalViewHolder;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model>, Model> extends RecyclerView.Adapter<BaseViewHolder> {
@@ -118,6 +119,11 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
             this.isThereMore = isThereMore;
             notifyDataSetChanged();
         }
+    }
+
+    public void populateInverse(List<Model> items, boolean isThereMore) {
+        Collections.reverse(items);
+        populate(items, isThereMore);
     }
 
     public void clear() {
