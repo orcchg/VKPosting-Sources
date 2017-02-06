@@ -262,7 +262,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                 memento.posts.add(post);  // add Post to the end of the list
                 listMemento.currentSize += 1;
                 PostSingleGridItemVO viewObject = postToSingleGridVoMapper.map(post);
-                listAdapter.addInverse(viewObject);
+                listAdapter.add(viewObject);
                 if (isViewAttached()) getView().showPosts(viewObject == null);
                 selectInitialPost();  // new Post was added - recalculate selection properly
             }
