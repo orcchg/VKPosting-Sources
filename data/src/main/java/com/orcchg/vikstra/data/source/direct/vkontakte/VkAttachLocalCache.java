@@ -20,6 +20,7 @@ import javax.inject.Singleton;
 
 import hugo.weaving.DebugLog;
 import io.realm.Realm;
+import timber.log.Timber;
 
 @Singleton
 public class VkAttachLocalCache {
@@ -55,26 +56,28 @@ public class VkAttachLocalCache {
      */
     @DebugLog
     public long getIdByPhotoPath(String path) {
+        long id = Constant.BAD_ID;
         if (!TextUtils.isEmpty(path)) {
             Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
             VkApiPhotoDBO dbo = realm.where(VkApiPhotoDBO.class).equalTo(VkApiPhotoDBO.COLUMN_PATH, path).findFirst();
+            if (dbo != null) id = dbo.id;
             realm.close();
-            if (dbo != null) return dbo.id;
         }
-        return Constant.BAD_ID;
+        return id;
     }
 
     /* Read */
     // ------------------------------------------
     @DebugLog
     boolean hasPhoto(long mediaId) {
+        boolean result = false;
         if (mediaId != Constant.BAD_ID) {
             Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
             VkApiPhotoDBO dbo = realm.where(VkApiPhotoDBO.class).equalTo(VkApiPhotoDBO.COLUMN_ID, mediaId).findFirst();
+            result = dbo != null;
             realm.close();
-            return dbo != null;
         }
-        return false;
+        return result;
     }
 
     @DebugLog @Nullable
@@ -109,6 +112,7 @@ public class VkAttachLocalCache {
      */
     @DebugLog
     void writePhoto(String path, VKApiPhoto vkPhoto) {
+        Timber.v("writePhoto: path=%s, vkPhoto[%s]=%s", path, vkPhoto.id, vkPhoto.toAttachmentString());
         Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
         realm.executeTransaction((xrealm) -> {
             VkApiPhotoDBO dbo = xrealm.createObject(VkApiPhotoDBO.class);
