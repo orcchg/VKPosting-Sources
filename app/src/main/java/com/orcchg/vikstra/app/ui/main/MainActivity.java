@@ -542,14 +542,8 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
         switch (tag.showcase()) {
             case SingleShot.CASE_MAKE_WALL_POSTING:
-                UiUtility.dimViewCancel(fab);
-                UiUtility.dimView(topFrameLayout);
-                UiUtility.dimView(bottomFrameLayout);
-                break;
             case SingleShot.CASE_FILLED_LIST_KEYWORDS:
-                UiUtility.dimViewCancel(bottomFrameLayout);
-                UiUtility.dimView(topFrameLayout);
-                UiUtility.dimView(fab);
+                // no-op
                 break;
             case SingleShot.CASE_FILLED_LIST_POSTS:
                 UiUtility.dimViewCancel(topFrameLayout);
@@ -573,16 +567,25 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             SingleShot.ShowcaseTag tag = (SingleShot.ShowcaseTag) showcaseView.getTag();
             switch (tag.showcase()) {
                 case SingleShot.CASE_FILLED_LIST_POSTS:
+                    UiUtility.dimViewCancel(bottomFrameLayout);
+                    UiUtility.dimView(topFrameLayout);
+                    UiUtility.dimView(fab);
+                    showcaseView.setTag(new SingleShot.ShowcaseTag(SingleShot.CASE_FILLED_LIST_KEYWORDS, tag.screen()));
                     runShowcase(SingleShot.CASE_FILLED_LIST_KEYWORDS);
                     break;
                 case SingleShot.CASE_FILLED_LIST_KEYWORDS:
-                    runShowcase(SingleShot.CASE_MAKE_WALL_POSTING);
-                    break;
-                case SingleShot.CASE_MAKE_WALL_POSTING:
                     if (!UiUtility.isVisible(fab)) {  // show fab during showcase if it isn't visible
                         fabHasShownArtificially = true;
                         showFab(true);
                     }
+                    UiUtility.dimViewCancel(fab);
+                    UiUtility.dimView(topFrameLayout);
+                    UiUtility.dimView(bottomFrameLayout);
+                    showcaseView.setTag(new SingleShot.ShowcaseTag(SingleShot.CASE_MAKE_WALL_POSTING, tag.screen()));
+                    showcaseView.setButtonPosition(SingleShot.moveButton(getResources()));
+                    runShowcase(SingleShot.CASE_MAKE_WALL_POSTING);
+                    break;
+                case SingleShot.CASE_MAKE_WALL_POSTING:
                     runShowcase(SingleShot.CASE_HIDE);
                     break;
             }

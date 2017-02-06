@@ -18,6 +18,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 
+import timber.log.Timber;
+
 public class SingleShot {
     public static final int CASE_HIDE = -1;
     public static final int CASE_NEW_LISTS = 0;
@@ -40,9 +42,9 @@ public class SingleShot {
     @Retention(RetentionPolicy.SOURCE)
     public @interface ShowCase {}
 
-    public static final int MAIN_SCREEN = 10_000;
-    public static final int GROUP_LIST_SCREEN = 20_000;
-    public static final int REPORT_SCREEN = 30_000;
+    public static final int MAIN_SCREEN = 10_005;
+    public static final int GROUP_LIST_SCREEN = 20_005;
+    public static final int REPORT_SCREEN = 30_005;
     @IntDef({MAIN_SCREEN, GROUP_LIST_SCREEN, REPORT_SCREEN})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Screen {}
@@ -100,9 +102,9 @@ public class SingleShot {
             ShowcaseView sv = (ShowcaseView) f.get(svb);
             sv.setTag(new ShowcaseTag(showcase, screen));
         } catch (NoSuchFieldException e) {
-            // TODO: exc
+            Timber.e(e, "Reflection call");
         } catch (IllegalAccessException e) {
-            // TODO: exc
+            Timber.e(e, "Reflection call");
         }
 
         return svb.build();
