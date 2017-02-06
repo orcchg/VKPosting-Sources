@@ -100,6 +100,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(BUNDLE_KEY_POST_ID, postId);
+        outState.putBoolean(BUNDLE_KEY_EDITABLE, isEditable);
     }
 
     /* Data */
