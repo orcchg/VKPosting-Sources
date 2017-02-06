@@ -330,6 +330,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
             // restore all those GroupReport-s from repository that we had managed to store.
             memento.isFinishedPosting = true;  // assume posting has finished on state restore
+            if (isViewAttached()) getView().enableButtonsOnPostingFinished();
+
             getGroupReportBundleByIdUseCase.setGroupReportId(memento.storedReportsId);
             getGroupReportBundleByIdUseCase.execute();
         } else {

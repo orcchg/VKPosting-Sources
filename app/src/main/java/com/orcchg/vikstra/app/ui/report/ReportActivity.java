@@ -210,14 +210,19 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         if (fragment != null) fragment.enableSwipeToRefresh(isEnabled);
     }
 
+    @Override
+    public void enableButtonsOnPostingFinished() {
+        interruptButton.setEnabled(false);
+        revertAllButton.setEnabled(true);
+    }
+
     // ------------------------------------------
     @Override
     public void onPostingCancel() {
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
         DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
                 R.string.report_dialog_posting_was_cancelled_daily_limit_reached);
-        interruptButton.setEnabled(false);
-        revertAllButton.setEnabled(true);
+        enableButtonsOnPostingFinished();
     }
 
     @Override
@@ -225,8 +230,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
         String text = String.format(Locale.ENGLISH, SNACKBAR_POSTING_FINISHED, posted, total);
         DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text);
-        interruptButton.setEnabled(false);
-        revertAllButton.setEnabled(true);
+        enableButtonsOnPostingFinished();
     }
 
     @Override

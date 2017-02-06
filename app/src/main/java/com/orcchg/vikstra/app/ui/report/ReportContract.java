@@ -10,6 +10,7 @@ import com.orcchg.vikstra.domain.util.endpoint.AccessTokenTracker;
 public interface ReportContract {
     interface View extends AccessTokenTracker, SubView {
         void enableSwipeToRefresh(boolean isEnabled);
+        void enableButtonsOnPostingFinished();
 
         void onPostingCancel();
         void onPostingFinished(int posted, int total);
