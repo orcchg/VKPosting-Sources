@@ -477,7 +477,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 titleId = R.string.main_showcase_make_wall_posting;
                 target = anchorView;
                 ok = true;
-                sticky = false;
+                sticky = true;
                 break;
             case SingleShot.CASE_NEW_LISTS:
                 titleId = R.string.main_showcase_new_lists_title;
@@ -494,7 +494,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
             case SingleShot.CASE_FILLED_LIST_POSTS:
                 buttonStyle = R.layout.custom_showcase_button2;
                 titleId = R.string.main_showcase_filled_list_posts_title;
-                target = getPostListViewByPosition(0);
+                target = getPostListViewByPosition(1);
                 ok = true;
                 sticky = true;
                 break;
@@ -536,10 +536,32 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     @Override
     public void onShowcaseViewShow(ShowcaseView showcaseView) {
-        UiUtility.dimView(fab);
         UiUtility.dimView(toolbar);
-        UiUtility.dimView(topFrameLayout);
-        UiUtility.dimView(bottomFrameLayout);
+
+        SingleShot.ShowcaseTag tag = (SingleShot.ShowcaseTag) showcaseView.getTag();
+
+        switch (tag.showcase()) {
+            case SingleShot.CASE_MAKE_WALL_POSTING:
+                UiUtility.dimViewCancel(fab);
+                UiUtility.dimView(topFrameLayout);
+                UiUtility.dimView(bottomFrameLayout);
+                break;
+            case SingleShot.CASE_FILLED_LIST_KEYWORDS:
+                UiUtility.dimViewCancel(bottomFrameLayout);
+                UiUtility.dimView(topFrameLayout);
+                UiUtility.dimView(fab);
+                break;
+            case SingleShot.CASE_FILLED_LIST_POSTS:
+                UiUtility.dimViewCancel(topFrameLayout);
+                UiUtility.dimView(bottomFrameLayout);
+                UiUtility.dimView(fab);
+                break;
+            default:
+                UiUtility.dimView(fab);
+                UiUtility.dimView(topFrameLayout);
+                UiUtility.dimView(bottomFrameLayout);
+                break;
+        }
     }
 
     @Override
