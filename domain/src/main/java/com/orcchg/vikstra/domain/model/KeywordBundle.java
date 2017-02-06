@@ -1,6 +1,5 @@
 package com.orcchg.vikstra.domain.model;
 
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.auto.value.AutoValue;
@@ -10,7 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 @AutoValue
-public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterable<Keyword>, Parcelable {
+public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterable<Keyword> {
 
     /**
      * Setting of this field must not break correspondence between this object's id
@@ -84,5 +83,14 @@ public abstract class KeywordBundle implements Comparable<KeywordBundle>, Iterab
     @Override
     public Iterator<Keyword> iterator() {
         return keywords().iterator();
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder(super.toString())
+                .append(", groupBundleId=").append(groupBundleId)
+                .append(", selectedGroupsCount=").append(selectedGroupsCount)
+                .append(", totalGroupsCount=").append(totalGroupsCount)
+                .toString();
     }
 }

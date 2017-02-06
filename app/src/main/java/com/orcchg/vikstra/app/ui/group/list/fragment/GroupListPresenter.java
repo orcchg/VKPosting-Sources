@@ -41,6 +41,7 @@ import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
+import com.orcchg.vikstra.domain.model.parcelable.ParcelableKeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.ValueUtility;
@@ -144,7 +145,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         @DebugLog
         private void toBundle(Bundle outState) {
             outState.putLong(BUNDLE_KEY_INPUT_GROUP_BUNDLE_ID, inputGroupBundleId);
-            outState.putParcelable(BUNDLE_KEY_INPUT_KEYWORD_BUNDLE, inputKeywordBundle);
+            outState.putParcelable(BUNDLE_KEY_INPUT_KEYWORD_BUNDLE, new ParcelableKeywordBundle(inputKeywordBundle));
             outState.putParcelable(BUNDLE_KEY_CURRENT_POST, currentPost);
             outState.putParcelable(BUNDLE_KEY_NEWLY_ADDED_KEYWORD, newlyAddedKeyword);
             outState.putInt(BUNDLE_KEY_STATE, state);
@@ -159,7 +160,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         private static Memento fromBundle(Bundle savedInstanceState) {
             Memento memento = new Memento();
             memento.inputGroupBundleId = savedInstanceState.getLong(BUNDLE_KEY_INPUT_GROUP_BUNDLE_ID, Constant.BAD_ID);
-            memento.inputKeywordBundle = savedInstanceState.getParcelable(BUNDLE_KEY_INPUT_KEYWORD_BUNDLE);
+            memento.inputKeywordBundle = ((ParcelableKeywordBundle) savedInstanceState.getParcelable(BUNDLE_KEY_INPUT_KEYWORD_BUNDLE)).get();
             memento.currentPost = savedInstanceState.getParcelable(BUNDLE_KEY_CURRENT_POST);
             memento.newlyAddedKeyword = savedInstanceState.getParcelable(BUNDLE_KEY_NEWLY_ADDED_KEYWORD);
             memento.state = savedInstanceState.getInt(BUNDLE_KEY_STATE, StateContainer.START);

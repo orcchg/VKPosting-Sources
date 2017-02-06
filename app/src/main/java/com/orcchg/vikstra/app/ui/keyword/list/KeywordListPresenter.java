@@ -19,6 +19,7 @@ import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.DeleteKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundles;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
+import com.orcchg.vikstra.domain.model.parcelable.ParcelableKeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
@@ -60,12 +61,11 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
         @DebugLog
         private void toBundle(Bundle outState) {
-            if (ArrayList.class.isInstance(keywordBundles)) {
-                outState.putParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES, (ArrayList<KeywordBundle>) keywordBundles);
-            } else {
-                ArrayList<KeywordBundle> copyKeywordBundles = new ArrayList<>(keywordBundles);
-                outState.putParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES, copyKeywordBundles);
+            ArrayList<ParcelableKeywordBundle> parcelables = new ArrayList<>();
+            for (KeywordBundle item : keywordBundles) {
+                parcelables.add(new ParcelableKeywordBundle(item));
             }
+            outState.putParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES, parcelables);
             outState.putLong(BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID, selectedGroupBundleId);
             outState.putLong(BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID, selectedKeywordBundleId);
             outState.putInt(BUNDLE_KEY_SELECTED_LIST_MODEL_POSITION, selectedModelPosition);
@@ -75,8 +75,13 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
         @DebugLog
         private static Memento fromBundle(Bundle savedInstanceState) {
             Memento memento = new Memento();
-            memento.keywordBundles = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES);
-            if (memento.keywordBundles == null) memento.keywordBundles = new ArrayList<>();
+            memento.keywordBundles = new ArrayList<>();
+            ArrayList<ParcelableKeywordBundle> parcelables = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_KEYWORD_BUNDLES);
+            if (parcelables != null) {
+                for (ParcelableKeywordBundle item : parcelables) {
+                    memento.keywordBundles.add(item.get());
+                }
+            }
             memento.selectedGroupBundleId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_GROUP_BUNDLE_ID, Constant.BAD_ID);
             memento.selectedKeywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             memento.selectedModelPosition = savedInstanceState.getInt(BUNDLE_KEY_SELECTED_LIST_MODEL_POSITION, Constant.BAD_POSITION);
