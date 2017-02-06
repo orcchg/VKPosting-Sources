@@ -58,9 +58,11 @@
         android:layout_marginStart="@dimen/post_single_grid_item_margin_side"
         android:layout_marginRight="@dimen/post_single_grid_item_margin_side"
         android:layout_marginEnd="@dimen/post_single_grid_item_margin_side"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
         android:textColor="@color/textSecondary"
-        android:textSize="@dimen/post_single_grid_item_title_text_size"
-        android:gravity="center_vertical"/>
+        android:textSize="@dimen/post_single_grid_item_title_text_size" />
 
     <TextView
         android:id="@+id/tv_description"
@@ -73,7 +75,7 @@
         android:layout_marginEnd="@dimen/post_single_grid_item_margin_side"
         android:ellipsize="end"
         android:gravity="center_vertical"
-        android:maxLines="2"
+        android:maxLines="1"
         android:textColor="@color/textSecondary"
         android:textSize="@dimen/post_single_grid_item_description_text_size"/>
 
