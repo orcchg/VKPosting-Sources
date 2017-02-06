@@ -128,8 +128,10 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     Timber.d("Selected image from Gallery, url: %s", imagePath);
                     if (isViewAttached()) getView().addMediaThumbnail(imagePath);
                     // try to find image in cache, if it has already been uploaded and hence - cached with id, assigned by endpoint
-                    long mediaId = attachLocalCache.getIdByPhotoPath(imagePath);  // if BAD_ID - then generate a unique one
+                    // TODO: disable image upload cache temporary
+                    long mediaId = Constant.BAD_ID;  // attachLocalCache.getIdByPhotoPath(imagePath);  // if BAD_ID - then generate a unique one
                     if (mediaId == Constant.BAD_ID) mediaId = sharedPrefsManagerComponent.sharedPrefsManager().getUniqueMediaId();
+                    Timber.d("Assigned new id [%s] for Media from Gallery with path: %s", mediaId, imagePath);
                     Media media = Media.builder().setId(mediaId).setUrl(imagePath).build();
                     memento.attachMedia.add(media);
                     memento.hasAttachChanged = true;
