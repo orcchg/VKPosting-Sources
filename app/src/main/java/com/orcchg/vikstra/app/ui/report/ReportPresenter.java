@@ -74,6 +74,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         private static final String BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS = "bundle_key_flag_posted_with_success" + PrID;;
         private static final String BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING = "bundle_key_flag_total_for_posting" + PrID;;
         private static final String BUNDLE_KEY_STORED_REPORTS_ID = "bundle_key_stored_reports_id_" + PrID;
+        private static final String BUNDLE_KEY_CURRENT_POST = "bundle_key_current_post_" + PrID;
 
         @InteractiveMode boolean isFinishedPosting;
         @InteractiveMode int postedWithCancel = 0;
@@ -81,6 +82,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         @InteractiveMode int postedWithSuccess = 0;
         @InteractiveMode int totalForPosting = 0;
         @InteractiveMode long storedReportsId = Constant.BAD_ID;
+
+        private Post currentPost;
 
         @DebugLog
         private void toBundle(Bundle outState) {
@@ -90,6 +93,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS, postedWithSuccess);
             outState.putInt(BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING, totalForPosting);
             outState.putLong(BUNDLE_KEY_STORED_REPORTS_ID, storedReportsId);
+            outState.putParcelable(BUNDLE_KEY_CURRENT_POST, currentPost);
         }
 
         @DebugLog
@@ -101,6 +105,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             memento.postedWithSuccess = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS, 0);
             memento.totalForPosting = savedInstanceState.getInt(BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING, 0);
             memento.storedReportsId = savedInstanceState.getLong(BUNDLE_KEY_STORED_REPORTS_ID, Constant.BAD_ID);
+            memento.currentPost = savedInstanceState.getParcelable(BUNDLE_KEY_CURRENT_POST);
             return memento;
         }
     }
@@ -273,6 +278,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         memento.postedWithSuccess = 0;  // drop counter
         memento.postedWithFailure = 0;  // drop counter
         memento.isFinishedPosting = false;
+        memento.currentPost = null;
         storedReports.clear();
         listAdapter.clear();
         dropListStat();
@@ -315,6 +321,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     protected void onRestoreState() {
         memento = Memento.fromBundle(savedInstanceState);
         if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+            /**
+             * Restore Post in interactive mode. In standard mode {@link ReportPresenter#freshStart()}
+             * will be invoked and Post will be re-loaded from repository. So, this line is placed here
+             * inside if-statement in order not to re-load Post twice.
+             */
+            applyPost(memento.currentPost);  // restore Post
+
             // restore all those GroupReport-s from repository that we had managed to store.
             memento.isFinishedPosting = true;  // assume posting has finished on state restore
             getGroupReportBundleByIdUseCase.setGroupReportId(memento.storedReportsId);
@@ -373,13 +386,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             @DebugLog @Override
             public void onFinish(@Nullable Post post) {
                 Timber.i("Use-Case: succeeded to get Post by id");
-                if (isViewAttached()) {
-                    if (post != null) {
-                        getView().showPost(postToSingleGridVoMapper.map(post));
-                    } else {
-                        getView().showEmptyPost();
-                    }
-                }
+                memento.currentPost = post;
+                applyPost(post);
             }
 
             @DebugLog @Override
@@ -491,5 +499,17 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             memento.isFinishedPosting = true;
             if (isViewAttached()) getView().onPostingFinished(memento.postedWithSuccess, memento.totalForPosting);
         };
+    }
+
+    /* Utility */
+    // --------------------------------------------------------------------------------------------
+    private void applyPost(Post post) {
+        if (isViewAttached()) {
+            if (post != null) {
+                getView().showPost(postToSingleGridVoMapper.map(post));
+            } else {
+                getView().showEmptyPost();
+            }
+        }
     }
 }
