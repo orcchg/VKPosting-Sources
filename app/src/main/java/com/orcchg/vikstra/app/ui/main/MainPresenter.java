@@ -217,6 +217,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     @Override
     protected void onRestoreState() {
         memento = Memento.fromBundle(savedInstanceState);
+        freshStart();  // nothing to be restored
     }
 
     /* Callback */
