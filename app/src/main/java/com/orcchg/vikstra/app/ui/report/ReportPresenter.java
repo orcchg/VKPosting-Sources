@@ -301,8 +301,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
+        if (isViewAttached()) getView().showLoading(getListTag());
         if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
-            if (isViewAttached()) getView().showLoading(getListTag());
             getGroupReportBundleByIdUseCase.execute();
         } else if (isViewAttached()) {
             // disable swipe-to-refresh when GroupReport-s are coming interactively
