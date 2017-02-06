@@ -26,6 +26,13 @@ public abstract class ProcessWallPost extends VkUseCase<VkSimpleResponseModel> {
         public Parameters(GroupReport groupReport) {
             this.groupReport = groupReport;
         }
+
+        @Override
+        public String toString() {
+            return new StringBuilder("ProcessWallPost.Parameters {groupReport=")
+                    .append(groupReport)
+                    .append("}").toString();
+        }
     }
 
     private Parameters parameters;
