@@ -440,6 +440,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             @Override
             public void onFinish(@Nullable Boolean result) {
                 Timber.i("Use-Case: succeeded to delete wall Post-s");
+                ((ReportAdapter) listAdapter).setAllItemsReverted(true);
                 if (isViewAttached()) getView().onPostRevertingFinished();
             }
 

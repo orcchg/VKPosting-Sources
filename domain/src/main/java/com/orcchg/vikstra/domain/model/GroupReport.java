@@ -10,11 +10,12 @@ import java.lang.annotation.RetentionPolicy;
 
 @AutoValue
 public abstract class GroupReport implements Comparable<GroupReport> {
-    public static final int STATUS_CANCEL = -1;
-    public static final int STATUS_SUCCESS = 0;
-    public static final int STATUS_FAILURE = 1;
-    public static final int STATUSES_COUNT = STATUS_FAILURE + 1;
-    @IntDef({STATUS_CANCEL, STATUS_SUCCESS, STATUS_FAILURE})
+    public static final int STATUS_CANCEL = 0;
+    public static final int STATUS_SUCCESS = 1;
+    public static final int STATUS_FAILURE = 2;
+    public static final int STATUS_REVERT = 3;
+    public static final int STATUSES_COUNT = STATUS_REVERT + 1;
+    @IntDef({STATUS_CANCEL, STATUS_SUCCESS, STATUS_FAILURE, STATUS_REVERT})
     @Retention(RetentionPolicy.SOURCE)
     public @interface Status {}
 
@@ -42,6 +43,7 @@ public abstract class GroupReport implements Comparable<GroupReport> {
 
     @Status
     public int status() {
+        // TODO: return status REVERT
         if (cancelled()) return STATUS_CANCEL;
         if (errorCode() == 0) return STATUS_SUCCESS;
         return STATUS_FAILURE;
@@ -52,6 +54,7 @@ public abstract class GroupReport implements Comparable<GroupReport> {
             case STATUS_CANCEL:   return "Cancelled";
             case STATUS_SUCCESS:  return "Success";
             case STATUS_FAILURE:  return "Failure";
+            case STATUS_REVERT:   return "Revert";
         }
         return "";
     }

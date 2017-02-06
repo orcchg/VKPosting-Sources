@@ -48,6 +48,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private static final String FRAGMENT_TAG = "report_fragment_tag";
     private static final String BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID = "bundle_key_group_report_bundle_id";
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
+    private static final String BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED = "bundle_key_flag_posting_revert_finished";
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
 
@@ -76,6 +77,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private ReportComponent reportComponent;
     private long groupReportBundleId = Constant.BAD_ID;  // if BAD_ID will not change later, then update reports interactively
     private long postId = Constant.BAD_ID;
+
+    private boolean postingRevertFinished = false;
 
     private @Nullable ShowcaseView showcaseView;
 
@@ -128,6 +131,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         super.onSaveInstanceState(outState);
         outState.putLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
         outState.putLong(BUNDLE_KEY_POST_ID, postId);
+        outState.putBoolean(BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED, postingRevertFinished);
     }
 
     /* Data */
@@ -136,9 +140,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         if (savedInstanceState != null) {
             groupReportBundleId = savedInstanceState.getLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
             postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
+            postingRevertFinished = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED, false);
         } else {
             groupReportBundleId = getIntent().getLongExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
             postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+            postingRevertFinished = false;
         }
         Timber.d("GroupReportBundle id: %s ; Post id: %s", groupReportBundleId, postId);
     }
@@ -213,7 +219,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @Override
     public void enableButtonsOnPostingFinished() {
         interruptButton.setEnabled(false);
-        revertAllButton.setEnabled(true);
+        revertAllButton.setEnabled(!postingRevertFinished);
     }
 
     // ------------------------------------------
@@ -245,6 +251,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void onPostRevertingFinished() {
+        postingRevertFinished = true;
+        revertAllButton.setEnabled(false);
         UiUtility.showSnackbar(this, R.string.report_snackbar_revert_all_wall_posting_finished);
     }
 

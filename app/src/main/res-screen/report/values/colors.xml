@@ -10,5 +10,6 @@
     <color name="report_progressbar_secondary_end_color">#a0ffcb00</color>
     <color name="report_screen_status_cancelled">#ffb600</color>
     <color name="report_screen_status_failure">#B71C1C</color>
+    <color name="report_screen_status_revert">#1976D2</color>
     <color name="report_screen_status_success">#388E3C</color>
 </resources>

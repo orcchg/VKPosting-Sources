@@ -19,4 +19,17 @@ public class ReportAdapter extends BaseAdapter<ReportViewHolder, ReportListItemV
         viewHolder.setOnItemLongClickListener(onItemLongClickListener);
         return viewHolder;
     }
+
+    public void setItemReverted(int position, boolean reverted) {
+        ReportListItemVO vo = models.get(position);
+        vo.setReverted(reverted);
+        notifyItemChanged(position);
+    }
+
+    public void setAllItemsReverted(boolean reverted) {
+        for (ReportListItemVO vo : models) {
+            vo.setReverted(reverted);
+        }
+        notifyDataSetChanged();
+    }
 }

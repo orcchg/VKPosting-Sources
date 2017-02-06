@@ -25,6 +25,7 @@ public class ReportViewHolder extends NormalViewHolder<ReportListItemVO> {
 
     private static @ColorInt int sCancelledColor = -1;
     private static @ColorInt int sFailureColor = -1;
+    private static @ColorInt int sRevertColor = -1;
     private static @ColorInt int sSuccessColor = -1;
 
     public ReportViewHolder(View view) {
@@ -34,6 +35,7 @@ public class ReportViewHolder extends NormalViewHolder<ReportListItemVO> {
         Context context = itemView.getContext();
         if (sCancelledColor == -1) sCancelledColor = ContextCompat.getColor(context, R.color.report_screen_status_cancelled);
         if (sFailureColor == -1) sFailureColor = ContextCompat.getColor(context, R.color.report_screen_status_failure);
+        if (sRevertColor == -1) sRevertColor = ContextCompat.getColor(context, R.color.report_screen_status_revert);
         if (sSuccessColor == -1) sSuccessColor = ContextCompat.getColor(context, R.color.report_screen_status_success);
     }
 
@@ -44,6 +46,11 @@ public class ReportViewHolder extends NormalViewHolder<ReportListItemVO> {
         itemView.setOnClickListener(createOnItemClickListener(viewObject));
 
         @GroupReport.Status int status = viewObject.reportStatus();
+        // TODO: make REVERT basic status of model
+        if (viewObject.wasReverted() && status == GroupReport.STATUS_SUCCESS) {
+            status = GroupReport.STATUS_REVERT;
+        }
+
         switch (status) {
             case GroupReport.STATUS_CANCEL:
                 statusView.setImageResource(R.drawable.ic_priority_high_white_24dp);
@@ -56,6 +63,10 @@ public class ReportViewHolder extends NormalViewHolder<ReportListItemVO> {
             case GroupReport.STATUS_FAILURE:
                 statusView.setImageResource(R.drawable.ic_clear_white_24dp);
                 statusView.setColorFilter(sFailureColor);
+                break;
+            case GroupReport.STATUS_REVERT:
+                statusView.setImageResource(R.drawable.ic_replay_white_24dp);
+                statusView.setColorFilter(sRevertColor);
                 break;
         }
     }

@@ -6,6 +6,8 @@ import com.orcchg.vikstra.domain.model.GroupReport;
 @AutoValue
 public abstract class ReportListItemVO {
 
+    private boolean wasReverted = false;
+
     public static Builder builder() {
         return new AutoValue_ReportListItemVO.Builder();
     }
@@ -23,4 +25,12 @@ public abstract class ReportListItemVO {
     public abstract String groupName();
     public abstract int membersCount();
     public abstract @GroupReport.Status int reportStatus();
+
+    public boolean wasReverted() {
+        return wasReverted;
+    }
+
+    public void setReverted(boolean wasReverted) {
+        this.wasReverted = wasReverted;
+    }
 }
