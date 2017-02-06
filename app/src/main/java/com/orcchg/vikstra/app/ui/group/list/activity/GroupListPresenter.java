@@ -142,6 +142,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         Timber.i("onPostThumbnailClick: %s", postId);
         if (isViewAttached()) {
             if (postId == Constant.BAD_ID) {
+                // TODO: open PostCreate, if no posts at all in list
                 // in case of initially empty post - open PostListScreen to choose Post among the existing ones
                 getView().openPostListScreen();
             } else {
