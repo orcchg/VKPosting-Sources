@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.domain.util.file;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 
@@ -48,6 +49,10 @@ public class FileUtility {
         return "/sdcard" + rawPath.substring(index);
     }
 
+    public static Uri uriFromFile(String path) {
+        return Uri.fromFile(new File(path));
+    }
+
     /* Internal */
     // ------------------------------------------
     private static String createExternalApplicationFolder(String root) {
@@ -62,8 +67,9 @@ public class FileUtility {
     }
 
     private static String getDumpFileName(Context context, String prefix, boolean external, boolean withTs) {
-        String root = external ? Environment.getExternalStorageDirectory().getPath()
-                : context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath();
+        File storage = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+        if (storage == null) storage = context.getExternalFilesDir(null);  // guarantees not null
+        String root = external ? Environment.getExternalStorageDirectory().getPath() : storage.getAbsolutePath();
         String directory = createExternalApplicationFolder(root);
         StringBuilder fileName = new StringBuilder(directory).append('/').append(prefix);
         if (withTs) fileName.append(currentTimestamp());

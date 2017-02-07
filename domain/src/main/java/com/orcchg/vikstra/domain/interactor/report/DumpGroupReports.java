@@ -33,10 +33,10 @@ public class DumpGroupReports extends UseCase<String> {
         }
     }
 
-    private String path;
-    private final ReportComposer reportComposer;
-    private final IReportRepository reportRepository;
-    private Parameters parameters;
+    protected String path;
+    protected final ReportComposer reportComposer;
+    protected final IReportRepository reportRepository;
+    protected Parameters parameters;
 
     @Inject
     public DumpGroupReports(String path, ReportComposer reportComposer, IReportRepository reportRepository,

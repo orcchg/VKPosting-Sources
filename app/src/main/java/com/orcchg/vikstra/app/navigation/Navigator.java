@@ -80,6 +80,7 @@ public class Navigator {
         intent.setData(Uri.parse("mailto:"));
         intent.setType("message/rfc822");
         intent.putExtra(Intent.EXTRA_EMAIL, emailContent.recipients().toArray());
+        intent.putExtra(Intent.EXTRA_STREAM, emailContent.attachment());
         intent.putExtra(Intent.EXTRA_SUBJECT, emailContent.subject());
         intent.putExtra(Intent.EXTRA_TEXT, emailContent.body());
         try {
