@@ -19,6 +19,6 @@ public class EndpointUtility {
     }
 
     public static boolean hasAccessTokenExhausted(@Nullable Throwable reason) {
-        return VKSdk.isLoggedIn() || Api5VkUseCaseException.class.isInstance(reason);
+        return !VKSdk.isLoggedIn() || Api5VkUseCaseException.class.isInstance(reason);
     }
 }
