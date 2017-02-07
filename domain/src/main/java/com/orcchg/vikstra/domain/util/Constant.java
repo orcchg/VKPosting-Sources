@@ -48,5 +48,6 @@ public class Constant {
         public static final int POST_LIST_PRESENTER = 10021;
         public static final int POST_SINGLE_GRID_PRESENTER = 10022;
         public static final int REPORT_PRESENTER = 10030;
+        public static final int MAIN_PRESENTER = 10040;
     }
 }

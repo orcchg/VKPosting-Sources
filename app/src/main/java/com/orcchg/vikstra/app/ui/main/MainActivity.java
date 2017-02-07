@@ -3,6 +3,8 @@ package com.orcchg.vikstra.app.ui.main;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -181,7 +183,8 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void notifyBothListsHaveItems() {
         if (AppConfig.INSTANCE.useTutorialShowcases()) {
-            showcaseView = runShowcase(SingleShot.CASE_FILLED_LIST_POSTS);
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(() -> showcaseView = runShowcase(SingleShot.CASE_FILLED_LIST_POSTS), 500);
         }
     }
 
@@ -464,7 +467,8 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Nullable
     private ShowcaseView runShowcase(@SingleShot.ShowCase int showcase) {
         // check single shot
-        if (sharedPrefsManagerComponent.sharedPrefsManager().checkShowcaseSingleShot(showcase, SingleShot.MAIN_SCREEN)) {
+        if (showcase != SingleShot.CASE_HIDE &&
+            sharedPrefsManagerComponent.sharedPrefsManager().checkShowcaseSingleShot(showcase, SingleShot.MAIN_SCREEN)) {
             Timber.i("Showcase [%s] has already been fired on Main Screen", showcase);
             return null;
         }

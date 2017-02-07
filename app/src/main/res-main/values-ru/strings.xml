@@ -160,6 +160,7 @@
     <string name="report_snackbar_group_reports_dump_succeeded">Выгружено&#58; %s</string>
     <string name="report_snackbar_posting_interrupted">Публикация прервана</string>
     <string name="report_snackbar_posting_finished">Публикация успешно завершилась. Опубликовано в %1$s из %2$s группах.</string>
+    <string name="report_snackbar_revert_all_wall_posting_empty">Все уже было откатано</string>
     <string name="report_snackbar_revert_all_wall_posting_started">Началось удаление всех текущих публикаций</string>
     <string name="report_snackbar_revert_all_wall_posting_finished">Удаление всех текущих публикаций завершено</string>
     <string name="report_showcase_report_dump_title">Сохраните отчет о выполненных публикациях</string>

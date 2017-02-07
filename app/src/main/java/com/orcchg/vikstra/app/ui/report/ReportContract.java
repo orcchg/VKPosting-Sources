@@ -15,6 +15,7 @@ public interface ReportContract {
         void onPostingCancel();
         void onPostingFinished(int posted, int total);
         void onPostRevertingStarted();
+        void onPostRevertingEmpty();
         void onPostRevertingError();
         void onPostRevertingFinished();
 

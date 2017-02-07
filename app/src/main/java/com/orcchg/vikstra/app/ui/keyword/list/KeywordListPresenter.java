@@ -42,6 +42,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     private final @BaseSelectAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
+    private ValueEmitter<Boolean> keywordsLoadedEmitter;
 
     private final KeywordBundleToVoMapper keywordBundleToVoMapper;
 
@@ -105,6 +106,10 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
 
     public void setExternalValueEmitter(ValueEmitter<Boolean> listener) {
         externalValueEmitter = listener;
+    }
+
+    public void setKeywordsLoadedEmitter(ValueEmitter<Boolean> listener) {
+        keywordsLoadedEmitter = listener;
     }
 
     @Override
@@ -277,6 +282,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                     memento.keywordBundles = bundles;
                     listMemento.currentSize += bundles.size();
                     populateList(bundles);
+                    if (keywordsLoadedEmitter != null) keywordsLoadedEmitter.emit(true);
                 }
             }
 
@@ -288,6 +294,7 @@ public class KeywordListPresenter extends BaseListPresenter<KeywordListContract.
                 } else {
                     listAdapter.onError(true);
                 }
+                if (keywordsLoadedEmitter != null) keywordsLoadedEmitter.emit(false);
             }
         };
     }

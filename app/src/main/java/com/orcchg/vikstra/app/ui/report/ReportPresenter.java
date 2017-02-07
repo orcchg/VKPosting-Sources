@@ -268,8 +268,17 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     public void performReverting() {
         Timber.i("performReverting");
-        if (isViewAttached()) getView().onPostRevertingStarted();
-        vkontakteEndpoint.deleteWallPosts(storedReports, createDeleteWallPostsCallback());
+        List<GroupReport> successReports = new ArrayList<>();
+        for (GroupReport report : storedReports) {
+            if (report.status() == GroupReport.STATUS_SUCCESS) successReports.add(report);
+        }
+        if (successReports.isEmpty()) {
+            // TODO: exclude success reports from 'storeReports' after revert
+            if (isViewAttached()) getView().onPostRevertingEmpty();
+        } else {
+            if (isViewAttached()) getView().onPostRevertingStarted();
+            vkontakteEndpoint.deleteWallPosts(successReports, createDeleteWallPostsCallback());
+        }
     }
 
     @Override

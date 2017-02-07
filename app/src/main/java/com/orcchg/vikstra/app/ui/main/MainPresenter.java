@@ -38,6 +38,7 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class MainPresenter extends BaseCompositePresenter<MainContract.View> implements MainContract.Presenter {
+    private static final int PrID = Constant.PresenterId.MAIN_PRESENTER;
 
     private KeywordListPresenter keywordListPresenter;
     private PostSingleGridPresenter postSingleGridPresenter;
@@ -51,23 +52,35 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
 
     // --------------------------------------------------------------------------------------------
     private static final class Memento {
-        private static final String BUNDLE_KEY_IS_KEYWORD_BUNDLE_SELECTED = "bundle_key_is_keyword_bundle_selected";
-        private static final String BUNDLE_KEY_IS_POST_SELECTED = "bundle_key_is_post_selected";
+        private static final String BUNDLE_KEY_IS_KEYWORD_BUNDLE_LOADED = "bundle_key_is_keyword_bundle_loaded_" + PrID;;
+        private static final String BUNDLE_KEY_IS_KEYWORD_BUNDLE_SELECTED = "bundle_key_is_keyword_bundle_selected_" + PrID;;
+        private static final String BUNDLE_KEY_IS_POST_LOADED = "bundle_key_is_post_loaded_" + PrID;
+        private static final String BUNDLE_KEY_IS_POST_SELECTED = "bundle_key_is_post_selected_" + PrID;;
+        private static final String BUNDLE_KEY_FLAG_RELOADED_ONCE = "bundle_key_flag_reloaded_once_" + PrID;
 
+        private boolean isKeywordBundleLoaded;
         private boolean isKeywordBundleSelected;
+        private boolean isPostLoaded;
         private boolean isPostSelected;
+        private boolean reloadedOnce;
 
         @DebugLog
         private void toBundle(Bundle outState) {
+            outState.putBoolean(BUNDLE_KEY_IS_KEYWORD_BUNDLE_LOADED, isKeywordBundleLoaded);
             outState.putBoolean(BUNDLE_KEY_IS_KEYWORD_BUNDLE_SELECTED, isKeywordBundleSelected);
+            outState.putBoolean(BUNDLE_KEY_IS_POST_LOADED, isPostLoaded);
             outState.putBoolean(BUNDLE_KEY_IS_POST_SELECTED, isPostSelected);
+            outState.putBoolean(BUNDLE_KEY_FLAG_RELOADED_ONCE, reloadedOnce);
         }
 
         @DebugLog
         private static Memento fromBundle(Bundle savedInstanceState) {
             Memento memento = new Memento();
+            memento.isKeywordBundleLoaded = savedInstanceState.getBoolean(BUNDLE_KEY_IS_KEYWORD_BUNDLE_LOADED, false);
             memento.isKeywordBundleSelected = savedInstanceState.getBoolean(BUNDLE_KEY_IS_KEYWORD_BUNDLE_SELECTED, false);
+            memento.isPostLoaded = savedInstanceState.getBoolean(BUNDLE_KEY_IS_POST_LOADED, false);
             memento.isPostSelected = savedInstanceState.getBoolean(BUNDLE_KEY_IS_POST_SELECTED, false);
+            memento.reloadedOnce = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_RELOADED_ONCE, false);
             return memento;
         }
     }
@@ -112,9 +125,26 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     // --------------------------------------------------------------------------------------------
     @Override
     public void onStart() {
+        boolean freshStart = isOnFreshStart();
         super.onStart();
-        if (isViewAttached() && !keywordListPresenter.isEmpty() && !postSingleGridPresenter.isEmpty()) {
-            getView().notifyBothListsHaveItems();
+        if (!freshStart && !memento.reloadedOnce) {  // reload once on non-fresh start in order to expose showcase
+            Timber.d("Reload list of Post-s and Keyword-s once on non-fresh start");
+            memento.reloadedOnce = true;
+            this.keywordListPresenter.setKeywordsLoadedEmitter(loaded -> {
+                memento.isKeywordBundleLoaded = loaded;
+                notifyBothListsHaveItems(memento.isKeywordBundleLoaded && memento.isPostLoaded);
+            });
+            this.postSingleGridPresenter.setPostsLoadedEmitter(loaded -> {
+                memento.isPostLoaded = loaded;
+                notifyBothListsHaveItems(memento.isKeywordBundleLoaded && memento.isPostLoaded);
+            });
+
+            retryKeywords();
+            retryPosts();
+        } else if (!freshStart) {
+            Timber.d("Simple non-fresh start, nothing to be loaded");
+            this.keywordListPresenter.setKeywordsLoadedEmitter(null);
+            this.postSingleGridPresenter.setPostsLoadedEmitter(null);
         }
     }
 
@@ -218,6 +248,10 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
     protected void onRestoreState() {
         memento = Memento.fromBundle(savedInstanceState);
         freshStart();  // nothing to be restored
+    }
+
+    private void notifyBothListsHaveItems(boolean both) {
+        if (isViewAttached() && both) getView().notifyBothListsHaveItems();
     }
 
     /* Callback */

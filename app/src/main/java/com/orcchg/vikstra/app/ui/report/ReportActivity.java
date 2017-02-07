@@ -245,6 +245,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     @Override
+    public void onPostRevertingEmpty() {
+        UiUtility.showSnackbar(this, R.string.report_snackbar_revert_all_wall_posting_empty);
+    }
+
+    @Override
     public void onPostRevertingError() {
         UiUtility.showSnackbar(this, R.string.snackbar_error_message);
     }
@@ -419,7 +424,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @Nullable
     private ShowcaseView runShowcase(@SingleShot.ShowCase int showcase) {
         // check single shot
-        if (sharedPrefsManagerComponent.sharedPrefsManager().checkShowcaseSingleShot(showcase, SingleShot.REPORT_SCREEN)) {
+        if (showcase != SingleShot.CASE_HIDE &&
+            sharedPrefsManagerComponent.sharedPrefsManager().checkShowcaseSingleShot(showcase, SingleShot.REPORT_SCREEN)) {
             Timber.i("Showcase [%s] has already been fired on Main Screen", showcase);
             return null;
         }

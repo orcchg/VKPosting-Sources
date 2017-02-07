@@ -52,6 +52,6 @@ public class SharedPrefsManager {
     }
 
     private String makeSingleShotKey(@SingleShot.ShowCase int showcase, @SingleShot.Screen int screen) {
-        return new StringBuilder("single_shot_key_").append(showcase).append('_').append(screen).toString();
+        return new StringBuilder("key_single_shot_").append(showcase).append('_').append(screen).toString();
     }
 }

@@ -41,6 +41,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     protected final @BaseSelectAdapter.SelectMode int selectMode;
     private ValueEmitter<Boolean> externalValueEmitter;
+    private ValueEmitter<Boolean> postsLoadedEmitter;
 
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
@@ -99,6 +100,10 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
 
     public void setExternalValueEmitter(ValueEmitter<Boolean> listener) {
         externalValueEmitter = listener;
+    }
+
+    public void setPostsLoadedEmitter(ValueEmitter<Boolean> listener) {
+        postsLoadedEmitter = listener;
     }
 
     @Override
@@ -292,6 +297,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                     listMemento.currentSize += posts.size();
                     populateList(posts);
                     selectInitialPost();
+                    if (postsLoadedEmitter != null) postsLoadedEmitter.emit(true);
                 }
             }
 
@@ -303,6 +309,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
                 } else {
                     listAdapter.onError(true);
                 }
+                if (postsLoadedEmitter != null) postsLoadedEmitter.emit(false);
             }
         };
     }
