@@ -1,3 +1,6 @@
 [submodule "android-proguard-snippets"]
 	path = android-proguard-snippets
 	url = https://github.com/krschultz/android-proguard-snippets
+[submodule "vk-android-sdk"]
+	path = vk-android-sdk
+	url = https://github.com/VKCOM/vk-android-sdk
