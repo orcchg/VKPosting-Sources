@@ -32,6 +32,12 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
 
     private NavigatorHolder navigatorHolder = new NavigatorHolder();
 
+    protected boolean isDestroying = false;
+
+    public boolean isDestroying() {
+        return isDestroying;
+    }
+
     @NonNull
     protected abstract P createPresenter();
 
@@ -39,6 +45,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
 
     @DebugLog @Override @SuppressWarnings("unchecked")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        isDestroying = false;
         super.onCreate(savedInstanceState);
         Timber.tag(getClass().getSimpleName());
         Timber.i("onCreate, smallest width: %s", UiUtility.getSmallestWidth(this));
@@ -101,6 +108,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
 
     @Override
     protected void onDestroy() {
+        isDestroying = true;
         super.onDestroy();
         Timber.tag(getClass().getSimpleName());
         Timber.i("onDestroy");

@@ -12,6 +12,7 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseActivity;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.dialog.DialogActivity;
+import com.orcchg.vikstra.app.ui.util.ContextUtility;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.vk.sdk.VKAccessToken;
@@ -48,7 +49,7 @@ public class StartActivity extends SimpleBaseActivity {
             @DebugLog @Override
             public void onError(VKError error) {
                 if (error != null) Timber.e("Authorization has failed: %s", error.toString());
-                if (!isFinishing()) {
+                if (!ContextUtility.isActivityDestroyed(StartActivity.this)) {
                     AlertDialog dialog = DialogProvider.getTextDialog(StartActivity.this, R.string.dialog_error_title,
                             R.string.main_dialog_authorization_failed, (xdialog, which) -> finish());
                     dialog.setCancelable(false);

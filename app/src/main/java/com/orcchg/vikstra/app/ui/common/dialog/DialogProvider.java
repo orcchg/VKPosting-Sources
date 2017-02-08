@@ -15,6 +15,7 @@ import android.widget.EditText;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.PermissionManager;
 import com.orcchg.vikstra.app.ui.base.BaseActivity;
+import com.orcchg.vikstra.app.ui.util.ContextUtility;
 
 public class DialogProvider {
 
@@ -68,28 +69,28 @@ public class DialogProvider {
     /* Show */
     // ------------------------------------------
     public static void showTextDialog(Activity activity, @StringRes int title, @StringRes int description) {
-        if (!activity.isFinishing()) getTextDialog(activity, title, description, null).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialog(activity, title, description, null).show();
     }
 
     public static void showTextDialog(Activity activity, @StringRes int title, String description) {
         String xtitle = activity.getResources().getString(title);
-        if (!activity.isFinishing()) getTextDialog(activity, xtitle, description, null).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialog(activity, xtitle, description, null).show();
     }
 
     public static void showTextDialog(Activity activity, @StringRes int title, @StringRes int description,
                                       DialogInterface.OnClickListener listener) {
         String xtitle = activity.getResources().getString(title);
         String xdescription = activity.getResources().getString(description);
-        if (!activity.isFinishing()) getTextDialog(activity, xtitle, xdescription, listener).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialog(activity, xtitle, xdescription, listener).show();
     }
 
     public static void showTextDialog(Activity activity, String title, String description) {
-        if (!activity.isFinishing()) getTextDialog(activity, title, description, null).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialog(activity, title, description, null).show();
     }
 
     public static void showTextDialog(Activity activity, String title, String description,
                                       DialogInterface.OnClickListener listener) {
-        if (!activity.isFinishing()) getTextDialog(activity, title, description, listener).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialog(activity, title, description, listener).show();
     }
 
     // --------------------------------------------------------------------------------------------
@@ -131,21 +132,21 @@ public class DialogProvider {
                                                 @StringRes int yesLabel, @StringRes int noLabel,
                                                 DialogInterface.OnClickListener yesListener,
                                                 DialogInterface.OnClickListener noListener) {
-        if (!activity.isFinishing()) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
     }
 
     public static void showTextDialogTwoButtons(Activity activity, @StringRes int title, String description,
                                                 @StringRes int yesLabel, @StringRes int noLabel,
                                                 DialogInterface.OnClickListener yesListener,
                                                 DialogInterface.OnClickListener noListener) {
-        if (!activity.isFinishing()) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
     }
 
     public static void showTextDialogTwoButtons(Activity activity, String title, String description,
                                                 String yesLabel, String noLabel,
                                                 DialogInterface.OnClickListener yesListener,
                                                 DialogInterface.OnClickListener noListener) {
-        if (!activity.isFinishing()) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
     }
 
     /* Edit text */
@@ -201,17 +202,17 @@ public class DialogProvider {
     // ------------------------------------------
     public static void showEditTextDialog(Activity activity, @StringRes int title, @StringRes int hint,
                                           String init, @NonNull OnEditTextDialogOkPressed okListener) {
-        if (!activity.isFinishing()) getEditTextDialog(activity, title, hint, init, okListener).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getEditTextDialog(activity, title, hint, init, okListener).show();
     }
 
     public static void showEditTextDialog(Activity activity, String title, String hint,
                                           @StringRes int init, @NonNull OnEditTextDialogOkPressed okListener) {
-        if (!activity.isFinishing()) getEditTextDialog(activity, title, hint, init, okListener).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getEditTextDialog(activity, title, hint, init, okListener).show();
     }
 
     public static void showEditTextDialog(Activity activity, String title, String hint,
                                           @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
-        if (!activity.isFinishing()) getEditTextDialog(activity, title, hint, init, okListener).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getEditTextDialog(activity, title, hint, init, okListener).show();
     }
 
     /* Photo */
@@ -245,6 +246,6 @@ public class DialogProvider {
     /* Show */
     // ------------------------------------------
     public static void showUploadPhotoDialog(BaseActivity activity) {
-        if (!activity.isFinishing()) getUploadPhotoDialog(activity).show();
+        if (!ContextUtility.isActivityDestroyed(activity)) getUploadPhotoDialog(activity).show();
     }
 }
