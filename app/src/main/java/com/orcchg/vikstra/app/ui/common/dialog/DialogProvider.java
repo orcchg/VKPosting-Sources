@@ -68,29 +68,39 @@ public class DialogProvider {
 
     /* Show */
     // ------------------------------------------
-    public static void showTextDialog(Activity activity, @StringRes int title, @StringRes int description) {
-        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialog(activity, title, description, null).show();
+    public static AlertDialog showTextDialog(Activity activity, @StringRes int title, @StringRes int description) {
+        AlertDialog dialog = getTextDialog(activity, title, description, null);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
-    public static void showTextDialog(Activity activity, @StringRes int title, String description) {
+    public static AlertDialog showTextDialog(Activity activity, @StringRes int title, String description) {
         String xtitle = activity.getResources().getString(title);
-        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialog(activity, xtitle, description, null).show();
+        AlertDialog dialog = getTextDialog(activity, xtitle, description, null);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
-    public static void showTextDialog(Activity activity, @StringRes int title, @StringRes int description,
-                                      DialogInterface.OnClickListener listener) {
+    public static AlertDialog showTextDialog(Activity activity, @StringRes int title, @StringRes int description,
+                                             DialogInterface.OnClickListener listener) {
         String xtitle = activity.getResources().getString(title);
         String xdescription = activity.getResources().getString(description);
-        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialog(activity, xtitle, xdescription, listener).show();
+        AlertDialog dialog = getTextDialog(activity, xtitle, xdescription, listener);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
-    public static void showTextDialog(Activity activity, String title, String description) {
-        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialog(activity, title, description, null).show();
+    public static AlertDialog showTextDialog(Activity activity, String title, String description) {
+        AlertDialog dialog = getTextDialog(activity, title, description, null);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
-    public static void showTextDialog(Activity activity, String title, String description,
-                                      DialogInterface.OnClickListener listener) {
-        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialog(activity, title, description, listener).show();
+    public static AlertDialog showTextDialog(Activity activity, String title, String description,
+                                             DialogInterface.OnClickListener listener) {
+        AlertDialog dialog = getTextDialog(activity, title, description, listener);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
     // --------------------------------------------------------------------------------------------
@@ -128,25 +138,31 @@ public class DialogProvider {
 
     /* Show */
     // ------------------------------------------
-    public static void showTextDialogTwoButtons(Activity activity, @StringRes int title, @StringRes int description,
-                                                @StringRes int yesLabel, @StringRes int noLabel,
-                                                DialogInterface.OnClickListener yesListener,
-                                                DialogInterface.OnClickListener noListener) {
-        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
+    public static AlertDialog showTextDialogTwoButtons(Activity activity, @StringRes int title, @StringRes int description,
+                                                       @StringRes int yesLabel, @StringRes int noLabel,
+                                                       DialogInterface.OnClickListener yesListener,
+                                                       DialogInterface.OnClickListener noListener) {
+        AlertDialog dialog = getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
-    public static void showTextDialogTwoButtons(Activity activity, @StringRes int title, String description,
-                                                @StringRes int yesLabel, @StringRes int noLabel,
-                                                DialogInterface.OnClickListener yesListener,
-                                                DialogInterface.OnClickListener noListener) {
-        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
+    public static AlertDialog showTextDialogTwoButtons(Activity activity, @StringRes int title, String description,
+                                                       @StringRes int yesLabel, @StringRes int noLabel,
+                                                       DialogInterface.OnClickListener yesListener,
+                                                       DialogInterface.OnClickListener noListener) {
+        AlertDialog dialog = getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
-    public static void showTextDialogTwoButtons(Activity activity, String title, String description,
-                                                String yesLabel, String noLabel,
-                                                DialogInterface.OnClickListener yesListener,
-                                                DialogInterface.OnClickListener noListener) {
-        if (!ContextUtility.isActivityDestroyed(activity)) getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener).show();
+    public static AlertDialog showTextDialogTwoButtons(Activity activity, String title, String description,
+                                                       String yesLabel, String noLabel,
+                                                       DialogInterface.OnClickListener yesListener,
+                                                       DialogInterface.OnClickListener noListener) {
+        AlertDialog dialog = getTextDialogTwoButtons(activity, title, description, yesLabel, noLabel, yesListener, noListener);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
     /* Edit text */
@@ -200,19 +216,25 @@ public class DialogProvider {
 
     /* Show */
     // ------------------------------------------
-    public static void showEditTextDialog(Activity activity, @StringRes int title, @StringRes int hint,
-                                          String init, @NonNull OnEditTextDialogOkPressed okListener) {
-        if (!ContextUtility.isActivityDestroyed(activity)) getEditTextDialog(activity, title, hint, init, okListener).show();
+    public static AlertDialog showEditTextDialog(Activity activity, @StringRes int title, @StringRes int hint,
+                                                 String init, @NonNull OnEditTextDialogOkPressed okListener) {
+        AlertDialog dialog = getEditTextDialog(activity, title, hint, init, okListener);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
-    public static void showEditTextDialog(Activity activity, String title, String hint,
-                                          @StringRes int init, @NonNull OnEditTextDialogOkPressed okListener) {
-        if (!ContextUtility.isActivityDestroyed(activity)) getEditTextDialog(activity, title, hint, init, okListener).show();
+    public static AlertDialog showEditTextDialog(Activity activity, String title, String hint,
+                                                 @StringRes int init, @NonNull OnEditTextDialogOkPressed okListener) {
+        AlertDialog dialog = getEditTextDialog(activity, title, hint, init, okListener);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
-    public static void showEditTextDialog(Activity activity, String title, String hint,
-                                          @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
-        if (!ContextUtility.isActivityDestroyed(activity)) getEditTextDialog(activity, title, hint, init, okListener).show();
+    public static AlertDialog showEditTextDialog(Activity activity, String title, String hint,
+                                                 @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
+        AlertDialog dialog = getEditTextDialog(activity, title, hint, init, okListener);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 
     /* Photo */
@@ -245,7 +267,9 @@ public class DialogProvider {
 
     /* Show */
     // ------------------------------------------
-    public static void showUploadPhotoDialog(BaseActivity activity) {
-        if (!ContextUtility.isActivityDestroyed(activity)) getUploadPhotoDialog(activity).show();
+    public static AlertDialog showUploadPhotoDialog(BaseActivity activity) {
+        AlertDialog dialog = getUploadPhotoDialog(activity);
+        if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        return dialog;
     }
 }

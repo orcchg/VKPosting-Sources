@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
@@ -82,6 +83,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     private @Nullable ShowcaseView showcaseView;
 
+    private @Nullable AlertDialog dialog1, dialog2, dialog3, dialog4, dialog5, dialog6;
+
     public static Intent getCallingIntent(@NonNull Context context, long groupReportBundleId, long postId) {
         Intent intent = new Intent(context, ReportActivity.class);
         intent.putExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
@@ -132,6 +135,17 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         outState.putLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
         outState.putLong(BUNDLE_KEY_POST_ID, postId);
         outState.putBoolean(BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED, postingRevertFinished);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog1 != null) dialog1.dismiss();
+        if (dialog2 != null) dialog2.dismiss();
+        if (dialog3 != null) dialog3.dismiss();
+        if (dialog4 != null) dialog4.dismiss();
+        if (dialog5 != null) dialog5.dismiss();
+        if (dialog6 != null) dialog6.dismiss();
     }
 
     /* Data */
@@ -226,8 +240,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @Override
     public void onPostingCancel() {
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
-        DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
-                R.string.report_dialog_posting_was_cancelled_daily_limit_reached);
+        dialog1 = DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_posting_was_cancelled_daily_limit_reached);
         enableButtonsOnPostingFinished();
     }
 
@@ -235,7 +248,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     public void onPostingFinished(int posted, int total) {
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
         String text = String.format(Locale.ENGLISH, SNACKBAR_POSTING_FINISHED, posted, total);
-        DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text);
+        dialog2 = DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text);
         enableButtonsOnPostingFinished();
     }
 
@@ -264,7 +277,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // ------------------------------------------
     @Override
     public void openCloseWhilePostingDialog() {
-        DialogProvider.showTextDialogTwoButtons(this, R.string.report_dialog_interrupt_posting_and_close_title,
+        dialog3 = DialogProvider.showTextDialogTwoButtons(this, R.string.report_dialog_interrupt_posting_and_close_title,
                 R.string.report_dialog_interrupt_posting_and_close_description,
                 R.string.button_interrupt,R.string.button_continue,
                 (dialog, which) -> {
@@ -276,13 +289,13 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void openDumpNotReadyDialog() {
-        DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
+        dialog4 = DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
                 R.string.report_dialog_group_reports_not_ready_to_dump);
     }
 
     @Override
     public void openEditDumpFileNameDialog() {
-        DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
+        dialog5 = DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
                 (dialog, which, text) -> {
                     dialog.dismiss();
                     String path = FileUtility.makeDumpFileName(this, text, true /* external */);
@@ -297,7 +310,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void openRevertAllWarningDialog() {
-        DialogProvider.showTextDialogTwoButtons(this, R.string.dialog_warning_title,
+        dialog6 = DialogProvider.showTextDialogTwoButtons(this, R.string.dialog_warning_title,
                 R.string.report_dialog_revert_all_wall_posting_description,
                 R.string.button_revert, R.string.button_cancel,
                 (dialog, which) -> {

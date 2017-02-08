@@ -25,6 +25,8 @@ import timber.log.Timber;
 
 public class StartActivity extends SimpleBaseActivity {
 
+    private @Nullable AlertDialog dialog1;
+
     public static Intent getCallingIntent(@NonNull Context context) {
         return new Intent(context, StartActivity.class);
     }
@@ -50,11 +52,11 @@ public class StartActivity extends SimpleBaseActivity {
             public void onError(VKError error) {
                 if (error != null) Timber.e("Authorization has failed: %s", error.toString());
                 if (!ContextUtility.isActivityDestroyed(StartActivity.this)) {
-                    AlertDialog dialog = DialogProvider.getTextDialog(StartActivity.this, R.string.dialog_error_title,
+                    dialog1 = DialogProvider.getTextDialog(StartActivity.this, R.string.dialog_error_title,
                             R.string.main_dialog_authorization_failed, (xdialog, which) -> finish());
-                    dialog.setCancelable(false);
-                    dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
+                    dialog1.setCancelable(false);
+                    dialog1.setCanceledOnTouchOutside(false);
+                    dialog1.show();
 //                    navigationComponent.navigator().openAuthorizationNotPassedDialog(StartActivity.this);
                 }
             }
@@ -70,6 +72,12 @@ public class StartActivity extends SimpleBaseActivity {
                     break;
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog1 != null) dialog1.dismiss();
     }
 
     /* Data */

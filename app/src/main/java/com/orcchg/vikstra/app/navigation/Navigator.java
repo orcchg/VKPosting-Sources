@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.webkit.URLUtil;
 
@@ -36,6 +37,8 @@ import com.orcchg.vikstra.domain.util.Constant;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -45,6 +48,8 @@ import timber.log.Timber;
 
 @PerActivity
 public class Navigator {
+
+    private final List<WeakReference<AlertDialog>> dialogs = new ArrayList<>();
 
     @Inject
     public Navigator() {
@@ -85,7 +90,9 @@ public class Navigator {
             context.startActivity(Intent.createChooser(intent, title));
         } catch (android.content.ActivityNotFoundException ex) {
             Timber.e("No Activity was found to send an email !");
-            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_email);
+            AlertDialog dialog = DialogProvider.showTextDialog(context, R.string.dialog_error_title,
+                    R.string.error_external_screen_not_found_email);
+            dialogs.add(new WeakReference<>(dialog));
         }
     }
 
@@ -105,7 +112,9 @@ public class Navigator {
                 context.startActivity(intent);
             } else {
                 Timber.e("No Activity was found to open Browser !");
-                DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_browser);
+                AlertDialog dialog = DialogProvider.showTextDialog(context, R.string.dialog_error_title,
+                        R.string.error_external_screen_not_found_browser);
+                dialogs.add(new WeakReference<>(dialog));
             }
         } else {
             Timber.e("Input url [%s] is invalid !", url);
@@ -166,7 +175,9 @@ public class Navigator {
             context.startActivityForResult(intent, Constant.RequestCode.EXTERNAL_SCREEN_GALLERY);
         } else {
             Timber.e("No Activity was found to open Gallery !");
-            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_gallery);
+            AlertDialog dialog = DialogProvider.showTextDialog(context, R.string.dialog_error_title,
+                    R.string.error_external_screen_not_found_gallery);
+            dialogs.add(new WeakReference<>(dialog));
         }
     }
 
@@ -199,7 +210,9 @@ public class Navigator {
             context.startActivityForResult(intent, Constant.RequestCode.EXTERNAL_SCREEN_CAMERA);
         } else {
             Timber.e("No Activity was found to open Camera !");
-            DialogProvider.showTextDialog(context, R.string.dialog_error_title, R.string.error_external_screen_not_found_camera);
+            AlertDialog dialog = DialogProvider.showTextDialog(context, R.string.dialog_error_title,
+                    R.string.error_external_screen_not_found_camera);
+            dialogs.add(new WeakReference<>(dialog));
         }
     }
 
@@ -265,5 +278,16 @@ public class Navigator {
     public void openStatusScreen(@NonNull Context context) {
         Intent intent = StatusActivity.getCallingIntent(context);
         context.startActivity(intent);
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    public void onDestroy() {
+        for (WeakReference<AlertDialog> refDialog : dialogs) {
+            AlertDialog dialog = refDialog.get();
+            if (dialog != null) dialog.dismiss();
+            refDialog.clear();
+        }
+        dialogs.clear();
     }
 }

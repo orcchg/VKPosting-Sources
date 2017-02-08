@@ -30,6 +30,8 @@ public class DialogActivity extends SimpleBaseActivity {
 
     private boolean finishApp = false;
 
+    private @Nullable AlertDialog dialog1;
+
     public static Intent getCallingIntent(@NonNull Context context, @StringRes int title,
                                           @StringRes int description, @StringRes int yesLabel,
                                           boolean finishApp) {
@@ -54,7 +56,7 @@ public class DialogActivity extends SimpleBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        AlertDialog dialog = DialogProvider.getTextDialog(this, DIALOG_TITLE, DIALOG_DESCRIPTION, DIALOG_YES_BUTTON_LABEL,
+        dialog1 = DialogProvider.getTextDialog(this, DIALOG_TITLE, DIALOG_DESCRIPTION, DIALOG_YES_BUTTON_LABEL,
                 (xdialog, which) -> {
                     xdialog.dismiss();
                     if (finishApp) {
@@ -66,9 +68,15 @@ public class DialogActivity extends SimpleBaseActivity {
                     }
                     finish();
                 });
-        dialog.setCancelable(false);
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+        dialog1.setCancelable(false);
+        dialog1.setCanceledOnTouchOutside(false);
+        dialog1.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog1 != null) dialog1.dismiss();
     }
 
     /* Data */

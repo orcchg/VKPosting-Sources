@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,6 +80,8 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     private PostCreateComponent postCreateComponent;
     private long postId = Constant.BAD_ID;
 
+    private @Nullable AlertDialog dialog1, dialog2, dialog3;
+
     @NonNull @Override
     protected PostCreateContract.Presenter createPresenter() {
         return postCreateComponent.presenter();
@@ -125,6 +128,14 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(BUNDLE_KEY_POST_ID, postId);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog1 != null) dialog1.dismiss();
+        if (dialog2 != null) dialog2.dismiss();
+        if (dialog3 != null) dialog3.dismiss();
     }
 
     /* Data */
@@ -201,7 +212,7 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     // ------------------------------------------
     @Override
     public void openEditLinkDialog() {
-        DialogProvider.showEditTextDialog(this, R.string.post_create_dialog_attach_link_title,
+        dialog1 = DialogProvider.showEditTextDialog(this, R.string.post_create_dialog_attach_link_title,
                 R.string.post_create_dialog_attach_link_hint, "",
                 (dialog, which, text) -> {
                     dialog.dismiss();
@@ -212,12 +223,12 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
 
     @Override
     public void openMediaLoadDialog() {
-        DialogProvider.showUploadPhotoDialog(this);
+        dialog2 = DialogProvider.showUploadPhotoDialog(this);
     }
 
     @Override
     public void openSaveChangesDialog() {
-        DialogProvider.showTextDialogTwoButtons(this, R.string.post_create_dialog_save_changes_title,
+        dialog3 = DialogProvider.showTextDialogTwoButtons(this, R.string.post_create_dialog_save_changes_title,
                 R.string.post_create_dialog_save_changes_description, R.string.button_save, R.string.button_close,
                 (dialog, which) -> {
                     dialog.dismiss();

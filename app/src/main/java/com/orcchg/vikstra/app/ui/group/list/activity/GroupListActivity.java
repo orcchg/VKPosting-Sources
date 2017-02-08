@@ -96,6 +96,8 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     private @Nullable ShowcaseView showcaseView;
 
+    private @Nullable AlertDialog dialog1, dialog2, dialog3, dialog4;
+
     public static Intent getCallingIntent(@NonNull Context context, long keywordBunldeId, long postId) {
         Intent intent = new Intent(context, GroupListActivity.class);
         intent.putExtra(EXTRA_KEYWORD_BUNDLE_ID, keywordBunldeId);
@@ -137,6 +139,15 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         outState.putInt(BUNDLE_KEY_CHOSEN_SETTING_VARIANT, chosenSettingVariant);
         outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
         outState.putLong(BUNDLE_KEY_POST_ID, postId);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog1 != null) dialog1.dismiss();
+        if (dialog2 != null) dialog2.dismiss();
+        if (dialog3 != null) dialog3.dismiss();
+        if (dialog4 != null) dialog4.dismiss();
     }
 
     /* Data */
@@ -253,7 +264,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     // ------------------------------------------
     @Override
     public void openAddKeywordDialog() {
-        DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
+        dialog1 = DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
                 (dialog, which, text) -> {
                     dialog.dismiss();
                     if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_SELECT_POST);
@@ -263,7 +274,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     @Override
     public void openEditDumpFileNameDialog() {
-        DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
+        dialog2 = DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
                 (dialog, which, text) -> {
                     dialog.dismiss();
                     String path = FileUtility.makeDumpFileName(this, text, true /* external */);
@@ -273,12 +284,12 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     @Override
     public void openDumpNotReadyDialog() {
-        DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.group_list_dialog_groups_not_ready_to_dump);
+        dialog3 = DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.group_list_dialog_groups_not_ready_to_dump);
     }
 
     @Override
     public void openEditTitleDialog(@Nullable String initTitle) {
-        DialogProvider.showEditTextDialog(this, EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, initTitle,
+        dialog4 = DialogProvider.showEditTextDialog(this, EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, initTitle,
                 (dialog, which, text) -> {
                     dialog.dismiss();
                     toolbar.setTitle(text);
