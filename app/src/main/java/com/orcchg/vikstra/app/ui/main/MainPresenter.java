@@ -275,7 +275,7 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
                 Timber.e("Use-Case: failed to get current User");
                 if (EndpointUtility.hasAccessTokenExhausted(reason)) {
                     Timber.w("Access Token has exhausted !");
-                    getView().onAccessTokenExhausted();
+                    if (isViewAttached()) getView().onAccessTokenExhausted();
                 } else {
                     if (isViewAttached()) getView().showCurrentUser(null);
                 }
