@@ -53,7 +53,7 @@
     </array>
     <string name="dialog_progress_posting">Posting&#8230;</string>
     <string name="dialog_send_email_title">Send email</string>
-    <string name="dialog_send_email_hint">Enter email address per comma</string>
+    <string name="dialog_send_email_hint">Enter emails per comma</string>
     <string name="dialog_warning_title">Warning</string>
 
     <string name="message_send_email">Send email&#8230;</string>

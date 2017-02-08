@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -306,9 +307,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     public void openEditDumpFileNameDialog() {
         dialog5 = DialogProvider.showEditTextDialog(this, DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT, "",
                 (dialog, which, text) -> {
-                    dialog.dismiss();
-                    String path = FileUtility.makeDumpFileName(this, text, true /* external */);
-                    presenter.performDumping(path);
+                    if (!TextUtils.isEmpty(text)) {
+                        dialog.dismiss();
+                        String path = FileUtility.makeDumpFileName(this, text, true /* external */);
+                        presenter.performDumping(path);
+                    }
                 });
     }
 
@@ -316,9 +319,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     public void openEditDumpEmailDialog() {
         dialog7 = DialogProvider.showEditTextDialog(this, EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, "",
                 (dialog, which, email) -> {
-                    dialog.dismiss();
-                    String path = FileUtility.makeDumpFileName(this, REPORTS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
-                    presenter.performDumping(path, email);
+                    if (!TextUtils.isEmpty(email)) {
+                        dialog.dismiss();
+                        String path = FileUtility.makeDumpFileName(this, REPORTS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
+                        presenter.performDumping(path, email);
+                    }
                 });
     }
 

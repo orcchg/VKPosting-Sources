@@ -202,7 +202,7 @@ public class DialogProvider {
                 .setPositiveButton(R.string.button_ok, (dialog, which) -> {
                     String text = input.getText().toString();
                     if (TextUtils.isEmpty(text)) {
-                        input.setError(errorMessage);  // TODO: not working properly
+                        input.setError(errorMessage);
                     } else {
                         okListener.onClick(dialog, which, text);
                     }
@@ -220,6 +220,7 @@ public class DialogProvider {
                                                  String init, @NonNull OnEditTextDialogOkPressed okListener) {
         AlertDialog dialog = getEditTextDialog(activity, title, hint, init, okListener);
         if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        overrideButtonBehavior(activity, dialog, okListener);
         return dialog;
     }
 
@@ -227,6 +228,7 @@ public class DialogProvider {
                                                  @StringRes int init, @NonNull OnEditTextDialogOkPressed okListener) {
         AlertDialog dialog = getEditTextDialog(activity, title, hint, init, okListener);
         if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        overrideButtonBehavior(activity, dialog, okListener);
         return dialog;
     }
 
@@ -234,7 +236,22 @@ public class DialogProvider {
                                                  @Nullable String init, @NonNull OnEditTextDialogOkPressed okListener) {
         AlertDialog dialog = getEditTextDialog(activity, title, hint, init, okListener);
         if (!ContextUtility.isActivityDestroyed(activity)) dialog.show();
+        overrideButtonBehavior(activity, dialog, okListener);
         return dialog;
+    }
+
+    // {@see http://stackoverflow.com/questions/2620444/how-to-prevent-a-dialog-from-closing-when-a-button-is-clicked}
+    private static void overrideButtonBehavior(Activity activity, AlertDialog dialog, @NonNull OnEditTextDialogOkPressed okListener) {
+        String errorMessage = activity.getResources().getString(R.string.error_empty_input_text);
+        EditText input = (EditText) dialog.findViewById(R.id.et_input);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener((view) -> {
+            String text = input != null ? input.getText().toString() : "default";
+            if (TextUtils.isEmpty(text) && input != null) {
+                input.setError(errorMessage);
+            } else {
+                okListener.onClick(dialog, AlertDialog.BUTTON_POSITIVE, text);
+            }
+        });
     }
 
     /* Photo */

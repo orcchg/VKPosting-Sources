@@ -215,10 +215,12 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     public void openEditTitleDialog(@Nullable String initTitle, boolean saveAfter) {
         dialog1 = DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, initTitle,
                 (dialog, which, text) -> {
-                    dialog.dismiss();
-                    toolbar.setTitle(text);
-                    presenter.onTitleChanged(text);
-                    if (saveAfter) presenter.onSavePressed();
+                    if (!TextUtils.isEmpty(text)) {
+                        dialog.dismiss();
+                        toolbar.setTitle(text);
+                        presenter.onTitleChanged(text);
+                        if (saveAfter) presenter.onSavePressed();
+                    }
                 });
     }
 

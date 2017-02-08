@@ -275,9 +275,11 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     public void openAddKeywordDialog() {
         dialog1 = DialogProvider.showEditTextDialog(this, ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT, null,
                 (dialog, which, text) -> {
-                    dialog.dismiss();
-                    if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_SELECT_POST);
-                    if (!TextUtils.isEmpty(text)) presenter.addKeyword(Keyword.create(text));
+                    if (!TextUtils.isEmpty(text)) {
+                        dialog.dismiss();
+                        if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_SELECT_POST);
+                        presenter.addKeyword(Keyword.create(text));
+                    }
                 });
     }
 
@@ -285,9 +287,11 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     public void openEditDumpFileNameDialog() {
         dialog2 = DialogProvider.showEditTextDialog(this, DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT, "",
                 (dialog, which, text) -> {
-                    dialog.dismiss();
-                    String path = FileUtility.makeDumpFileName(this, text, true /* external */);
-                    presenter.performDumping(path);
+                    if (!TextUtils.isEmpty(text)) {
+                        dialog.dismiss();
+                        String path = FileUtility.makeDumpFileName(this, text, true /* external */);
+                        presenter.performDumping(path);
+                    }
                 });
     }
 
@@ -295,9 +299,11 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     public void openEditDumpEmailDialog() {
         dialog5 = DialogProvider.showEditTextDialog(this, EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, "",
                 (dialog, which, email) -> {
-                    dialog.dismiss();
-                    String path = FileUtility.makeDumpFileName(this, GROUPS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
-                    presenter.performDumping(path, email);
+                    if (!TextUtils.isEmpty(email)) {
+                        dialog.dismiss();
+                        String path = FileUtility.makeDumpFileName(this, GROUPS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
+                        presenter.performDumping(path, email);
+                    }
                 });
     }
 
@@ -310,9 +316,11 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     public void openEditTitleDialog(@Nullable String initTitle) {
         dialog4 = DialogProvider.showEditTextDialog(this, EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, initTitle,
                 (dialog, which, text) -> {
-                    dialog.dismiss();
-                    toolbar.setTitle(text);
-                    presenter.onTitleChanged(text);
+                    if (!TextUtils.isEmpty(text)) {
+                        dialog.dismiss();
+                        toolbar.setTitle(text);
+                        presenter.onTitleChanged(text);
+                    }
                 });
     }
 
