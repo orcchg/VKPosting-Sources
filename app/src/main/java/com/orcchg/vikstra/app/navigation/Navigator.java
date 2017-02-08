@@ -52,21 +52,18 @@ public class Navigator {
 
     /* Dialog */
     // ------------------------------------------
-    public void openAccessTokenExhaustedDialog(@NonNull Context context) {
-        openDialog(context, 0, R.string.toast_access_token_has_expired, R.string.button_logout);
+    public void openAccessTokenExhaustedDialog(@NonNull Activity context) {
+        openDialog(context, 0, R.string.toast_access_token_has_expired, R.string.button_logout, false);
     }
 
-    public void openDialog(@NonNull Context context, @StringRes int description) {
-        openDialog(context, 0, description, 0);
+    public void openAuthorizationNotPassedDialog(@NonNull Activity context) {
+        openDialog(context, R.string.dialog_error_title, R.string.main_dialog_authorization_failed, R.string.button_close, true);
     }
 
-    public void openDialog(@NonNull Context context, @StringRes int description, @StringRes int yesLabel) {
-        openDialog(context, 0, description, yesLabel);
-    }
-
-    public void openDialog(@NonNull Context context, @StringRes int title, @StringRes int description, @StringRes int yesLabel) {
-        Intent intent = DialogActivity.getCallingIntent(context, title, description, yesLabel);
-        context.startActivity(intent);
+    public void openDialog(@NonNull Activity context, @StringRes int title, @StringRes int description,
+                           @StringRes int yesLabel, boolean finishAll) {
+        Intent intent = DialogActivity.getCallingIntent(context, title, description, yesLabel, finishAll);
+        context.startActivityForResult(intent, DialogActivity.REQUEST_CODE);
     }
 
     /* Email */

@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.app.ui.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseActivity;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
+import com.orcchg.vikstra.app.ui.dialog.DialogActivity;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.vk.sdk.VKAccessToken;
@@ -52,10 +54,20 @@ public class StartActivity extends SimpleBaseActivity {
                     dialog.setCancelable(false);
                     dialog.setCanceledOnTouchOutside(false);
                     dialog.show();
+//                    navigationComponent.navigator().openAuthorizationNotPassedDialog(StartActivity.this);
                 }
             }
         })) {
             super.onActivityResult(requestCode, resultCode, data);
+            switch (requestCode) {
+                case DialogActivity.REQUEST_CODE:
+                    if (resultCode == Activity.RESULT_OK && data != null) {
+                        boolean finishApp = data.getBooleanExtra(DialogActivity.OUT_BUNDLE_KEY_FINISH_APP, false);
+                        Timber.v("Requested to finish the whole app: %s", finishApp);
+                        if (finishApp) finish();
+                    }
+                    break;
+            }
         }
     }
 
