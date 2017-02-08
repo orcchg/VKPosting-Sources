@@ -8,9 +8,11 @@ import com.orcchg.vikstra.app.ui.post.single.PostSingleGridContract;
 import com.orcchg.vikstra.app.ui.viewobject.UserVO;
 import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
+import com.orcchg.vikstra.domain.util.endpoint.AccessTokenTracker;
 
 public interface MainContract {
-    interface View extends KeywordListContract.View, PostSingleGridContract.View,
+    interface View extends AccessTokenTracker,
+            KeywordListContract.View, PostSingleGridContract.View,
             IPostingNotificationDelegate, IPhotoUploadNotificationDelegate {
         void notifyBothListsHaveItems();
         void onKeywordBundleAndPostNotSelected();

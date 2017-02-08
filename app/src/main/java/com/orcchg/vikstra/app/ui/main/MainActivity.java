@@ -211,6 +211,12 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
 
     // ------------------------------------------
     @Override
+    public void onAccessTokenExhausted() {
+        navigationComponent.navigator().openAccessTokenExhaustedDialog(this);
+    }
+
+    // ------------------------------------------
+    @Override
     public void openGroupListScreen(long keywordBundleId, long postId) {
         navigationComponent.navigator().openGroupListScreen(this, keywordBundleId, postId);
     }

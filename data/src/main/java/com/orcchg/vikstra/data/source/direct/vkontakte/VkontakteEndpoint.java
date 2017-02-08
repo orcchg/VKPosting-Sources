@@ -10,6 +10,7 @@ import com.orcchg.vikstra.data.source.direct.ImageLoader;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.DomainConfig;
 import com.orcchg.vikstra.domain.exception.ProgramException;
+import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
@@ -38,6 +39,7 @@ import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.ValueUtility;
+import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.model.VKApiCommunityArray;
 import com.vk.sdk.api.model.VKApiCommunityFull;
 import com.vk.sdk.api.model.VKApiLink;
@@ -358,7 +360,8 @@ public class VkontakteEndpoint extends Endpoint {
             public void onFinish(@Nullable VKList<VKApiUserFull> users) {
                 if (users == null || users.isEmpty()) {
                     Timber.e("List of VKApiUserFull-s must not be null or empty, it must contain current User info");
-                    throw new ProgramException();
+                    if (callback != null) callback.onError(new Api5VkUseCaseException(new VKError(VKError.VK_API_ERROR)));
+                    return;  // probably, access token has expired
                 }
                 Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to get current User");
                 if (callback != null) callback.onFinish(convert(users.get(0)));
