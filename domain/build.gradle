@@ -74,7 +74,8 @@ dependencies {
     compile domainDependencies.javaxInject
     compile domainDependencies.openCSV
     compile domainDependencies.timber
-    compile domainDependencies.vkontakteSdk
+//    compile domainDependencies.vkontakteSdk  // remote
+    compile project(':vksdk_library')  // local sub-module
 
     provided domainDependencies.autoValue
     provided domainDependencies.javaxAnnotation
