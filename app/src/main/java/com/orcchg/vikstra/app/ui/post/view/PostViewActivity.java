@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,6 +47,9 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     @BindView(R.id.iv_secondary) ImageView secondaryImage;
     @BindView(R.id.media_container_root) ViewGroup mediaContainerRoot;
     @BindView(R.id.media_container) ViewGroup mediaContainer;
+    @BindView(R.id.ll_link_container) ViewGroup linkContainer;
+    @BindView(R.id.tv_link) TextView linkTextView;
+    @BindView(R.id.wv_link) WebView linkWebView;
     @BindView(R.id.space) View space;
     @BindView(R.id.loading_view) View loadingView;
     @BindView(R.id.error_view) View errorView;
@@ -195,6 +201,21 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
         params.height = PRIMARY_MEDIA_DOUBLE_HEIGHT;
         primaryMediaContainer.setLayoutParams(params);
         space.setVisibility(View.GONE);  // remove space separator between primary and secondary medias
+
+        showLink(viewObject.link());
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    private void showLink(String link) {
+        if (TextUtils.isEmpty(link)) {
+            linkContainer.setVisibility(View.GONE);
+        } else {
+            linkContainer.setVisibility(View.VISIBLE);
+            linkTextView.setText(link.toLowerCase());
+            linkWebView.setWebViewClient(new WebViewClient());
+            linkWebView.loadUrl(link);
+        }
     }
 
     /* Resources */

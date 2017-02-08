@@ -25,6 +25,7 @@ public class PostToDboPopulator implements Populator<Post, PostDBO> {
     public void populate(Post object, PostDBO dbo) {
         dbo.id = object.id();
         dbo.description = object.description();
+        dbo.link = object.link();
         dbo.media = new RealmList<>();
         dbo.timestamp = object.timestamp();
         dbo.title = object.title();

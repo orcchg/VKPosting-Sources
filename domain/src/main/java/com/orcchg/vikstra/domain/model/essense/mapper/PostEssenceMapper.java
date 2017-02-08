@@ -25,6 +25,7 @@ public class PostEssenceMapper implements Mapper<PostEssence, Post> {
         return Post.builder()
                 .setId(postId)
                 .setDescription(object.description())
+                .setLink(object.link())
                 .setMedia(object.media())
                 .setTimestamp(timestamp)
                 .setTitle(object.title())

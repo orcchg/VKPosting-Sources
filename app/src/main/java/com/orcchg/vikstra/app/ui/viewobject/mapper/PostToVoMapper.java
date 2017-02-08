@@ -22,6 +22,7 @@ public class PostToVoMapper implements Mapper<Post, PostViewVO> {
     public PostViewVO map(Post object) {
         return PostViewVO.builder()
                 .setDescription(object.description())
+                .setLink(object.link())
                 .setMedia(mediaToVoMapper.map(object.media()))
                 .build();
     }
