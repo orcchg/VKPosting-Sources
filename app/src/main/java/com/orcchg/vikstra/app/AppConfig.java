@@ -9,6 +9,7 @@ public enum AppConfig {
     // ------------------------------------------
     private boolean isAllGroupsSelected = true;
     private boolean isAllGroupsSortedByMembersCount = true;
+    private boolean sendDumpFilesViaEmail = true;
     private @DebugSake boolean showSettingsMenuOnGroupListScreen = true;  // for DEBUG
     private boolean useInteractiveReportScreen = true;  // show ReportScreen instead of StatusDialog while posting
     private boolean useTutorialShowcases = true;
@@ -18,6 +19,9 @@ public enum AppConfig {
     }
     public boolean isAllGroupsSortedByMembersCount() {
         return isAllGroupsSortedByMembersCount;
+    }
+    public boolean sendDumpFilesViaEmail() {
+        return sendDumpFilesViaEmail;
     }
     @DebugSake public boolean showSettingsMenuOnGroupListScreen() {
         return showSettingsMenuOnGroupListScreen;

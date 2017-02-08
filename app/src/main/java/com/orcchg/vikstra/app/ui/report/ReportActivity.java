@@ -34,6 +34,7 @@ import com.orcchg.vikstra.app.ui.report.injection.ReportComponent;
 import com.orcchg.vikstra.app.ui.report.injection.ReportModule;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
 
@@ -53,7 +54,9 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
 
-    private String DIALOG_TITLE, DIALOG_HINT, INFO_TITLE,
+    private String DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT,
+            EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, EMAIL_BODY, EMAIL_SUBJECT,
+            INFO_TITLE, REPORTS_DUMP_FILE_PREFIX,
             SNACKBAR_DUMP_SUCCESS, SNACKBAR_POSTING_FINISHED;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -83,7 +86,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     private @Nullable ShowcaseView showcaseView;
 
-    private @Nullable AlertDialog dialog1, dialog2, dialog3, dialog4, dialog5, dialog6;
+    private @Nullable AlertDialog dialog1, dialog2, dialog3, dialog4, dialog5, dialog6, dialog7;
 
     public static Intent getCallingIntent(@NonNull Context context, long groupReportBundleId, long postId) {
         Intent intent = new Intent(context, ReportActivity.class);
@@ -146,6 +149,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         if (dialog4 != null) dialog4.dismiss();
         if (dialog5 != null) dialog5.dismiss();
         if (dialog6 != null) dialog6.dismiss();
+        if (dialog7 != null) dialog7.dismiss();
     }
 
     /* Data */
@@ -196,10 +200,15 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private void initToolbar() {
         toolbar.setTitle(R.string.report_screen_title);
         toolbar.setNavigationOnClickListener((view) -> onBackPressed());
-        toolbar.inflateMenu(R.menu.dump);
+        if (AppConfig.INSTANCE.sendDumpFilesViaEmail()) {
+            toolbar.inflateMenu(R.menu.send);
+        } else {
+            toolbar.inflateMenu(R.menu.dump);
+        }
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.dump:
+                case R.id.send:
                     if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_HIDE);
                     askForPermission_writeExternalStorage();
                     return true;
@@ -295,12 +304,28 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void openEditDumpFileNameDialog() {
-        dialog5 = DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
+        dialog5 = DialogProvider.showEditTextDialog(this, DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT, "",
                 (dialog, which, text) -> {
                     dialog.dismiss();
                     String path = FileUtility.makeDumpFileName(this, text, true /* external */);
                     presenter.performDumping(path);
                 });
+    }
+
+    @Override
+    public void openEditDumpEmailDialog() {
+        dialog7 = DialogProvider.showEditTextDialog(this, EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, "",
+                (dialog, which, email) -> {
+                    dialog.dismiss();
+                    String path = FileUtility.makeDumpFileName(this, REPORTS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
+                    presenter.performDumping(path, email);
+                });
+    }
+
+    @Override
+    public void openEmailScreen(EmailContent.Builder builder) {
+        builder.setBody(EMAIL_BODY).setSubject(EMAIL_SUBJECT);
+        navigationComponent.navigator().openEmailScreen(this, builder.build());
     }
 
     @Override
@@ -425,9 +450,14 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // --------------------------------------------------------------------------------------------
     private void initResources() {
         Resources resources = getResources();
-        DIALOG_TITLE = resources.getString(R.string.report_dialog_new_dump_file_title);
-        DIALOG_HINT = resources.getString(R.string.report_dialog_new_dump_file_hint);
+        DUMP_FILE_DIALOG_TITLE = resources.getString(R.string.report_dialog_new_dump_file_title);
+        DUMP_FILE_DIALOG_HINT = resources.getString(R.string.report_dialog_new_dump_file_hint);
+        EMAIL_FILE_DIALOG_TITLE = resources.getString(R.string.dialog_send_email_title);
+        EMAIL_FILE_DIALOG_HINT = resources.getString(R.string.dialog_send_email_hint);
+        EMAIL_BODY = resources.getString(R.string.report_dump_file_email_body);
+        EMAIL_SUBJECT = resources.getString(R.string.report_dump_file_email_subject);
         INFO_TITLE = resources.getString(R.string.report_posted_counters);
+        REPORTS_DUMP_FILE_PREFIX = resources.getString(R.string.report_dump_file_prefix);
         SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.report_snackbar_group_reports_dump_succeeded);
         SNACKBAR_POSTING_FINISHED = resources.getString(R.string.report_snackbar_posting_finished);
     }

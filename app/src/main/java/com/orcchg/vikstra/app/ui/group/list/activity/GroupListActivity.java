@@ -38,6 +38,7 @@ import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
@@ -60,8 +61,10 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     public static final int REQUEST_CODE = Constant.RequestCode.GROUP_LIST_SCREEN;
 
     private String ADD_KEYWORD_DIALOG_TITLE, ADD_KEYWORD_DIALOG_HINT,
-            DIALOG_TITLE, DIALOG_HINT, EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT,
-            INFO_TITLE, SNACKBAR_KEYWORD_ALREADY_ADDED, SNACKBAR_DUMP_SUCCESS, SNACKBAR_KEYWORDS_LIMIT;
+            DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT,
+            EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, EMAIL_BODY, EMAIL_SUBJECT,
+            EDIT_TITLE_DIALOG_TITLE, EDIT_TITLE_DIALOG_HINT, INFO_TITLE, GROUPS_DUMP_FILE_PREFIX,
+            SNACKBAR_KEYWORD_ALREADY_ADDED, SNACKBAR_DUMP_SUCCESS, SNACKBAR_KEYWORDS_LIMIT;
 
     @BindView(R.id.coordinator_root) ViewGroup coordinatorRoot;
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -96,7 +99,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     private @Nullable ShowcaseView showcaseView;
 
-    private @Nullable AlertDialog dialog1, dialog2, dialog3, dialog4;
+    private @Nullable AlertDialog dialog1, dialog2, dialog3, dialog4, dialog5;
 
     public static Intent getCallingIntent(@NonNull Context context, long keywordBunldeId, long postId) {
         Intent intent = new Intent(context, GroupListActivity.class);
@@ -148,6 +151,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         if (dialog2 != null) dialog2.dismiss();
         if (dialog3 != null) dialog3.dismiss();
         if (dialog4 != null) dialog4.dismiss();
+        if (dialog5 != null) dialog5.dismiss();
     }
 
     /* Data */
@@ -194,13 +198,18 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     private void initToolbar() {
         toolbar.setTitle(R.string.group_list_screen_title);
         toolbar.setNavigationOnClickListener((view) -> finish());  // finish with current result
-        toolbar.inflateMenu(R.menu.edit_dump);
+        if (AppConfig.INSTANCE.sendDumpFilesViaEmail()) {
+            toolbar.inflateMenu(R.menu.edit_send);
+        } else {
+            toolbar.inflateMenu(R.menu.edit_dump);
+        }
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.edit:
                     openEditTitleDialog(toolbar.getTitle().toString());
                     return true;
                 case R.id.dump:
+                case R.id.send:
                     askForPermission_writeExternalStorage();
                     return true;
                 case R.id.settings:
@@ -274,11 +283,21 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     @Override
     public void openEditDumpFileNameDialog() {
-        dialog2 = DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
+        dialog2 = DialogProvider.showEditTextDialog(this, DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT, "",
                 (dialog, which, text) -> {
                     dialog.dismiss();
                     String path = FileUtility.makeDumpFileName(this, text, true /* external */);
                     presenter.performDumping(path);
+                });
+    }
+
+    @Override
+    public void openEditDumpEmailDialog() {
+        dialog5 = DialogProvider.showEditTextDialog(this, EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, "",
+                (dialog, which, email) -> {
+                    dialog.dismiss();
+                    String path = FileUtility.makeDumpFileName(this, GROUPS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
+                    presenter.performDumping(path, email);
                 });
     }
 
@@ -295,6 +314,12 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                     toolbar.setTitle(text);
                     presenter.onTitleChanged(text);
                 });
+    }
+
+    @Override
+    public void openEmailScreen(EmailContent.Builder builder) {
+        builder.setBody(EMAIL_BODY).setSubject(EMAIL_SUBJECT);
+        navigationComponent.navigator().openEmailScreen(this, builder.build());
     }
 
     @Override
@@ -407,11 +432,16 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         Resources resources = getResources();
         ADD_KEYWORD_DIALOG_TITLE = resources.getString(R.string.group_list_dialog_new_keyword_title);
         ADD_KEYWORD_DIALOG_HINT = resources.getString(R.string.group_list_dialog_new_keyword_hint);
-        DIALOG_TITLE = resources.getString(R.string.group_list_dialog_new_dump_file_title);
-        DIALOG_HINT = resources.getString(R.string.group_list_dialog_new_dump_file_hint);
+        DUMP_FILE_DIALOG_TITLE = resources.getString(R.string.group_list_dialog_new_dump_file_title);
+        DUMP_FILE_DIALOG_HINT = resources.getString(R.string.group_list_dialog_new_dump_file_hint);
+        EMAIL_FILE_DIALOG_TITLE = resources.getString(R.string.dialog_send_email_title);
+        EMAIL_FILE_DIALOG_HINT = resources.getString(R.string.dialog_send_email_hint);
+        EMAIL_BODY = resources.getString(R.string.group_list_dump_file_email_body);
+        EMAIL_SUBJECT = resources.getString(R.string.group_list_dump_file_email_subject);
         EDIT_TITLE_DIALOG_TITLE = resources.getString(R.string.dialog_input_edit_title);
         EDIT_TITLE_DIALOG_HINT = resources.getString(R.string.dialog_input_edit_title_hint);
         INFO_TITLE = resources.getString(R.string.group_list_selected_groups_total_count);
+        GROUPS_DUMP_FILE_PREFIX = resources.getString(R.string.group_list_dump_file_prefix);
         SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.group_list_snackbar_groups_dump_succeeded);
         SNACKBAR_KEYWORD_ALREADY_ADDED = resources.getString(R.string.group_list_error_already_added_keyword);
         SNACKBAR_KEYWORDS_LIMIT = resources.getString(R.string.group_list_snackbar_keywords_limit_message);

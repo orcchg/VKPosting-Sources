@@ -78,9 +78,8 @@ public class Navigator {
      */
     @DebugLog @ExternalScreen
     public void openEmailScreen(@NonNull Activity context, @NonNull EmailContent emailContent) {
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:"));
-        intent.setType("message/rfc822");
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("plain/text");
         intent.putExtra(Intent.EXTRA_EMAIL, emailContent.recipients().toArray());
         intent.putExtra(Intent.EXTRA_STREAM, emailContent.attachment());
         intent.putExtra(Intent.EXTRA_SUBJECT, emailContent.subject());

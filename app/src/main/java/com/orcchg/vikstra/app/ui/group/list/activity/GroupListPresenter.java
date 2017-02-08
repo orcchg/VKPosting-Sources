@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
+import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.group.list.injection.DaggerGroupListMediatorComponent;
 import com.orcchg.vikstra.app.ui.group.list.injection.GroupListMediatorComponent;
@@ -18,8 +19,12 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.group.DumpGroups;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
+import com.orcchg.vikstra.domain.util.file.FileUtility;
+
+import java.util.Arrays;
 
 import javax.inject.Inject;
 
@@ -39,14 +44,17 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     // --------------------------------------------------------------------------------------------
     private static final class Memento {
+        private static final String BUNDLE_KEY_EMAIL = "bundle_key_email_" + PrID;
         private static final String BUNDLE_KEY_TITLE = "bundle_key_title_" + PrID;
         private static final String BUNDLE_KEY_HAS_TITLE_CHANGED = "bundle_key_has_title_changed_" + PrID;
 
+        private @Nullable String email;
         private @Nullable String title;
         private boolean hasTitleChanged;
 
         @DebugLog
         private void toBundle(Bundle outState) {
+            outState.putString(BUNDLE_KEY_EMAIL, email);
             outState.putString(BUNDLE_KEY_TITLE, title);
             outState.putBoolean(BUNDLE_KEY_HAS_TITLE_CHANGED, hasTitleChanged);
         }
@@ -54,6 +62,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         @DebugLog
         private static Memento fromBundle(Bundle savedInstanceState) {
             Memento memento = new Memento();
+            memento.email = savedInstanceState.getString(BUNDLE_KEY_EMAIL);
             memento.title = savedInstanceState.getString(BUNDLE_KEY_TITLE);
             memento.hasTitleChanged = savedInstanceState.getBoolean(BUNDLE_KEY_HAS_TITLE_CHANGED, false);
             return memento;
@@ -123,7 +132,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             if (groupBundleId != BAD_ID) {
                 Timber.d("GroupBundle id [%s] is valid, ready to dump", groupBundleId);
                 dumpGroupsUseCase.setParameters(new DumpGroups.Parameters(groupBundleId));
-                getView().openEditDumpFileNameDialog();
+                if (AppConfig.INSTANCE.sendDumpFilesViaEmail()) {
+                    Timber.d("Sending GroupBundle to email...");
+                    getView().openEditDumpEmailDialog();
+                } else {
+                    Timber.d("Dumping GroupBundle to file...");
+                    getView().openEditDumpFileNameDialog();
+                }
             } else {
                 Timber.d("GroupBundle is not available to dump");
                 getView().openDumpNotReadyDialog();
@@ -162,9 +177,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         }
     }
 
-    @Override
+    @DebugLog @Override
     public void performDumping(String path) {
-        Timber.i("performDumping: %s", path);
+        performDumping(path, null);
+    }
+
+    @DebugLog @Override
+    public void performDumping(String path, @Nullable String email) {
+        Timber.i("performDumping: path=%s, email=%s", path, email);
+        memento.email = email;
         dumpGroupsUseCase.setPath(path);
         dumpGroupsUseCase.execute();
     }
@@ -346,7 +367,16 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             public void onFinish(@Nullable String path) {
                 if (!TextUtils.isEmpty(path)) {
                     Timber.i("Use-Case: succeeded to dump Group-s");
-                    if (isViewAttached()) getView().showDumpSuccess(path);
+                    if (AppConfig.INSTANCE.sendDumpFilesViaEmail() && !TextUtils.isEmpty(memento.email)) {
+                        Timber.d("Group-s have been dumped to file [%s]. Now send it via email", path);
+                        String[] recipients = memento.email.split(",");
+                        EmailContent.Builder builder = EmailContent.builder()
+                                .setAttachment(FileUtility.uriFromFile(path))
+                                .setRecipients(Arrays.asList(recipients));
+                        if (isViewAttached()) getView().openEmailScreen(builder);
+                    } else {
+                        if (isViewAttached()) getView().showDumpSuccess(path);
+                    }
                 } else {
                     Timber.e("Use-Case: failed to dump Group-s");
                     if (isViewAttached()) getView().showDumpError();

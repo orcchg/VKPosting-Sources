@@ -32,10 +32,13 @@ import com.orcchg.vikstra.domain.model.Heavy;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.essense.mapper.GroupReportEssenceMapper;
+import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
+import com.orcchg.vikstra.domain.util.file.FileUtility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -68,6 +71,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     // --------------------------------------------------------------------------------------------
     private static final class Memento {
+        private static final String BUNDLE_KEY_EMAIL = "bundle_key_email_" + PrID;
         private static final String BUNDLE_KEY_FLAG_IS_FINISHED_POSTING = "bundle_key_flag_is_finished_posting" + PrID;;
         private static final String BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL = "bundle_key_flag_posted_with_cancel" + PrID;;
         private static final String BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE = "bundle_key_flag_posted_with_failure" + PrID;;
@@ -83,6 +87,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         @InteractiveMode int totalForPosting = 0;
         @InteractiveMode long storedReportsId = Constant.BAD_ID;
 
+        private @Nullable String email;
         private Post currentPost;
 
         @DebugLog
@@ -93,6 +98,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS, postedWithSuccess);
             outState.putInt(BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING, totalForPosting);
             outState.putLong(BUNDLE_KEY_STORED_REPORTS_ID, storedReportsId);
+            outState.putString(BUNDLE_KEY_EMAIL, email);
             outState.putParcelable(BUNDLE_KEY_CURRENT_POST, currentPost);
         }
 
@@ -105,6 +111,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             memento.postedWithSuccess = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS, 0);
             memento.totalForPosting = savedInstanceState.getInt(BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING, 0);
             memento.storedReportsId = savedInstanceState.getLong(BUNDLE_KEY_STORED_REPORTS_ID, Constant.BAD_ID);
+            memento.email = savedInstanceState.getString(BUNDLE_KEY_EMAIL);
             memento.currentPost = savedInstanceState.getParcelable(BUNDLE_KEY_CURRENT_POST);
             return memento;
         }
@@ -235,7 +242,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             Timber.d("GroupReportBundle is not available to dump");
             if (isViewAttached()) getView().openDumpNotReadyDialog();
         } else if (isViewAttached()) {
-            getView().openEditDumpFileNameDialog();
+            if (AppConfig.INSTANCE.sendDumpFilesViaEmail()) {
+                Timber.d("Sending GroupReportBundle to email...");
+                getView().openEditDumpEmailDialog();
+            } else {
+                Timber.d("Dumping GroupReportBundle to file...");
+                getView().openEditDumpFileNameDialog();
+            }
         }
     }
 
@@ -258,9 +271,15 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         if (shouldClose && isViewAttached()) getView().closeView();
     }
 
-    @Override
+    @DebugLog @Override
     public void performDumping(String path) {
-        Timber.i("performDumping: %s", path);
+        performDumping(path, null);
+    }
+
+    @DebugLog @Override
+    public void performDumping(String path, @Nullable String email) {
+        Timber.i("performDumping: path=%s, email=%s", path, email);
+        memento.email = email;
         dumpGroupReportsUseCase.setPath(path);
         dumpGroupReportsUseCase.execute();
     }
@@ -428,7 +447,16 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             public void onFinish(@Nullable String path) {
                 if (!TextUtils.isEmpty(path)) {
                     Timber.i("Use-Case: succeeded to dump GroupReport-s");
-                    if (isViewAttached()) getView().showDumpSuccess(path);
+                    if (AppConfig.INSTANCE.sendDumpFilesViaEmail() && !TextUtils.isEmpty(memento.email)) {
+                        Timber.d("Report-s have been dumped to file [%s]. Now send it via email", path);
+                        String[] recipients = memento.email.split(",");
+                        EmailContent.Builder builder = EmailContent.builder()
+                                .setAttachment(FileUtility.uriFromFile(path))
+                                .setRecipients(Arrays.asList(recipients));
+                        if (isViewAttached()) getView().openEmailScreen(builder);
+                    } else {
+                        if (isViewAttached()) getView().showDumpSuccess(path);
+                    }
                 } else {
                     Timber.e("Use-Case: failed to dump GroupReport-s");
                     if (isViewAttached()) getView().showDumpError();

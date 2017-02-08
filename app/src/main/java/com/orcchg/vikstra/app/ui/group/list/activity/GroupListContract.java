@@ -6,6 +6,7 @@ import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.base.MvpView;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.DebugSake;
 
 interface GroupListContract {
@@ -20,8 +21,10 @@ interface GroupListContract {
 
         void openAddKeywordDialog();
         void openEditDumpFileNameDialog();
+        void openEditDumpEmailDialog();
         void openDumpNotReadyDialog();
         void openEditTitleDialog(@Nullable String initTitle);
+        void openEmailScreen(EmailContent.Builder builder);
         void openPostCreateScreen(long postId);
         void openPostListScreen();
 
@@ -49,6 +52,7 @@ interface GroupListContract {
         void onPostThumbnailClick(long postId);
         void onTitleChanged(String text);
         void performDumping(String path);
+        void performDumping(String path, @Nullable String email);
         void retry();
         void retryPost();
 

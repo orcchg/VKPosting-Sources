@@ -41,7 +41,11 @@ public class FileUtility {
     }
 
     public static String makeDumpFileName(Context context, String name, boolean external) {
-        return getDumpFileName(context, name, external, false);
+        return makeDumpFileName(context, name, external, false);
+    }
+
+    public static String makeDumpFileName(Context context, String name, boolean external, boolean withTs) {
+        return getDumpFileName(context, name, external, withTs);
     }
 
     public static String refineExternalPath(String rawPath) {
@@ -72,7 +76,7 @@ public class FileUtility {
         String root = external ? Environment.getExternalStorageDirectory().getPath() : storage.getAbsolutePath();
         String directory = createExternalApplicationFolder(root);
         StringBuilder fileName = new StringBuilder(directory).append('/').append(prefix);
-        if (withTs) fileName.append(currentTimestamp());
+        if (withTs) fileName.append('_').append(currentTimestamp());
         fileName.append(".csv");
         return fileName.toString();
     }
