@@ -265,6 +265,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         memento.state = newState;
     }
 
+    @DebugLog
+    private void assignState(@StateContainer.State int newState) {
+        Timber.d("assignState: %s", newState);
+        setState(newState);  // verbose call
+    }
+
     // ------------------------------------------
     /**
      * Go to ERROR_LOAD state, when some critical data was not loaded
@@ -508,9 +514,17 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         memento.addKeywordFinishedResult = false;  // drop flag, will be set at finish
 
+        /**
+         * Previous state could be either {@link StateContainer.KEYWORDS_CREATE_FINISH} or
+         * {@link StateContainer.GROUPS_LOADED}. The former case means that input KeywordBundle
+         * (i.e. {@link GroupListPresenter.Memento#inputKeywordBundle} field) contains no Keyword-s,
+         * thus the following if-statement won't execute. Otherwise, we should assign the next state
+         * manually - it will be {@link StateContainer.GROUPS_LOADED} - in order to bet into final state.
+         */
         if (memento.inputKeywordBundle.keywords().contains(keyword)) {
-            Timber.d("Keyword %s has already been added", keyword.keyword());
+            Timber.d("Keyword [%s] has already been added", keyword.keyword());
             sendAlreadyAddedKeyword(keyword.keyword());
+            assignState(StateContainer.GROUPS_LOADED);  // get to the final state
             return;
         }
 
@@ -531,6 +545,19 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         setState(StateContainer.ADD_KEYWORD_FINISH);
         // enter ADD_KEYWORD_FINISH state logic
 
+        /**
+         * Previous state could be only {@link StateContainer.ADD_KEYWORD_START}, there is already a
+         * filter preventing from adding already existing Keyword repeatedly. Here we avoid from doing
+         * the same in case the Screen has restored in this {@link StateContainer.ADD_KEYWORD_FINISH}
+         * state, because our previous filter had no effect.
+         */
+        Keyword keyword = memento.newlyAddedKeyword;
+        if (memento.inputKeywordBundle.keywords().contains(keyword)) {
+            Timber.d("Keyword [%s] has already been added", keyword.keyword());
+            assignState(StateContainer.GROUPS_LOADED);  // get to the final state
+            return;
+        }
+
         // disable swipe-to-refresh while add keyword is in progress
         if (isViewAttached()) {
             getView().enableSwipeToRefresh(false);
@@ -543,22 +570,22 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         sendEnableAddKeywordButtonRequest(false);  // disable add keyword button while adding new Keyword
 
         // show progress list item while adding new Keyword with Group-s
-        listAdapter.setAddingNewItem(true, memento.newlyAddedKeyword);
+        listAdapter.setAddingNewItem(true, keyword);
 
         memento.addKeywordFinishedResult = result;  // set result flag to use in 'memento' restoration
 
         if (result) {
             Timber.d("Adding Keyword and requesting more Group-s from network");
             // add new Keyword to the head of input KeywordBundle to preserve ordering
-            memento.inputKeywordBundle.keywords().add(0, memento.newlyAddedKeyword);
+            memento.inputKeywordBundle.keywords().add(0, keyword);
             isKeywordBundleChanged = true;
 
-            GroupParentItem item = new GroupParentItem(memento.newlyAddedKeyword);
+            GroupParentItem item = new GroupParentItem(keyword);
             groupParentItems.add(0, item);  // add new item on top of the list
 
             // prepare parameters to make new request for Group-s by Keyword
             List<Keyword> keywords = new ArrayList<>();
-            keywords.add(memento.newlyAddedKeyword);
+            keywords.add(keyword);
             memento.isAddingNewKeyword = true;  // to manipulate with newly fetched Group-s properly
 
             // fetch Group-s by newly added Keyword from the endpoint
