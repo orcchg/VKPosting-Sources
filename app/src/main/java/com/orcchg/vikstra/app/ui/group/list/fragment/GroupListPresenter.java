@@ -546,13 +546,31 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // enter ADD_KEYWORD_FINISH state logic
 
         /**
+         *
+         * @Screen_restored
          * Previous state could be only {@link StateContainer.ADD_KEYWORD_START}, there is already a
          * filter preventing from adding already existing Keyword repeatedly. Here we avoid from doing
          * the same in case the Screen has restored in this {@link StateContainer.ADD_KEYWORD_FINISH}
          * state, because our previous filter had no effect.
+         *
+         * Additional check {@link GroupListPresenter#inputGroupBundle} != null is required to distinguish
+         * between restoring to this state in the following two cases:
+         *
+         * - there is input GroupBundle associated with input KeywordBundle
+         * - there is no such association
+         *
+         * The former case is filtered here, preventing the same Keyword to be added twice both into
+         * expandable list and repository.
+         *
+         * The latter case isn't filtered here, because we need to propagate the whole pipeline adding
+         * new Keyword and creating new GroupBundle (in repository), associated with input KeywordBundle.
+         * But we are in the process of restoring state, so we had previously added such Keyword
+         * to the input KeywordBundle, and we must not do it again. This is why 'alreadyContainsKeyword'
+         * flag is involved here.
          */
         Keyword keyword = memento.newlyAddedKeyword;
-        if (memento.inputKeywordBundle.keywords().contains(keyword)) {
+        boolean alreadyContainsKeyword = memento.inputKeywordBundle.keywords().contains(keyword);
+        if (alreadyContainsKeyword && inputGroupBundle != null) {
             Timber.d("Keyword [%s] has already been added", keyword.keyword());
             assignState(StateContainer.GROUPS_LOADED);  // get to the final state
             return;
@@ -576,9 +594,13 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         if (result) {
             Timber.d("Adding Keyword and requesting more Group-s from network");
-            // add new Keyword to the head of input KeywordBundle to preserve ordering
-            memento.inputKeywordBundle.keywords().add(0, keyword);
-            isKeywordBundleChanged = true;
+            if (!alreadyContainsKeyword) {
+                // add new Keyword to the head of input KeywordBundle to preserve ordering
+                memento.inputKeywordBundle.keywords().add(0, keyword);
+                isKeywordBundleChanged = true;
+            } else {
+                Timber.d("Restoring to state [%s], but already added Keyword to input KeywordBundle (before saving state)", memento.state);
+            }
 
             GroupParentItem item = new GroupParentItem(keyword);
             groupParentItems.add(0, item);  // add new item on top of the list
