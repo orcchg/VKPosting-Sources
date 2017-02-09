@@ -876,6 +876,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                     chainedStateRestore = memento.state;
                 }
                 // proceed further, without break
+            case StateContainer.REFRESHING:  // refreshing is just discarded, restore GroupBundle and then allow user to refresh manually
             case StateContainer.GROUPS_LOADED:
                 /**
                  * First - clear and fill Parent items in expandable list, because it must be ready
@@ -888,9 +889,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                  * fill expandable list with corresponding Child items.
                  */
                 restoreLoadedGroups(memento.inputGroupBundleId);  // id must be valid, not BAD_ID
-                break;
-            case StateContainer.REFRESHING:
-                stateRefreshing();
                 break;
             default:
                 Timber.e("Unreachable state: %s", memento.state);
