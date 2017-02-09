@@ -628,15 +628,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (shouldDeleteEmptyCreatedKeywordBundle()) {
-            /**
-             * User is leaving or pausing GroupListScreen w/o any changes performed on newly created
-             * empty KeywordBundle, so it must be deleted from repository.
-             */
-            deleteKeywordBundleUseCase.setKeywordBundleId(memento.inputKeywordBundle.id());
-            deleteKeywordBundleUseCase.execute();  // silent delete without callback
-        }
-
         mediatorComponent.mediator().detachSecond();
     }
 
@@ -698,6 +689,19 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         if (inputGroupBundle != null) {
             isGroupBundleChanged = true;
             postGroupBundleTitleUpdate(newTitle);
+        }
+    }
+
+    @Override
+    public void receiveOnBackPressedNotification() {
+        if (shouldDeleteEmptyCreatedKeywordBundle()) {
+            /**
+             * User is leaving or pausing GroupListScreen w/o any changes performed on newly created
+             * empty KeywordBundle, so it must be deleted from repository.
+             */
+            Timber.d("Deleting empty KeywordBundle from repository, because it wasn't changed and hence - not needed at all");
+            deleteKeywordBundleUseCase.setKeywordBundleId(memento.inputKeywordBundle.id());
+            deleteKeywordBundleUseCase.execute();  // silent delete without callback
         }
     }
 

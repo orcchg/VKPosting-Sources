@@ -125,6 +125,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void onBackPressed() {
+        Timber.i("onBackPressed");
+        sendOnBackPressedNotification();
+    }
+
+    @Override
     public void onDumpPressed() {
         Timber.i("onDumpPressed");
         long groupBundleId = sendAskForGroupBundleIdToDump();
@@ -323,6 +329,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void sendNewTitle(String newTitle) {
         mediatorComponent.mediator().sendNewTitle(newTitle);
+    }
+
+    @Override
+    public void sendOnBackPressedNotification() {
+        mediatorComponent.mediator().sendOnBackPressedNotification();
     }
 
     @Override

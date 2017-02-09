@@ -137,6 +137,12 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     }
 
     @Override
+    public void onBackPressed() {
+        presenter.onBackPressed();
+        super.onBackPressed();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(BUNDLE_KEY_CHOSEN_SETTING_VARIANT, chosenSettingVariant);
@@ -197,7 +203,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
 
     private void initToolbar() {
         toolbar.setTitle(R.string.group_list_screen_title);
-        toolbar.setNavigationOnClickListener((view) -> finish());  // finish with current result
+        toolbar.setNavigationOnClickListener((view) -> onBackPressed());  // finish with current result
         if (AppConfig.INSTANCE.sendDumpFilesViaEmail()) {
             toolbar.inflateMenu(R.menu.edit_send);
         } else {

@@ -53,6 +53,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendOnBackPressedNotification() {
+        if (clientSecond != null) clientSecond.receiveOnBackPressedNotification();
+    }
+
+    @Override
     public void sendPostHasChangedRequest(long postId) {
         if (clientSecond != null) clientSecond.receivePostHasChangedRequest(postId);
     }

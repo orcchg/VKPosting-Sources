@@ -47,6 +47,7 @@ interface GroupListContract {
     interface Presenter extends MvpPresenter<View>,
             ActivityMediator.Receiver, ActivityMediator.Sender {
         void addKeyword(Keyword keyword);
+        void onBackPressed();
         void onDumpPressed();
         void onFabClick();
         void onPostThumbnailClick(long postId);
