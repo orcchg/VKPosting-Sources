@@ -128,11 +128,16 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         private static final String BUNDLE_KEY_FLAG_IS_REFRESHING = "bundle_key_flag_is_refreshing_" + PrID;
         private static final String BUNDLE_KEY_FLAG_FETCHED_INPUT_GROUP_BUNDLE_FROM_REPO = "bundle_key_flag_fetched_input_group_bundle_from_repo_" + PrID;
         private static final String BUNDLE_KEY_FLAG_WAS_INPUT_KEYWORD_BUNDLE_CREATED = "bundle_key_flag_was_input_keyword_bundle_created_" + PrID;
+        private static final String BUNDLE_KEY_USE_CASE_PARAMETER_ADD_KEYWORD_TO_BUNDLE_ID = "bundle_key_use_case_parameter_add_keyword_to_bundle_id_" + PrID;
+        private static final String BUNDLE_KEY_USE_CASE_PARAMETER_GET_KEYWORD_BUNDLE_BY_ID_ID = "bundle_key_use_case_parameter_get_keyword_bundle_by_id_id_" + PrID;
 
         private long inputGroupBundleId = Constant.BAD_ID;
         private KeywordBundle inputKeywordBundle;
         private Post currentPost;
         private Keyword newlyAddedKeyword;
+
+        private long useCaseParameter_addKeywordToBundle_id = Constant.BAD_ID;
+        private long useCaseParameter_getKeywordBundleById_id = Constant.BAD_ID;
 
         private @StateContainer.State int state = StateContainer.START;
         // state control flags
@@ -154,6 +159,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             outState.putBoolean(BUNDLE_KEY_FLAG_IS_REFRESHING, isRefreshing);
             outState.putBoolean(BUNDLE_KEY_FLAG_FETCHED_INPUT_GROUP_BUNDLE_FROM_REPO, fetchedInputGroupBundleFromRepo);
             outState.putBoolean(BUNDLE_KEY_FLAG_WAS_INPUT_KEYWORD_BUNDLE_CREATED, wasInputKeywordBundleCreated);
+            outState.putLong(BUNDLE_KEY_USE_CASE_PARAMETER_ADD_KEYWORD_TO_BUNDLE_ID, useCaseParameter_addKeywordToBundle_id);
+            outState.putLong(BUNDLE_KEY_USE_CASE_PARAMETER_GET_KEYWORD_BUNDLE_BY_ID_ID, useCaseParameter_getKeywordBundleById_id);
         }
 
         @DebugLog @SuppressWarnings("ResourceType")
@@ -169,6 +176,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             memento.isRefreshing = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_REFRESHING, false);
             memento.fetchedInputGroupBundleFromRepo = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_FETCHED_INPUT_GROUP_BUNDLE_FROM_REPO, false);
             memento.wasInputKeywordBundleCreated = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_WAS_INPUT_KEYWORD_BUNDLE_CREATED, false);
+            memento.useCaseParameter_addKeywordToBundle_id = savedInstanceState.getLong(BUNDLE_KEY_USE_CASE_PARAMETER_ADD_KEYWORD_TO_BUNDLE_ID, Constant.BAD_ID);
+            memento.useCaseParameter_getKeywordBundleById_id = savedInstanceState.getLong(BUNDLE_KEY_USE_CASE_PARAMETER_GET_KEYWORD_BUNDLE_BY_ID_ID, Constant.BAD_ID);
             return memento;
         }
     }
@@ -404,6 +413,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         memento.isRefreshing = false;  // drop flag after filling, where it is used
         memento.isAddingNewKeyword = false;  // don't re-use state control flag
+        memento.newlyAddedKeyword = null;  // drop temporary Keyword
 
         // enable swipe-to-refresh after all Group-s loaded, show Group-s in expandable list
         if (isViewAttached()) {
@@ -523,7 +533,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             // prepare parameters to make new request for Group-s by Keyword
             List<Keyword> keywords = new ArrayList<>();
             keywords.add(memento.newlyAddedKeyword);
-            memento.newlyAddedKeyword = null;  // drop temporary Keyword
             memento.isAddingNewKeyword = true;  // to manipulate with newly fetched Group-s properly
 
             // fetch Group-s by newly added Keyword from the endpoint
@@ -577,6 +586,16 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        /**
+         * Persist some important parameters for use-cases. These ids are assigned to {@link UseCase}
+         * instances in some states (referenced as {@link StateContainer.State} values), but then used
+         * in some other states, so they could be lost during save-restore state.
+         *
+         * The whole parameters of {@link UseCase} aren't stored, because such parameters will be
+         * built again right before execution of the use-case (by implementation of this Screen).
+         */
+        memento.useCaseParameter_addKeywordToBundle_id = addKeywordToBundleUseCase.getKeywordBundleId();
+        memento.useCaseParameter_getKeywordBundleById_id = getKeywordBundleByIdUseCase.getKeywordBundleId();
         memento.toBundle(outState);
     }
 
@@ -774,6 +793,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     protected void onRestoreState() {
         memento = Memento.fromBundle(savedInstanceState);
         applyPost(memento.currentPost);  // restore Post
+
+        // restore important parameters for use-cases
+        addKeywordToBundleUseCase.setKeywordBundleId(memento.useCaseParameter_addKeywordToBundle_id);
+        getKeywordBundleByIdUseCase.setKeywordBundleId(memento.useCaseParameter_getKeywordBundleById_id);
 
         Timber.d("Restore to state: %s", memento.state);
         switch (memento.state) {
