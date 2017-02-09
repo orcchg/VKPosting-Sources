@@ -24,6 +24,7 @@ ext {
     cardViewVersion = '24.2.0'
     circleImageViewVersion = '1.3.0'
     circleLoadingViewVersion = '1.1.5@aar'
+    crashlyticsVersion = '2.+@aar'
     daggerVersion = '2.6.1'
     eventbusVersion = '2.4.0'
     expandRecyclerViewVersion = '3.0.0-RC1'
@@ -69,6 +70,7 @@ ext {
             cardView:             "com.android.support:cardview-v7:${cardViewVersion}",
             circleImageView:      "de.hdodenhof:circleimageview:${circleImageViewVersion}",
             circleLoadingView:    "com.github.jlmd:AnimatedCircleLoadingView:${circleLoadingViewVersion}",
+            crashlytics:          "com.crashlytics.sdk.android:crashlytics:${crashlyticsVersion}",
             dagger:               "com.google.dagger:dagger:${daggerVersion}",
             daggerCompiler:       "com.google.dagger:dagger-compiler:${daggerVersion}",
             eventbus:             "de.greenrobot:eventbus:${eventbusVersion}",

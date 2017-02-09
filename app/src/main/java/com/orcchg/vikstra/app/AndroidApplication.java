@@ -4,6 +4,7 @@ import android.app.Application;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.orcchg.vikstra.BuildConfig;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
@@ -16,6 +17,7 @@ import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKAccessTokenTracker;
 import com.vk.sdk.VKSdk;
 
+import io.fabric.sdk.android.Fabric;
 import io.realm.Realm;
 import timber.log.Timber;
 
@@ -30,6 +32,7 @@ public class AndroidApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         Timber.i("Application onCreate");
         initResources();
         initializeInjector();
