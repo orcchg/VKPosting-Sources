@@ -852,8 +852,26 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
              * In the latter case, it will be created (PUT) in repository with Group-s, corresponding
              * to the Keyword being added.
              */
-            case StateContainer.ADD_KEYWORD_START:   chainedStateRestore = memento.state;
-            case StateContainer.ADD_KEYWORD_FINISH:  chainedStateRestore = memento.state;
+            case StateContainer.ADD_KEYWORD_START:
+                if (memento.inputGroupBundleId == Constant.BAD_ID) {  // input GroupBundle wasn't exist before
+                    Timber.d("input GroupBundle wasn't exist before, add new Keyword and then GroupBundle will be created in repository");
+                    stateAddKeywordStart(memento.newlyAddedKeyword);
+                    break;
+                } else {
+                    Timber.d("Fallback to restore existing GroupBundle before adding new Keyword to it");
+                    chainedStateRestore = memento.state;
+                }
+                // proceed further, without break
+            case StateContainer.ADD_KEYWORD_FINISH:
+                if (memento.inputGroupBundleId == Constant.BAD_ID) {  // input GroupBundle wasn't exist before
+                    Timber.d("input GroupBundle wasn't exist before, add new Keyword and then GroupBundle will be created in repository");
+                    stateAddKeywordFinish(memento.addKeywordFinishedResult);
+                    break;
+                } else {
+                    Timber.d("Fallback to restore existing GroupBundle before adding new Keyword to it");
+                    chainedStateRestore = memento.state;
+                }
+                // proceed further, without break
             case StateContainer.GROUPS_LOADED:
                 /**
                  * First - clear and fill Parent items in expandable list, because it must be ready
@@ -865,7 +883,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                  * but it's id in repository could be used to restore the whole model in memory and then
                  * fill expandable list with corresponding Child items.
                  */
-                restoreLoadedGroups(memento.inputGroupBundleId);
+                restoreLoadedGroups(memento.inputGroupBundleId);  // id must be valid, not BAD_ID
                 break;
             case StateContainer.REFRESHING:
                 stateRefreshing();
