@@ -257,7 +257,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // check consistency between state transitions
         if (previousState == StateContainer.ERROR_LOAD && newState != StateContainer.START ||
             // forbid transition from any kind of loading to refreshing
-            previousState != StateContainer.GROUPS_LOADED && newState == StateContainer.REFRESHING) {
+            (previousState != StateContainer.GROUPS_LOADED && previousState != StateContainer.REFRESHING) && newState == StateContainer.REFRESHING) {
             Timber.e("Illegal state transition from [%s] to [%s]", previousState, newState);
             throw new IllegalStateException(String.format(Locale.ENGLISH, "Transition from %s to %s", previousState, newState));
         }
