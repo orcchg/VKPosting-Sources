@@ -80,7 +80,9 @@ public class Navigator {
     public void openEmailScreen(@NonNull Activity context, @NonNull EmailContent emailContent) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("plain/text");
-        intent.putExtra(Intent.EXTRA_EMAIL, emailContent.recipients().toArray());
+        if (emailContent.recipients() != null) {
+            intent.putExtra(Intent.EXTRA_EMAIL, emailContent.recipients().toArray());
+        }
         intent.putExtra(Intent.EXTRA_STREAM, emailContent.attachment());
         intent.putExtra(Intent.EXTRA_SUBJECT, emailContent.subject());
         intent.putExtra(Intent.EXTRA_TEXT, emailContent.body());

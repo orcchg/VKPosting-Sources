@@ -13,6 +13,8 @@ interface GroupListContract {
     interface View extends MvpView {
         void enableAddKeywordButton(boolean isEnabled);
 
+        String getDumpFilename();
+
         void onAddKeywordError();
         void onAlreadyAddedKeyword(String keyword);
         void onGroupsNotSelected();

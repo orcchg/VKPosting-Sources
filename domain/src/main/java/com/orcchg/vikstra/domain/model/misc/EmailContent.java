@@ -25,6 +25,6 @@ public abstract class EmailContent {
 
     public abstract @Nullable Uri attachment();
     public abstract @Nullable String body();
-    public abstract List<String> recipients();
+    public abstract @Nullable List<String> recipients();
     public abstract String subject();
 }

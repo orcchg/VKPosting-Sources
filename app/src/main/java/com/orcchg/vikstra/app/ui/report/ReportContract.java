@@ -15,6 +15,8 @@ public interface ReportContract {
         void enableSwipeToRefresh(boolean isEnabled);
         void enableButtonsOnPostingFinished();
 
+        String getDumpFilename();
+
         void onPostingCancel();
         void onPostingFinished(int posted, int total);
         void onPostRevertingStarted();

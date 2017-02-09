@@ -138,12 +138,19 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             if (groupBundleId != BAD_ID) {
                 Timber.d("GroupBundle id [%s] is valid, ready to dump", groupBundleId);
                 dumpGroupsUseCase.setParameters(new DumpGroups.Parameters(groupBundleId));
-                if (AppConfig.INSTANCE.sendDumpFilesViaEmail()) {
-                    Timber.d("Sending GroupBundle to email...");
-                    getView().openEditDumpEmailDialog();
-                } else {
-                    Timber.d("Dumping GroupBundle to file...");
-                    getView().openEditDumpFileNameDialog();
+                switch (AppConfig.INSTANCE.sendDumpFilesVia()) {
+                    case AppConfig.SEND_DUMP_FILE:
+                        Timber.d("Dumping GroupBundle to file...");
+                        getView().openEditDumpFileNameDialog();
+                        break;
+                    case AppConfig.SEND_DUMP_EMAIL:
+                        Timber.d("Sending GroupBundle to email...");
+                        getView().openEditDumpEmailDialog();
+                        break;
+                    case AppConfig.SEND_DUMP_SHARE:
+                        Timber.d("Sharing GroupBundle...");
+                        performDumping(getView().getDumpFilename());
+                        break;
                 }
             } else {
                 Timber.d("GroupBundle is not available to dump");
@@ -378,15 +385,23 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             public void onFinish(@Nullable String path) {
                 if (!TextUtils.isEmpty(path)) {
                     Timber.i("Use-Case: succeeded to dump Group-s");
-                    if (AppConfig.INSTANCE.sendDumpFilesViaEmail() && !TextUtils.isEmpty(memento.email)) {
-                        Timber.d("Group-s have been dumped to file [%s]. Now send it via email", path);
-                        String[] recipients = memento.email.split(",");
-                        EmailContent.Builder builder = EmailContent.builder()
-                                .setAttachment(FileUtility.uriFromFile(path))
-                                .setRecipients(Arrays.asList(recipients));
-                        if (isViewAttached()) getView().openEmailScreen(builder);
-                    } else {
-                        if (isViewAttached()) getView().showDumpSuccess(path);
+                    EmailContent.Builder builder = EmailContent.builder()
+                            .setAttachment(FileUtility.uriFromFile(path));
+
+                    switch (AppConfig.INSTANCE.sendDumpFilesVia()) {
+                        case AppConfig.SEND_DUMP_FILE:
+                            if (isViewAttached()) getView().showDumpSuccess(path);
+                            break;
+                        case AppConfig.SEND_DUMP_EMAIL:
+                            if (!TextUtils.isEmpty(memento.email)) {
+                                Timber.d("Group-s have been dumped to file [%s]. Now send it via email", path);
+                                String[] recipients = memento.email.split(",");
+                                builder.setRecipients(Arrays.asList(recipients));
+                            }
+                            // proceed opening email screen without break
+                        case AppConfig.SEND_DUMP_SHARE:
+                            if (isViewAttached()) getView().openEmailScreen(builder);
+                            break;
                     }
                 } else {
                     Timber.e("Use-Case: failed to dump Group-s");

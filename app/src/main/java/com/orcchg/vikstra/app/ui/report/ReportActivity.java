@@ -201,15 +201,22 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private void initToolbar() {
         toolbar.setTitle(R.string.report_screen_title);
         toolbar.setNavigationOnClickListener((view) -> onBackPressed());
-        if (AppConfig.INSTANCE.sendDumpFilesViaEmail()) {
-            toolbar.inflateMenu(R.menu.send);
-        } else {
-            toolbar.inflateMenu(R.menu.dump);
+        switch (AppConfig.INSTANCE.sendDumpFilesVia()) {
+            case AppConfig.SEND_DUMP_FILE:
+                toolbar.inflateMenu(R.menu.dump);
+                break;
+            case AppConfig.SEND_DUMP_EMAIL:
+                toolbar.inflateMenu(R.menu.send);
+                break;
+            case AppConfig.SEND_DUMP_SHARE:
+                toolbar.inflateMenu(R.menu.share);
+                break;
         }
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.dump:
                 case R.id.send:
+                case R.id.share:
                     if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_HIDE);
                     askForPermission_writeExternalStorage();
                     return true;
@@ -244,6 +251,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     public void enableButtonsOnPostingFinished() {
         interruptButton.setEnabled(false);
         revertAllButton.setEnabled(!postingRevertFinished);
+    }
+
+    // ------------------------------------------
+    @Override
+    public String getDumpFilename() {
+        return FileUtility.makeDumpFileName(this, REPORTS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
     }
 
     // ------------------------------------------
@@ -321,7 +334,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
                 (dialog, which, email) -> {
                     if (!TextUtils.isEmpty(email)) {
                         dialog.dismiss();
-                        String path = FileUtility.makeDumpFileName(this, REPORTS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
+                        String path = getDumpFilename();
                         presenter.performDumping(path, email);
                     }
                 });

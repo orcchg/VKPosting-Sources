@@ -204,10 +204,16 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     private void initToolbar() {
         toolbar.setTitle(R.string.group_list_screen_title);
         toolbar.setNavigationOnClickListener((view) -> onBackPressed());  // finish with current result
-        if (AppConfig.INSTANCE.sendDumpFilesViaEmail()) {
-            toolbar.inflateMenu(R.menu.edit_send);
-        } else {
-            toolbar.inflateMenu(R.menu.edit_dump);
+        switch (AppConfig.INSTANCE.sendDumpFilesVia()) {
+            case AppConfig.SEND_DUMP_FILE:
+                toolbar.inflateMenu(R.menu.edit_dump);
+                break;
+            case AppConfig.SEND_DUMP_EMAIL:
+                toolbar.inflateMenu(R.menu.edit_send);
+                break;
+            case AppConfig.SEND_DUMP_SHARE:
+                toolbar.inflateMenu(R.menu.edit_share);
+                break;
         }
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
@@ -216,6 +222,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                     return true;
                 case R.id.dump:
                 case R.id.send:
+                case R.id.share:
                     askForPermission_writeExternalStorage();
                     return true;
                 case R.id.settings:
@@ -248,6 +255,12 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     @Override
     public void enableAddKeywordButton(boolean isEnabled) {
         addKeywordButton.setEnabled(isEnabled);
+    }
+
+    // ------------------------------------------
+    @Override
+    public String getDumpFilename() {
+        return FileUtility.makeDumpFileName(this, GROUPS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
     }
 
     // ------------------------------------------
@@ -307,7 +320,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                 (dialog, which, email) -> {
                     if (!TextUtils.isEmpty(email)) {
                         dialog.dismiss();
-                        String path = FileUtility.makeDumpFileName(this, GROUPS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
+                        String path = getDumpFilename();
                         presenter.performDumping(path, email);
                     }
                 });
