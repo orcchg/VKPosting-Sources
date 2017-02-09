@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app;
 
 import android.support.annotation.IntDef;
 
+import com.orcchg.vikstra.BuildConfig;
 import com.orcchg.vikstra.domain.util.DebugSake;
 
 import java.lang.annotation.Retention;
@@ -12,51 +13,41 @@ public enum AppConfig {
 
     /* Dump */
     // ------------------------------------------
-    public static final int SEND_DUMP_FILE = 0;
-    public static final int SEND_DUMP_EMAIL = 1;
-    public static final int SEND_DUMP_SHARE = 2;
+    public static final int SEND_DUMP_FILE = BuildConfig.SEND_DUMP_FILE;
+    public static final int SEND_DUMP_EMAIL = BuildConfig.SEND_DUMP_EMAIL;
+    public static final int SEND_DUMP_SHARE = BuildConfig.SEND_DUMP_SHARE;
     @IntDef({SEND_DUMP_FILE, SEND_DUMP_EMAIL, SEND_DUMP_SHARE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface SendDumpVia {}
 
-    private @SendDumpVia int sendDumpFilesVia = SEND_DUMP_SHARE;
-
-    @SendDumpVia
+    @SendDumpVia @SuppressWarnings("ResourceType")
     public int sendDumpFilesVia() {
-        return sendDumpFilesVia;
+        return BuildConfig.sendDumpFilesVia;
     }
 
     /* Group */
     // ------------------------------------------
-    private boolean isAllGroupsSelected = true;
-    private boolean isAllGroupsSortedByMembersCount = true;
-
-    private @DebugSake boolean showSettingsMenuOnGroupListScreen = true;  // for DEBUG
-    private boolean useInteractiveReportScreen = true;  // show ReportScreen instead of StatusDialog while posting
-    private boolean useTutorialShowcases = true;
-
     public boolean isAllGroupsSelected() {
-        return isAllGroupsSelected;
+        return BuildConfig.isAllGroupsSelected;
     }
     public boolean isAllGroupsSortedByMembersCount() {
-        return isAllGroupsSortedByMembersCount;
+        return BuildConfig.isAllGroupsSortedByMembersCount;
     }
-    @DebugSake public boolean showSettingsMenuOnGroupListScreen() {
-        return showSettingsMenuOnGroupListScreen;
+    @DebugSake
+    public boolean showSettingsMenuOnGroupListScreen() {
+        return BuildConfig.showSettingsMenuOnGroupListScreen;
     }
     public boolean useInteractiveReportScreen() {
-        return useInteractiveReportScreen;
+        return BuildConfig.useInteractiveReportScreen;
     }
     public boolean useTutorialShowcases() {
-        return useTutorialShowcases;
+        return BuildConfig.useTutorialShowcases;
     }
 
     /* Keyword */
     // ------------------------------------------
-    private boolean interceptKeywordClickOnVH = false;
-
     public boolean shouldInterceptKeywordClickOnVH() {
-        return interceptKeywordClickOnVH;
+        return BuildConfig.interceptKeywordClickOnVH;
     }
 
     /* Log */
@@ -64,11 +55,13 @@ public enum AppConfig {
     @Override
     public String toString() {
         return new StringBuilder("AppConfig: ")
-                .append("isAllGroupsSelected=").append(isAllGroupsSelected)
-                .append(", isAllGroupsSortedByMembersCount=").append(isAllGroupsSortedByMembersCount)
-                .append(", showSettingsMenuOnGroupListScreen=").append(showSettingsMenuOnGroupListScreen)
-                .append(", useInteractiveReportScreen=").append(useInteractiveReportScreen)
-                .append(", interceptKeywordClickOnVH=").append(interceptKeywordClickOnVH)
+                .append("sendDumpFilesVia=").append(sendDumpFilesVia())
+                .append(", isAllGroupsSelected=").append(isAllGroupsSelected())
+                .append(", isAllGroupsSortedByMembersCount=").append(isAllGroupsSortedByMembersCount())
+                .append(", showSettingsMenuOnGroupListScreen=").append(showSettingsMenuOnGroupListScreen())
+                .append(", useInteractiveReportScreen=").append(useInteractiveReportScreen())
+                .append(", useTutorialShowcases=").append(useTutorialShowcases())
+                .append(", interceptKeywordClickOnVH=").append(shouldInterceptKeywordClickOnVH())
                 .toString();
     }
 }

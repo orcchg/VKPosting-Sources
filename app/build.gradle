@@ -43,7 +43,18 @@ android {
         testInstrumentationRunner globalConfiguration.getAt("testInstrumentationRunner")
         testApplicationId globalConfiguration.getAt("testApplicationId")
 
+        // see: http://stackoverflow.com/questions/17197636/is-it-possible-to-declare-a-variable-in-gradle-usable-in-java
         buildConfigField "String[]", "SNG_LANGUAGES", listToJavaArray(sngLanguages)
+        buildConfigField "int", "SEND_DUMP_FILE", "0"
+        buildConfigField "int", "SEND_DUMP_EMAIL", "1"
+        buildConfigField "int", "SEND_DUMP_SHARE", "2"
+        buildConfigField "int", "sendDumpFilesVia", "2"  // SEND_DUMP_SHARE
+        buildConfigField "boolean", "isAllGroupsSelected", "true"
+        buildConfigField "boolean", "isAllGroupsSortedByMembersCount", "true"
+        buildConfigField "boolean", "showSettingsMenuOnGroupListScreen", "true"
+        buildConfigField "boolean", "useInteractiveReportScreen", "true"
+        buildConfigField "boolean", "useTutorialShowcases", "true"
+        buildConfigField "boolean", "interceptKeywordClickOnVH", "false"
 
         externalNativeBuild {
             cmake {
