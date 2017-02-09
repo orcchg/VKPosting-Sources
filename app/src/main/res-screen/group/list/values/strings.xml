@@ -7,6 +7,9 @@
     <string name="group_list_dialog_new_dump_file_hint">Enter file name</string>
     <string name="group_list_dialog_new_keyword_title">New keyword</string>
     <string name="group_list_dialog_new_keyword_hint">Enter new keyword</string>
+    <string name="group_list_dump_file_email_body">Sent via VK posting</string>
+    <string name="group_list_dump_file_email_subject">[VK posting]: Groups</string>
+    <string name="group_list_dump_file_prefix">Groups</string>
     <string name="group_list_empty_keywords_data_button_label">Add</string>
     <string name="group_list_empty_keywords_data_text">Add new keywords</string>
     <string name="group_list_error_add_keyword">Failed to add new keyword!</string>

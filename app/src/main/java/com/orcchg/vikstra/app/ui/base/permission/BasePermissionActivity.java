@@ -3,6 +3,8 @@ package com.orcchg.vikstra.app.ui.base.permission;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.PermissionManager;
@@ -18,6 +20,8 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public abstract class BasePermissionActivity<V extends MvpView, P extends MvpPresenter<V>> extends BaseActivity<V, P> {
+
+    private @Nullable AlertDialog dialog0;
 
     @DebugLog @Override
     public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -39,6 +43,12 @@ public abstract class BasePermissionActivity<V extends MvpView, P extends MvpPre
                 if (!shouldShowRequestPermissionRationale(permissions[0])) onPermissionDenied(requestCode);
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog0 != null) dialog0.dismiss();
     }
 
     /* Permissions handling */
@@ -85,7 +95,7 @@ public abstract class BasePermissionActivity<V extends MvpView, P extends MvpPre
         String permission = "Unknown code=" + requestCode;
         if (index >= 0 && index < permissions.length) permission = permissions[index];  // guard from index out of bounds
         String description = String.format(Locale.ENGLISH, getResources().getString(R.string.permission_not_granted_message), permission);
-        DialogProvider.showTextDialogTwoButtons(this, R.string.dialog_warning_title, description,
+        dialog0 = DialogProvider.showTextDialogTwoButtons(this, R.string.dialog_warning_title, description,
                 R.string.button_settings, R.string.button_close,
                 (dialog, which) -> {
                     dialog.dismiss();

@@ -14,11 +14,13 @@ public abstract class PostViewVO {
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setDescription(String description);
+        public abstract Builder setLink(String link);
         public abstract Builder setMedia(List<MediaVO> media);
         public abstract PostViewVO build();
     }
 
     public abstract String description();
+    public abstract String link();
     public abstract List<MediaVO> media();
     // TODO: add other fields
 }

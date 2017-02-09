@@ -9,6 +9,9 @@
     <string name="report_dialog_posting_finished">Posting finished</string>
     <string name="report_dialog_posting_was_cancelled_daily_limit_reached">You\&apos;ve reached daily limit of posting.\nTry another account or continue tomorrow.</string>
     <string name="report_dialog_revert_all_wall_posting_description">Are you sure, you want to revert all published posts?</string>
+    <string name="report_dump_file_email_body">Sent via VK posting</string>
+    <string name="report_dump_file_email_subject">[VK posting]: Reports</string>
+    <string name="report_dump_file_prefix">Reports</string>
     <string name="report_posted_counters">Posted to %1$s of %2$s groups</string>
     <string name="report_screen_title">Report</string>
     <string name="report_snackbar_group_reports_dump_failed">Failed to dump group reports to file</string>

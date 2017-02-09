@@ -49,6 +49,20 @@ public class MakeWallPost extends VkUseCase<GroupReportEssence> {
             Group group;
             String message;
 
+            public Builder addAttachment(VKAttachments.VKApiAttachment attachment) {
+                VKAttachments attachments = new VKAttachments();
+                attachments.add(attachment);
+                return addAttachments(attachments);
+            }
+
+            public Builder addAttachments(VKAttachments attachments) {
+                if (this.attachments == null) return setAttachments(attachments);
+                for (VKAttachments.VKApiAttachment attachment : attachments) {
+                    this.attachments.add(attachment);
+                }
+                return this;
+            }
+
             public Builder setAttachments(VKAttachments attachments) {
                 this.attachments = attachments;
                 return this;

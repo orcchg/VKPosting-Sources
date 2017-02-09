@@ -88,8 +88,8 @@ public abstract class BaseListPresenter<V extends MvpListView> extends BasePrese
     // --------------------------------------------------------------------------------------------
     @Override
     public void onScroll(int itemsLeftToEnd) {
-        if (isThereMore() && itemsLeftToEnd <= DomainConfig.INSTANCE.loadMoreThreshold) {
-            listMemento.currentOffset += DomainConfig.INSTANCE.limitItemsPerRequest;
+        if (isThereMore() && itemsLeftToEnd <= DomainConfig.INSTANCE.loadMoreThreshold()) {
+            listMemento.currentOffset += DomainConfig.INSTANCE.limitItemsPerRequest();
             onLoadMore();
         }
     }

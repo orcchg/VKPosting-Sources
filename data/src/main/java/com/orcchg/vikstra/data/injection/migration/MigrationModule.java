@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.data.injection.migration;
 
 import com.orcchg.vikstra.data.source.direct.vkontakte.migration.VkAttachMigration;
+import com.orcchg.vikstra.data.source.local.post.PostMigration;
 import com.orcchg.vikstra.data.source.local.report.ReportMigration;
 
 import javax.inject.Singleton;
@@ -16,6 +17,11 @@ public class MigrationModule {
     private static RealmConfiguration sRealmConfiguration;
 
     @Provides @Singleton
+    PostMigration providePostMigration() {
+        return new PostMigration();
+    }
+
+    @Provides @Singleton
     ReportMigration provideReportMigration() {
         return new ReportMigration();
     }
@@ -26,15 +32,15 @@ public class MigrationModule {
     }
 
     @Provides @Singleton
-    Migration provideMigration(ReportMigration reportMigration, VkAttachMigration vkAttachMigration) {
-        return new Migration(reportMigration, vkAttachMigration);
+    Migration provideMigration(PostMigration postMigration, ReportMigration reportMigration, VkAttachMigration vkAttachMigration) {
+        return new Migration(postMigration, reportMigration, vkAttachMigration);
     }
 
     @Provides @Singleton
     RealmConfiguration provideRealmConfiguration(Migration migration) {
         if (sRealmConfiguration == null) {
             sRealmConfiguration = new RealmConfiguration.Builder()
-                    .schemaVersion(1)  // bumped version up, previous: 0
+                    .schemaVersion(3)  // bumped version up, previous: 2
                     .migration(migration)
                     .build();
         }

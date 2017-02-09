@@ -98,6 +98,7 @@ public abstract class BaseDialogFragment<V extends MvpView, P extends MvpPresent
         Timber.i("onDestroy");
         presenter.onDestroy();
         presenter.detachView();
+        navigationComponent.navigator().onDestroy();
     }
 
     /* Internal */

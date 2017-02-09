@@ -9,8 +9,10 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,7 @@ import com.orcchg.vikstra.app.ui.report.injection.ReportComponent;
 import com.orcchg.vikstra.app.ui.report.injection.ReportModule;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
 
@@ -52,7 +55,9 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
 
-    private String DIALOG_TITLE, DIALOG_HINT, INFO_TITLE,
+    private String DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT,
+            EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, EMAIL_BODY, EMAIL_SUBJECT,
+            INFO_TITLE, REPORTS_DUMP_FILE_PREFIX,
             SNACKBAR_DUMP_SUCCESS, SNACKBAR_POSTING_FINISHED;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
@@ -81,6 +86,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private boolean postingRevertFinished = false;
 
     private @Nullable ShowcaseView showcaseView;
+
+    private @Nullable AlertDialog dialog1, dialog2, dialog3, dialog4, dialog5, dialog6, dialog7;
 
     public static Intent getCallingIntent(@NonNull Context context, long groupReportBundleId, long postId) {
         Intent intent = new Intent(context, ReportActivity.class);
@@ -134,6 +141,18 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         outState.putBoolean(BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED, postingRevertFinished);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog1 != null) dialog1.dismiss();
+        if (dialog2 != null) dialog2.dismiss();
+        if (dialog3 != null) dialog3.dismiss();
+        if (dialog4 != null) dialog4.dismiss();
+        if (dialog5 != null) dialog5.dismiss();
+        if (dialog6 != null) dialog6.dismiss();
+        if (dialog7 != null) dialog7.dismiss();
+    }
+
     /* Data */
     // --------------------------------------------------------------------------------------------
     private void initData(@Nullable Bundle savedInstanceState) {
@@ -182,10 +201,22 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private void initToolbar() {
         toolbar.setTitle(R.string.report_screen_title);
         toolbar.setNavigationOnClickListener((view) -> onBackPressed());
-        toolbar.inflateMenu(R.menu.dump);
+        switch (AppConfig.INSTANCE.sendDumpFilesVia()) {
+            case AppConfig.SEND_DUMP_FILE:
+                toolbar.inflateMenu(R.menu.dump);
+                break;
+            case AppConfig.SEND_DUMP_EMAIL:
+                toolbar.inflateMenu(R.menu.send);
+                break;
+            case AppConfig.SEND_DUMP_SHARE:
+                toolbar.inflateMenu(R.menu.share);
+                break;
+        }
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.dump:
+                case R.id.send:
+                case R.id.share:
                     if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_HIDE);
                     askForPermission_writeExternalStorage();
                     return true;
@@ -224,10 +255,15 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     // ------------------------------------------
     @Override
+    public String getDumpFilename() {
+        return FileUtility.makeDumpFileName(this, REPORTS_DUMP_FILE_PREFIX, true /* external */, true /* with timestamp */);
+    }
+
+    // ------------------------------------------
+    @Override
     public void onPostingCancel() {
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
-        DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
-                R.string.report_dialog_posting_was_cancelled_daily_limit_reached);
+        dialog1 = DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_posting_was_cancelled_daily_limit_reached);
         enableButtonsOnPostingFinished();
     }
 
@@ -235,7 +271,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     public void onPostingFinished(int posted, int total) {
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
         String text = String.format(Locale.ENGLISH, SNACKBAR_POSTING_FINISHED, posted, total);
-        DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text);
+        dialog2 = DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text);
         enableButtonsOnPostingFinished();
     }
 
@@ -264,7 +300,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // ------------------------------------------
     @Override
     public void openCloseWhilePostingDialog() {
-        DialogProvider.showTextDialogTwoButtons(this, R.string.report_dialog_interrupt_posting_and_close_title,
+        dialog3 = DialogProvider.showTextDialogTwoButtons(this, R.string.report_dialog_interrupt_posting_and_close_title,
                 R.string.report_dialog_interrupt_posting_and_close_description,
                 R.string.button_interrupt,R.string.button_continue,
                 (dialog, which) -> {
@@ -276,18 +312,38 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void openDumpNotReadyDialog() {
-        DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
+        dialog4 = DialogProvider.showTextDialog(this, R.string.dialog_warning_title,
                 R.string.report_dialog_group_reports_not_ready_to_dump);
     }
 
     @Override
     public void openEditDumpFileNameDialog() {
-        DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, "",
+        dialog5 = DialogProvider.showEditTextDialog(this, DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT, "",
                 (dialog, which, text) -> {
-                    dialog.dismiss();
-                    String path = FileUtility.makeDumpFileName(this, text, true /* external */);
-                    presenter.performDumping(path);
+                    if (!TextUtils.isEmpty(text)) {
+                        dialog.dismiss();
+                        String path = FileUtility.makeDumpFileName(this, text, true /* external */);
+                        presenter.performDumping(path);
+                    }
                 });
+    }
+
+    @Override
+    public void openEditDumpEmailDialog() {
+        dialog7 = DialogProvider.showEditTextDialog(this, EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, "",
+                (dialog, which, email) -> {
+                    if (!TextUtils.isEmpty(email)) {
+                        dialog.dismiss();
+                        String path = getDumpFilename();
+                        presenter.performDumping(path, email);
+                    }
+                });
+    }
+
+    @Override
+    public void openEmailScreen(EmailContent.Builder builder) {
+        builder.setBody(EMAIL_BODY).setSubject(EMAIL_SUBJECT);
+        navigationComponent.navigator().openEmailScreen(this, builder.build());
     }
 
     @Override
@@ -297,7 +353,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void openRevertAllWarningDialog() {
-        DialogProvider.showTextDialogTwoButtons(this, R.string.dialog_warning_title,
+        dialog6 = DialogProvider.showTextDialogTwoButtons(this, R.string.dialog_warning_title,
                 R.string.report_dialog_revert_all_wall_posting_description,
                 R.string.button_revert, R.string.button_cancel,
                 (dialog, which) -> {
@@ -412,9 +468,14 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // --------------------------------------------------------------------------------------------
     private void initResources() {
         Resources resources = getResources();
-        DIALOG_TITLE = resources.getString(R.string.report_dialog_new_dump_file_title);
-        DIALOG_HINT = resources.getString(R.string.report_dialog_new_dump_file_hint);
+        DUMP_FILE_DIALOG_TITLE = resources.getString(R.string.report_dialog_new_dump_file_title);
+        DUMP_FILE_DIALOG_HINT = resources.getString(R.string.report_dialog_new_dump_file_hint);
+        EMAIL_FILE_DIALOG_TITLE = resources.getString(R.string.dialog_send_email_title);
+        EMAIL_FILE_DIALOG_HINT = resources.getString(R.string.dialog_send_email_hint);
+        EMAIL_BODY = resources.getString(R.string.report_dump_file_email_body);
+        EMAIL_SUBJECT = resources.getString(R.string.report_dump_file_email_subject);
         INFO_TITLE = resources.getString(R.string.report_posted_counters);
+        REPORTS_DUMP_FILE_PREFIX = resources.getString(R.string.report_dump_file_prefix);
         SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.report_snackbar_group_reports_dump_succeeded);
         SNACKBAR_POSTING_FINISHED = resources.getString(R.string.report_snackbar_posting_finished);
     }

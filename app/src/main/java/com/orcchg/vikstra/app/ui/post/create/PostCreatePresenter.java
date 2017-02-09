@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.orcchg.vikstra.app.ui.base.BasePresenter;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
@@ -53,7 +54,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         private static final String BUNDLE_KEY_HAS_ATTACH_CHANGED = "bundle_key_has_attach_changed_" + PrID;
         private static final String BUNDLE_KEY_INPUT_POST = "bundle_key_input_post_" + PrID;
 
-        private String attachLink;
+        private @NonNull String attachLink = "";
         private List<Media> attachMedia = new ArrayList<>();
         private boolean hasAttachChanged;
         private @Nullable Post inputPost;
@@ -74,7 +75,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         @DebugLog
         private static Memento fromBundle(Bundle savedInstanceState) {
             Memento memento = new Memento();
-            memento.attachLink = savedInstanceState.getString(BUNDLE_KEY_ATTACH_LINK);
+            memento.attachLink = savedInstanceState.getString(BUNDLE_KEY_ATTACH_LINK, "");
             memento.attachMedia = savedInstanceState.getParcelableArrayList(BUNDLE_KEY_ATTACH_MEDIA);
             if (memento.attachMedia == null) memento.attachMedia = new ArrayList<>();
             memento.hasAttachChanged = savedInstanceState.getBoolean(BUNDLE_KEY_HAS_ATTACH_CHANGED);
@@ -170,8 +171,8 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
     @Override
     public void attachLink(String link) {
         Timber.i("attachLink: %s", link);
-        memento.attachLink = link;
-        memento.hasAttachChanged = true;
+        memento.hasAttachChanged = !memento.attachLink.equalsIgnoreCase(link);
+        memento.attachLink = TextUtils.isEmpty(link) ? "" : link;
     }
 
     // ------------------------------------------
@@ -238,6 +239,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
         // TODO: set location, file attach, poll
         PostEssence essence = PostEssence.builder()
                 .setDescription(description)
+                .setLink(memento.attachLink)
                 .setMedia(memento.attachMedia)
                 .setTitle(title)
                 .build();
@@ -415,7 +417,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
             // TODO: set title to view
             getView().setInputText(post.description());
             getView().showContent(PostCreateActivity.RV_TAG, false);
-
+            getView().showLink(post.link());
         }
     }
 

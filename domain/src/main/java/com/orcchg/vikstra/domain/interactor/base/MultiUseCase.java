@@ -40,7 +40,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     private Throwable cancellationReason;
 
     private final Object lock = new Object();
-    private int sleepInterval = DomainConfig.INSTANCE.multiUseCaseSleepInterval;  // to avoid Captcha error, interval in ms
+    private int sleepInterval = DomainConfig.INSTANCE.multiUseCaseSleepInterval();  // to avoid Captcha error, interval in ms
 
     private final PostExecuteScheduler progressCallbackScheduler;  // where to observe progress callbacks
 

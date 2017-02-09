@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -62,6 +63,8 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     private KeywordCreateComponent keywordCreateComponent;
     private long keywordBundleId = Constant.BAD_ID;
 
+    private @Nullable AlertDialog dialog1, dialog2;
+
     public static Intent getCallingIntent(@NonNull Context context) {
         return getCallingIntent(context, Constant.BAD_ID);
     }
@@ -109,6 +112,13 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog1 != null) dialog1.dismiss();
+        if (dialog2 != null) dialog2.dismiss();
     }
 
     /* Data */
@@ -203,18 +213,20 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     // ------------------------------------------
     @Override
     public void openEditTitleDialog(@Nullable String initTitle, boolean saveAfter) {
-        DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, initTitle,
+        dialog1 = DialogProvider.showEditTextDialog(this, DIALOG_TITLE, DIALOG_HINT, initTitle,
                 (dialog, which, text) -> {
-                    dialog.dismiss();
-                    toolbar.setTitle(text);
-                    presenter.onTitleChanged(text);
-                    if (saveAfter) presenter.onSavePressed();
+                    if (!TextUtils.isEmpty(text)) {
+                        dialog.dismiss();
+                        toolbar.setTitle(text);
+                        presenter.onTitleChanged(text);
+                        if (saveAfter) presenter.onSavePressed();
+                    }
                 });
     }
 
     @Override
     public void openSaveChangesDialog() {
-        DialogProvider.showTextDialogTwoButtons(this, R.string.keyword_create_dialog_save_changes_title,
+        dialog2 = DialogProvider.showTextDialogTwoButtons(this, R.string.keyword_create_dialog_save_changes_title,
                 R.string.keyword_create_dialog_save_changes_description, R.string.button_save, R.string.button_close,
                 (dialog, which) -> {
                     dialog.dismiss();

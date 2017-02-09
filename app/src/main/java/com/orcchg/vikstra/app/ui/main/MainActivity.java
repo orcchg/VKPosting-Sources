@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
@@ -89,6 +90,8 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private @Nullable ShowcaseView showcaseView;
     private boolean fabHasShownArtificially = false;
 
+    private @Nullable AlertDialog dialog1, dialog2;
+
     public static Intent getCallingIntent(@NonNull Context context) {
         return new Intent(context, MainActivity.class);
     }
@@ -121,6 +124,13 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         initNotifications();
         initToolbar();
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_NEW_LISTS);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog1 != null) dialog1.dismiss();
+        if (dialog2 != null) dialog2.dismiss();
     }
 
     /* View */
@@ -197,6 +207,12 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     public void onLoggedOut() {
         navigationComponent.navigator().openStartScreen(this);
         finish();
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onAccessTokenExhausted() {
+        navigationComponent.navigator().openAccessTokenExhaustedDialog(this);
     }
 
     // ------------------------------------------
@@ -449,11 +465,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     private void openAboutDialog() {
-        DialogProvider.showTextDialog(this, R.string.main_dialog_about_title, R.string.main_dialog_about_description);
+        dialog1 = DialogProvider.showTextDialog(this, R.string.main_dialog_about_title, R.string.main_dialog_about_description);
     }
 
     private void openLogoutDialog() {
-        DialogProvider.showTextDialogTwoButtons(this, R.string.main_dialog_logout_title,
+        dialog2 = DialogProvider.showTextDialogTwoButtons(this, R.string.main_dialog_logout_title,
                 R.string.main_dialog_logout_description, R.string.button_logout, R.string.button_cancel,
                 (dialog, which) -> {
                     dialog.dismiss();

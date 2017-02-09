@@ -27,6 +27,7 @@ import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.User;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.vk.sdk.VKSdk;
 
 import java.util.ArrayList;
@@ -270,9 +271,14 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
             }
 
             @Override
-            public void onError(Throwable e) {
+            public void onError(Throwable reason) {
                 Timber.e("Use-Case: failed to get current User");
-                if (isViewAttached()) getView().showCurrentUser(null);
+                if (EndpointUtility.hasAccessTokenExhausted(reason)) {
+                    Timber.w("Access Token has exhausted !");
+                    if (isViewAttached()) getView().onAccessTokenExhausted();
+                } else {
+                    if (isViewAttached()) getView().showCurrentUser(null);
+                }
             }
         };
     }

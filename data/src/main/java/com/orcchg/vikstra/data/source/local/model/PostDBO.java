@@ -6,12 +6,14 @@ import io.realm.RealmObject;
 public class PostDBO extends RealmObject {
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_LINK = "link";
     public static final String COLUMN_MEDIA = "media";
     public static final String COLUMN_TIMESTAMP = "timestamp";
     public static final String COLUMN_TITLE = "title";
 
     public long id;
     public String description;
+    public String link;
     public RealmList<MediaDBO> media;
     public long timestamp;
     public String title;

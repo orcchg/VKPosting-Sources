@@ -42,6 +42,12 @@ android {
         targetSdkVersion globalConfiguration.getAt("androidTargetSdkVersion")
         defaultPublishConfig 'release'
         publishNonDefault true
+
+        // see: http://stackoverflow.com/questions/17197636/is-it-possible-to-declare-a-variable-in-gradle-usable-in-java
+        buildConfigField "int", "multiUseCaseSleepInterval", "1000"  // to avoid Captcha error, interval in ms
+        buildConfigField "int", "limitItemsPerRequest", "20"
+        buildConfigField "int", "loadMoreThreshold", "1"
+        buildConfigField "boolean", "useOnlyGroupsWhereCanPostFreely", "true"
     }
 
 //    compileOptions {
@@ -74,7 +80,8 @@ dependencies {
     compile domainDependencies.javaxInject
     compile domainDependencies.openCSV
     compile domainDependencies.timber
-    compile domainDependencies.vkontakteSdk
+//    compile domainDependencies.vkontakteSdk  // remote
+    compile project(':vksdk_library')  // local sub-module
 
     provided domainDependencies.autoValue
     provided domainDependencies.javaxAnnotation

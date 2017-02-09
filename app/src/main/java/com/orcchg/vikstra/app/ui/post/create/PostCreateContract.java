@@ -24,6 +24,8 @@ public interface PostCreateContract {
         String getInputText();
         void setInputText(String text);
 
+        void showLink(String link);
+
         ContentResolver contentResolver();
         void closeView();  // with currently set result
         void closeView(int resultCode, long postId);

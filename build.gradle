@@ -10,15 +10,15 @@ buildscript {
         classpath "com.fernandocejas.frodo:frodo-plugin:0.8.3"
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.4'
-        classpath "io.realm:realm-gradle-plugin:2.2.1"
+        classpath "io.realm:realm-gradle-plugin:2.3.0"
     }
 }
 
 allprojects {
     ext {
         androidApplicationId = 'com.orcchg.dev.maxa.vikstra'
-        androidVersionCode = 9
-        androidVersionName = "1.1.9"
+        androidVersionCode = 11
+        androidVersionName = "1.2.11"
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         testApplicationId = 'com.orcchg.vikstra.test'
     }

@@ -19,6 +19,7 @@ public abstract class Post implements Comparable<Post>, Parcelable {
     public abstract static class Builder {
         public abstract Builder setId(long id);
         public abstract Builder setDescription(String description);
+        public abstract Builder setLink(String link);
         public abstract Builder setMedia(List<Media> media);
         public abstract Builder setTimestamp(long ts);
         public abstract Builder setTitle(String title);
@@ -27,6 +28,7 @@ public abstract class Post implements Comparable<Post>, Parcelable {
 
     public abstract long id();
     public abstract @Nullable String description();
+    public abstract @Nullable String link();
     public abstract @Nullable List<Media> media();
     public abstract long timestamp();
     public abstract @Nullable String title();

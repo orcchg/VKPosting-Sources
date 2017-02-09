@@ -9,10 +9,15 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
@@ -47,6 +52,9 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.container) ViewGroup container;
     @BindView(R.id.et_post_description) AutoCompleteTextView postDescriptionEditText;
+    @BindView(R.id.ll_link_container) ViewGroup linkContainer;
+    @BindView(R.id.tv_link) TextView linkTextView;
+    @BindView(R.id.wv_link) WebView linkWebView;
     @BindView(R.id.media_container_root) ViewGroup mediaContainerRoot;
     @BindView(R.id.media_container) ViewGroup mediaContainer;
     @BindView(R.id.loading_view) View loadingView;
@@ -71,6 +79,11 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     void onLinkButtonClick() {
         presenter.onLinkPressed();
     }
+    @OnClick(R.id.ibtn_delete_link)
+    void onLinkDeleteButtonClick() {
+        showLink(null);
+        presenter.attachLink(null);
+    }
     @OnClick(R.id.btn_retry)
     void onRetryClick() {
         presenter.retry();
@@ -78,6 +91,8 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
 
     private PostCreateComponent postCreateComponent;
     private long postId = Constant.BAD_ID;
+
+    private @Nullable AlertDialog dialog1, dialog2, dialog3;
 
     @NonNull @Override
     protected PostCreateContract.Presenter createPresenter() {
@@ -125,6 +140,14 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(BUNDLE_KEY_POST_ID, postId);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (dialog1 != null) dialog1.dismiss();
+        if (dialog2 != null) dialog2.dismiss();
+        if (dialog3 != null) dialog3.dismiss();
     }
 
     /* Data */
@@ -201,23 +224,26 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     // ------------------------------------------
     @Override
     public void openEditLinkDialog() {
-        DialogProvider.showEditTextDialog(this, R.string.post_create_dialog_attach_link_title,
+        dialog1 = DialogProvider.showEditTextDialog(this, R.string.post_create_dialog_attach_link_title,
                 R.string.post_create_dialog_attach_link_hint, "",
-                (dialog, which, text) -> {
-                    dialog.dismiss();
-                    // TODO: attach link visually
-                    presenter.attachLink(text);
+                (dialog, which, link) -> {
+                    if (!TextUtils.isEmpty(link)) {
+                        if (!link.startsWith("http")) link = "http://" + link;
+                        dialog.dismiss();
+                        showLink(link);
+                        presenter.attachLink(link);
+                    }
                 });
     }
 
     @Override
     public void openMediaLoadDialog() {
-        DialogProvider.showUploadPhotoDialog(this);
+        dialog2 = DialogProvider.showUploadPhotoDialog(this);
     }
 
     @Override
     public void openSaveChangesDialog() {
-        DialogProvider.showTextDialogTwoButtons(this, R.string.post_create_dialog_save_changes_title,
+        dialog3 = DialogProvider.showTextDialogTwoButtons(this, R.string.post_create_dialog_save_changes_title,
                 R.string.post_create_dialog_save_changes_description, R.string.button_save, R.string.button_close,
                 (dialog, which) -> {
                     dialog.dismiss();
@@ -255,6 +281,19 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     public void setInputText(String text) {
         postDescriptionEditText.setText(text);
         postDescriptionEditText.setSelection(text.length());  // move cursor to the end of text
+    }
+
+    // ------------------------------------------
+    @Override
+    public void showLink(String link) {
+        if (TextUtils.isEmpty(link)) {
+            linkContainer.setVisibility(View.GONE);
+        } else {
+            linkContainer.setVisibility(View.VISIBLE);
+            linkTextView.setText(link.toLowerCase());
+            linkWebView.setWebViewClient(new WebViewClient());
+            linkWebView.loadUrl(link);
+        }
     }
 
     // ------------------------------------------

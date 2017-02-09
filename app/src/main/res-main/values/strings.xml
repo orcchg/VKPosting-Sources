@@ -34,8 +34,10 @@
     <string name="button_revert_all">Revert all</string>
     <string name="button_save">Save</string>
     <string name="button_search">Search</string>
+    <string name="button_send">Send</string>
     <string name="button_select">Select</string>
     <string name="button_settings">Settings</string>
+    <string name="button_share">Share</string>
     <string name="button_showcase_got_it">Got it</string>
     <string name="button_showcase_next">Next</string>
     <string name="button_user">User</string>
@@ -51,6 +53,8 @@
         <!-- <item name="dialog_upload_photo_variant_albums">Albums</item> -->
     </array>
     <string name="dialog_progress_posting">Posting&#8230;</string>
+    <string name="dialog_send_email_title">Send email</string>
+    <string name="dialog_send_email_hint">Enter emails per comma</string>
     <string name="dialog_warning_title">Warning</string>
 
     <string name="message_send_email">Send email&#8230;</string>

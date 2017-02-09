@@ -1,16 +1,21 @@
 package com.orcchg.vikstra.app.ui.report;
 
+import android.support.annotation.Nullable;
+
 import com.orcchg.vikstra.app.ui.base.MvpListView;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.common.screen.LceView;
 import com.orcchg.vikstra.app.ui.common.screen.ListPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.endpoint.AccessTokenTracker;
 
 public interface ReportContract {
     interface View extends AccessTokenTracker, SubView {
         void enableSwipeToRefresh(boolean isEnabled);
         void enableButtonsOnPostingFinished();
+
+        String getDumpFilename();
 
         void onPostingCancel();
         void onPostingFinished(int posted, int total);
@@ -22,6 +27,8 @@ public interface ReportContract {
         void openCloseWhilePostingDialog();
         void openDumpNotReadyDialog();
         void openEditDumpFileNameDialog();
+        void openEditDumpEmailDialog();
+        void openEmailScreen(EmailContent.Builder builder);
         void openGroupDetailScreen(long groupId);
         void openRevertAllWarningDialog();
 
@@ -45,6 +52,7 @@ public interface ReportContract {
         void onDumpPressed();
         void interruptPostingAndClose(boolean shouldClose);
         void performDumping(String path);
+        void performDumping(String path, @Nullable String email);
         void performReverting();
         void retry();
         void retryPost();

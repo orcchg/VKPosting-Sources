@@ -52,6 +52,7 @@ public class PostToDboMapper implements DuplexMapper<Post, PostDBO> {
         return Post.builder()
                 .setId(object.id)
                 .setDescription(object.description)
+                .setLink(object.link)
                 .setMedia(media)
                 .setTimestamp(object.timestamp)
                 .setTitle(object.title)
