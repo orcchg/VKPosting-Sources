@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -254,7 +255,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             // forbid transition from any kind of loading to refreshing
             previousState != StateContainer.GROUPS_LOADED && newState == StateContainer.REFRESHING) {
             Timber.e("Illegal state transition from [%s] to [%s]", previousState, newState);
-            throw new IllegalStateException();
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Transition from %s to %s", previousState, newState));
         }
 
         memento.state = newState;
@@ -490,21 +491,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             return;
         }
 
-        // disable swipe-to-refresh while add keyword is in progress
-        if (isViewAttached()) {
-            getView().enableSwipeToRefresh(false);
-            // make expandable list view visible while adding new Parent list item, if it has been previously hidden
-            if (!getView().isContentViewVisible(GroupListFragment.RV_TAG)) {
-                getView().showContent(GroupListFragment.RV_TAG, false);
-            }
-        }
-
-        sendEnableAddKeywordButtonRequest(false);  // disable add keyword button while adding new Keyword
-
         memento.newlyAddedKeyword = keyword;
-
-        // show progress list item while adding new Keyword with Group-s
-        listAdapter.setAddingNewItem(true, keyword);
 
         addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
         addKeywordToBundleUseCase.execute();
@@ -518,6 +505,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         Timber.i("stateAddKeywordFinish: %s", result);
         setState(StateContainer.ADD_KEYWORD_FINISH);
         // enter ADD_KEYWORD_FINISH state logic
+
+        // disable swipe-to-refresh while add keyword is in progress
+        if (isViewAttached()) {
+            getView().enableSwipeToRefresh(false);
+            // make expandable list view visible while adding new Parent list item, if it has been previously hidden
+            if (!getView().isContentViewVisible(GroupListFragment.RV_TAG)) {
+                getView().showContent(GroupListFragment.RV_TAG, false);
+            }
+        }
+
+        sendEnableAddKeywordButtonRequest(false);  // disable add keyword button while adding new Keyword
+
+        // show progress list item while adding new Keyword with Group-s
+        listAdapter.setAddingNewItem(true, memento.newlyAddedKeyword);
 
         memento.addKeywordFinishedResult = result;  // set result flag to use in 'memento' restoration
 
