@@ -493,6 +493,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
         memento.newlyAddedKeyword = keyword;
 
+        sendEnableAddKeywordButtonRequest(false);  // disable add keyword button while adding new Keyword
+
         addKeywordToBundleUseCase.setParameters(new AddKeywordToBundle.Parameters(keyword));
         addKeywordToBundleUseCase.execute();
     }
