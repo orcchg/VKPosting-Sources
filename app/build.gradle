@@ -61,7 +61,7 @@ android {
         buildConfigField "boolean", "isAllGroupsSortedByMembersCount", "true"
         buildConfigField "boolean", "showSettingsMenuOnGroupListScreen", "true"
         buildConfigField "boolean", "useInteractiveReportScreen", "true"
-        buildConfigField "boolean", "useTutorialShowcases", "true"
+        buildConfigField "boolean", "useTutorialShowcases", "false"
         buildConfigField "boolean", "interceptKeywordClickOnVH", "false"
 
         externalNativeBuild {
