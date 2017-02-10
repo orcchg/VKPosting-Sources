@@ -71,9 +71,8 @@ public class FileUtility {
     }
 
     private static String getDumpFileName(Context context, String prefix, boolean external, boolean withTs) {
-        File storage = context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
-        if (storage == null) storage = context.getExternalFilesDir(null);  // guarantees not null
-        String root = external ? Environment.getExternalStorageDirectory().getPath() : storage.getAbsolutePath();
+        File storage = context.getExternalFilesDir(null);
+        String root = external ? Environment.getExternalStorageDirectory().getPath() : (storage != null ? storage.getAbsolutePath() : "");
         String directory = createExternalApplicationFolder(root);
         StringBuilder fileName = new StringBuilder(directory).append('/').append(prefix);
         if (withTs) fileName.append('_').append(currentTimestamp());
