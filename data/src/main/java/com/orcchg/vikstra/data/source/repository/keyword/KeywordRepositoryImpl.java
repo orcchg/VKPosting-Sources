@@ -1,10 +1,13 @@
 package com.orcchg.vikstra.data.source.repository.keyword;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.domain.executor.ReadWriteReentrantLock;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +22,7 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
 
     private final IKeywordStorage cloudSource;
     private final IKeywordStorage localSource;
+    private ReadWriteReentrantLock lock = new ReadWriteReentrantLock();
 
     @Inject
     KeywordRepositoryImpl(@Named("keywordCloud") IKeywordStorage cloudSource,
@@ -29,38 +33,78 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
 
     @Override
     public long getLastId() {
-        // TODO: impl cloudly
-        return localSource.getLastId();
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.getLastId();
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return Constant.BAD_ID;
     }
 
     /* Create */
     // ------------------------------------------
-    @Override
+    @Nullable @Override
     public KeywordBundle addKeywords(String title, Collection<Keyword> keywords) {
-        // TODO: impl cloudly
-        long lastId = getLastId();
-        KeywordBundle bundle = KeywordBundle.builder()
-                .setId(++lastId)
-                .setKeywords(new ArrayList<>(keywords))  // turn collection into ordered list
-                .setTimestamp(System.currentTimeMillis())
-                .setTitle(title)
-                .build();
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                long lastId = getLastId();
+                KeywordBundle bundle = KeywordBundle.builder()
+                        .setId(++lastId)
+                        .setKeywords(new ArrayList<>(keywords))  // turn collection into ordered list
+                        .setTimestamp(System.currentTimeMillis())
+                        .setTitle(title)
+                        .build();
 
-        return localSource.addKeywords(bundle);
+                return localSource.addKeywords(bundle);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return null;
     }
 
     @Override
     public boolean addKeywordToBundle(long id, Keyword keyword) {
-        // TODO: impl cloudly
-        return localSource.addKeywordToBundle(id, keyword);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.addKeywordToBundle(id, keyword);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 
     /* Read */
     // ------------------------------------------
-    @Override
+    @Nullable @Override
     public KeywordBundle keywords(long id) {
-        // TODO: impl cloudly
-        return localSource.keywords(id);
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.keywords(id);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return null;
     }
 
     @Override
@@ -70,29 +114,69 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
 
     @Override
     public List<KeywordBundle> keywords(int limit, int offset) {
-        // TODO: impl cloudly
-        return localSource.keywords(limit, offset);
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.keywords(limit, offset);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new ArrayList<>();
     }
 
     /* Update */
     // ------------------------------------------
     @Override
     public boolean updateKeywords(@NonNull KeywordBundle keywords) {
-        // TODO: impl cloudly
-        return localSource.updateKeywords(keywords);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.updateKeywords(keywords);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 
     @Override
     public boolean updateKeywordsTitle(long id, String newTitle) {
-        // TODO: impl cloudly
-        return localSource.updateKeywordsTitle(id, newTitle);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.updateKeywordsTitle(id, newTitle);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 
     /* Delete */
     // ------------------------------------------
     @Override
     public boolean deleteKeywords(long id) {
-        // TODO: impl cloudly
-        return localSource.deleteKeywords(id);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.deleteKeywords(id);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 }

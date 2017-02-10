@@ -1,12 +1,16 @@
 package com.orcchg.vikstra.data.source.repository.post;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.domain.executor.ReadWriteReentrantLock;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.PostEssence;
 import com.orcchg.vikstra.domain.model.essense.mapper.PostEssenceMapper;
 import com.orcchg.vikstra.domain.repository.IPostRepository;
+import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -18,6 +22,7 @@ public class PostRepositoryImpl implements IPostRepository {
 
     private final IPostStorage cloudSource;
     private final IPostStorage localSource;
+    private ReadWriteReentrantLock lock = new ReadWriteReentrantLock();
 
     @Inject
     PostRepositoryImpl(@Named("postCloud") IPostStorage cloudSource,
@@ -28,26 +33,56 @@ public class PostRepositoryImpl implements IPostRepository {
 
     @Override
     public long getLastId() {
-        // TODO: impl cloudly
-        return localSource.getLastId();
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.getLastId();
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return Constant.BAD_ID;
     }
 
     /* Create */
     // ------------------------------------------
-    @Override
+    @Nullable @Override
     public Post addPost(PostEssence essence) {
-        // TODO: impl cloudly
-        long lastId = getLastId();
-        PostEssenceMapper mapper = new PostEssenceMapper(++lastId, System.currentTimeMillis());
-        return localSource.addPost(mapper.map(essence));
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                long lastId = getLastId();
+                PostEssenceMapper mapper = new PostEssenceMapper(++lastId, System.currentTimeMillis());
+                return localSource.addPost(mapper.map(essence));
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return null;
     }
 
     /* Read */
     // ------------------------------------------
-    @Override
+    @Nullable @Override
     public Post post(long id) {
-        // TODO: impl cloudly
-        return localSource.post(id);
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.post(id);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return null;
     }
 
     @Override
@@ -57,23 +92,53 @@ public class PostRepositoryImpl implements IPostRepository {
 
     @Override
     public List<Post> posts(int limit, int offset) {
-        // TODO: impl cloudly
-        return localSource.posts(limit, offset);
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.posts(limit, offset);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new ArrayList<>();
     }
 
     /* Update */
     // ------------------------------------------
     @Override
     public boolean updatePost(@NonNull Post post) {
-        // TODO: impl cloudly
-        return localSource.updatePost(post);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.updatePost(post);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 
     /* Delete */
     // ------------------------------------------
     @Override
     public boolean deletePost(long id) {
-        // TODO: impl cloudly
-        return localSource.deletePost(id);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.deletePost(id);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 }

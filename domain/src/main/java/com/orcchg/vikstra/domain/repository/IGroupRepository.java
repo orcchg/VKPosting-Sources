@@ -13,7 +13,7 @@ public interface IGroupRepository extends IRepository {
 
     /* Create */
     // ------------------------------------------
-    GroupBundle addGroups(String title, long keywordBundleId, Collection<Group> groups);
+    @Nullable GroupBundle addGroups(String title, long keywordBundleId, Collection<Group> groups);
     boolean addGroupToBundle(long id, Group group);
 
     /* Read */

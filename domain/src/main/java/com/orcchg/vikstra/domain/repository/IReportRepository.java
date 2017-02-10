@@ -11,7 +11,7 @@ public interface IReportRepository extends IRepository {
 
     /* Create */
     // ------------------------------------------
-    GroupReportBundle addGroupReports(List<GroupReportEssence> many);
+    @Nullable GroupReportBundle addGroupReports(List<GroupReportEssence> many);
 
     /* Read */
     // ------------------------------------------

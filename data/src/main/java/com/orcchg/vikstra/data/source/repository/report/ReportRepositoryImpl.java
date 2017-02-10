@@ -2,11 +2,13 @@ package com.orcchg.vikstra.data.source.repository.report;
 
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.domain.executor.ReadWriteReentrantLock;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.essense.mapper.GroupReportEssenceMapper;
 import com.orcchg.vikstra.domain.repository.IReportRepository;
+import com.orcchg.vikstra.domain.util.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,7 @@ public class ReportRepositoryImpl implements IReportRepository {
 
     private final IReportStorage cloudSource;
     private final IReportStorage localSource;
+    private ReadWriteReentrantLock lock = new ReadWriteReentrantLock();
 
     @Inject
     ReportRepositoryImpl(@Named("reportCloud") IReportStorage cloudSource,
@@ -30,52 +33,102 @@ public class ReportRepositoryImpl implements IReportRepository {
 
     @Override
     public long getLastId() {
-        // TODO: impl cloudly
-        return localSource.getLastId();
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.getLastId();
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return Constant.BAD_ID;
     }
 
     /* Create */
     // ------------------------------------------
-    @Override
+    @Nullable @Override
     public GroupReportBundle addGroupReports(List<GroupReportEssence> many) {
-        // TODO: impl cloudly
-        long lastId = getLastId();
-        List<GroupReport> reports = new ArrayList<>();
-        GroupReportBundle bundle = GroupReportBundle.builder()
-                .setId(++lastId)
-                .setGroupReports(reports)
-                .setTimestamp(System.currentTimeMillis())
-                .build();
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                long lastId = getLastId();
+                List<GroupReport> reports = new ArrayList<>();
+                GroupReportBundle bundle = GroupReportBundle.builder()
+                        .setId(++lastId)
+                        .setGroupReports(reports)
+                        .setTimestamp(System.currentTimeMillis())
+                        .build();
 
-        // TODO: set proper id
-        GroupReportEssenceMapper mapper = new GroupReportEssenceMapper(1000, System.currentTimeMillis());
-        for (GroupReportEssence essence : many) {
-            bundle.groupReports().add(mapper.map(essence));
-            mapper.setGroupReportId(1000);
-            mapper.setTimestamp(System.currentTimeMillis());
+                // TODO: set proper id
+                GroupReportEssenceMapper mapper = new GroupReportEssenceMapper(1000, System.currentTimeMillis());
+                for (GroupReportEssence essence : many) {
+                    bundle.groupReports().add(mapper.map(essence));
+                    mapper.setGroupReportId(1000);
+                    mapper.setTimestamp(System.currentTimeMillis());
+                }
+                return localSource.addGroupReports(bundle);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
-        return localSource.addGroupReports(bundle);
+        return null;
     }
 
     /* Read */
     // ------------------------------------------
     @Nullable @Override
     public GroupReportBundle groupReports(long id) {
-        // TODO: impl cloudly
-        return localSource.groupReports(id);
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.groupReports(id);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return null;
     }
 
     /* Delete */
     // ------------------------------------------
     @Override
     public boolean clear() {
-        // TODO: impl cloudly
-        return localSource.clear();
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.clear();
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 
     @Override
     public boolean deleteGroupReports(long id) {
-        // TODO: impl cloudly
-        return localSource.deleteGroupReports(id);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.deleteGroupReports(id);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 }

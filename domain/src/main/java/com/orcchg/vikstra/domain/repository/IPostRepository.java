@@ -12,7 +12,7 @@ public interface IPostRepository extends IRepository {
 
     /* Create */
     // ------------------------------------------
-    Post addPost(PostEssence essence);
+    @Nullable Post addPost(PostEssence essence);
 
     /* Read */
     // ------------------------------------------

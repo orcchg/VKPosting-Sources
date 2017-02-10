@@ -3,10 +3,13 @@ package com.orcchg.vikstra.data.source.repository.group;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.domain.executor.ReadWriteReentrantLock;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupBundle;
 import com.orcchg.vikstra.domain.repository.IGroupRepository;
+import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -19,6 +22,7 @@ public class GroupRepositoryImpl implements IGroupRepository {
 
     private final IGroupStorage cloudSource;
     private final IGroupStorage localSource;
+    private ReadWriteReentrantLock lock = new ReadWriteReentrantLock();
 
     @Inject
     GroupRepositoryImpl(@Named("groupCloud") IGroupStorage cloudSource,
@@ -29,39 +33,79 @@ public class GroupRepositoryImpl implements IGroupRepository {
 
     @Override
     public long getLastId() {
-        // TODO: impl cloudly
-        return localSource.getLastId();
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.getLastId();
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return Constant.BAD_ID;
     }
 
     /* Create */
     // ------------------------------------------
-    @Override
+    @Nullable @Override
     public GroupBundle addGroups(String title, long keywordBundleId, Collection<Group> groups) {
-        // TODO: impl cloudly
-        long lastId = getLastId();
-        GroupBundle bundle = GroupBundle.builder()
-                .setId(++lastId)
-                .setGroups(groups)
-                .setKeywordBundleId(keywordBundleId)
-                .setTimestamp(System.currentTimeMillis())
-                .setTitle(title)
-                .build();
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                long lastId = getLastId();
+                GroupBundle bundle = GroupBundle.builder()
+                        .setId(++lastId)
+                        .setGroups(groups)
+                        .setKeywordBundleId(keywordBundleId)
+                        .setTimestamp(System.currentTimeMillis())
+                        .setTitle(title)
+                        .build();
 
-        return localSource.addGroups(bundle);
+                return localSource.addGroups(bundle);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return null;
     }
 
     @Override
     public boolean addGroupToBundle(long id, Group group) {
-        // TODO: impl cloudly
-        return localSource.addGroupToBundle(id, group);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.addGroupToBundle(id, group);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 
     /* Read */
     // ------------------------------------------
     @Nullable @Override
     public GroupBundle groups(long id) {
-        // TODO: impl cloudly
-        return localSource.groups(id);
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.groups(id);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return null;
     }
 
     @Override
@@ -71,29 +115,69 @@ public class GroupRepositoryImpl implements IGroupRepository {
 
     @Override
     public List<GroupBundle> groups(int limit, int offset) {
-        // TODO: impl cloudly
-        return localSource.groups(limit, offset);
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.groups(limit, offset);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new ArrayList<>();
     }
 
     /* Update */
     // ------------------------------------------
     @Override
     public boolean updateGroups(@NonNull GroupBundle groups) {
-        // TODO: impl cloudly
-        return localSource.updateGroups(groups);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.updateGroups(groups);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 
     @Override
     public boolean updateGroupsTitle(long id, String newTitle) {
-        // TODO: impl cloudly
-        return localSource.updateGroupsTitle(id, newTitle);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.updateGroupsTitle(id, newTitle);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 
     /* Delete */
     // ------------------------------------------
     @Override
     public boolean deleteGroups(long id) {
-        // TODO: impl cloudly
-        return localSource.deleteGroups(id);
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.deleteGroups(id);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 }

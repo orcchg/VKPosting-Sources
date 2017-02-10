@@ -13,7 +13,7 @@ public interface IKeywordRepository extends IRepository {
 
     /* Create */
     // ------------------------------------------
-    KeywordBundle addKeywords(String title, Collection<Keyword> keywords);
+    @Nullable KeywordBundle addKeywords(String title, Collection<Keyword> keywords);
     boolean addKeywordToBundle(long id, Keyword keyword);
 
     /* Read */
