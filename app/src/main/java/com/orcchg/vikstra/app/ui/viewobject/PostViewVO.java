@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.app.ui.viewobject;
 
+import android.support.annotation.Nullable;
+
 import com.google.auto.value.AutoValue;
 
 import java.util.List;
@@ -20,7 +22,7 @@ public abstract class PostViewVO {
     }
 
     public abstract String description();
-    public abstract String link();
+    public abstract @Nullable String link();
     public abstract List<MediaVO> media();
     // TODO: add other fields
 }
