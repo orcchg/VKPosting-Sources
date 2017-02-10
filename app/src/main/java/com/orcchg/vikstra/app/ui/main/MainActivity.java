@@ -536,13 +536,13 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 showcaseView.setShowcase(new ViewTarget(target), true);
                 if (titleId != 0) showcaseView.setContentTitle(getResources().getString(titleId));
                 if (descriptionId != 0) showcaseView.setContentText(getResources().getString(descriptionId));
-                showcaseView.overrideButtonClick(stickyShowcaseNextClick());
+                showcaseView.overrideButtonClick(stickyShowcaseNextClick(showcaseView));
                 showcaseView.setButtonText(buttonText);
             } else {
                 if (showcaseView != null && showcaseView.isShowing()) showcaseView.hide();
                 showcaseView = SingleShot.runShowcase(this, target, titleId, descriptionId, showcase,
                         SingleShot.MAIN_SCREEN, buttonStyle, this);
-                if (sticky && showcaseView != null) showcaseView.overrideButtonClick(stickyShowcaseNextClick());
+                if (sticky && showcaseView != null) showcaseView.overrideButtonClick(stickyShowcaseNextClick(showcaseView));
             }
         }
         return showcaseView;
@@ -594,7 +594,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     public void onShowcaseViewTouchBlocked(MotionEvent motionEvent) {
     }
 
-    private View.OnClickListener stickyShowcaseNextClick() {
+    private View.OnClickListener stickyShowcaseNextClick(ShowcaseView showcaseView) {
         return (view) -> {
             SingleShot.ShowcaseTag tag = (SingleShot.ShowcaseTag) showcaseView.getTag();
             switch (tag.showcase()) {
