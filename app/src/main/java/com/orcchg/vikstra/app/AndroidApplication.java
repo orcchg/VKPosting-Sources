@@ -2,9 +2,11 @@ package com.orcchg.vikstra.app;
 
 import android.app.Application;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.core.CrashlyticsCore;
 import com.orcchg.vikstra.BuildConfig;
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
@@ -32,9 +34,9 @@ public class AndroidApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Fabric.with(this, new Crashlytics());
         Timber.i("Application onCreate");
         initResources();
+        initializeCrashlytics();
         initializeInjector();
 //        initializeLeakDetection();
         initializeLogger();
@@ -55,6 +57,13 @@ public class AndroidApplication extends Application {
 
     /* Initialization */
     // --------------------------------------------------------------------------------------------
+    private void initializeCrashlytics() {
+        CrashlyticsCore core = new CrashlyticsCore.Builder()
+                .disabled(BuildConfig.DEBUG)
+                .build();
+        Fabric.with(this, new Crashlytics.Builder().core(core).build());
+    }
+
     private void initializeInjector() {
         applicationComponent = DaggerApplicationComponent.builder()
                 .cloudModule(new CloudModule(this))
@@ -70,6 +79,8 @@ public class AndroidApplication extends Application {
                     return getPackageName() + ":" + super.createStackElementTag(element) + ":" + element.getLineNumber();
                 }
             });
+        } else {
+            Timber.plant(new CrashlyticsTree());
         }
     }
 
@@ -101,5 +112,37 @@ public class AndroidApplication extends Application {
     // --------------------------------------------------------------------------------------------
     private void initResources() {
         TOAST_ACCESS_TOKEN_INVALID = getResources().getString(R.string.toast_access_token_has_expired);
+    }
+
+    /* Crashlytics */
+    // --------------------------------------------------------------------------------------------
+    /**
+     * {@see https://blog.xmartlabs.com/2015/07/09/Android-logging-with-Crashlytics-and-Timber/}
+     *
+     * Comment: {@link Timber.Tree} only supplies the tag when it was explicitly set.
+     * In most cases, tag will be null. If you want the tag to be extracted from the log,
+     * you need to extend {@link Timber.DebugTree} instead.
+     */
+    public class CrashlyticsTree extends Timber.DebugTree {
+        private static final String CRASHLYTICS_KEY_PRIORITY = "priority";
+        private static final String CRASHLYTICS_KEY_TAG = "tag";
+        private static final String CRASHLYTICS_KEY_MESSAGE = "message";
+
+        @Override
+        protected void log(int priority, @Nullable String tag, @Nullable String message, @Nullable Throwable t) {
+            if (priority == Log.VERBOSE) {
+                return;
+            }
+
+            Crashlytics.setInt(CRASHLYTICS_KEY_PRIORITY, priority);
+            Crashlytics.setString(CRASHLYTICS_KEY_TAG, tag);
+            Crashlytics.setString(CRASHLYTICS_KEY_MESSAGE, message);
+
+            if (t == null) {
+                Crashlytics.logException(new Exception(message));
+            } else {
+                Crashlytics.logException(t);
+            }
+        }
     }
 }
