@@ -312,7 +312,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         Timber.i("retry");
         memento.postedWithSuccess = 0;  // drop counter
         memento.postedWithFailure = 0;  // drop counter
-        memento.isFinishedPosting = false;
         memento.currentPost = null;
         storedReports.clear();
         listAdapter.clear();
@@ -343,7 +342,15 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     protected void freshStart() {
         if (isViewAttached()) getView().showLoading(getListTag());
-        if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
+        /**
+         * Load GroupReportBundle from repository either if we aren't in interactive mode or we are
+         * in such mode, but have also restored everything from repository that we had previously
+         * managed to store. So, now it is allowed to swipe-to-refresh (by default) and this will lead
+         * {@link ReportPresenter#retry()} method to be invoked, and then {@link ReportPresenter#freshStart()},
+         * and we will get here, but still in interactive mode - so, we just retry and reload items
+         * from repository.
+         */
+        if (!AppConfig.INSTANCE.useInteractiveReportScreen() || isStateRestored()) {
             getGroupReportBundleByIdUseCase.execute();
         } else if (isViewAttached()) {
             // disable swipe-to-refresh when GroupReport-s are coming interactively
