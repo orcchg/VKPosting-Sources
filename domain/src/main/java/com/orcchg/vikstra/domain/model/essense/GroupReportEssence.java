@@ -7,6 +7,8 @@ import com.orcchg.vikstra.domain.model.GroupReport;
 @AutoValue
 public abstract class GroupReportEssence implements Essence {
 
+    private boolean wasReverted = false;
+
     public static Builder builder() {
         return new AutoValue_GroupReportEssence.Builder();
     }
@@ -24,6 +26,14 @@ public abstract class GroupReportEssence implements Essence {
     public abstract int errorCode();
     public abstract Group group();
     public abstract long wallPostId();
+
+    public boolean wasReverted() {
+        return wasReverted;
+    }
+
+    public void setReverted(boolean wasReverted) {
+        this.wasReverted = wasReverted;
+    }
 
     @GroupReport.Status
     public int status() {

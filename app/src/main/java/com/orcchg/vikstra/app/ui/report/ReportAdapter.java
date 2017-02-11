@@ -21,9 +21,13 @@ public class ReportAdapter extends BaseAdapter<ReportViewHolder, ReportListItemV
     }
 
     public void setItemReverted(int position, boolean reverted) {
+        setItemRevertedSilent(position, reverted);
+        notifyItemChanged(position);
+    }
+
+    public void setItemRevertedSilent(int position, boolean reverted) {
         ReportListItemVO vo = models.get(position);
         vo.setReverted(reverted);
-        notifyItemChanged(position);
     }
 
     public void setAllItemsReverted(boolean reverted) {

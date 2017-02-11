@@ -96,6 +96,21 @@ public class ReportDatabase implements IReportStorage {
         return null;
     }
 
+    /* Update */
+    // ------------------------------------------
+    @DebugLog @Override
+    public boolean updateReports(@NonNull GroupReportBundle reports) {
+        boolean result = false;
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
+        GroupReportBundleDBO dbo = realm.where(GroupReportBundleDBO.class).equalTo(GroupReportBundleDBO.COLUMN_ID, reports.id()).findFirst();
+        if (dbo != null) {
+            realm.executeTransaction((xrealm) -> groupReportBundleToDboPopulator.populate(reports, dbo));
+            result = true;
+        }
+        realm.close();
+        return result;
+    }
+
     /* Delete */
     // ------------------------------------------
     @DebugLog @Override

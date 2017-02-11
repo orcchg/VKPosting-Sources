@@ -43,6 +43,13 @@ public class ReportCloud implements IReportStorage {
         return null;
     }
 
+    /* Update */
+    // ------------------------------------------
+    @Override
+    public boolean updateReports(@NonNull GroupReportBundle reports) {
+        return false;
+    }
+
     /* Delete */
     // ------------------------------------------
     @Override

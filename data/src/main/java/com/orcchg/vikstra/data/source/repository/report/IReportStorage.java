@@ -18,6 +18,10 @@ public interface IReportStorage extends IStorage {
     // ------------------------------------------
     @Nullable GroupReportBundle groupReports(long id);
 
+    /* Update */
+    // ------------------------------------------
+    boolean updateReports(@NonNull GroupReportBundle reports);
+
     /* Delete */
     // ------------------------------------------
     boolean clear();

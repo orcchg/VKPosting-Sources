@@ -22,6 +22,7 @@ public class GroupReportToDboPopulator implements Populator<GroupReport, GroupRe
         dbo.cancelled = object.cancelled();
         dbo.errorCode = object.errorCode();
         dbo.group = groupToDboMapper.map(object.group());
+        dbo.reverted = object.wasReverted();
         dbo.timestamp = object.timestamp();
         dbo.wallPostId = object.wallPostId();
     }

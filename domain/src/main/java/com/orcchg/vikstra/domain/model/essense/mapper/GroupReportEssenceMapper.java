@@ -3,7 +3,6 @@ package com.orcchg.vikstra.domain.model.essense.mapper;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.mapper.DuplexMapper;
-import com.orcchg.vikstra.domain.model.mapper.Mapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ public class GroupReportEssenceMapper implements DuplexMapper<GroupReportEssence
     // ------------------------------------------
     @Override
     public GroupReport map(GroupReportEssence object) {
-        return GroupReport.builder()
+        GroupReport report = GroupReport.builder()
                 .setId(groupReportId)
                 .setCancelled(object.cancelled())
                 .setErrorCode(object.errorCode())
@@ -43,6 +42,8 @@ public class GroupReportEssenceMapper implements DuplexMapper<GroupReportEssence
                 .setTimestamp(timestamp)
                 .setWallPostId(object.wallPostId())
                 .build();
+        report.setReverted(object.wasReverted());
+        return report;
     }
 
     @Override
@@ -62,12 +63,14 @@ public class GroupReportEssenceMapper implements DuplexMapper<GroupReportEssence
      */
     @Override
     public GroupReportEssence mapBack(GroupReport object) {
-        return GroupReportEssence.builder()
+        GroupReportEssence essence = GroupReportEssence.builder()
                 .setCancelled(object.cancelled())
                 .setErrorCode(object.errorCode())
                 .setGroup(object.group())
                 .setWallPostId(object.wallPostId())
                 .build();
+        essence.setReverted(object.wasReverted());
+        return essence;
     }
 
     @Override

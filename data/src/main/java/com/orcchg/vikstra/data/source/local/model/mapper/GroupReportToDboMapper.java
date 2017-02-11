@@ -44,7 +44,7 @@ public class GroupReportToDboMapper implements DuplexMapper<GroupReport, GroupRe
     // ------------------------------------------
     @Override
     public GroupReport mapBack(GroupReportDBO object) {
-        return GroupReport.builder()
+        GroupReport report = GroupReport.builder()
                 .setId(object.id)
                 .setCancelled(object.cancelled)
                 .setErrorCode(object.errorCode)
@@ -52,6 +52,8 @@ public class GroupReportToDboMapper implements DuplexMapper<GroupReport, GroupRe
                 .setTimestamp(object.timestamp)
                 .setWallPostId(object.wallPostId)
                 .build();
+        report.setReverted(object.reverted);
+        return report;
     }
 
     @Override

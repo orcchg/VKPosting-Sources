@@ -47,7 +47,8 @@ public class ReportViewHolder extends NormalViewHolder<ReportListItemVO> {
 
         @GroupReport.Status int status = viewObject.reportStatus();
         // TODO: make REVERT basic status of model
-        if (viewObject.wasReverted() && status == GroupReport.STATUS_SUCCESS) {
+        if (status == GroupReport.STATUS_REVERT ||
+            viewObject.wasReverted() && status == GroupReport.STATUS_SUCCESS) {
             status = GroupReport.STATUS_REVERT;
         }
 

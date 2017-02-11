@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.data.source.repository.report;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.executor.ReadWriteReentrantLock;
@@ -96,6 +97,24 @@ public class ReportRepositoryImpl implements IReportRepository {
             Thread.currentThread().interrupt();
         }
         return null;
+    }
+
+    /* Update */
+    // ------------------------------------------
+    @Override
+    public boolean updateReports(@NonNull GroupReportBundle reports) {
+        try {
+            lock.lockWrite();
+            try {
+                // TODO: impl cloudly
+                return localSource.updateReports(reports);
+            } finally {
+                lock.unlockWrite();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return false;
     }
 
     /* Delete */

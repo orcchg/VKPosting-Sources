@@ -19,12 +19,14 @@ public class GroupReportEssenceToVoMapper implements Mapper<GroupReportEssence, 
     @Override
     public ReportListItemVO map(GroupReportEssence object) {
         Group group = object.group();
-        return ReportListItemVO.builder()
+        ReportListItemVO viewObject = ReportListItemVO.builder()
                 .setGroupId(object.group().id())
                 .setGroupName(group.name())
                 .setMembersCount(group.membersCount())
                 .setReportStatus(object.status())
                 .build();
+        viewObject.setReverted(object.wasReverted());
+        return viewObject;
     }
 
     @Override

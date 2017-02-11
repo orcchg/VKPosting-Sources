@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.domain.repository;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
@@ -16,6 +17,10 @@ public interface IReportRepository extends IRepository {
     /* Read */
     // ------------------------------------------
     @Nullable GroupReportBundle groupReports(long id);
+
+    /* Update */
+    // ------------------------------------------
+    boolean updateReports(@NonNull GroupReportBundle reports);
 
     /* Delete */
     // ------------------------------------------

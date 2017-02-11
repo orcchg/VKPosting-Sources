@@ -37,7 +37,7 @@ public class ReportMigration implements RealmMigration {
          *     long timestamp;
          *     long wallPostId;
          *
-         * Version 1
+         * Version 1, 2, 3
          * --------------------------------------
          *     long id;
          *  ++ boolean cancelled;
@@ -45,10 +45,26 @@ public class ReportMigration implements RealmMigration {
          *     GroupDBO group;
          *     long timestamp;
          *     long wallPostId;
+         *
+         * Version 4
+         * --------------------------------------
+         *     long id;
+         *     boolean cancelled;
+         *     int errorCode;
+         *     GroupDBO group;
+         *  ++ boolean reverted;
+         *     long timestamp;
+         *     long wallPostId;
          */
         if (oldVersion == 0) {
             RealmObjectSchema objectSchema = schema.get("GroupReportDBO");
             objectSchema.addField(GroupReportDBO.COLUMN_CANCELLED, boolean.class);
+            oldVersion = 3;
+        }
+
+        if (oldVersion < 4) {
+            RealmObjectSchema objectSchema = schema.get("GroupReportDBO");
+            objectSchema.addField(GroupReportDBO.COLUMN_REVERTED, boolean.class);
             ++oldVersion;
         }
     }

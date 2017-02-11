@@ -19,6 +19,8 @@ public abstract class GroupReport implements Comparable<GroupReport> {
     @Retention(RetentionPolicy.SOURCE)
     public @interface Status {}
 
+    private boolean wasReverted = false;
+
     public static Builder builder() {
         return new AutoValue_GroupReport.Builder();
     }
@@ -41,9 +43,17 @@ public abstract class GroupReport implements Comparable<GroupReport> {
     public abstract long timestamp();
     public abstract long wallPostId();
 
+    public boolean wasReverted() {
+        return wasReverted;
+    }
+
+    public void setReverted(boolean wasReverted) {
+        this.wasReverted = wasReverted;
+    }
+
     @Status
     public int status() {
-        // TODO: return status REVERT
+        if (wasReverted()) return STATUS_REVERT;
         if (cancelled()) return STATUS_CANCEL;
         if (errorCode() == 0) return STATUS_SUCCESS;
         return STATUS_FAILURE;
@@ -54,7 +64,7 @@ public abstract class GroupReport implements Comparable<GroupReport> {
             case STATUS_CANCEL:   return "Cancelled";
             case STATUS_SUCCESS:  return "Success";
             case STATUS_FAILURE:  return "Failure";
-            case STATUS_REVERT:   return "Revert";
+            case STATUS_REVERT:   return "Reverted";
         }
         return "";
     }

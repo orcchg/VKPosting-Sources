@@ -23,6 +23,7 @@ import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.DumpGroupReports;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
+import com.orcchg.vikstra.domain.interactor.report.PostGroupReportBundle;
 import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
 import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost;
 import com.orcchg.vikstra.domain.model.Group;
@@ -52,6 +53,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final GetGroupReportBundleById getGroupReportBundleByIdUseCase;
     private final GetPostById getPostByIdUseCase;
     private final DumpGroupReports dumpGroupReportsUseCase;
+    private final PostGroupReportBundle postGroupReportBundleUseCase;
     private final PutGroupReportBundle putGroupReportBundleUseCase;
     private final VkontakteEndpoint vkontakteEndpoint;
 
@@ -65,7 +67,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final MultiUseCase.CancelCallback postingCancelledCallback;
     private final MultiUseCase.FinishCallback postingFinishedCallback;
 
-    private @InteractiveMode @Heavy List<GroupReport> storedReports = new ArrayList<>();
+    private @Heavy List<GroupReport> storedReports = new ArrayList<>();
+    private @Heavy GroupReportBundle inputGroupReportBundle;  // used only in non-interactive mode
 
     private Memento memento = new Memento();
 
@@ -120,8 +123,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     // --------------------------------------------------------------------------------------------
     @Inject
     ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase, GetPostById getPostByIdUseCase,
-                    DumpGroupReports dumpGroupReportsUseCase, PutGroupReportBundle putGroupReportBundleUseCase,
-                    VkontakteEndpoint vkontakteEndpoint,
+                    DumpGroupReports dumpGroupReportsUseCase, PostGroupReportBundle postGroupReportBundleUseCase,
+                    PutGroupReportBundle putGroupReportBundleUseCase, VkontakteEndpoint vkontakteEndpoint,
                     GroupReportToVoMapper groupReportToVoMapper, GroupReportEssenceMapper groupReportEssenceMapper,
                     GroupReportEssenceToVoMapper groupReportEssenceToVoMapper, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter();
@@ -131,6 +134,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
         this.dumpGroupReportsUseCase = dumpGroupReportsUseCase;
         this.dumpGroupReportsUseCase.setPostExecuteCallback(createDumpGroupReportsCallback());
+        this.postGroupReportBundleUseCase = postGroupReportBundleUseCase;  // no callback - background task
         this.putGroupReportBundleUseCase = putGroupReportBundleUseCase;  // no callback - background task
         this.vkontakteEndpoint = vkontakteEndpoint;
         this.groupReportToVoMapper = groupReportToVoMapper;
@@ -180,7 +184,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             List<GroupReportEssence> essences = groupReportEssenceMapper.mapBack(storedReports);  // 'id' and 'timestamp' are ignored
             PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(essences);
             putGroupReportBundleUseCase.setParameters(parameters);
-            putGroupReportBundleUseCase.execute();
+            putGroupReportBundleUseCase.execute();  // silent create without callback
         }
         memento.toBundle(outState);
     }
@@ -295,7 +299,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     public void performReverting() {
         Timber.i("performReverting");
         List<GroupReport> successReports = new ArrayList<>();
-        for (GroupReport report : storedReports) {
+        for (GroupReport report : storedReports) {  // only successful posts can be reverted
             if (report.status() == GroupReport.STATUS_SUCCESS) successReports.add(report);
         }
         if (successReports.isEmpty()) {
@@ -313,6 +317,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         memento.postedWithSuccess = 0;  // drop counter
         memento.postedWithFailure = 0;  // drop counter
         memento.currentPost = null;
+        inputGroupReportBundle = null;
         storedReports.clear();
         listAdapter.clear();
         dropListStat();
@@ -388,6 +393,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
             @DebugLog @Override
             public void onFinish(@Nullable GroupReportBundle bundle) {
+                inputGroupReportBundle = bundle;
                 long groupReportBundleId = getGroupReportBundleByIdUseCase.getGroupReportId();
                 if (bundle == null || bundle.groupReports() == null) {
                     Timber.e("GroupReportBundle wasn't found by id [%s], or groupReports property is null", groupReportBundleId);
@@ -499,7 +505,35 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             @Override
             public void onFinish(@Nullable Boolean result) {
                 Timber.i("Use-Case: succeeded to delete wall Post-s");
-                ((ReportAdapter) listAdapter).setAllItemsReverted(true);
+                int totalReverted = 0;
+                int position = 0;
+                for (GroupReport report : storedReports) {  // only successful posts can be reverted
+                    if (report.status() == GroupReport.STATUS_SUCCESS) {
+                        ++totalReverted;
+                        report.setReverted(true);
+                        int xposition = position;
+                        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+                            // in interactive mode items in list adapter have reversed order
+                            xposition = storedReports.size() - 1 - position;
+                        }
+                        ((ReportAdapter) listAdapter).setItemRevertedSilent(xposition, true);
+                    }
+                    ++position;
+                }
+                if (totalReverted > 0) {
+                    Timber.d("Total reverted successful posts: %s", totalReverted);
+                    listAdapter.notifyDataSetChanged();  // visual changes
+                    if (!AppConfig.INSTANCE.useInteractiveReportScreen() || isStateRestored()) {
+                        Timber.d("Update GroupReport-s in repository in non-interactive mode or after state restored");
+                        GroupReportBundle bundle = GroupReportBundle.builder()
+                                .setId(inputGroupReportBundle.id())
+                                .setGroupReports(storedReports)
+                                .setTimestamp(inputGroupReportBundle.timestamp())
+                                .build();
+                        postGroupReportBundleUseCase.setParameters(new PostGroupReportBundle.Parameters(bundle));
+                        postGroupReportBundleUseCase.execute();  // silent update without callback
+                    }
+                }
                 if (isViewAttached()) getView().onPostRevertingFinished();
             }
 
