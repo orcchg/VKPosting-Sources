@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.report.injection;
+package com.orcchg.vikstra.app.ui.report.main.injection;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;

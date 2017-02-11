@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.report.viewholder;
+package com.orcchg.vikstra.app.ui.report.main.viewholder;
 
 import android.content.Context;
 import android.support.annotation.ColorInt;

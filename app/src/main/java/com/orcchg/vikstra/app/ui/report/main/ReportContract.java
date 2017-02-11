@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.report;
+package com.orcchg.vikstra.app.ui.report.main;
 
 import android.support.annotation.Nullable;
 

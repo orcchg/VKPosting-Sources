@@ -9,7 +9,7 @@ import android.support.v4.app.NotificationManagerCompat;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
-import com.orcchg.vikstra.app.ui.report.ReportActivity;
+import com.orcchg.vikstra.app.ui.report.main.ReportActivity;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
 

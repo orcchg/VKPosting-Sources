@@ -12,7 +12,7 @@ vikstra:MultiUseCase:91  D  Performing request [0] at time 17182 16:16:38
                          V  ⇠ onPause [0ms]
                          V  ⇢ onPause()
                          V  ⇠ onPause [0ms]
-                         V  ⇢ attachView(view=com.orcchg.vikstra.app.ui.report.ReportActivity@c4768ec)
+                         V  ⇢ attachView(view=com.orcchg.vikstra.app.ui.report.main.ReportActivity@c4768ec)
                          V  ⇠ attachView [0ms]
                          V  ⇢ onCreate(savedInstanceState=null)
                          V  ⇠ onCreate [0ms]
@@ -108,7 +108,7 @@ ikstra:MultiUseCase:108  W  Unhandled exception: android.view.ViewRootImpl$Calle
          AndroidRuntime  E  FATAL EXCEPTION: pool-8-thread-1
                          E  Process: com.orcchg.vikstra, PID: 8096
                          E  java.lang.ClassCastException: android.view.ViewRootImpl$CalledFromWrongThreadException cannot be cast to com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException
-                         E      at com.orcchg.vikstra.app.ui.report.ReportPresenter$3.onDone(ReportPresenter.java:182)
+                         E      at com.orcchg.vikstra.app.ui.report.main.ReportPresenter$3.onDone(ReportPresenter.java:182)
                          E      at com.orcchg.vikstra.data.source.memory.ContentUtility$InMemoryStorage.setPostingProgress(ContentUtility.java:72)
                          E      at com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint$8.onDone(VkontakteEndpoint.java:267)
                          E      at com.orcchg.vikstra.domain.interactor.base.MultiUseCase$1.run(MultiUseCase.java:110)

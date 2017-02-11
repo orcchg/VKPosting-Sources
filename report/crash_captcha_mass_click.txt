@@ -39,9 +39,9 @@ vikstra:MakeWallPost:94  D  MakeWallPost.Parameters {group=Group{id=-74443920, c
                          E  Process: com.orcchg.vikstra, PID: 22446
                          E  java.lang.ClassCastException: java.lang.NullPointerException cannot be cast to com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseException
                          E      at com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint.refineModel(VkontakteEndpoint.java:412)
-                         E      at com.orcchg.vikstra.app.ui.report.ReportPresenter.lambda$createPostingProgressCallback$66(ReportPresenter.java:265)
-                         E      at com.orcchg.vikstra.app.ui.report.ReportPresenter.access$lambda$2(ReportPresenter.java:0)
-                         E      at com.orcchg.vikstra.app.ui.report.ReportPresenter$$Lambda$3.onDone(Unknown Source)
+                         E      at com.orcchg.vikstra.app.ui.report.main.ReportPresenter.lambda$createPostingProgressCallback$66(ReportPresenter.java:265)
+                         E      at com.orcchg.vikstra.app.ui.report.main.ReportPresenter.access$lambda$2(ReportPresenter.java:0)
+                         E      at com.orcchg.vikstra.app.ui.report.main.ReportPresenter$$Lambda$3.onDone(Unknown Source)
                          E      at com.orcchg.vikstra.data.source.memory.ContentUtility$InMemoryStorage.setPostingProgress(ContentUtility.java:75)
                          E      at com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint.lambda$makeWallPosts$3(VkontakteEndpoint.java:282)
                          E      at com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint.access$lambda$3(VkontakteEndpoint.java:0)

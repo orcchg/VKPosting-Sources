@@ -1,4 +1,4 @@
-package com.orcchg.vikstra.app.ui.report;
+package com.orcchg.vikstra.app.ui.report.main;
 
 import android.content.Context;
 import android.content.Intent;
@@ -30,9 +30,9 @@ import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
 import com.orcchg.vikstra.app.ui.common.showcase.SingleShot;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
-import com.orcchg.vikstra.app.ui.report.injection.DaggerReportComponent;
-import com.orcchg.vikstra.app.ui.report.injection.ReportComponent;
-import com.orcchg.vikstra.app.ui.report.injection.ReportModule;
+import com.orcchg.vikstra.app.ui.report.main.injection.DaggerReportComponent;
+import com.orcchg.vikstra.app.ui.report.main.injection.ReportComponent;
+import com.orcchg.vikstra.app.ui.report.main.injection.ReportModule;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;

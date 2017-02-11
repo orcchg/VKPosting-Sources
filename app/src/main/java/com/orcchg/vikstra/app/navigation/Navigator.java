@@ -28,7 +28,7 @@ import com.orcchg.vikstra.app.ui.main.StartActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.list.PostListActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
-import com.orcchg.vikstra.app.ui.report.ReportActivity;
+import com.orcchg.vikstra.app.ui.report.main.ReportActivity;
 import com.orcchg.vikstra.app.ui.status.StatusActivity;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
