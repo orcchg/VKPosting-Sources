@@ -6,6 +6,7 @@ import com.orcchg.vikstra.data.source.direct.vkontakte.VkAttachLocalCache;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.post.PostPost;
 
 import javax.inject.Singleton;
 
@@ -21,8 +22,8 @@ public class DirectSourceModule {
     }
 
     @Provides @Singleton
-    VkontakteEndpoint provideVkontakteEndpoint(ImageLoader imageLoader, VkAttachLocalCache attachLocalCache,
-           ThreadExecutor executor, PostExecuteScheduler scheduler) {
-        return new VkontakteEndpoint(imageLoader, attachLocalCache, executor, scheduler);
+    VkontakteEndpoint provideVkontakteEndpoint(PostPost postPostUseCase, ImageLoader imageLoader,
+           VkAttachLocalCache attachLocalCache, ThreadExecutor executor, PostExecuteScheduler scheduler) {
+        return new VkontakteEndpoint(postPostUseCase, imageLoader, attachLocalCache, executor, scheduler);
     }
 }

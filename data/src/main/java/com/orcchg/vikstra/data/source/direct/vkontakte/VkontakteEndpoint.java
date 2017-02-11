@@ -17,6 +17,7 @@ import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
+import com.orcchg.vikstra.domain.interactor.post.PostPost;
 import com.orcchg.vikstra.domain.interactor.vkontakte.DeleteWallPost;
 import com.orcchg.vikstra.domain.interactor.vkontakte.DeleteWallPosts;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetCurrentUser;
@@ -55,12 +56,15 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
+@Singleton
 public class VkontakteEndpoint extends Endpoint {
 
+    private final PostPost postPostUseCase;
     private final ImageLoader imageLoader;
     private final VkAttachLocalCache attachLocalCache;
 
@@ -71,10 +75,11 @@ public class VkontakteEndpoint extends Endpoint {
         public static final String WALL = "wall";
     }
 
-    @Inject
-    public VkontakteEndpoint(ImageLoader imageLoader, VkAttachLocalCache attachLocalCache,
+    @DebugLog @Inject
+    public VkontakteEndpoint(PostPost postPostUseCase, ImageLoader imageLoader, VkAttachLocalCache attachLocalCache,
                              ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
+        this.postPostUseCase = postPostUseCase;
         this.imageLoader = imageLoader;
         this.attachLocalCache = attachLocalCache;
     }
@@ -212,7 +217,10 @@ public class VkontakteEndpoint extends Endpoint {
 
         List<Media> media = post.media();
         if (media != null && !media.isEmpty()) {
-            Timber.d("Found some media in attachments to Post, uploading media first before wall posting");
+            Timber.d("Found some media in attachments to Post, uploading not cached media first before wall posting");
+            refreshIdsForUploadedMedia(post);  // go to declaration for full explanation of this call
+
+            // checking cache to get already uploaded media
             List<Media> cached = new ArrayList<>();
             List<Media> retained = new ArrayList<>();
             attachLocalCache.retain(media, cached, retained);
@@ -482,6 +490,66 @@ public class VkontakteEndpoint extends Endpoint {
                 if (callback != null) callback.onError(e);
             }
         };
+    }
+
+    // ------------------------------------------
+    /**
+     * Check all media items attached to the current {@param post}, whether it has been already
+     * uploaded to Vkontakte endpoint: if so, it has an id assigned by endpoint and associated
+     * with the path (url) or this media item. We should update id of {@link Media} instance
+     * (i.e. field retrieved from {@link Media#id()} method call), if it has been generated
+     * internally within the Application, and hasn't been assigned by endpoint yet. This operation
+     * will prevent from re-uploading of already uploaded media.
+     *
+     * Some details: at the time some media is attached to some {@link Post}, it's path (url)
+     * (i.e. field retrieved from {@link Media#url()} method call) is checked in {@link VkAttachLocalCache}
+     * whether it has corresponding id assigned by Vkontakte endpoint, and hence this media
+     * had already been uploaded to endpoint before. If so, this media is considered 'cached'
+     * and will be attached to {@link MakeWallPostToGroups.Parameters} directly without being
+     * preliminary uploaded. Otherwise, media will be uploaded first and then attached.
+     *
+     * If some media had not been previously uploaded, it will be, and it's path (url) will
+     * become associated with an id assigned by endpoint in the {@link VkAttachLocalCache}.
+     * But for the current {@param post} this media item remains not cached because it still
+     * has an internally-generated id. If user will attach the same media item to some another
+     * {@link Post} or attach it repeatedly to the same {@link Post} (or re-attach it), this
+     * media item will then become cached, but still it isn't cached. So, we update it's id here.
+     *
+     * Internally-generated id and id assigned by endpoint can'not be distinguished properly,
+     * but we assume, that an endpoint's id has quite large value (>10_000_000), when an internal
+     * id has quite small value (around {@link Constant.INIT_ID}). These ids are unlikely to
+     * overlap, because the threshold is quite big - no user can reach this threshold and attach
+     * such number of media manually. But if they do overlap, then some media items uploaded to
+     * endpoint have the same ids as some not uploaded ones, and when user attaches such
+     * not uploaded media items before posting, they will be considered as already uploaded
+     * since there will be a cache hit for each of them. But those already uploaded media items
+     * will be actually posted during wall posting instead of selected not uploaded ones, so
+     * in final posting there will be different media items, not those selected by user.
+     */
+    private void refreshIdsForUploadedMedia(Post post) {
+        List<Media> media = post.media();
+        if (media == null || media.isEmpty()) return;
+
+        int totalChanged = 0;
+        for (int i = 0; i < media.size(); ++i) {
+            Media item = media.get(i);
+            if (item.id() < 10_000_000) {  // threshold between internally-generated media ids and assigned by endpoint
+                // media item has id assigned internally, not by endpoint after uploading
+                long id = attachLocalCache.getIdByPhotoPath(item.url());
+                if (id != Constant.BAD_ID) {
+                    // media item has already been uploaded to endpoint, it's id should be updated
+                    Media updated = Media.builder().setId(id).setUrl(item.url()).build();
+                    media.set(i, updated);  // safe collection modification, because it's not structural
+                    ++totalChanged;
+                }
+            }
+        }
+        // update Post in repository after modification
+        if (totalChanged > 0) {
+            Timber.d("Changed ids for %s media items in Post", totalChanged);
+            postPostUseCase.setParameters(new PostPost.Parameters(post));
+            postPostUseCase.execute();
+        }
     }
 
     /* Conversion */
