@@ -139,7 +139,7 @@ public class AndroidApplication extends Application {
             Crashlytics.setString(CRASHLYTICS_KEY_MESSAGE, message);
 
             if (t == null) {
-                Crashlytics.logException(new Exception(message));
+                Crashlytics.log(message);
             } else {
                 Crashlytics.logException(t);
             }
