@@ -22,6 +22,10 @@ public class VkUseCaseExceptionFactory {
                 case 220: return new Api220VkUseCaseException(error);
             }
         }
+        switch (error.errorCode) {
+            case VKError.VK_REQUEST_HTTP_FAILED:
+                return new NoConnectionException(error);
+        }
         return new VkUseCaseException(error);
     }
 }
