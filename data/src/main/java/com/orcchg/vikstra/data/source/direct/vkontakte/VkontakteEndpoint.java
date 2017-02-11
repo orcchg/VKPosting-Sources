@@ -222,10 +222,15 @@ public class VkontakteEndpoint extends Endpoint {
              * For each already cached media we just make wall post with attached image ids directly.
              */
             if (!cached.isEmpty()) {
+                Timber.d("Some media [size = %s] have already been cached, attach it directly", cached.size());
                 VKAttachments attachments = attachLocalCache.readPhotos(cached);
-                MakeWallPostToGroups.Parameters parameters = paramsBuilder.build();
-                parameters.setAttachments(attachments);
-                makeWallPosts(parameters, callback, progressCallback);
+                paramsBuilder.addAttachments(attachments);  // add cached media to attachment directly
+            }
+
+            if (retained.isEmpty()) {
+                Timber.d("No media will be uploaded to endpoint before making wall post - all is in cache");
+                makeWallPosts(paramsBuilder.build(), callback, progressCallback);
+                return;  // not need to load media before making wall posting - already uploaded
             }
 
             /**
@@ -236,6 +241,7 @@ public class VkontakteEndpoint extends Endpoint {
              *
              * Nothing will be done is 'retained' list is empty or NULL
              */
+            Timber.d("Some media [size = %s] should be uploaded to endpoint before making wall posting", retained.size());
             imageLoader.loadImages(retained, new UseCase.OnPostExecuteCallback<List<Ordered<Bitmap>>>() {
                 @DebugLog @Override
                 public void onFinish(@Nullable List<Ordered<Bitmap>> bitmaps) {
