@@ -63,7 +63,7 @@ public class KeywordListActivity extends BaseActivity<KeywordListContract.View, 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_keywords_list);
+        setContentView(R.layout.activity_container_root);
         ButterKnife.bind(this);
         initView();
         initToolbar();

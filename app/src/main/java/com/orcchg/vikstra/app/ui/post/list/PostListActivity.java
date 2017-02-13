@@ -82,7 +82,7 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         initData(savedInstanceState);  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_posts_list);
+        setContentView(R.layout.activity_container_root);
         ButterKnife.bind(this);
         initView();
         initToolbar();
