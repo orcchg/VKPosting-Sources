@@ -13,6 +13,7 @@ import com.orcchg.vikstra.app.ui.base.stub.SimpleBaseActivity;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class ReportHistoryActivity extends SimpleBaseActivity implements ShadowHolder {
 
@@ -27,14 +28,25 @@ public class ReportHistoryActivity extends SimpleBaseActivity implements ShadowH
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_container_root);
+        ButterKnife.bind(this);
+        initView();
+        initToolbar();
+    }
 
+    /* View */
+    // --------------------------------------------------------------------------------------------
+    private void initView() {
+        //
+    }
+
+    private void initToolbar() {
+        //
     }
 
     @Override
     public void showShadow(boolean show) {
         dropshadowView.setVisibility(show ? View.VISIBLE : View.INVISIBLE);
     }
-
-    /* View */
-    // --------------------------------------------------------------------------------------------
 }

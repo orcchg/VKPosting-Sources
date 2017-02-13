@@ -80,6 +80,10 @@
                   android:theme="@style/AppTheme"/>
 
         <!-- Report -->
+        <activity android:name=".app.ui.report.history.ReportHistoryActivity"
+                  android:label="@string/report_history_screen_title"
+                  android:theme="@style/AppTheme"/>
+
         <activity android:name=".app.ui.report.main.ReportActivity"
                   android:label="@string/report_screen_title"
                   android:theme="@style/AppTheme"

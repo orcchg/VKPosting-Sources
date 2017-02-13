@@ -147,7 +147,8 @@ android {
                            'src/main/res-screen/post/list',
                            'src/main/res-screen/post/single',
                            'src/main/res-screen/post/view',
-                           'src/main/res-screen/report',
+                           'src/main/res-screen/report/history',
+                           'src/main/res-screen/report/main',
                            'src/main/res-screen/status']
             file('src/main/res-screen')
                     .listFiles()
