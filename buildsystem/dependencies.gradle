@@ -48,11 +48,19 @@ ext {
     vkontakteSdkVersion = '1.6.8'
 
     //Testing
+    androidTestRulesVersion = '0.5'
+    androidTestRunnerVersion = '0.5'
     assertJVersion = '1.7.1'
     dexmakerVersion = '1.0'
     espressoVersion = '2.2.2'
+    espressoContribVersion = '2.2.2'
+    espressoIntentsVersion = '2.2.2'
+    hamcrestVersion = '1.3'
     jUnitVersion = '4.12'
-    mockitoVersion = '1.9.5'
+    mockitoVersion = '1.10.19'
+    okHttpMockWebServer = '3.4.0'
+    powermockJunitVersion = '1.6.6'
+    powermockMockito = '1.6.6'
     robolectricVersion = '3.0'
     testingSupportLibVersion = '0.1'
 
@@ -93,9 +101,13 @@ ext {
     ]
 
     presentationTestDependencies = [
+            androidTestRules:     "com.android.support.test:rules:${androidTestRulesVersion}",
+            androidTestRunner:    "com.android.support.test:runner:${androidTestRunnerVersion}",
             dexmaker:             "com.google.dexmaker:dexmaker:${dexmakerVersion}",
             dexmakerMockito:      "com.google.dexmaker:dexmaker-mockito:${dexmakerVersion}",
             espresso:             "com.android.support.test.espresso:espresso-core:${espressoVersion}",
+            espressoContrib:      "com.android.support.test.espresso:espresso-contrib:${espressoContribVersion}",
+            espressoIntents:      "com.android.support.test.espresso:espresso-intents:${espressoIntentsVersion}",
             junit:                "junit:junit:${jUnitVersion}",
             mockito:              "org.mockito:mockito-core:${mockitoVersion}",
             testingSupportLib:    "com.android.support.test:testing-support-lib:${testingSupportLibVersion}",

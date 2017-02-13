@@ -230,12 +230,32 @@ dependencies {
 
     testCompile presentationTestDependencies.junit
 
-    androidTestCompile presentationTestDependencies.mockito
+    androidTestCompile(presentationTestDependencies.androidTestRules) {
+        exclude module: 'support-annotations'
+        exclude module: 'support-v4'
+    }
+    androidTestCompile(presentationTestDependencies.androidTestRunner) {
+        exclude module: 'support-annotations'
+        exclude module: 'support-v4'
+    }
     androidTestCompile presentationTestDependencies.dexmaker
     androidTestCompile presentationTestDependencies.dexmakerMockito
-    androidTestCompile(presentationTestDependencies.espresso, {
+    androidTestCompile presentationTestDependencies.mockito
+    androidTestCompile(presentationTestDependencies.espresso) {
         exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    }
+    androidTestCompile(presentationTestDependencies.espressoContrib) {
+        exclude group: 'com.android.support', module: 'design'
+        exclude module: 'appcompat-v7'
+        exclude module: 'recyclerview-v7'
+        exclude module: 'support-annotations'
+        exclude module: 'support-v4'
+    }
+    androidTestCompile(presentationTestDependencies.espressoIntents) {
+        exclude module: 'recyclerview-v7'
+        exclude module: 'support-annotations'
+        exclude module: 'support-v4'
+    }
     androidTestCompile presentationTestDependencies.testingSupportLib
 
     //Development
