@@ -2,6 +2,7 @@ package com.orcchg.vikstra.domain.interactor.group;
 
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
@@ -41,6 +42,7 @@ public class GetGroupBundles extends UseCase<List<GroupBundle>> {
 
     @Nullable @Override
     protected List<GroupBundle> doAction() {
+        if (parameters == null) throw new NoParametersException();
         int limit = parameters.limit();
         int offset = parameters.offset();
         return groupRepository.groups(limit, offset);

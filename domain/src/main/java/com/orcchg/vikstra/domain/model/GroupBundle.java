@@ -45,7 +45,6 @@ public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<G
         return count;
     }
 
-    // TODO: unit-test this method
     public List<List<Group>> splitGroupsByKeywords() {
         Map<Keyword, Integer> keywords = new TreeMap<>();
         Collection<Group> list = groups();

@@ -2,6 +2,7 @@ package com.orcchg.vikstra.domain.interactor.post;
 
 import android.support.annotation.Nullable;
 
+import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
@@ -45,6 +46,7 @@ public class GetPosts extends UseCase<List<Post>> {
 
     @Nullable @Override
     protected List<Post> doAction() {
+        if (parameters == null) throw new NoParametersException();
         int limit = parameters.limit();
         int offset = parameters.offset();
         return postRepository.posts(limit, offset);
