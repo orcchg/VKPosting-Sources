@@ -23,6 +23,7 @@ apply plugin: 'com.neenbedankt.android-apt'
 
 configurations {
     provided
+    testOutput
 }
 
 sourceSets {
@@ -86,6 +87,17 @@ dependencies {
     provided domainDependencies.autoValue
     provided domainDependencies.javaxAnnotation
 
+    /* Test */
+    // ------------------------------------------
+//    apt domainTestDependencies.daggerCompiler
+//
+//    testCompile domainTestDependencies.dagger
     testCompile domainTestDependencies.junit
     testCompile domainTestDependencies.mockito
+
+//    testOutput sourceSets.test.output
+}
+
+configurations.testOutput.each {
+    println "testOutput: $it"
 }

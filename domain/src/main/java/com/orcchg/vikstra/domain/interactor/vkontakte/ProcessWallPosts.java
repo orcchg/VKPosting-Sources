@@ -31,7 +31,7 @@ public abstract class ProcessWallPosts extends MultiUseCase<VkSimpleResponseMode
 
     private Parameters parameters;
 
-    @Inject @SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     public ProcessWallPosts(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(0, threadExecutor, postExecuteScheduler);  // total count will be set later
     }

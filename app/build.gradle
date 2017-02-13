@@ -127,6 +127,15 @@ android {
         }
     }
 
+    productFlavors {
+        production {
+            // default
+        }
+        mock {
+            applicationId globalConfiguration.getAt("androidApplicationId") + ".mock"
+        }
+    }
+
     sourceSets {
         main {
             res.srcDirs = ['src/main/res-main',
@@ -228,6 +237,8 @@ dependencies {
     provided presentationDependencies.autoValue
     provided presentationDependencies.javaxAnnotation
 
+    /* Test */
+    // ------------------------------------------
     testCompile presentationTestDependencies.junit
 
     androidTestCompile(presentationTestDependencies.androidTestRules) {

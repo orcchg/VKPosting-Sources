@@ -40,6 +40,10 @@ public class GetGroupBundles extends UseCase<List<GroupBundle>> {
         this.parameters = new Parameters.Builder().build();
     }
 
+    public void setParameters(Parameters parameters) {
+        this.parameters = parameters;
+    }
+
     @Nullable @Override
     protected List<GroupBundle> doAction() {
         if (parameters == null) throw new NoParametersException();

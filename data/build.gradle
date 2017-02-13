@@ -72,7 +72,7 @@ android {
 
 dependencies {
     def dataDependencies = rootProject.ext.dataDependencies
-    def testDependencies = rootProject.ext.dataTestDependencies
+    def dataTestDependencies = rootProject.ext.dataTestDependencies
 
     compile project(':domain')
 
@@ -94,12 +94,15 @@ dependencies {
     provided domainDependencies.autoValue
     provided dataDependencies.javaxAnnotation
 
-    testCompile testDependencies.assertj
-    testCompile testDependencies.junit
-    testCompile testDependencies.mockito
-    testCompile testDependencies.robolectric
+    /* Test */
+    // ------------------------------------------
+    testCompile dataTestDependencies.assertj
+    testCompile dataTestDependencies.junit
+    testCompile dataTestDependencies.mockito
+    testCompile dataTestDependencies.robolectric
+    testCompile project(path: ':domain', configuration: 'testOutput')
 
-    androidTestCompile(testDependencies.espresso, {
+    androidTestCompile(dataTestDependencies.espresso, {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 }

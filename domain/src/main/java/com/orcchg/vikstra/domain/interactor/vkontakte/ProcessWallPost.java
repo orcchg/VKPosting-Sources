@@ -37,7 +37,6 @@ public abstract class ProcessWallPost extends VkUseCase<VkSimpleResponseModel> {
 
     private Parameters parameters;
 
-    @Inject
     public ProcessWallPost(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
     }

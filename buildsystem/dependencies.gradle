@@ -126,6 +126,8 @@ ext {
     ]
 
     domainTestDependencies = [
+            dagger:               "com.google.dagger:dagger:${daggerVersion}",
+            daggerCompiler:       "com.google.dagger:dagger-compiler:${daggerVersion}",
             junit:                "junit:junit:${jUnitVersion}",
             mockito:              "org.mockito:mockito-core:${mockitoVersion}",
     ]
