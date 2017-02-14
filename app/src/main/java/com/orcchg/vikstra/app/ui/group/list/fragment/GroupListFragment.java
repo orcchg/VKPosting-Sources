@@ -157,16 +157,16 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         showContent(RV_TAG, isEmpty);
     }
 
-    @Override
-    public void updateGroupReportBundleId(long groupReportBundleId) {
-        postingNotification.updateGroupReportBundleId(getActivity(), groupReportBundleId);
-    }
-
     /* Notification delegate */
     // --------------------------------------------------------------------------------------------
     private void initNotifications() {
         postingNotification = new PostingNotification(getActivity(), Constant.BAD_ID, keywordBundleId, postId);
         photoUploadNotification = new PhotoUploadNotification(getActivity());
+    }
+
+    @Override
+    public void updateGroupReportBundleId(long groupReportBundleId) {
+        postingNotification.updateGroupReportBundleId(getActivity(), groupReportBundleId);
     }
 
     // ------------------------------------------

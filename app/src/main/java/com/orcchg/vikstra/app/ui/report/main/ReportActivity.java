@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +29,8 @@ import com.orcchg.vikstra.app.ui.base.permission.BasePermissionActivity;
 import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
+import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
+import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
 import com.orcchg.vikstra.app.ui.common.showcase.SingleShot;
 import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.report.main.injection.DaggerReportComponent;
@@ -58,6 +61,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
     private static final String EXTRA_FORCE_DISABLE_INTERACTIVE_MODE = "extra_force_disable_interactive_mode";
+    public static final int REQUEST_CODE = Constant.RequestCode.REPORT_SCREEN;
 
     private String DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT,
             EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, EMAIL_BODY, EMAIL_SUBJECT,
@@ -94,6 +98,9 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
      */
     private boolean forceDisableInteractiveMode = false;
     private boolean postingRevertFinished = false;
+
+    private PostingNotification postingNotification;
+    private PhotoUploadNotification photoUploadNotification;
 
     private @Nullable ShowcaseView showcaseView;
 
@@ -143,6 +150,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         initResources();
         initView();
         initToolbar();
+        initNotifications();
     }
 
     @Override
@@ -491,6 +499,56 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @Override
     public void onScrollList(int itemsLeftToEnd) {
         presenter.onScroll(itemsLeftToEnd);
+    }
+
+    /* Notification delegate */
+    // --------------------------------------------------------------------------------------------
+    private void initNotifications() {
+        postingNotification = new PostingNotification(this, groupReportBundleId, keywordBundleId, postId);
+        photoUploadNotification = new PhotoUploadNotification(this);
+    }
+
+    @Override
+    public void cancelPreviousNotifications() {
+        NotificationManagerCompat.from(this).cancel(Constant.NotificationID.POSTING);
+        NotificationManagerCompat.from(this).cancel(Constant.NotificationID.PHOTO_UPLOAD);
+    }
+
+    @Override
+    public void updateGroupReportBundleId(long groupReportBundleId) {
+        postingNotification.updateGroupReportBundleId(this, groupReportBundleId);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onPhotoUploadProgress(int progress, int total) {
+        photoUploadNotification.onPhotoUploadProgress(progress, total);
+    }
+
+    @Override
+    public void onPhotoUploadProgressInfinite() {
+        photoUploadNotification.onPhotoUploadProgressInfinite();
+    }
+
+    @Override
+    public void onPhotoUploadComplete() {
+        photoUploadNotification.onPhotoUploadComplete();
+    }
+
+    // ------------------------------------------
+    @Override
+    public void onPostingProgress(int progress, int total) {
+        postingNotification.onPostingProgress(progress, total);
+    }
+
+    @Override
+    public void onPostingProgressInfinite() {
+        postingNotification.onPostingProgressInfinite();
+    }
+
+    @Override
+    public void onPostingComplete() {
+        postingNotification.onPostingComplete();
     }
 
     /* Internal */

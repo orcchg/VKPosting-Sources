@@ -20,6 +20,7 @@ public class PhotoUploadNotification implements IPhotoUploadNotificationDelegate
         Resources resources = activity.getResources();
         notificationManager = NotificationManagerCompat.from(activity);
         notificationBuilderPhotoUpload = new NotificationCompat.Builder(activity)
+                .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_collections_white_18dp)
                 .setContentTitle(resources.getString(R.string.notification_photo_upload_title))
                 .setContentText(resources.getString(R.string.notification_photo_upload_description_progress));

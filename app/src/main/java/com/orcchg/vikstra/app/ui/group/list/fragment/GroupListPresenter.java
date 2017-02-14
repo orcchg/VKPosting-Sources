@@ -42,6 +42,8 @@ import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.parcelable.ParcelableKeywordBundle;
+import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
+import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.ValueUtility;
@@ -1096,8 +1098,18 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             }
 
             sendPostingStartedMessage(true);
+
+            // In interactive mode there are different notifications - directly from ReportScreen
+            IPostingNotificationDelegate postingDelegate = null;
+            IPhotoUploadNotificationDelegate photoUploadDelegate = null;
+            if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
+                // TODO: fix ids inside notifications - they are wrong and causes known crash on PostView screen
+                postingDelegate = getView();
+                photoUploadDelegate = getView();
+            }
+
             vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, memento.currentPost,
-                    createMakeWallPostCallback(), getView(), getView());
+                    createMakeWallPostCallback(), postingDelegate, photoUploadDelegate);
 
             if (isViewAttached()) {
                 if (AppConfig.INSTANCE.useInteractiveReportScreen()) {

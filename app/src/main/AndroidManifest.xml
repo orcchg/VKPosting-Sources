@@ -87,7 +87,13 @@
         <activity android:name=".app.ui.report.main.ReportActivity"
                   android:label="@string/report_screen_title"
                   android:theme="@style/AppTheme"
-                  android:screenOrientation="portrait"/>
+                  android:launchMode="singleTop"
+                  android:screenOrientation="portrait"
+                  android:parentActivityName=".app.ui.main.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".app.ui.main.MainActivity"/>
+        </activity>
 
         <!-- Status -->
         <activity android:name=".app.ui.status.StatusActivity"

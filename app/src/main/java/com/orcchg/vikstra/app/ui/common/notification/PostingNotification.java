@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.app.TaskStackBuilder;
 
 import com.orcchg.vikstra.R;
-import com.orcchg.vikstra.app.ui.group.list.activity.GroupListActivity;
 import com.orcchg.vikstra.app.ui.report.main.ReportActivity;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -34,6 +34,7 @@ public class PostingNotification implements IPostingNotificationDelegate {
         Resources resources = activity.getResources();
         notificationManager = NotificationManagerCompat.from(activity);
         notificationBuilderPosting = new NotificationCompat.Builder(activity)
+                .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_cloud_upload_white_18dp)
                 .setContentTitle(resources.getString(R.string.notification_posting_title))
                 .setContentText(resources.getString(R.string.notification_posting_description_progress))
@@ -75,7 +76,10 @@ public class PostingNotification implements IPostingNotificationDelegate {
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private PendingIntent makePendingIntent(Activity activity, long groupReportBundleId, long keywordBundleId, long postId) {
-        Intent intent = ReportActivity.getCallingIntent(activity, groupReportBundleId, keywordBundleId, postId);
-        return PendingIntent.getActivity(activity, GroupListActivity.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent intent = ReportActivity.getCallingIntentNoInteractive(activity, groupReportBundleId, keywordBundleId, postId);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(activity);
+        stackBuilder.addParentStack(ReportActivity.class);
+        stackBuilder.addNextIntent(intent);
+        return stackBuilder.getPendingIntent(ReportActivity.REQUEST_CODE, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }
