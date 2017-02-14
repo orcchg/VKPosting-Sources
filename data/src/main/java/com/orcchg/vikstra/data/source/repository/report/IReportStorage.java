@@ -7,6 +7,8 @@ import com.orcchg.vikstra.data.source.repository.IStorage;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 
+import java.util.List;
+
 public interface IReportStorage extends IStorage {
 
     /* Create */
@@ -17,6 +19,7 @@ public interface IReportStorage extends IStorage {
     /* Read */
     // ------------------------------------------
     @Nullable GroupReportBundle groupReports(long id);
+    List<GroupReportBundle> groupReports(int limit, int offset);
 
     /* Update */
     // ------------------------------------------

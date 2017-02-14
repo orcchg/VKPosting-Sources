@@ -91,6 +91,22 @@ public class PostRepositoryImpl implements IPostRepository {
     }
 
     @Override
+    public List<Post> posts(long... ids) {
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.posts(ids);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
     public List<Post> posts(int limit, int offset) {
         try {
             lock.lockRead();

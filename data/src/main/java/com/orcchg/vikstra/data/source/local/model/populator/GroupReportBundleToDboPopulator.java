@@ -23,6 +23,8 @@ public class GroupReportBundleToDboPopulator implements Populator<GroupReportBun
     public void populate(GroupReportBundle object, GroupReportBundleDBO dbo) {
         dbo.id = object.id();
         dbo.groupReports = new RealmList<>();
+        dbo.keywordBundleId = object.keywordBundleId();
+        dbo.postId = object.postId();
         dbo.timestamp = object.timestamp();
         for (GroupReport report : object.groupReports()) {
             dbo.groupReports.add(groupReportToDboMapper.map(report));

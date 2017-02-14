@@ -3,8 +3,8 @@ package com.orcchg.vikstra.domain.interactor.common;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
 
 public class ListParameters implements IParameters {
-    protected int limit = -1;
-    protected int offset = 0;
+    protected final int limit;
+    protected final int offset;
 
     protected ListParameters(Builder builder) {
         this.limit = builder.limit;

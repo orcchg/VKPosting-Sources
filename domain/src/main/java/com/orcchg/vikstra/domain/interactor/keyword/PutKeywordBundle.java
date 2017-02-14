@@ -19,8 +19,8 @@ import javax.inject.Inject;
 public class PutKeywordBundle extends UseCase<KeywordBundle> implements IPutUseCase {
 
     public static class Parameters implements IParameters {
-        String title;
-        Collection<Keyword> keywords;
+        final String title;
+        final Collection<Keyword> keywords;
 
         Parameters(Builder builder) {
             this.title = builder.title;

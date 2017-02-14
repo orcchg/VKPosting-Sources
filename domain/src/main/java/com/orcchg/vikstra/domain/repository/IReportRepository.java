@@ -12,11 +12,13 @@ public interface IReportRepository extends IRepository {
 
     /* Create */
     // ------------------------------------------
-    @Nullable GroupReportBundle addGroupReports(List<GroupReportEssence> many);
+    @Nullable GroupReportBundle addGroupReports(List<GroupReportEssence> many, long keywordBundleId, long postId);
 
     /* Read */
     // ------------------------------------------
     @Nullable GroupReportBundle groupReports(long id);
+    List<GroupReportBundle> groupReports();
+    List<GroupReportBundle> groupReports(int limit, int offset);
 
     /* Update */
     // ------------------------------------------

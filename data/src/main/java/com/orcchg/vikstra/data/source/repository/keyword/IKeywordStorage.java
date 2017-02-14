@@ -19,6 +19,7 @@ public interface IKeywordStorage extends IStorage {
     /* Read */
     // ------------------------------------------
     @Nullable KeywordBundle keywords(long id);
+    List<KeywordBundle> keywords(long... ids);
     List<KeywordBundle> keywords(int limit, int offset);
 
     /* Update */

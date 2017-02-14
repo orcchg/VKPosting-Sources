@@ -101,6 +101,18 @@ public class KeywordDatabase implements IKeywordStorage {
     }
 
     @DebugLog @Override
+    public List<KeywordBundle> keywords(long... ids) {
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
+        RealmResults<KeywordBundleDBO> dbos = realm.where(KeywordBundleDBO.class).findAll();
+        List<KeywordBundle> models = new ArrayList<>();
+        for (int i = 0; i < ids.length; ++i) {
+            if (dbos.get(i).id == ids[i]) models.add(keywordBundleToDboMapper.mapBack(dbos.get(i)));
+        }
+        realm.close();
+        return models;
+    }
+
+    @DebugLog @Override
     public List<KeywordBundle> keywords(int limit, int offset) {
         RepoUtility.checkLimitAndOffset(limit, offset);
         Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());

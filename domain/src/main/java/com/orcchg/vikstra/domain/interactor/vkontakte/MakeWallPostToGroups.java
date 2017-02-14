@@ -30,18 +30,14 @@ import timber.log.Timber;
 public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<Ordered<GroupReportEssence>>> {
 
     public static class Parameters implements IParameters {
-        VKAttachments attachments;
-        List<Group> groups;
-        String message;
+        final VKAttachments attachments;
+        final List<Group> groups;
+        final String message;
 
         Parameters(Builder builder) {
             this.attachments = builder.attachments;
             this.groups = builder.groups;
             this.message = builder.message;
-        }
-
-        public void setAttachments(VKAttachments attachments) {
-            this.attachments = attachments;
         }
 
         public VKAttachments getAttachments() {

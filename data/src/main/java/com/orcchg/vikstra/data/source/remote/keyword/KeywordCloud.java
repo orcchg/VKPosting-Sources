@@ -47,6 +47,11 @@ public class KeywordCloud implements IKeywordStorage {
     }
 
     @Override
+    public List<KeywordBundle> keywords(long... ids) {
+        return null;
+    }
+
+    @Override
     public List<KeywordBundle> keywords(int limit, int offset) {
         return null;
     }

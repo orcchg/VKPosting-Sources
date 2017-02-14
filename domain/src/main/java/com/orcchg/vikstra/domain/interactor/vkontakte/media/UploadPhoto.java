@@ -20,7 +20,7 @@ import javax.inject.Inject;
 public class UploadPhoto extends VkUseCase<VKPhotoArray> {
 
     public static class Parameters implements IParameters {
-        Bitmap bitmap;
+        final Bitmap bitmap;
 
         public Parameters(Bitmap bitmap) {
             this.bitmap = bitmap;

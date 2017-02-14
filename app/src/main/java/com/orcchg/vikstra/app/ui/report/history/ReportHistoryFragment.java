@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import com.orcchg.vikstra.app.ui.common.screen.CollectionFragment;
 import com.orcchg.vikstra.app.ui.report.history.injection.DaggerReportHistoryComponent;
 import com.orcchg.vikstra.app.ui.report.history.injection.ReportHistoryComponent;
-import com.orcchg.vikstra.app.ui.report.history.injection.ReportHistoryModule;
 import com.orcchg.vikstra.domain.util.Constant;
 
 public class ReportHistoryFragment extends CollectionFragment<ReportHistoryContract.View, ReportHistoryContract.Presenter>
@@ -29,7 +28,6 @@ public class ReportHistoryFragment extends CollectionFragment<ReportHistoryContr
     protected void injectDependencies() {
         reportHistoryComponent = DaggerReportHistoryComponent.builder()
                 .applicationComponent(getApplicationComponent())
-                .reportHistoryModule(new ReportHistoryModule())  // TODO: pass ids
                 .build();
         reportHistoryComponent.inject(this);
     }
@@ -40,11 +38,7 @@ public class ReportHistoryFragment extends CollectionFragment<ReportHistoryContr
     }
 
     public static ReportHistoryFragment newInstance() {
-        Bundle args = new Bundle();
-        // TODO: args
-        ReportHistoryFragment fragment = new ReportHistoryFragment();
-        fragment.setArguments(args);
-        return fragment;
+        return new ReportHistoryFragment();
     }
 
     @Override
@@ -54,20 +48,30 @@ public class ReportHistoryFragment extends CollectionFragment<ReportHistoryContr
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        Bundle args = getArguments();// TODO: args
-        super.onCreate(savedInstanceState);
-    }
-
     @Nullable @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = super.onCreateView(inflater, container, savedInstanceState);
-        // TODO: impl view
+        swipeRefreshLayout.setOnRefreshListener(() -> presenter.refresh());
+        errorRetryButton.setOnClickListener((view) -> presenter.retry());
+        emptyDataButton.setVisibility(View.GONE);  // no action on empty data
         return rootView;
     }
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
-    // TODO: impl
+    @Override
+    public void openPostViewScreen(long postId) {
+        navigationComponent.navigator().openPostViewScreen(getActivity(), postId, false);
+    }
+
+    @Override
+    public void openReportScreen(long groupReportBundleId, long keywordBundleId, long postId) {
+        navigationComponent.navigator().openReportScreenNoInteractive(getActivity(), groupReportBundleId, keywordBundleId, postId);
+    }
+
+    // ------------------------------------------
+    @Override
+    public void showReports(boolean isEmpty) {
+        showContent(RV_TAG, isEmpty);
+    }
 }

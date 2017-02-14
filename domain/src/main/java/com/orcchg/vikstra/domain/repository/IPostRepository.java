@@ -18,6 +18,7 @@ public interface IPostRepository extends IRepository {
     // ------------------------------------------
     @Nullable Post post(long id);
     List<Post> posts();
+    List<Post> posts(long... ids);
     List<Post> posts(int limit, int offset);
 
     /* Update */

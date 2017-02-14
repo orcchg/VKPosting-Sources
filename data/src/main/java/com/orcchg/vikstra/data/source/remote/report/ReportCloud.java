@@ -8,6 +8,8 @@ import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 public class ReportCloud implements IReportStorage {
@@ -40,6 +42,11 @@ public class ReportCloud implements IReportStorage {
         if (id != Constant.BAD_ID) {
             // TODO: cloud impl
         }
+        return null;
+    }
+
+    @Override
+    public List<GroupReportBundle> groupReports(int limit, int offset) {
         return null;
     }
 

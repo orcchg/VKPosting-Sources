@@ -232,13 +232,15 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
      *                           START ----- < ------ < ----- < ----- < ---- ERROR_LOAD  { user retry }
      *                             |                                              |
      *                             |                                              |
-     *                        KEYWORDS_LOADED  or  KEYWORDS_CREATE_START  or      #
+     *                        KEYWORDS_LOADED  or  KEYWORDS_CREATE_START  or ---- #
      *                             |                      |                       |
      *                             |                      |                       |
      *                             |----- < ---- < -- KEYWORDS_CREATE_FINISH      |
-     *                        GROUPS_LOADED    or                                 #
+     *                             |                                              |
+     *                             |                                              |
+     *                        GROUPS_LOADED    or  ----- > ----- > ----- > ------ #
      *                          |       |
-     *                          |       |
+     *                          |       ^
      *                          |       |
      * { user refresh }  REFRESHING ->--|----------- < ------- < ---------|
      *                                                                    |
@@ -1100,7 +1102,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             if (isViewAttached()) {
                 if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
                     Timber.d("Open ReportScreen in interactive mode showing posting progress");
-                    getView().openInteractiveReportScreen(memento.currentPost.id());
+                    getView().openInteractiveReportScreen(memento.inputKeywordBundle.id(), memento.currentPost.id());
                     // TODO: report screen could subscribe for posting-progress callback
                     // TODO:        too late, missing some early reports
                 } else {
@@ -1313,6 +1315,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get Post by id");
+                memento.currentPost = null;  // post has been dropped
                 sendErrorPost();
             }
         };
@@ -1376,7 +1379,7 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 sendPostingStartedMessage(false);
                 if (isViewAttached()) {
                     getView().updateGroupReportBundleId(bundle.id());
-                    getView().onReportReady(bundle.id(), getPostByIdUseCase.getPostId());
+                    getView().onReportReady(bundle.id(), memento.inputKeywordBundle.id(), memento.currentPost.id());
                 }
             }
 
@@ -1476,7 +1479,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
             @DebugLog @Override
             public void onFinish(@Nullable List<GroupReportEssence> reports) {
                 Timber.i("Use-Case: succeeded to make wall posting");
-                PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(reports);
+                PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(
+                        reports, memento.inputKeywordBundle.id(), memento.currentPost.id());
                 putGroupReportBundleUseCase.setParameters(parameters);
                 putGroupReportBundleUseCase.execute();
             }

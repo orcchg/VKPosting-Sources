@@ -17,6 +17,7 @@ public interface IPostStorage extends IStorage {
     /* Read */
     // ------------------------------------------
     @Nullable Post post(long id);
+    List<Post> posts(long... ids);
     List<Post> posts(int limit, int offset);
 
     /* Update */

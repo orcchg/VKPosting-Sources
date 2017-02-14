@@ -24,7 +24,7 @@ import timber.log.Timber;
 public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<Ordered<VKPhotoArray>>> {
 
     public static class Parameters implements IParameters {
-        List<Bitmap> bitmaps;
+        final List<Bitmap> bitmaps;
 
         public Parameters(List<Bitmap> bitmaps) {
             this.bitmaps = bitmaps;

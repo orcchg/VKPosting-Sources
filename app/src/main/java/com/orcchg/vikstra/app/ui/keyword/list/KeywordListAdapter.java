@@ -14,12 +14,10 @@ import hugo.weaving.DebugLog;
 
 public class KeywordListAdapter extends BaseSelectAdapter<KeywordViewHolder, KeywordListItemVO> {
 
-    private BaseAdapter.OnItemClickListener<KeywordListItemVO> wrappedItemClickListener;
     private BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener;
 
     public KeywordListAdapter(@SelectMode int selectMode) {
         super(selectMode);
-        this.wrappedItemClickListener = createWrappedClickListener();
     }
 
     public void setOnEditClickListener(BaseAdapter.OnItemClickListener<KeywordListItemVO> editClickListener) {

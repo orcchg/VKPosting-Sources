@@ -20,8 +20,11 @@ public abstract class BaseSelectAdapter<ModelViewHolder extends NormalViewHolder
 
     protected final @SelectMode int selectMode;
 
+    protected BaseAdapter.OnItemClickListener<Model> wrappedItemClickListener;
+
     public BaseSelectAdapter(@SelectMode int selectMode) {
         this.selectMode = selectMode;
+        this.wrappedItemClickListener = createWrappedClickListener();
     }
 
     /* Click item */

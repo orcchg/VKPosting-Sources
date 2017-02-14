@@ -38,7 +38,7 @@ public class VkAttachMigration implements RealmMigration {
          *     String attachString;
          *
          *
-         * Version 1
+         * Version 1, 2, 3, 4, 5
          * --------------------------------------
          *     long id;
          *  ++ String path;

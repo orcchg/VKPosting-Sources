@@ -40,6 +40,7 @@ public interface ReportContract {
         void updatePostedCounters(int posted, int total);
 
         void closeView();
+        boolean isForceDisableInteractiveMode();
     }
 
     interface SubView extends LceView, MvpListView {

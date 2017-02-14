@@ -40,7 +40,7 @@ public class MigrationModule {
     RealmConfiguration provideRealmConfiguration(Migration migration) {
         if (sRealmConfiguration == null) {
             sRealmConfiguration = new RealmConfiguration.Builder()
-                    .schemaVersion(4)  // bumped version up, previous: 3
+                    .schemaVersion(5)  // bumped version up, previous: 4
                     .migration(migration)
                     .build();
         }

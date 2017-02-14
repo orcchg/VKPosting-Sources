@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 public class ReportProvider {
     private static long BASE_ID = 1000;
+    private static long BASE_BUNDLE_ID = 1000;
 
     private final GroupBundleProvider groupsProvider;
 
@@ -23,10 +24,18 @@ public class ReportProvider {
 
     public GroupReportBundle reportBundle() {
         return GroupReportBundle.builder()
-                .setId(1000)
+                .setId(BASE_BUNDLE_ID++)
                 .setGroupReports(reports(rng.nextInt() % 10 + 1))
+                .setKeywordBundleId(999)
+                .setPostId(1000)
                 .setTimestamp(1_456_789_101)
                 .build();
+    }
+
+    public List<GroupReportBundle> reportBundles(int size) {
+        List<GroupReportBundle> list = new ArrayList<>();
+        for (int i = 0; i < size; ++i) list.add(reportBundle());
+        return list;
     }
 
     // ------------------------------------------
@@ -41,7 +50,6 @@ public class ReportProvider {
                 .build();
     }
 
-    // ------------------------------------------
     public List<GroupReport> reports(int size) {
         List<GroupReport> list = new ArrayList<>();
         for (int i = 0; i < size; ++i) list.add(report());

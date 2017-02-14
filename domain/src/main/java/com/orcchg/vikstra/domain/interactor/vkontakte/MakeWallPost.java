@@ -24,9 +24,9 @@ import timber.log.Timber;
 public class MakeWallPost extends VkUseCase<GroupReportEssence> {
 
     public static class Parameters implements IParameters {
-        VKAttachments attachments;
-        Group group;
-        String message;
+        final VKAttachments attachments;
+        final Group group;
+        final String message;
 
         Parameters(Builder builder) {
             this.attachments = builder.attachments;

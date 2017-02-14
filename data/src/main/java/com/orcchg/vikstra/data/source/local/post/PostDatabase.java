@@ -76,6 +76,18 @@ public class PostDatabase implements IPostStorage {
     }
 
     @DebugLog @Override
+    public List<Post> posts(long... ids) {
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
+        RealmResults<PostDBO> dbos = realm.where(PostDBO.class).findAll();
+        List<Post> models = new ArrayList<>();
+        for (int i = 0; i < ids.length; ++i) {
+            if (dbos.get(i).id == ids[i]) models.add(postToDboMapper.mapBack(dbos.get(i)));
+        }
+        realm.close();
+        return models;
+    }
+
+    @DebugLog @Override
     public List<Post> posts(int limit, int offset) {
         RepoUtility.checkLimitAndOffset(limit, offset);
         Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());

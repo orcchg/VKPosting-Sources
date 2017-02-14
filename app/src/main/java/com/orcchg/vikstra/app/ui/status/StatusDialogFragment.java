@@ -29,6 +29,7 @@ public class StatusDialogFragment extends SimpleBaseDialogFragment implements St
     }
 
     private long groupReportBundleId = Constant.BAD_ID;
+    private long keywordBundleId = Constant.BAD_ID;
     private long postId = Constant.BAD_ID;
 
     public static StatusDialogFragment newInstance() {
@@ -62,7 +63,7 @@ public class StatusDialogFragment extends SimpleBaseDialogFragment implements St
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private void openReportScreen() {
-        navigationComponent.navigator().openReportScreen(getActivity(), groupReportBundleId, postId);
+        navigationComponent.navigator().openReportScreen(getActivity(), groupReportBundleId, keywordBundleId, postId);
         dismiss();  // TODO: don't set background label
     }
 
@@ -72,8 +73,9 @@ public class StatusDialogFragment extends SimpleBaseDialogFragment implements St
         progressView.post(() -> progressView.stopOk());
     }
 
-    public void onReportReady(long groupReportBundleId, long postId) {
+    public void onReportReady(long groupReportBundleId, long keywordBundleId, long postId) {
         this.groupReportBundleId = groupReportBundleId;
+        this.keywordBundleId = keywordBundleId;
         this.postId = postId;
         reportButton.post(() -> reportButton.setVisibility(View.VISIBLE));
     }

@@ -113,6 +113,22 @@ public class KeywordRepositoryImpl implements IKeywordRepository {
     }
 
     @Override
+    public List<KeywordBundle> keywords(long... ids) {
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.keywords(ids);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
     public List<KeywordBundle> keywords(int limit, int offset) {
         try {
             lock.lockRead();

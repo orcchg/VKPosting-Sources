@@ -10,10 +10,14 @@ import com.orcchg.vikstra.data.source.local.model.GroupReportDBO;
 import com.orcchg.vikstra.data.source.local.model.mapper.GroupReportBundleToDboMapper;
 import com.orcchg.vikstra.data.source.local.model.populator.GroupReportBundleToDboPopulator;
 import com.orcchg.vikstra.data.source.local.model.populator.GroupReportToDboPopulator;
+import com.orcchg.vikstra.data.source.repository.RepoUtility;
 import com.orcchg.vikstra.data.source.repository.report.IReportStorage;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.util.Constant;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -94,6 +98,21 @@ public class ReportDatabase implements IReportStorage {
             return model;
         }
         return null;
+    }
+
+    @Override
+    public List<GroupReportBundle> groupReports(int limit, int offset) {
+        RepoUtility.checkLimitAndOffset(limit, offset);
+        Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
+        RealmResults<GroupReportBundleDBO> dbos = realm.where(GroupReportBundleDBO.class).findAll();
+        List<GroupReportBundle> models = new ArrayList<>();
+        int size = limit < 0 ? dbos.size() : limit;
+        RepoUtility.checkListBounds(offset + size - 1, dbos.size());
+        for (int i = offset; i < offset + size; ++i) {
+            models.add(groupReportBundleToDboMapper.mapBack(dbos.get(i)));
+        }
+        realm.close();
+        return models;
     }
 
     /* Update */

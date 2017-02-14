@@ -252,12 +252,17 @@ public class Navigator {
 
     /* Report */
     // ------------------------------------------
-    public void openReportScreen(@NonNull Context context, long postId) {
-        openReportScreen(context, Constant.BAD_ID, postId);
+    public void openReportScreen(@NonNull Context context, long keywordBundleId, long postId) {
+        openReportScreen(context, Constant.BAD_ID /* interactive mode (if config set) */, keywordBundleId, postId);
     }
 
-    public void openReportScreen(@NonNull Context context, long groupReportBundleId, long postId) {
-        Intent intent = ReportActivity.getCallingIntent(context, groupReportBundleId, postId);
+    public void openReportScreen(@NonNull Context context, long groupReportBundleId, long keywordBundleId, long postId) {
+        Intent intent = ReportActivity.getCallingIntent(context, groupReportBundleId, keywordBundleId, postId);
+        context.startActivity(intent);
+    }
+
+    public void openReportScreenNoInteractive(@NonNull Context context, long groupReportBundleId, long keywordBundleId, long postId) {
+        Intent intent = ReportActivity.getCallingIntentNoInteractive(context, groupReportBundleId, keywordBundleId, postId);
         context.startActivity(intent);
     }
 

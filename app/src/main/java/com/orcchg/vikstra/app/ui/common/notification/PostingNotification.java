@@ -15,7 +15,7 @@ import com.orcchg.vikstra.domain.util.Constant;
 
 public class PostingNotification implements IPostingNotificationDelegate {
 
-    private long groupReportBundleId, postId;
+    private long groupReportBundleId, keywordBundleId, postId;
 
     private NotificationManagerCompat notificationManager;
     private NotificationCompat.Builder notificationBuilderPosting;
@@ -23,11 +23,12 @@ public class PostingNotification implements IPostingNotificationDelegate {
     private String NOTIFICATION_POSTING_COMPLETE;
 
     public PostingNotification(Activity activity) {
-        this(activity, Constant.BAD_ID, Constant.BAD_ID);
+        this(activity, Constant.BAD_ID, Constant.BAD_ID, Constant.BAD_ID);
     }
 
-    public PostingNotification(Activity activity, long groupReportBundleId, long postId) {
+    public PostingNotification(Activity activity, long groupReportBundleId, long keywordBundleId, long postId) {
         this.groupReportBundleId = groupReportBundleId;
+        this.keywordBundleId = keywordBundleId;
         this.postId = postId;
 
         Resources resources = activity.getResources();
@@ -36,17 +37,21 @@ public class PostingNotification implements IPostingNotificationDelegate {
                 .setSmallIcon(R.drawable.ic_cloud_upload_white_18dp)
                 .setContentTitle(resources.getString(R.string.notification_posting_title))
                 .setContentText(resources.getString(R.string.notification_posting_description_progress))
-                .setContentIntent(makePendingIntent(activity, groupReportBundleId, postId));
+                .setContentIntent(makePendingIntent(activity, groupReportBundleId, keywordBundleId, postId));
 
         NOTIFICATION_POSTING_COMPLETE = resources.getString(R.string.notification_posting_description_complete);
     }
 
     public void updateGroupReportBundleId(Activity activity, long groupReportBundleId) {
-        notificationBuilderPosting.setContentIntent(makePendingIntent(activity, groupReportBundleId, postId));
+        notificationBuilderPosting.setContentIntent(makePendingIntent(activity, groupReportBundleId, keywordBundleId, postId));
+    }
+
+    public void updateKeywordBundleId(Activity activity, long keywordBundleId) {
+        notificationBuilderPosting.setContentIntent(makePendingIntent(activity, groupReportBundleId, keywordBundleId, postId));
     }
 
     public void updatePostId(Activity activity, long postId) {
-        notificationBuilderPosting.setContentIntent(makePendingIntent(activity, groupReportBundleId, postId));
+        notificationBuilderPosting.setContentIntent(makePendingIntent(activity, groupReportBundleId, keywordBundleId, postId));
     }
 
     @Override
@@ -69,8 +74,8 @@ public class PostingNotification implements IPostingNotificationDelegate {
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    private PendingIntent makePendingIntent(Activity activity, long groupReportBundleId, long postId) {
-        Intent intent = ReportActivity.getCallingIntent(activity, groupReportBundleId, postId);
+    private PendingIntent makePendingIntent(Activity activity, long groupReportBundleId, long keywordBundleId, long postId) {
+        Intent intent = ReportActivity.getCallingIntent(activity, groupReportBundleId, keywordBundleId, postId);
         return PendingIntent.getActivity(activity, GroupListActivity.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 }

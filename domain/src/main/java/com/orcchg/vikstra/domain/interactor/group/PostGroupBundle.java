@@ -15,7 +15,7 @@ import javax.inject.Inject;
 public class PostGroupBundle extends UseCase<Boolean> {
 
     public static class Parameters implements IParameters {
-        GroupBundle groups;
+        final GroupBundle groups;
 
         final long id;
         String title = "";  // title could be updated separately
@@ -27,6 +27,7 @@ public class PostGroupBundle extends UseCase<Boolean> {
 
         public Parameters(long id, String title) {
             this.id = id;
+            this.groups = null;
             this.title = title;
         }
     }

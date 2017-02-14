@@ -120,11 +120,11 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
 
     // ------------------------------------------
     @Override
-    public void onReportReady(long groupReportBundleId, long postId) {
+    public void onReportReady(long groupReportBundleId, long keywordBundleId, long postId) {
         if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
-            if (dialog != null) dialog.onReportReady(groupReportBundleId, postId);
+            if (dialog != null) dialog.onReportReady(groupReportBundleId, keywordBundleId, postId);
         }
     }
 
@@ -134,8 +134,8 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     }
 
     @Override
-    public void openInteractiveReportScreen(long postId) {
-        navigationComponent.navigator().openReportScreen(getActivity(), postId);
+    public void openInteractiveReportScreen(long keywordBundleId, long postId) {
+        navigationComponent.navigator().openReportScreen(getActivity(), keywordBundleId, postId);
     }
 
     @Override
@@ -165,7 +165,7 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     /* Notification delegate */
     // --------------------------------------------------------------------------------------------
     private void initNotifications() {
-        postingNotification = new PostingNotification(getActivity(), Constant.BAD_ID, postId);
+        postingNotification = new PostingNotification(getActivity(), Constant.BAD_ID, keywordBundleId, postId);
         photoUploadNotification = new PhotoUploadNotification(getActivity());
     }
 

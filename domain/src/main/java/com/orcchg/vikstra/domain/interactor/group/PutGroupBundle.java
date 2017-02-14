@@ -19,9 +19,9 @@ import javax.inject.Inject;
 public class PutGroupBundle extends UseCase<GroupBundle> implements IPutUseCase {
 
     public static class Parameters implements IParameters {
-        Collection<Group> groups;
-        long keywordBundleId;
-        String title;
+        final Collection<Group> groups;
+        final long keywordBundleId;
+        final String title;
 
         Parameters(Builder builder) {
             this.groups = builder.groups;

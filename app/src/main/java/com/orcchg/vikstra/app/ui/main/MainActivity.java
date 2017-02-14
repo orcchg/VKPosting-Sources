@@ -237,8 +237,8 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     }
 
     @Override
-    public void openReportScreen(long groupReportBundleId, long postId) {
-        navigationComponent.navigator().openReportScreen(this, groupReportBundleId, postId);
+    public void openReportScreen(long groupReportBundleId, long keywordBundleId, long postId) {
+        navigationComponent.navigator().openReportScreen(this, groupReportBundleId, keywordBundleId, postId);
     }
 
     @Override
@@ -403,6 +403,11 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     @Override
     public void updateGroupReportBundleId(long groupReportBundleId) {
         postingNotification.updateGroupReportBundleId(this, groupReportBundleId);
+    }
+
+    @Override
+    public void updateKeywordBundleId(long keywordBundleId) {
+        postingNotification.updateKeywordBundleId(this, keywordBundleId);
     }
 
     @Override

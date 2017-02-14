@@ -35,7 +35,7 @@ public class PostMigration implements RealmMigration {
          *     long timestamp;
          *     String title;
          *
-         * Version 3
+         * Version 3, 4, 5
          * --------------------------------------
          *     public long id;
          *     String description;

@@ -51,7 +51,7 @@ public class ReportRepositoryImpl implements IReportRepository {
     /* Create */
     // ------------------------------------------
     @Nullable @Override
-    public GroupReportBundle addGroupReports(List<GroupReportEssence> many) {
+    public GroupReportBundle addGroupReports(List<GroupReportEssence> many, long keywordBundleId, long postId) {
         try {
             lock.lockWrite();
             try {
@@ -61,6 +61,8 @@ public class ReportRepositoryImpl implements IReportRepository {
                 GroupReportBundle bundle = GroupReportBundle.builder()
                         .setId(++lastId)
                         .setGroupReports(reports)
+                        .setKeywordBundleId(keywordBundleId)
+                        .setPostId(postId)
                         .setTimestamp(System.currentTimeMillis())
                         .build();
 
@@ -97,6 +99,27 @@ public class ReportRepositoryImpl implements IReportRepository {
             Thread.currentThread().interrupt();
         }
         return null;
+    }
+
+    @Override
+    public List<GroupReportBundle> groupReports() {
+        return groupReports(-1, 0);
+    }
+
+    @Override
+    public List<GroupReportBundle> groupReports(int limit, int offset) {
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.groupReports(limit, offset);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new ArrayList<>();
     }
 
     /* Update */

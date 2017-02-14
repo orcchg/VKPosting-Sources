@@ -17,7 +17,7 @@ import javax.inject.Inject;
 public class PutPost extends UseCase<Post> implements IPutUseCase {
 
     public static class Parameters implements IParameters {
-        PostEssence essence;
+        final PostEssence essence;
 
         public Parameters(PostEssence essence) {
             this.essence = essence;

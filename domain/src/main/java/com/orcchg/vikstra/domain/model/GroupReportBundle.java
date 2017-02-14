@@ -19,12 +19,16 @@ public abstract class GroupReportBundle implements Comparable<GroupReportBundle>
     public abstract static class Builder {
         public abstract Builder setId(long id);
         public abstract Builder setGroupReports(List<GroupReport> reports);
+        public abstract Builder setKeywordBundleId(long keywordBundleId);
+        public abstract Builder setPostId(long postId);
         public abstract Builder setTimestamp(long ts);
         public abstract GroupReportBundle build();
     }
 
     public abstract long id();
     public abstract List<GroupReport> groupReports();
+    public abstract long keywordBundleId();
+    public abstract long postId();
     public abstract long timestamp();
 
     public int[] statusCount() {

@@ -12,9 +12,9 @@ interface GroupListContract {
             IPostingNotificationDelegate, IPhotoUploadNotificationDelegate {
         void enableSwipeToRefresh(boolean isEnabled);
 
-        void onReportReady(long groupReportBundleId, long postId);
+        void onReportReady(long groupReportBundleId, long keywordBundleId, long postId);
         void onSearchingGroupsCancel();
-        void openInteractiveReportScreen(long postId);
+        void openInteractiveReportScreen(long keywordBundleId, long postId);
         void openGroupDetailScreen(long groupId);
         void openStatusScreen();
 

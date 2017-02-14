@@ -41,7 +41,7 @@ public class KeywordViewHolder extends NormalViewHolder<KeywordListItemVO> {
         View.OnClickListener listener = createOnItemClickListener(viewObject, isSelectable);
         View.OnLongClickListener longListener = createOnItemLongClickListener(viewObject);
         KeywordsFlowLayout.OnKeywordItemClickListener keyListener = AppConfig.INSTANCE.shouldInterceptKeywordClickOnVH() ?
-                null : createDefaultOnKeywordItemClickListener(itemView, listener);  // TODO: use different callback instead of NULL
+                null : createDefaultOnKeywordItemClickListener(itemView, listener);
 
         flowView.setKeywords(viewObject.keywords());
         flowView.setTitle(viewObject.title());

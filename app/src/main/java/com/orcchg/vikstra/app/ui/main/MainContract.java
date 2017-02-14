@@ -19,10 +19,11 @@ public interface MainContract {
         void onLoggedOut();
 
         void openGroupListScreen(long keywordBundleId, long postId);
-        void openReportScreen(long groupReportBundleId, long postId);
+        void openReportScreen(long groupReportBundleId, long keywordBundleId, long postId);
         void showCurrentUser(@Nullable UserVO viewObject);
         void showFab(boolean isVisible);
         void updateGroupReportBundleId(long groupReportBundleId);
+        void updateKeywordBundleId(long keywordBundleId);
         void updatePostId(long postId);
     }
 

@@ -50,10 +50,14 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         implements ReportContract.View, IScrollList, OnShowcaseEventListener {
     private static final String FRAGMENT_TAG = "report_fragment_tag";
     private static final String BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID = "bundle_key_group_report_bundle_id";
+    private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id";
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     private static final String BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED = "bundle_key_flag_posting_revert_finished";
+    private static final String BUNDLE_KEY_FLAG_FORCE_DISABLE_INTERACTIVE_MODE = "bundle_key_flag_force_disable_interactive_mode";
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
+    private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
+    private static final String EXTRA_FORCE_DISABLE_INTERACTIVE_MODE = "extra_force_disable_interactive_mode";
 
     private String DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT,
             EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, EMAIL_BODY, EMAIL_SUBJECT,
@@ -81,18 +85,33 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     private ReportComponent reportComponent;
     private long groupReportBundleId = Constant.BAD_ID;  // if BAD_ID will not change later, then update reports interactively
+    private long keywordBundleId = Constant.BAD_ID;  // TODO: initialize from extra
     private long postId = Constant.BAD_ID;
 
+    /**
+     * This flag overrides {@link AppConfig#useInteractiveReportScreen()} global configuration on
+     * this ReportScreen, but doesn't affect the others.
+     */
+    private boolean forceDisableInteractiveMode = false;
     private boolean postingRevertFinished = false;
 
     private @Nullable ShowcaseView showcaseView;
 
     private @Nullable AlertDialog dialog1, dialog2, dialog3, dialog4, dialog5, dialog6, dialog7;
 
-    public static Intent getCallingIntent(@NonNull Context context, long groupReportBundleId, long postId) {
+    public static Intent getCallingIntent(@NonNull Context context, long groupReportBundleId,
+                                          long keywordBundleId, long postId) {
         Intent intent = new Intent(context, ReportActivity.class);
         intent.putExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
+        intent.putExtra(EXTRA_KEYWORD_BUNDLE_ID, keywordBundleId);
         intent.putExtra(EXTRA_POST_ID, postId);
+        return intent;
+    }
+
+    public static Intent getCallingIntentNoInteractive(@NonNull Context context, long groupReportBundleId,
+                                                       long keywordBundleId, long postId) {
+        Intent intent = getCallingIntent(context, groupReportBundleId, keywordBundleId, postId);
+        intent.putExtra(EXTRA_FORCE_DISABLE_INTERACTIVE_MODE, true);
         return intent;
     }
 
@@ -103,10 +122,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     protected void injectDependencies() {
+        ReportModule reportModule = new ReportModule(groupReportBundleId, keywordBundleId,
+                FileUtility.getDumpGroupReportsFileName(this, true /* external */));
         reportComponent = DaggerReportComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .postModule(new PostModule(postId))
-                .reportModule(new ReportModule(groupReportBundleId, FileUtility.getDumpGroupReportsFileName(this, true /* external */)))
+                .reportModule(reportModule)
                 .build();
         reportComponent.inject(this);
     }
@@ -126,7 +147,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void onBackPressed() {
-        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+        if (isInteractiveMode()) {
             presenter.onCloseView();
         } else {
             super.onBackPressed();
@@ -137,7 +158,9 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
+        outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
         outState.putLong(BUNDLE_KEY_POST_ID, postId);
+        outState.putBoolean(BUNDLE_KEY_FLAG_FORCE_DISABLE_INTERACTIVE_MODE, forceDisableInteractiveMode);
         outState.putBoolean(BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED, postingRevertFinished);
     }
 
@@ -158,14 +181,22 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private void initData(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             groupReportBundleId = savedInstanceState.getLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
+            keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
+            forceDisableInteractiveMode = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_FORCE_DISABLE_INTERACTIVE_MODE, false);
             postingRevertFinished = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED, false);
         } else {
             groupReportBundleId = getIntent().getLongExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
+            keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+            forceDisableInteractiveMode = getIntent().getBooleanExtra(EXTRA_FORCE_DISABLE_INTERACTIVE_MODE, false);
             postingRevertFinished = false;
         }
         Timber.d("GroupReportBundle id: %s ; Post id: %s", groupReportBundleId, postId);
+    }
+
+    private boolean isInteractiveMode() {
+        return AppConfig.INSTANCE.useInteractiveReportScreen() && !forceDisableInteractiveMode;
     }
 
     /* Permissions */
@@ -182,7 +213,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         postThumbnail.setErrorRetryButtonClickListener((view) -> presenter.retryPost());
         updatePostedCounters(0, 0);
 
-        if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+        if (isInteractiveMode()) {
             interruptButton.setVisibility(View.VISIBLE);
             revertAllButton.setEnabled(false);
         } else {
@@ -401,6 +432,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @Override
     public void closeView() {
         finish();
+    }
+
+    @Override
+    public boolean isForceDisableInteractiveMode() {
+        return forceDisableInteractiveMode;
     }
 
     // ------------------------------------------

@@ -21,7 +21,7 @@ import javax.inject.Inject;
 public class DumpGroups extends UseCase<String> {
 
     public static class Parameters implements IParameters {
-        private long groupBundleId;  // has priority over collection of Group-s
+        private final long groupBundleId;  // has priority over collection of Group-s
         private Collection<Group> groups;
 
         public Parameters(long groupBundleId) {
@@ -29,6 +29,7 @@ public class DumpGroups extends UseCase<String> {
         }
 
         public Parameters(Collection<Group> groups) {
+            this.groupBundleId = Constant.BAD_ID;
             this.groups = groups;
         }
     }

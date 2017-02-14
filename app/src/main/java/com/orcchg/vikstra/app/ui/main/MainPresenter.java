@@ -102,7 +102,11 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
         this.keywordListPresenter = keywordListPresenter;
         this.keywordListPresenter.setExternalValueEmitter(isSelected -> {
             memento.isKeywordBundleSelected = isSelected;
-            if (isViewAttached()) getView().showFab(memento.isKeywordBundleSelected && memento.isPostSelected);
+            long keywordBundleId = isSelected ? keywordListPresenter.getSelectedKeywordBundleId() : Constant.BAD_ID;
+            if (isViewAttached()) {
+                getView().showFab(memento.isKeywordBundleSelected && memento.isPostSelected);
+                getView().updateKeywordBundleId(keywordBundleId);
+            }
         });
         this.postSingleGridPresenter = postSingleGridPresenter;
         this.postSingleGridPresenter.setExternalValueEmitter(isSelected -> {

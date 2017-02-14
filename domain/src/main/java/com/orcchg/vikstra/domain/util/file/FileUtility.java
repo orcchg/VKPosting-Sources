@@ -31,7 +31,6 @@ public class FileUtility {
         return new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.ENGLISH).format(new Date());
     }
 
-
     public static String getDumpGroupsFileName(Context context, boolean external) {
         return getDumpFileName(context, "groups_", external, true);
     }

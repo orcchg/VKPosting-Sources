@@ -20,6 +20,7 @@ public interface IKeywordRepository extends IRepository {
     // ------------------------------------------
     @Nullable KeywordBundle keywords(long id);
     List<KeywordBundle> keywords();
+    List<KeywordBundle> keywords(long... ids);
     List<KeywordBundle> keywords(int limit, int offset);
 
     /* Update */

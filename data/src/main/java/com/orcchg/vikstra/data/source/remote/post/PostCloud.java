@@ -39,6 +39,11 @@ public class PostCloud implements IPostStorage {
     }
 
     @Override
+    public List<Post> posts(long... ids) {
+        return null;
+    }
+
+    @Override
     public List<Post> posts(int limit, int offset) {
         return null;
     }

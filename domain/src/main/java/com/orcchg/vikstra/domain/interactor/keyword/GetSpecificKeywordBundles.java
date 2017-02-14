@@ -7,40 +7,30 @@ import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
-import com.orcchg.vikstra.domain.model.Keyword;
+import com.orcchg.vikstra.domain.interactor.common.IdsParameters;
+import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.repository.IKeywordRepository;
-import com.orcchg.vikstra.domain.util.Constant;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
-public class AddKeywordToBundle extends UseCase<Boolean> {
+public class GetSpecificKeywordBundles extends UseCase<List<KeywordBundle>> {
 
-    public static class Parameters implements IParameters {
-        final Keyword keyword;
-
-        public Parameters(Keyword keyword) {
-            this.keyword = keyword;
+    public static class Parameters extends IdsParameters {
+        public Parameters(long... ids) {
+            super(ids);
         }
     }
 
-    private long id = Constant.BAD_ID;
     private final IKeywordRepository keywordRepository;
     private Parameters parameters;
 
     @Inject
-    public AddKeywordToBundle(long id, IKeywordRepository keywordRepository,
-                              ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
+    GetSpecificKeywordBundles(IKeywordRepository keywordRepository, ThreadExecutor threadExecutor,
+                              PostExecuteScheduler postExecuteScheduler) {
         super(threadExecutor, postExecuteScheduler);
-        this.id = id;
         this.keywordRepository = keywordRepository;
-    }
-
-    public long getKeywordBundleId() {
-        return id;
-    }
-
-    public void setKeywordBundleId(long id) {
-        this.id = id;
     }
 
     public void setParameters(Parameters parameters) {
@@ -48,9 +38,9 @@ public class AddKeywordToBundle extends UseCase<Boolean> {
     }
 
     @Nullable @Override
-    protected Boolean doAction() {
+    protected List<KeywordBundle> doAction() {
         if (parameters == null) throw new NoParametersException();
-        return keywordRepository.addKeywordToBundle(id, parameters.keyword);
+        return keywordRepository.keywords(parameters.ids);
     }
 
     @Nullable @Override

@@ -3,8 +3,10 @@ package com.orcchg.vikstra.app.ui.report.main.injection;
 import com.orcchg.vikstra.app.injection.PerActivity;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.report.DumpGroupReports;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
+import com.orcchg.vikstra.domain.repository.IKeywordRepository;
 import com.orcchg.vikstra.domain.repository.IReportRepository;
 import com.orcchg.vikstra.domain.util.file.ReportComposer;
 
@@ -15,10 +17,12 @@ import dagger.Provides;
 public class ReportModule {
 
     protected final long groupReportBundleId;
+    protected final long keywordBundleId;
     private final String pathToDumpFile;
 
-    public ReportModule(long groupReportBundleId, String pathToDumpFile) {
+    public ReportModule(long groupReportBundleId, long keywordBundleId, String pathToDumpFile) {
         this.groupReportBundleId = groupReportBundleId;
+        this.keywordBundleId = keywordBundleId;
         this.pathToDumpFile = pathToDumpFile;
     }
 
@@ -26,6 +30,12 @@ public class ReportModule {
     protected GetGroupReportBundleById provideGetGroupReportBundleById(IReportRepository repository,
            ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         return new GetGroupReportBundleById(groupReportBundleId, repository, threadExecutor, postExecuteScheduler);
+    }
+
+    @Provides @PerActivity
+    protected GetKeywordBundleById provideGetKeywordBundleById(IKeywordRepository repository,
+            ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
+        return new GetKeywordBundleById(keywordBundleId, repository, threadExecutor, postExecuteScheduler);
     }
 
     @Provides @PerActivity
