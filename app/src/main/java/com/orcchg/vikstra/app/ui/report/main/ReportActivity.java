@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -47,6 +49,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class ReportActivity extends BasePermissionActivity<ReportContract.View, ReportContract.Presenter>
@@ -77,6 +80,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @BindView(R.id.anchor_view) View achorView;
     @BindView(R.id.btn_posting_interrupt) Button interruptButton;
     @BindView(R.id.btn_posting_revert_all) Button revertAllButton;
+    @BindView(R.id.fab) FloatingActionButton fab;
     @OnClick(R.id.btn_posting_interrupt)
     void onInterruptPostingClick() {
         presenter.interruptPostingAndClose(false);  // don't close on interruption
@@ -85,6 +89,10 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @OnClick(R.id.btn_posting_revert_all)
     void onRevertAllPostingClick() {
         openRevertAllWarningDialog();
+    }
+    @OnClick(R.id.fab)
+    void onSuspenClick() {
+        presenter.onSuspendClick();
     }
 
     private ReportComponent reportComponent;
@@ -223,11 +231,18 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         updatePostedCounters(0, 0);
 
         if (isInteractiveMode()) {
+            fab.setImageResource(R.drawable.ic_pause_white_24dp);  // pause icon
+            showFab(true);
             interruptButton.setVisibility(View.VISIBLE);
             revertAllButton.setEnabled(false);
         } else {
+            showFab(false);
             interruptButton.setVisibility(View.GONE);
             revertAllButton.setEnabled(true);
+        }
+
+        if (isStateRestored()) {
+            showFab(false);  // don't show fab when state restore regardless whether in interactive mode or not
         }
 
         FragmentManager fm = getSupportFragmentManager();
@@ -305,6 +320,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_DUMP_REPORT);
         dialog1 = DialogProvider.showTextDialog(this, R.string.dialog_warning_title, R.string.report_dialog_posting_was_cancelled_daily_limit_reached);
         enableButtonsOnPostingFinished();
+        showFab(false);
     }
 
     @Override
@@ -313,6 +329,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         String text = String.format(Locale.ENGLISH, SNACKBAR_POSTING_FINISHED, posted, total);
         dialog2 = DialogProvider.showTextDialog(this, R.string.report_dialog_posting_finished, text);
         enableButtonsOnPostingFinished();
+        showFab(false);
     }
 
     @Override
@@ -335,6 +352,22 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         postingRevertFinished = true;
         revertAllButton.setEnabled(false);
         UiUtility.showSnackbar(this, R.string.report_snackbar_revert_all_wall_posting_finished);
+    }
+
+    @DebugLog @Override
+    public void onWallPostingSuspend(boolean paused) {
+        if (isInteractiveMode()) {
+            if (paused) {
+                UiUtility.showSnackbar(this, R.string.report_snackbar_posting_paused);
+                fab.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+            } else {
+                UiUtility.showSnackbar(this, R.string.report_snackbar_posting_resumed);
+                fab.setImageResource(R.drawable.ic_pause_white_24dp);
+            }
+            Intent intent = new Intent(Constant.Broadcast.WALL_POSTING);
+            intent.putExtra(Constant.Broadcast.WALL_POSTING, paused);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }
     }
 
     // ------------------------------------------
@@ -573,6 +606,14 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         REPORTS_DUMP_FILE_PREFIX = resources.getString(R.string.report_dump_file_prefix);
         SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.report_snackbar_group_reports_dump_succeeded);
         SNACKBAR_POSTING_FINISHED = resources.getString(R.string.report_snackbar_posting_finished);
+    }
+
+    private void showFab(boolean isVisible) {
+        if (isVisible) {
+            fab.show();
+        } else {
+            fab.hide();
+        }
     }
 
     /* Showcase */

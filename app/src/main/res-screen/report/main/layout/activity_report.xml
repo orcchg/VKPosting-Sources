@@ -108,6 +108,7 @@
     </LinearLayout>
 
     <include layout="@layout/toolbar_dropshadow" />
+    <include layout="@layout/standard_fab" />
 
     <View
         android:id="@+id/anchor_view"

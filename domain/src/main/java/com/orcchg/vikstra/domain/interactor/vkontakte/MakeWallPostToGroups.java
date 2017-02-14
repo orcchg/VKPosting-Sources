@@ -6,6 +6,7 @@ import com.orcchg.vikstra.domain.exception.NoParametersException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api220VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api6VkUseCaseException;
+import com.orcchg.vikstra.domain.executor.PausableThreadPoolExecutor;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.base.IParameters;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -131,10 +131,10 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
     /* Thread pool */
     // ------------------------------------------
     @Override
-    protected ThreadPoolExecutor createHighloadThreadPoolExecutor() {
+    protected PausableThreadPoolExecutor createHighloadThreadPoolExecutor() {
         // completely overridden method
         BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>();
-        ThreadPoolExecutor pool = new ThreadPoolExecutor(10, 10, 3, TimeUnit.SECONDS, queue);
+        PausableThreadPoolExecutor pool = new PausableThreadPoolExecutor(10, 10, 3, TimeUnit.SECONDS, queue);
         pool.allowCoreThreadTimeOut(true);
         return pool;
     }

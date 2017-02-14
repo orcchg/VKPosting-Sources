@@ -32,8 +32,12 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
 
     private NavigatorHolder navigatorHolder = new NavigatorHolder();
 
+    private boolean isStateRestored = false;
     protected boolean isDestroying = false;
 
+    protected boolean isStateRestored() {
+        return isStateRestored;
+    }
     public boolean isDestroying() {
         return isDestroying;
     }
@@ -45,6 +49,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
 
     @DebugLog @Override @SuppressWarnings("unchecked")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        isStateRestored = savedInstanceState != null;
         isDestroying = false;
         super.onCreate(savedInstanceState);
         Timber.tag(getClass().getSimpleName());

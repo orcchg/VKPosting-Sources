@@ -1,9 +1,14 @@
 package com.orcchg.vikstra.app.ui.group.list.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -84,6 +89,16 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         return false;
     }
 
+    /* Broadcast receiver */
+    // --------------------------------------------------------------------------------------------
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean paused = intent.getBooleanExtra(Constant.Broadcast.WALL_POSTING, false);
+            presenter.onWallPostingSuspend(paused);
+        }
+    };
+
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
     @Override
@@ -92,6 +107,7 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
         postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         super.onCreate(savedInstanceState);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(Constant.Broadcast.WALL_POSTING));
         initNotifications();
     }
 
@@ -103,6 +119,12 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         emptyDataTextView.setText(R.string.group_list_empty_keywords_data_text);
         emptyDataButton.setText(R.string.group_list_empty_keywords_data_button_label);
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+        super.onDestroy();
     }
 
     /* Contract */

@@ -26,6 +26,10 @@ public class Constant {
         public static final int DIALOG_SCREEN = 10050;
     }
 
+    public static final class Broadcast {
+        public static final String WALL_POSTING = "wall_posting";
+    }
+
     public static final class ListTag {
         public static final int GROUP_LIST_SCREEN = 1000;
         public static final int KEYWORD_CREATE_SCREEN = 1010;

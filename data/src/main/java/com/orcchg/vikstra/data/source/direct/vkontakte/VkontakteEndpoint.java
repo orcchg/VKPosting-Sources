@@ -23,6 +23,7 @@ import com.orcchg.vikstra.domain.interactor.vkontakte.DeleteWallPosts;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetCurrentUser;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupById;
 import com.orcchg.vikstra.domain.interactor.vkontakte.GetGroupsByKeywordsList;
+import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost;
 import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPostToGroups;
 import com.orcchg.vikstra.domain.interactor.vkontakte.RestoreWallPost;
 import com.orcchg.vikstra.domain.interactor.vkontakte.RestoreWallPosts;
@@ -68,6 +69,8 @@ public class VkontakteEndpoint extends Endpoint {
     private final ImageLoader imageLoader;
     private final VkAttachLocalCache attachLocalCache;
 
+    private MakeWallPostToGroups makeWallPostingUseCase;  // reference to communicate with use-case
+
     private @DebugSake int postingInterval = 0;  // use default sleep interval
 
     public static class Scope {
@@ -89,6 +92,20 @@ public class VkontakteEndpoint extends Endpoint {
         postingInterval = interval;
     }
 
+    /* Communication */
+    // ------------------------------------------
+    @DebugLog
+    public void pauseWallPosting() {
+        makeWallPostingUseCase.pause();
+    }
+
+    @DebugLog
+    public void resumeWallPosting() {
+        makeWallPostingUseCase.resume();
+    }
+
+    /* API */
+    // --------------------------------------------------------------------------------------------
     /* Group */
     // ------------------------------------------
     /**
@@ -432,9 +449,8 @@ public class VkontakteEndpoint extends Endpoint {
                      *      Group group = params.getGroup();
                      *
                      * Here we obtain input parameters, containing Group, for each single use-case
-                     * {@link com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost} inside the
-                     * main use-case {@link MakeWallPostToGroups}, which results are eventually delivered
-                     * here in this callback.
+                     * {@link MakeWallPost} inside the main use-case {@link MakeWallPostToGroups},
+                     * which results are eventually delivered here in this callback.
                      *
                      * This is stable suggestion, because we use parameters corresponding to the item under consideration.
                      */
@@ -452,6 +468,7 @@ public class VkontakteEndpoint extends Endpoint {
             }
         });
         if (postingInterval > 0) useCase.setSleepInterval(postingInterval);
+        makeWallPostingUseCase = useCase;
         useCase.execute();
     }
 

@@ -77,16 +77,18 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     // --------------------------------------------------------------------------------------------
     private static final class Memento {
         private static final String BUNDLE_KEY_EMAIL = "bundle_key_email_" + PrID;
-        private static final String BUNDLE_KEY_FLAG_IS_FINISHED_POSTING = "bundle_key_flag_is_finished_posting" + PrID;;
-        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL = "bundle_key_flag_posted_with_cancel" + PrID;;
-        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE = "bundle_key_flag_posted_with_failure" + PrID;;
-        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS = "bundle_key_flag_posted_with_success" + PrID;;
-        private static final String BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING = "bundle_key_flag_total_for_posting" + PrID;;
+        private static final String BUNDLE_KEY_FLAG_IS_FINISHED_POSTING = "bundle_key_flag_is_finished_posting_" + PrID;
+        private static final String BUNDLE_KEY_FLAG_IS_WALL_POSTING_PAUSED = "bundle_key_flag_is_wall_posting_paused_" + PrID;
+        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL = "bundle_key_flag_posted_with_cancel_" + PrID;
+        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE = "bundle_key_flag_posted_with_failure_" + PrID;
+        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS = "bundle_key_flag_posted_with_success_" + PrID;
+        private static final String BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING = "bundle_key_flag_total_for_posting_" + PrID;
         private static final String BUNDLE_KEY_STORED_REPORTS_ID = "bundle_key_stored_reports_id_" + PrID;
         private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id_" + PrID;
         private static final String BUNDLE_KEY_CURRENT_POST = "bundle_key_current_post_" + PrID;
 
         @InteractiveMode boolean isFinishedPosting;
+        @InteractiveMode boolean isWallPostingPaused;
         @InteractiveMode int postedWithCancel = 0;
         @InteractiveMode int postedWithFailure = 0;
         @InteractiveMode int postedWithSuccess = 0;
@@ -100,6 +102,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         @DebugLog
         private void toBundle(Bundle outState) {
             outState.putBoolean(BUNDLE_KEY_FLAG_IS_FINISHED_POSTING, isFinishedPosting);
+            outState.putBoolean(BUNDLE_KEY_FLAG_IS_WALL_POSTING_PAUSED, isWallPostingPaused);
             outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL, postedWithCancel);
             outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE, postedWithFailure);
             outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS, postedWithSuccess);
@@ -114,6 +117,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         private static Memento fromBundle(Bundle savedInstanceState) {
             Memento memento = new Memento();
             memento.isFinishedPosting = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_FINISHED_POSTING, false);
+            memento.isWallPostingPaused = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_WALL_POSTING_PAUSED, false);
             memento.postedWithCancel = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL, 0);
             memento.postedWithFailure = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE, 0);
             memento.postedWithSuccess = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS, 0);
@@ -275,6 +279,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                     break;
             }
         }
+    }
+
+    @InteractiveMode @Override
+    public void onSuspendClick() {
+        Timber.i("onSuspendClick");
+        memento.isWallPostingPaused = !memento.isWallPostingPaused;
+        if (isViewAttached()) getView().onWallPostingSuspend(memento.isWallPostingPaused);
     }
 
     @InteractiveMode @Override

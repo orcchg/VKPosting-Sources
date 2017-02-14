@@ -25,6 +25,7 @@ interface GroupListContract {
     // ------------------------------------------
     interface Presenter extends MvpPresenter<View>,
             FragmentMediator.Receiver, FragmentMediator.Sender {
+        void onWallPostingSuspend(boolean paused);
         void removeChildListItem(int position, int parentPosition);
         void removeParentListItem(int position);
         void refresh();

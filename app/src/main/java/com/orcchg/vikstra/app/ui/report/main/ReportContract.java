@@ -26,6 +26,7 @@ public interface ReportContract {
         void onPostRevertingEmpty();
         void onPostRevertingError();
         void onPostRevertingFinished();
+        void onWallPostingSuspend(boolean paused);
 
         void openCloseWhilePostingDialog();
         void openDumpNotReadyDialog();
@@ -57,6 +58,7 @@ public interface ReportContract {
     interface Presenter extends MvpPresenter<View>, ListPresenter {
         void onCloseView();
         void onDumpPressed();
+        void onSuspendClick();
         void interruptPostingAndClose(boolean shouldClose);
         void performDumping(String path);
         void performDumping(String path, @Nullable String email);

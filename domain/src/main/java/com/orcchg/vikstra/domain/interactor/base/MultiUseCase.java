@@ -3,6 +3,7 @@ package com.orcchg.vikstra.domain.interactor.base;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.DomainConfig;
+import com.orcchg.vikstra.domain.executor.PausableThreadPoolExecutor;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.util.ValueUtility;
@@ -13,7 +14,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -58,6 +58,25 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     @DebugLog
     public void setSleepInterval(int interval) {
         sleepInterval = interval;
+    }
+
+    /* Control flow */
+    // --------------------------------------------------------------------------------------------
+    public void pause() {
+        suspend(true);
+    }
+
+    public void resume() {
+        suspend(false);
+    }
+
+    private void suspend(boolean paused) {
+        isSuspended.getAndSet(paused);  // atomic operation
+        synchronized (lock) {
+            Timber.tag(getClass().getSimpleName());
+            Timber.d("Toggled suspend: %s", paused);
+            lock.notify();  // wake-up main thread
+        }
     }
 
     /* Error sets */
@@ -150,10 +169,10 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         Arrays.fill(doneFlags, false);
 
         // local pool designed to handle highload multi-use-case
-        ThreadPoolExecutor threadExecutor = createHighloadThreadPoolExecutor();  // could be overriden in sub-classes
+        PausableThreadPoolExecutor threadExecutor = createHighloadThreadPoolExecutor();  // could be overriden in sub-classes
 
         for (int i = 0; i < total; ++i) {
-            if (checkInterruption()) return preparedResults(results);
+            if (checkInterruption()) return preparedResults(results);  // return results that have been recorded
 
             Timber.tag(getClass().getSimpleName());
             Timber.v("Request [%s / %s]", i + 1, total);
@@ -172,7 +191,28 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                 continue;  // skip not launched use-cases and go to wait for the currently running ones
             }
 
-            // TODO: use isSuspended to pause the rest use-cases
+            if (isSuspended.get()) {  // paused
+                if (!threadExecutor.isPaused()) {
+                    Timber.tag(getClass().getSimpleName());
+                    Timber.d("Execution has been paused");
+                    threadExecutor.pause();
+                    synchronized (lock) {
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            Timber.w("Interruption during suspension");
+                            Thread.currentThread().interrupt();
+                            return preparedResults(results);  // return results that have been recorded
+                        }
+                    }
+                }
+            } else {  // resumed
+                if (threadExecutor.isPaused()) {
+                    Timber.tag(getClass().getSimpleName());
+                    Timber.d("Execution has been resumed");
+                    threadExecutor.resume();
+                }
+            }
 
             threadExecutor.execute(new Runnable() {
                 @Override
@@ -282,12 +322,26 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         synchronized (lock) {
             while (!ValueUtility.isAllTrue(doneFlags) && !checkInterruption()) {
                 try {
-                    lock.wait();  // waiting all tasks to finish
+                    lock.wait();  // waiting all tasks to finish, releasing lock
 
                     if (isCancelled.get() && !threadExecutor.isShutdown()) {  // shutdown only once
                         Timber.tag(getClass().getSimpleName());
                         Timber.d("Execution was cancelled, interrupting all running (not finished) use-cases");
                         threadExecutor.shutdownNow();  // interrupt all running use-cases
+                    }
+
+                    if (isSuspended.get()) {  // paused
+                        if (!threadExecutor.isPaused()) {
+                            Timber.tag(getClass().getSimpleName());
+                            Timber.d("Execution has been paused");
+                            threadExecutor.pause();
+                        }
+                    } else {  // resumed
+                        if (threadExecutor.isPaused()) {
+                            Timber.tag(getClass().getSimpleName());
+                            Timber.d("Execution has been resumed");
+                            threadExecutor.resume();
+                        }
                     }
                     // continue awaiting for currently running use-cases
                 } catch (InterruptedException e) {
@@ -323,9 +377,9 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
 
     /* Thread pool */
     // --------------------------------------------------------------------------------------------
-    protected ThreadPoolExecutor createHighloadThreadPoolExecutor() {
+    protected PausableThreadPoolExecutor createHighloadThreadPoolExecutor() {
         BlockingQueue<Runnable> queue = new LinkedBlockingDeque<>();
-        ThreadPoolExecutor pool = new ThreadPoolExecutor(3, 3, 10, TimeUnit.SECONDS, queue);
+        PausableThreadPoolExecutor pool = new PausableThreadPoolExecutor(3, 3, 10, TimeUnit.SECONDS, queue);
         pool.allowCoreThreadTimeOut(true);
         return pool;
     }
