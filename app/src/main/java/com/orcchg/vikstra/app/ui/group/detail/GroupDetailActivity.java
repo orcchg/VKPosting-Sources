@@ -73,6 +73,7 @@ public class GroupDetailActivity extends BaseActivity<GroupDetailContract.View, 
     @DebugLog
     private void initData(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
+            Timber.d("Restore state");
             groupId = savedInstanceState.getLong(BUNDLE_KEY_GROUP_ID, Constant.BAD_ID);
         } else {
             groupId = getIntent().getLongExtra(EXTRA_GROUP_ID, Constant.BAD_ID);

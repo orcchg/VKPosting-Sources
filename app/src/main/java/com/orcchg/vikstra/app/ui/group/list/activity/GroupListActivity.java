@@ -164,6 +164,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     // --------------------------------------------------------------------------------------------
     private void initData(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
+            Timber.d("Restore state");
             chosenSettingVariant = savedInstanceState.getInt(BUNDLE_KEY_CHOSEN_SETTING_VARIANT, 0);
             keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);

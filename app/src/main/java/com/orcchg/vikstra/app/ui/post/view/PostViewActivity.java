@@ -114,6 +114,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
     @DebugLog
     private void initData(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
+            Timber.d("Restore state");
             postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
             isEditable = savedInstanceState.getBoolean(BUNDLE_KEY_EDITABLE, false);
         } else {

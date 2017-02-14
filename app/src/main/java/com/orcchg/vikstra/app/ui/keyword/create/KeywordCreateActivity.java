@@ -126,6 +126,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     @DebugLog
     private void initData(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
+            Timber.d("Restore state");
             keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
         } else {
             keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);

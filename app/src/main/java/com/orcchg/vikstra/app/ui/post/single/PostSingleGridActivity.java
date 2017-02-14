@@ -36,7 +36,6 @@ public class PostSingleGridActivity extends BaseActivity<PostSingleGridContract.
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
-    // TODO: later migrate this Activity to PostListActivity
 
     /* Contract */
     // --------------------------------------------------------------------------------------------

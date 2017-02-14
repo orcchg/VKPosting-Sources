@@ -155,6 +155,7 @@ public class PostCreateActivity extends BasePermissionActivity<PostCreateContrac
     @DebugLog
     private void initData(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
+            Timber.d("Restore state");
             postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         } else {
             postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);

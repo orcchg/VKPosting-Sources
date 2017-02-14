@@ -99,6 +99,7 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
     @DebugLog
     private void initData(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
+            Timber.d("Restore state");
             selectedPostId = savedInstanceState.getLong(BUNDLE_KEY_SELECTED_POST_ID, Constant.BAD_ID);
         } else {
             selectedPostId = getIntent().getLongExtra(EXTRA_SELECTED_POST_ID, Constant.BAD_ID);
