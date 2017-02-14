@@ -114,6 +114,7 @@
     <string name="keyword_list_empty_data_text">Добавьте новые слова</string>
     <string name="keyword_list_screen_title">Слова</string>
     <!-- Main screen -->
+    <string name="main_button_label_history">История</string>
     <string name="main_button_label_new_keywords">Новый список</string>
     <string name="main_dialog_about_title">О Приложении</string>
     <string name="main_dialog_about_description">Автор: Maxim Alov\nEmail: alovmax@yandex.ru\n\nAttribution\nИконка от: Freepik\nhttp://www.flaticon.com/free-icon/vk_145813#term=Vk&#38;page=1&#38;position=1</string>

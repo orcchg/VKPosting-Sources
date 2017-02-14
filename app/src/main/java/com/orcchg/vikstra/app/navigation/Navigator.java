@@ -28,6 +28,7 @@ import com.orcchg.vikstra.app.ui.main.StartActivity;
 import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.list.PostListActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
+import com.orcchg.vikstra.app.ui.report.history.ReportHistoryActivity;
 import com.orcchg.vikstra.app.ui.report.main.ReportActivity;
 import com.orcchg.vikstra.app.ui.status.StatusActivity;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
@@ -263,6 +264,11 @@ public class Navigator {
 
     public void openReportScreenNoInteractive(@NonNull Context context, long groupReportBundleId, long keywordBundleId, long postId) {
         Intent intent = ReportActivity.getCallingIntentNoInteractive(context, groupReportBundleId, keywordBundleId, postId);
+        context.startActivity(intent);
+    }
+
+    public void openReportHistoryScreen(@NonNull Context context) {
+        Intent intent = ReportHistoryActivity.getCallingIntent(context);
         context.startActivity(intent);
     }
 

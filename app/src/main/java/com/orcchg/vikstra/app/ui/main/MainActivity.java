@@ -76,6 +76,10 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     void onSeeAllKeywordsClick() {
         navigationComponent.navigator().openKeywordListScreen(this);
     }
+    @OnClick(R.id.btn_history)
+    public void onHistoryClick() {
+        navigationComponent.navigator().openReportHistoryScreen(this);
+    }
     @OnClick(R.id.btn_new_lists)
     public void onNewListsClick() {
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_HIDE);

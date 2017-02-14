@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="main_button_label_history">History</string>
     <string name="main_button_label_new_keywords">New list</string>
     <string name="main_dialog_about_title">About App</string>
     <string name="main_dialog_about_description">Created by: Maxim Alov\nEmail: alovmax@yandex.ru\n\nAttribution\nLauncher icon: Freepik\nhttp://www.flaticon.com/free-icon/vk_145813#term=Vk&#38;page=1&#38;position=1</string>
