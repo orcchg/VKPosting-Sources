@@ -205,17 +205,18 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     private void initToolbar() {
         toolbar.setTitle(R.string.group_list_screen_title);
         toolbar.setNavigationOnClickListener((view) -> onBackPressed());  // finish with current result
-        switch (AppConfig.INSTANCE.sendDumpFilesVia()) {
-            case AppConfig.SEND_DUMP_FILE:
-                toolbar.inflateMenu(R.menu.edit_dump);
-                break;
-            case AppConfig.SEND_DUMP_EMAIL:
-                toolbar.inflateMenu(R.menu.edit_send);
-                break;
-            case AppConfig.SEND_DUMP_SHARE:
-                toolbar.inflateMenu(R.menu.edit_share);
-                break;
-        }
+//        switch (AppConfig.INSTANCE.sendDumpFilesVia()) {
+//            case AppConfig.SEND_DUMP_FILE:
+//                toolbar.inflateMenu(R.menu.edit_dump);
+//                break;
+//            case AppConfig.SEND_DUMP_EMAIL:
+//                toolbar.inflateMenu(R.menu.edit_send);
+//                break;
+//            case AppConfig.SEND_DUMP_SHARE:
+//                toolbar.inflateMenu(R.menu.edit_share);
+//                break;
+//        }
+        toolbar.inflateMenu(R.menu.edit_dump_settings);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.edit:
