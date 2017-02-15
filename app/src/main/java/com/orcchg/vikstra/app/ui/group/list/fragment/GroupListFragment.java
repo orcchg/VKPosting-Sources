@@ -12,6 +12,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,8 +33,10 @@ import com.orcchg.vikstra.app.ui.group.list.listview.parent.AddNewKeywordParentV
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.vk.sdk.VKServiceActivity;
 
 import butterknife.OnClick;
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class GroupListFragment extends CollectionFragment<GroupListContract.View, GroupListContract.Presenter>
@@ -92,10 +95,17 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     /* Broadcast receiver */
     // --------------------------------------------------------------------------------------------
     private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
+        @DebugLog @Override
         public void onReceive(Context context, Intent intent) {
+            /**
+             * Pause / resume wall posting when user has explicitly asked for pause / resume ('paused' == true / false).
+             * Resume wall posting is the process has just recovered from Captcha error successfully.
+             */
             boolean paused = intent.getBooleanExtra(Constant.Broadcast.WALL_POSTING, false);
-            presenter.onWallPostingSuspend(paused);
+            int outerCode = intent.getIntExtra(VKServiceActivity.VK_SERVICE_OUT_KEY_TYPE, -1);
+            boolean captchaRecovered = outerCode == VKServiceActivity.VKServiceType.Captcha.getOuterCode();
+            Timber.d("Explicit pause: %s, Captcha(%s): %s", paused, outerCode, captchaRecovered);
+            presenter.onWallPostingSuspend(paused || !captchaRecovered);
         }
     };
 
@@ -107,8 +117,11 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
         postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         super.onCreate(savedInstanceState);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, new IntentFilter(Constant.Broadcast.WALL_POSTING));
         initNotifications();
+
+        IntentFilter filter = new IntentFilter(Constant.Broadcast.WALL_POSTING);
+        filter.addAction(VKServiceActivity.VK_SERVICE_BROADCAST);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
     }
 
     @Nullable @Override

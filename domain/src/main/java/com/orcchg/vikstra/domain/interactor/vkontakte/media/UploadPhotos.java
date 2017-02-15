@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.exception.NoParametersException;
+import com.orcchg.vikstra.domain.exception.vkontakte.Api14VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api6VkUseCaseException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
@@ -41,6 +42,7 @@ public class UploadPhotos extends MultiUseCase<VKPhotoArray, List<Ordered<VKPhot
     public UploadPhotos(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(0, threadExecutor, postExecuteScheduler);  // total count will be set later
         setAllowedErrors(Api6VkUseCaseException.class);
+        setSuspendErrors(Api14VkUseCaseException.class);
         setTerminalErrors(Api5VkUseCaseException.class);
     }
 

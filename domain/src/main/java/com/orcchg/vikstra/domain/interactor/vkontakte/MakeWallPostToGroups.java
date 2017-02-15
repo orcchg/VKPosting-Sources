@@ -3,6 +3,7 @@ package com.orcchg.vikstra.domain.interactor.vkontakte;
 import android.support.annotation.Nullable;
 
 import com.orcchg.vikstra.domain.exception.NoParametersException;
+import com.orcchg.vikstra.domain.exception.vkontakte.Api14VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api220VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api6VkUseCaseException;
@@ -96,6 +97,7 @@ public class MakeWallPostToGroups extends MultiUseCase<GroupReportEssence, List<
     public MakeWallPostToGroups(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         super(0, threadExecutor, postExecuteScheduler);  // total count will be set later
         setAllowedErrors(Api6VkUseCaseException.class);
+        setSuspendErrors(Api14VkUseCaseException.class);
         setTerminalErrors(Api5VkUseCaseException.class, Api220VkUseCaseException.class);
     }
 
