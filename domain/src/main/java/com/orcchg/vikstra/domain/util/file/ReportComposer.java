@@ -33,7 +33,7 @@ public class ReportComposer {
         try {
             Writer io = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "Cp1251"));
             CSVWriter writer = new CSVWriter(io, ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
-            String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Members", "Name", "Screen name"};
+            String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Members", "Name", "Screen name", "Selected"};
             writer.writeNext(header);
             int index = 1;
             for (Group group : groups) {
@@ -48,7 +48,8 @@ public class ReportComposer {
                         group.link(),
                         Integer.toString(group.membersCount()),
                         group.name().replaceAll("\"", "*"),
-                        group.screenName()};
+                        group.screenName(),
+                        group.isSelected() ? "selected" : ""};
                 writer.writeNext(csv);
                 ++index;
             }
