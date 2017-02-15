@@ -293,6 +293,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void receivePostingFailed() {
+        if (isViewAttached()) getView().showPostingFailed();
+    }
+
+    @Override
     public void receivePostingStartedMessage(boolean isStarted) {
         if (isViewAttached()) getView().showPostingStartedMessage(isStarted);
     }

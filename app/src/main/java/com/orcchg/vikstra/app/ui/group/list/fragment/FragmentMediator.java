@@ -37,6 +37,7 @@ public interface FragmentMediator {
         void sendKeywordsLimitReached(int limit);
         void sendPost(@Nullable PostSingleGridItemVO viewObject);
         void sendPostNotSelected();
+        void sendPostingFailed();
         void sendPostingStartedMessage(boolean isStarted);
         void sendShowPostingButtonRequest(boolean isVisible);
         void sendUpdatedSelectedGroupsCounter(int newCount, int total);

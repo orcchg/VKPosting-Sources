@@ -414,6 +414,11 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     }
 
     @Override
+    public void showPostingFailed() {
+        UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_posting_failed);
+    }
+
+    @Override
     public void showPostingStartedMessage(boolean isStarted) {
         if (isStarted) {
             UiUtility.showSnackbar(coordinatorRoot, R.string.group_list_snackbar_posting_started);

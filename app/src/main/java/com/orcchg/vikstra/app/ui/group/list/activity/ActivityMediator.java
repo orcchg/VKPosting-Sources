@@ -23,6 +23,7 @@ public interface ActivityMediator {
         void receiveKeywordsLimitReached(int limit);
         void receivePost(@Nullable PostSingleGridItemVO viewObject);
         void receivePostNotSelected();
+        void receivePostingFailed();
         void receivePostingStartedMessage(boolean isStarted);
         void receiveShowPostingButtonRequest(boolean isVisible);
         void receiveUpdatedSelectedGroupsCounter(int newCount, int total);

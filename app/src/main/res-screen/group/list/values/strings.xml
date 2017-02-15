@@ -23,6 +23,7 @@
     <string name="group_list_snackbar_keywords_limit_message">You\'ve reached keywords limit: %s</string>
     <string name="group_list_snackbar_post_is_empty_message">You must select a post</string>
     <string name="group_list_snackbar_posting_started">Posting has started</string>
+    <string name="group_list_snackbar_posting_failed">Posting has failed</string>
     <string name="group_list_snackbar_posting_finished">Posting has finished</string>
 
     <string name="group_list_showcase_add_keyword_title">Add keywords</string>

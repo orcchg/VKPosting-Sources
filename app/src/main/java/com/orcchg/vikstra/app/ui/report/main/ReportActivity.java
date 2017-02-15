@@ -361,8 +361,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
                 UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_posting_resumed);
             }
             styleFabSuspend(paused);
-            Intent intent = new Intent(Constant.Broadcast.WALL_POSTING);
-            intent.putExtra(Constant.Broadcast.WALL_POSTING, paused);
+            Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_SUSPEND);
+            intent.putExtra(Constant.Broadcast.WALL_POSTING_SUSPEND, paused);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
     }

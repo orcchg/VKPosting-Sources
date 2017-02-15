@@ -49,7 +49,9 @@ public class WallPostingService extends IntentService {
     public static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     public static final String EXTRA_SELECTED_GROUPS = "extra_selected_groups";
     public static final String EXTRA_CURRENT_POST = "extra_current_post";
+    public static final String OUT_EXTRA_WALL_POSTING_PROGRESS = "out_extra_wall_posting_progress";
     public static final String OUT_EXTRA_WALL_POSTING_STATUS = "out_extra_wall_posting_status";
+    public static final String OUT_EXTRA_WALL_POSTING_TOTAL = "out_extra_wall_posting_total";
 
     public static final int WALL_POSTING_STATUS_STARTED = 0;
     public static final int WALL_POSTING_STATUS_FINISHED = 1;
@@ -88,7 +90,7 @@ public class WallPostingService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        IntentFilter filter = new IntentFilter(Constant.Broadcast.WALL_POSTING);
+        IntentFilter filter = new IntentFilter(Constant.Broadcast.WALL_POSTING_SUSPEND);
         IntentFilter filterCaptcha = new IntentFilter(VKServiceActivity.VK_SERVICE_BROADCAST);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiverCaptcha, filterCaptcha);
@@ -150,7 +152,7 @@ public class WallPostingService extends IntentService {
             /**
              * Pause / resume wall posting when user has explicitly asked for pause / resume ('paused' == true / false).
              */
-            boolean paused = intent.getBooleanExtra(Constant.Broadcast.WALL_POSTING, false);
+            boolean paused = intent.getBooleanExtra(Constant.Broadcast.WALL_POSTING_SUSPEND, false);
             Timber.d("Explicit pause: %s", paused);
             onWallPostingSuspend(paused);
         }
@@ -201,8 +203,15 @@ public class WallPostingService extends IntentService {
             }
         }
 
-        Intent intent = new Intent();
+        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_STATUS);
         intent.putExtra(OUT_EXTRA_WALL_POSTING_STATUS, status);
+        sendBroadcast(intent);
+    }
+
+    void sendPostingProgress(int progress, int total) {
+        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_PROGRESS);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_PROGRESS, progress);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_TOTAL, total);
         sendBroadcast(intent);
     }
 
@@ -265,6 +274,7 @@ public class WallPostingService extends IntentService {
             @DebugLog @Override
             public void onPostingProgress(int progress, int total) {
                 postingNotification.onPostingProgress(progress, total);
+                sendPostingProgress(progress, total);
             }
 
             @Override

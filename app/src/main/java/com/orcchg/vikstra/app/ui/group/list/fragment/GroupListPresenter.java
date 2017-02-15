@@ -841,6 +841,11 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     }
 
     @Override
+    public void sendPostingFailed() {
+        mediatorComponent.mediator().sendPostingFailed();
+    }
+
+    @Override
     public void sendPostingStartedMessage(boolean isStarted) {
         mediatorComponent.mediator().sendPostingStartedMessage(isStarted);
     }
@@ -1095,20 +1100,19 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
             }
 
-            if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
-                Timber.d("Open ReportScreen in interactive mode showing posting progress");
-                if (isViewAttached()) {
-                    getView().startWallPostingService(memento.inputKeywordBundle.id(), selectedGroups, memento.currentPost);
+            if (isViewAttached()) {
+                getView().startWallPostingService(memento.inputKeywordBundle.id(), selectedGroups, memento.currentPost);
+                if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+                    Timber.d("Open ReportScreen in interactive mode showing posting progress");
                     getView().openInteractiveReportScreen(memento.inputKeywordBundle.id(), memento.currentPost.id());
+                    // TODO: report screen could subscribe for posting-progress callback
+                    // TODO:        too late, missing some early reports
+                } else {
+                    Timber.d("Show popup with wall posting progress");
+                    getView().openStatusScreen();
                 }
-                // TODO: report screen could subscribe for posting-progress callback
-                // TODO:        too late, missing some early reports
             } else {
-                Timber.d("Show popup with wall posting progress");
-                sendPostingStartedMessage(true);
-                vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, memento.currentPost,
-                        createMakeWallPostCallback(), getView(), null);
-                if (isViewAttached()) getView().openStatusScreen();
+                Timber.w("Unable to start Wall Posting Service: view isn't attached!");
             }
         } else {
             Timber.d("No Post was selected, send warning");

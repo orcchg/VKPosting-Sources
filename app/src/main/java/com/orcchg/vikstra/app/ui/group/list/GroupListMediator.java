@@ -143,6 +143,11 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     }
 
     @Override
+    public void sendPostingFailed() {
+        if (clientFirst != null) clientFirst.receivePostingFailed();
+    }
+
+    @Override
     public void sendPostingStartedMessage(boolean isStarted) {
         if (clientFirst != null) clientFirst.receivePostingStartedMessage(isStarted);
     }

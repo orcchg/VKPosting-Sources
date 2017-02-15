@@ -94,6 +94,7 @@
     <string name="group_list_snackbar_keywords_limit_message">Достигнут лимит ключевых слов: %s</string>
     <string name="group_list_snackbar_post_is_empty_message">Вы должны выбрать публикацию</string>
     <string name="group_list_snackbar_posting_started">Началась публикация</string>
+    <string name="group_list_snackbar_posting_failed">Публикация провалена</string>
     <string name="group_list_snackbar_posting_finished">Публикация завершилась</string>
     <string name="group_list_showcase_add_keyword_title">Добавьте ключевые слова</string>
     <string name="group_list_showcase_add_keyword_description">По этим словам приложение найдет самые популярные группы с открытой стеной</string>

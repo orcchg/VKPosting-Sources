@@ -41,6 +41,7 @@ interface GroupListContract {
         void showErrorPost();
         void showPost(@Nullable PostSingleGridItemVO viewObject);
         void showPostingButton(boolean isVisible);
+        void showPostingFailed();
         void showPostingStartedMessage(boolean isStarted);
         void updateSelectedGroupsCounter(int newCount, int total);
     }

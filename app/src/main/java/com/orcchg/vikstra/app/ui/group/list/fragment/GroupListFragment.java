@@ -1,9 +1,14 @@
 package com.orcchg.vikstra.app.ui.group.list.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -22,6 +27,7 @@ import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListCo
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListModule;
 import com.orcchg.vikstra.app.ui.group.list.listview.parent.AddNewKeywordParentViewHolder;
+import com.orcchg.vikstra.app.ui.report.service.WallPostingService;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.model.Group;
@@ -92,6 +98,10 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
         postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         super.onCreate(savedInstanceState);
+        IntentFilter filterProgress = new IntentFilter(Constant.Broadcast.WALL_POSTING_PROGRESS);
+        IntentFilter filterStatus = new IntentFilter(Constant.Broadcast.WALL_POSTING_STATUS);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiverProgress, filterProgress);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiverStatus, filterStatus);
     }
 
     @Nullable @Override
@@ -103,6 +113,44 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         emptyDataButton.setText(R.string.group_list_empty_keywords_data_button_label);
         return rootView;
     }
+
+    @Override
+    public void onDestroy() {
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiverProgress);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiverStatus);
+        super.onDestroy();
+    }
+
+    /* Broadcast receiver */
+    // --------------------------------------------------------------------------------------------
+    private BroadcastReceiver receiverProgress = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int progress = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_PROGRESS, 0);
+            int total = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_TOTAL, 0);
+            onPostingProgress(progress, total);
+        }
+    };
+
+    private BroadcastReceiver receiverStatus = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            @WallPostingService.WallPostingStatus int status =
+                    intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_STATUS,
+                            WallPostingService.WALL_POSTING_STATUS_STARTED);
+            switch (status) {
+                case WallPostingService.WALL_POSTING_STATUS_STARTED:
+                    onPostingStarted();
+                    break;
+                case WallPostingService.WALL_POSTING_STATUS_FINISHED:
+                    onPostingComplete();
+                    break;
+                case WallPostingService.WALL_POSTING_STATUS_ERROR:
+                    onPostingError();
+                    break;
+            }
+        }
+    };
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
@@ -162,8 +210,11 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     }
 
     // ------------------------------------------
-    @Override
-    public void onPostingProgress(int progress, int total) {
+    private void onPostingStarted() {
+        presenter.sendPostingStartedMessage(true);
+    }
+
+    private void onPostingProgress(int progress, int total) {
         if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
@@ -171,17 +222,18 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         }
     }
 
-    @Override
-    public void onPostingProgressInfinite() {
-    }
+    private void onPostingComplete() {
+        presenter.sendPostingStartedMessage(false);
 
-    @Override
-    public void onPostingComplete() {
         if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
             if (dialog != null) dialog.onPostingComplete();
         }
+    }
+
+    private void onPostingError() {
+        presenter.sendPostingFailed();
     }
 
     /* Internal */
