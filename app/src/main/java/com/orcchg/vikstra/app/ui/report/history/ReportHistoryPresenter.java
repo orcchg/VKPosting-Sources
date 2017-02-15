@@ -43,9 +43,9 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
 
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
-    private @Heavy List<GroupReportBundle> groupReportBundles = new ArrayList<>();
-    private @Heavy List<KeywordBundle> keywordBundles = new ArrayList<>();
-    private @Heavy List<Post> posts = new ArrayList<>();
+    private @Heavy List<GroupReportBundle> groupReportBundles;
+    private @Heavy List<KeywordBundle> keywordBundles;
+    private @Heavy List<Post> posts;
 
     private Memento memento = new Memento();
 
@@ -208,9 +208,9 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
         setState(StateContainer.START);
         // enter START state logic
 
-        groupReportBundles.clear();
-        keywordBundles.clear();
-        posts.clear();
+        groupReportBundles = null;
+        keywordBundles = null;
+        posts = null;
         listAdapter.clear();
         dropListStat();
 
@@ -231,6 +231,7 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
         Collections.sort(bundles);
         groupReportBundles = bundles;
         listMemento.currentSize += bundles.size();
+        Timber.d("Total GroupReportBundle-s: %s", bundles.size());
 
         if (bundles.isEmpty()) {
             if (isViewAttached()) getView().showEmptyList(getListTag());
@@ -264,6 +265,7 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
         // enter KEYWORDS_LOADED state logic
 
         keywordBundles = bundles;
+        Timber.d("Total KeywordBundle-s: %s", bundles.size());
 
         if (posts != null) stateIdle();
     }
@@ -278,6 +280,7 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
         // enter POSTS_LOADED state logic
 
         this.posts = posts;
+        Timber.d("Total Post-s: %s", posts.size());
 
         if (keywordBundles != null) stateIdle();
     }

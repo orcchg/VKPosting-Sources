@@ -106,7 +106,12 @@ public class KeywordDatabase implements IKeywordStorage {
         RealmResults<KeywordBundleDBO> dbos = realm.where(KeywordBundleDBO.class).findAll();
         List<KeywordBundle> models = new ArrayList<>();
         for (int i = 0; i < ids.length; ++i) {
-            if (dbos.get(i).id == ids[i]) models.add(keywordBundleToDboMapper.mapBack(dbos.get(i)));
+            for (KeywordBundleDBO dbo : dbos) {
+                if (dbo.id == ids[i]) {
+                    models.add(keywordBundleToDboMapper.mapBack(dbo));
+                    break;  // check next id, assuming all dbos have unique ids
+                }
+            }
         }
         realm.close();
         return models;

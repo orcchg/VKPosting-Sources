@@ -87,15 +87,6 @@
                     style="@style/Block.Title"/>
 
                 <Button
-                    android:id="@+id/btn_history"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/standard_side_padding_small"
-                    android:layout_marginStart="@dimen/standard_side_padding_small"
-                    android:text="@string/main_button_label_history"
-                    android:visibility="gone"/>
-
-                <Button
                     android:id="@+id/btn_new_lists"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

@@ -76,10 +76,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     void onSeeAllKeywordsClick() {
         navigationComponent.navigator().openKeywordListScreen(this);
     }
-    @OnClick(R.id.btn_history)
-    public void onHistoryClick() {
-        navigationComponent.navigator().openReportHistoryScreen(this);
-    }
     @OnClick(R.id.btn_new_lists)
     public void onNewListsClick() {
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_HIDE);
@@ -158,12 +154,15 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private void initToolbar() {
         toolbar.setTitle(R.string.main_screen_title);
         toolbar.setNavigationIcon(null);  // no navigation back from MainScreen
-        toolbar.inflateMenu(R.menu.avatar);
+        toolbar.inflateMenu(R.menu.avatar_history);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
 //                case R.id.about:
 //                    openAboutDialog();
 //                    return true;
+                case R.id.history:
+                    navigationComponent.navigator().openReportHistoryScreen(this);
+                    return true;
                 case R.id.logout:
                     openLogoutDialog();
                     return true;

@@ -81,7 +81,12 @@ public class PostDatabase implements IPostStorage {
         RealmResults<PostDBO> dbos = realm.where(PostDBO.class).findAll();
         List<Post> models = new ArrayList<>();
         for (int i = 0; i < ids.length; ++i) {
-            if (dbos.get(i).id == ids[i]) models.add(postToDboMapper.mapBack(dbos.get(i)));
+            for (PostDBO dbo : dbos) {
+                if (dbo.id == ids[i]) {
+                    models.add(postToDboMapper.mapBack(dbo));
+                    break;  // check next id, assuming all dbos have unique ids
+                }
+            }
         }
         realm.close();
         return models;
