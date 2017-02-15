@@ -684,17 +684,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
-    public void onWallPostingSuspend(boolean paused) {
-        Timber.i("onWallPostingSuspend: %s", paused);
-        if (paused) {
-            vkontakteEndpoint.pauseWallPosting();
-        } else {
-            vkontakteEndpoint.resumeWallPosting();
-        }
-    }
-
-    // ------------------------------------------
     @Override
     public void removeChildListItem(int position, int parentPosition) {
         Timber.i("removeChildListItem: %s, %s", position, parentPosition);

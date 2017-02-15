@@ -30,7 +30,7 @@ public class PhotoUploadNotification implements IPhotoUploadNotificationDelegate
 
     @Override
     public void onPhotoUploadProgress(int progress, int total) {
-        notificationBuilderPhotoUpload.setProgress(progress, total, false);
+        notificationBuilderPhotoUpload.setProgress(total, progress, false);
         notificationManager.notify(Constant.NotificationID.PHOTO_UPLOAD, notificationBuilderPhotoUpload.build());
     }
 

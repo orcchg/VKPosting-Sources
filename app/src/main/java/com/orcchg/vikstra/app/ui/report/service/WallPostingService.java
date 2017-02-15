@@ -1,13 +1,19 @@
 package com.orcchg.vikstra.app.ui.report.service;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Build;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.LocalBroadcastManager;
 
+import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AndroidApplication;
 import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
 import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
@@ -25,6 +31,7 @@ import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.vk.sdk.VKServiceActivity;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -36,6 +43,8 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class WallPostingService extends IntentService {
+    private static final int FOREGROUND_NOTIFICATION_ID = 777;
+
     public static final String NAME = "wall_posting_service";
     public static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     public static final String EXTRA_SELECTED_GROUPS = "extra_selected_groups";
@@ -74,9 +83,31 @@ public class WallPostingService extends IntentService {
         super(NAME);
     }
 
+    /* Lifecycle */
+    // --------------------------------------------------------------------------------------------
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        IntentFilter filter = new IntentFilter(Constant.Broadcast.WALL_POSTING);
+        IntentFilter filterCaptcha = new IntentFilter(VKServiceActivity.VK_SERVICE_BROADCAST);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverCaptcha, filterCaptcha);
+    }
+
+    @Override
+    public void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverCaptcha);
+        super.onDestroy();
+    }
+
+    /* Payload */
+    // --------------------------------------------------------------------------------------------
     @Override
     protected void onHandleIntent(Intent intent) {
         Timber.i("Enter Wall Posting service");
+        becomeForeground();
+
         component = DaggerWallPostingServiceComponent.builder()
                 .applicationComponent(((AndroidApplication) getApplication()).getApplicationComponent())
                 .wallPostingServiceModule(new WallPostingServiceModule())
@@ -111,8 +142,47 @@ public class WallPostingService extends IntentService {
         Timber.i("Exit Wall Posting service");
     }
 
+    /* Broadcast receiver */
+    // --------------------------------------------------------------------------------------------
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @DebugLog @Override
+        public void onReceive(Context context, Intent intent) {
+            /**
+             * Pause / resume wall posting when user has explicitly asked for pause / resume ('paused' == true / false).
+             */
+            boolean paused = intent.getBooleanExtra(Constant.Broadcast.WALL_POSTING, false);
+            Timber.d("Explicit pause: %s", paused);
+            onWallPostingSuspend(paused);
+        }
+    };
+
+    private BroadcastReceiver receiverCaptcha = new BroadcastReceiver() {
+        @DebugLog @Override
+        public void onReceive(Context context, Intent intent) {
+            /**
+             * Resume wall posting is the process has just recovered from Captcha error successfully.
+             */
+            int outerCode = intent.getIntExtra(VKServiceActivity.VK_SERVICE_OUT_KEY_TYPE, -1);
+            boolean captchaRecovered = outerCode == VKServiceActivity.VKServiceType.Captcha.getOuterCode();
+            Timber.d("Captcha(%s): %s", outerCode, captchaRecovered);
+            onWallPostingSuspend(!captchaRecovered);
+        }
+    };
+
     /* Notification delegate */
     // --------------------------------------------------------------------------------------------
+    private void becomeForeground() {
+        Notification.Builder builder = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.ic_app);  // TODO: prepare white icon stroked
+        Notification notification;
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+            notification = builder.getNotification();
+        } else {
+            notification = builder.build();
+        }
+        startForeground(FOREGROUND_NOTIFICATION_ID, notification);
+    }
+
     private void initNotifications() {
         NotificationManagerCompat.from(this).cancel(Constant.NotificationID.POSTING);
         NotificationManagerCompat.from(this).cancel(Constant.NotificationID.PHOTO_UPLOAD);
@@ -134,6 +204,16 @@ public class WallPostingService extends IntentService {
         Intent intent = new Intent();
         intent.putExtra(OUT_EXTRA_WALL_POSTING_STATUS, status);
         sendBroadcast(intent);
+    }
+
+    @DebugLog
+    private void onWallPostingSuspend(boolean paused) {
+        Timber.i("onWallPostingSuspend: %s", paused);
+        if (paused) {
+            component.vkontakteEndpoint().pauseWallPosting();
+        } else {
+            component.vkontakteEndpoint().resumeWallPosting();
+        }
     }
 
     // --------------------------------------------------------------------------------------------
@@ -182,7 +262,7 @@ public class WallPostingService extends IntentService {
     // --------------------------------------------------------------------------------------------
     private IPostingNotificationDelegate postingDelegate() {
         return new IPostingNotificationDelegate() {
-            @Override
+            @DebugLog @Override
             public void onPostingProgress(int progress, int total) {
                 postingNotification.onPostingProgress(progress, total);
             }
@@ -201,7 +281,7 @@ public class WallPostingService extends IntentService {
 
     private IPhotoUploadNotificationDelegate photoUploadDelegate() {
         return new IPhotoUploadNotificationDelegate() {
-            @Override
+            @DebugLog @Override
             public void onPhotoUploadProgress(int progress, int total) {
                 photoUploadNotification.onPhotoUploadProgress(progress, total);
             }

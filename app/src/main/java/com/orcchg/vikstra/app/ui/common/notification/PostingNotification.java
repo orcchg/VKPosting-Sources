@@ -57,7 +57,7 @@ public class PostingNotification implements IPostingNotificationDelegate {
 
     @Override
     public void onPostingProgress(int progress, int total) {
-        notificationBuilderPosting.setProgress(progress, total, false);
+        notificationBuilderPosting.setProgress(total, progress, false);
         notificationManager.notify(Constant.NotificationID.POSTING, notificationBuilderPosting.build());
     }
 

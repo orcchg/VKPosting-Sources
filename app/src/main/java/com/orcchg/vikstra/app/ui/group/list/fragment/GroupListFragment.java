@@ -1,14 +1,9 @@
 package com.orcchg.vikstra.app.ui.group.list.fragment;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -32,7 +27,6 @@ import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.util.Constant;
-import com.vk.sdk.VKServiceActivity;
 
 import java.util.Collection;
 
@@ -90,33 +84,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         return false;
     }
 
-    /* Broadcast receiver */
-    // --------------------------------------------------------------------------------------------
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @DebugLog @Override
-        public void onReceive(Context context, Intent intent) {
-            /**
-             * Pause / resume wall posting when user has explicitly asked for pause / resume ('paused' == true / false).
-             */
-            boolean paused = intent.getBooleanExtra(Constant.Broadcast.WALL_POSTING, false);
-            Timber.d("Explicit pause: %s", paused);
-            presenter.onWallPostingSuspend(paused);
-        }
-    };
-
-    private BroadcastReceiver receiverCaptcha = new BroadcastReceiver() {
-        @DebugLog @Override
-        public void onReceive(Context context, Intent intent) {
-            /**
-             * Resume wall posting is the process has just recovered from Captcha error successfully.
-             */
-            int outerCode = intent.getIntExtra(VKServiceActivity.VK_SERVICE_OUT_KEY_TYPE, -1);
-            boolean captchaRecovered = outerCode == VKServiceActivity.VKServiceType.Captcha.getOuterCode();
-            Timber.d("Captcha(%s): %s", outerCode, captchaRecovered);
-            presenter.onWallPostingSuspend(!captchaRecovered);
-        }
-    };
-
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
     @Override
@@ -125,11 +92,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
         postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         super.onCreate(savedInstanceState);
-
-        IntentFilter filter = new IntentFilter(Constant.Broadcast.WALL_POSTING);
-        IntentFilter filterCaptcha = new IntentFilter(VKServiceActivity.VK_SERVICE_BROADCAST);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
-        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiverCaptcha, filterCaptcha);
     }
 
     @Nullable @Override
@@ -140,13 +102,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         emptyDataTextView.setText(R.string.group_list_empty_keywords_data_text);
         emptyDataButton.setText(R.string.group_list_empty_keywords_data_button_label);
         return rootView;
-    }
-
-    @Override
-    public void onDestroy() {
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
-        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiverCaptcha);
-        super.onDestroy();
     }
 
     /* Contract */
