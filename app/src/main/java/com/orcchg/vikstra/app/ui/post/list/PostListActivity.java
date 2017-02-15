@@ -184,7 +184,7 @@ public class PostListActivity extends BaseActivity<PostSingleGridContract.View, 
 
     @Override
     public void showCreatePostFailure() {
-        UiUtility.showSnackbar(this, R.string.post_single_grid_snackbar_failed_to_create_post);
+        UiUtility.showSnackbar(coordinatorRoot, R.string.post_single_grid_snackbar_failed_to_create_post);
     }
 
     // ------------------------------------------

@@ -75,6 +75,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     private @ColorInt int FAB_NORMAL_COLOR, FAB_NORMAL_RIPPLE_COLOR, FAB_PAUSE_COLOR, FAB_PAUSE_RIPPLE_COLOR;
 
+    @BindView(R.id.coordinator_root) ViewGroup coordinatorRoot;
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.ll_container) ViewGroup container;
     @BindView(R.id.tv_info_title) TextView reportTextView;
@@ -88,7 +89,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @OnClick(R.id.btn_posting_interrupt)
     void onInterruptPostingClick() {
         presenter.interruptPostingAndClose(false);  // don't close on interruption
-        UiUtility.showSnackbar(this, R.string.report_snackbar_posting_interrupted);
+        UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_posting_interrupted);
     }
     @OnClick(R.id.btn_posting_revert_all)
     void onRevertAllPostingClick() {
@@ -338,33 +339,33 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     public void onPostRevertingStarted() {
-        UiUtility.showSnackbar(this, R.string.report_snackbar_revert_all_wall_posting_started);
+        UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_revert_all_wall_posting_started);
     }
 
     @Override
     public void onPostRevertingEmpty() {
-        UiUtility.showSnackbar(this, R.string.report_snackbar_revert_all_wall_posting_empty);
+        UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_revert_all_wall_posting_empty);
     }
 
     @Override
     public void onPostRevertingError() {
-        UiUtility.showSnackbar(this, R.string.snackbar_error_message);
+        UiUtility.showSnackbar(coordinatorRoot, R.string.snackbar_error_message);
     }
 
     @Override
     public void onPostRevertingFinished() {
         postingRevertFinished = true;
         revertAllButton.setEnabled(false);
-        UiUtility.showSnackbar(this, R.string.report_snackbar_revert_all_wall_posting_finished);
+        UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_revert_all_wall_posting_finished);
     }
 
     @DebugLog @Override
     public void onWallPostingSuspend(boolean paused) {
         if (isInteractiveMode()) {
             if (paused) {
-                UiUtility.showSnackbar(this, R.string.report_snackbar_posting_paused);
+                UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_posting_paused);
             } else {
-                UiUtility.showSnackbar(this, R.string.report_snackbar_posting_resumed);
+                UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_posting_resumed);
             }
             styleFabSuspend(paused);
             Intent intent = new Intent(Constant.Broadcast.WALL_POSTING);
@@ -442,12 +443,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // ------------------------------------------
     @Override
     public void showDumpError() {
-        UiUtility.showSnackbar(this, R.string.report_snackbar_group_reports_dump_failed, Snackbar.LENGTH_LONG);
+        UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_group_reports_dump_failed, Snackbar.LENGTH_LONG);
     }
 
     @Override
     public void showDumpSuccess(String path) {
-        UiUtility.showSnackbar(this, String.format(Locale.ENGLISH, SNACKBAR_DUMP_SUCCESS,
+        UiUtility.showSnackbar(coordinatorRoot, String.format(Locale.ENGLISH, SNACKBAR_DUMP_SUCCESS,
                 FileUtility.refineExternalPath(path)), Snackbar.LENGTH_LONG);
     }
 
