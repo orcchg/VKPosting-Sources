@@ -26,9 +26,9 @@
     <dimen name="standard_side_padding_plus_small_space">66dp</dimen>
     <dimen name="standard_side_padding_small">8dp</dimen>
     <dimen name="standard_space_width">42dp</dimen>
-    <dimen name="standard_thumbnail_size">90dp</dimen>
+    <dimen name="standard_thumbnail_size">80dp</dimen>
     <dimen name="standard_thumbnail_size_small">56dp</dimen>
-    <dimen name="standard_thumbnail_container_height">122dp</dimen>
+    <dimen name="standard_thumbnail_container_height">112dp</dimen>
     <dimen name="standard_thumbnail_small_container_height">72dp</dimen>
     <dimen name="standard_subdesc_text_size">14dp</dimen>
     <dimen name="standard_title_text_size">20dp</dimen>
