@@ -99,8 +99,10 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         super.onCreate(savedInstanceState);
         IntentFilter filterProgress = new IntentFilter(Constant.Broadcast.WALL_POSTING_PROGRESS);
+        IntentFilter filterResult = new IntentFilter(Constant.Broadcast.WALL_POSTING_RESULT_DATA);
         IntentFilter filterStatus = new IntentFilter(Constant.Broadcast.WALL_POSTING_STATUS);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiverProgress, filterProgress);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiverResult, filterResult);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiverStatus, filterStatus);
     }
 
@@ -117,6 +119,7 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     @Override
     public void onDestroy() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiverProgress);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiverResult);
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiverStatus);
         super.onDestroy();
     }
@@ -129,6 +132,14 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
             int progress = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_PROGRESS, 0);
             int total = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_TOTAL, 0);
             onPostingProgress(progress, total);
+        }
+    };
+
+    private BroadcastReceiver receiverResult = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long groupReportBundleId = intent.getLongExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
+            onPostingResult(groupReportBundleId);
         }
     };
 
@@ -220,6 +231,10 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
             StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
             if (dialog != null) dialog.updatePostingProgress(progress, total);
         }
+    }
+
+    private void onPostingResult(long groupReportBundleId) {
+        presenter.onPostingResult(groupReportBundleId);
     }
 
     private void onPostingComplete() {

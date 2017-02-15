@@ -26,6 +26,7 @@ interface GroupListContract {
     // ------------------------------------------
     interface Presenter extends MvpPresenter<View>,
             FragmentMediator.Receiver, FragmentMediator.Sender {
+        void onPostingResult(long groupReportBundleId);
         void removeChildListItem(int position, int parentPosition);
         void removeParentListItem(int position);
         void refresh();

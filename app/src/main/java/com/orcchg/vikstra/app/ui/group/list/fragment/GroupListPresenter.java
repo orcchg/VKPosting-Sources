@@ -32,15 +32,12 @@ import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
 import com.orcchg.vikstra.domain.interactor.keyword.PostKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.keyword.PutKeywordBundle;
 import com.orcchg.vikstra.domain.interactor.post.GetPostById;
-import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupBundle;
-import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Heavy;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
-import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.parcelable.ParcelableKeywordBundle;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
@@ -74,7 +71,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     private final PutKeywordBundle putKeywordBundleUseCase;
     private final PostGroupBundle postGroupBundleUseCase;
     private final PutGroupBundle putGroupBundleUseCase;
-    private final PutGroupReportBundle putGroupReportBundleUseCase;
     private final VkontakteEndpoint vkontakteEndpoint;
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
@@ -193,8 +189,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                        GetGroupBundleById getGroupBundleByIdUseCase, GetKeywordBundleById getKeywordBundleByIdUseCase,
                        GetPostById getPostByIdUseCase, PostKeywordBundle postKeywordBundleUseCase,
                        PutKeywordBundle putKeywordBundleUseCase, PostGroupBundle postGroupBundleUseCase,
-                       PutGroupBundle putGroupBundleUseCase, PutGroupReportBundle putGroupReportBundleUseCase,
-                       VkontakteEndpoint vkontakteEndpoint, PostToSingleGridVoMapper postToSingleGridVoMapper) {
+                       PutGroupBundle putGroupBundleUseCase, VkontakteEndpoint vkontakteEndpoint,
+                       PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter(groupParentItems, createGroupClickCallback(), createAllGroupsSelectedCallback());
         this.addKeywordToBundleUseCase = addKeywordToBundleUseCase;
         this.addKeywordToBundleUseCase.setPostExecuteCallback(createAddKeywordToBundleCallback());
@@ -211,8 +207,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         this.postGroupBundleUseCase = postGroupBundleUseCase;  // no callback - background task
         this.putGroupBundleUseCase = putGroupBundleUseCase;
         this.putGroupBundleUseCase.setPostExecuteCallback(createPutGroupBundleCallback());
-        this.putGroupReportBundleUseCase = putGroupReportBundleUseCase;
-        this.putGroupReportBundleUseCase.setPostExecuteCallback(createPutGroupReportBundleCallback());
         this.vkontakteEndpoint = vkontakteEndpoint;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
     }
@@ -684,6 +678,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     /* Contract */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void onPostingResult(long groupReportBundleId) {
+        if (isViewAttached()) getView().onReportReady(groupReportBundleId, memento.inputKeywordBundle.id(), memento.currentPost.id());
+    }
+
+    // ------------------------------------------
     @Override
     public void removeChildListItem(int position, int parentPosition) {
         Timber.i("removeChildListItem: %s, %s", position, parentPosition);
@@ -1369,30 +1369,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         };
     }
 
-    private UseCase.OnPostExecuteCallback<GroupReportBundle> createPutGroupReportBundleCallback() {
-        return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
-            @DebugLog @Override
-            public void onFinish(@Nullable GroupReportBundle bundle) {
-                if (bundle == null) {
-                    Timber.e("Failed to put new GroupReportBundle to repository - item not created, as expected");
-                    throw new ProgramException();
-                }
-                Timber.i("Use-Case: succeeded to put GroupReportBundle");
-                sendPostingStartedMessage(false);
-                if (isViewAttached()) {
-                    getView().onReportReady(bundle.id(), memento.inputKeywordBundle.id(), memento.currentPost.id());
-                }
-            }
-
-            @DebugLog @Override
-            public void onError(Throwable e) {
-                Timber.e("Use-Case: failed to put GroupReportBundle");
-                // TODO: failed to put GroupBundleReport - retry posting?
-                sendPostingStartedMessage(false);
-            }
-        };
-    }
-
     private UseCase.OnPostExecuteCallback<List<List<Group>>> createGetGroupsByKeywordsListCallback() {
         return new UseCase.OnPostExecuteCallback<List<List<Group>>>() {
             @DebugLog @Override
@@ -1471,26 +1447,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 } else {
                     getView().onSearchingGroupsCancel();
                 }
-            }
-        };
-    }
-
-    private UseCase.OnPostExecuteCallback<List<GroupReportEssence>> createMakeWallPostCallback() {
-        return new UseCase.OnPostExecuteCallback<List<GroupReportEssence>>() {
-            @DebugLog @Override
-            public void onFinish(@Nullable List<GroupReportEssence> reports) {
-                Timber.i("Use-Case: succeeded to make wall posting");
-                PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(
-                        reports, memento.inputKeywordBundle.id(), memento.currentPost.id());
-                putGroupReportBundleUseCase.setParameters(parameters);
-                putGroupReportBundleUseCase.execute();
-            }
-
-            @DebugLog @Override
-            public void onError(Throwable e) {
-                Timber.e("Use-Case: failed to make wall posting");
-                sendPostingStartedMessage(false);
-                // TODO: error on wall posting properly
             }
         };
     }

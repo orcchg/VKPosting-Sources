@@ -52,6 +52,8 @@ public class WallPostingService extends IntentService {
     public static final String OUT_EXTRA_WALL_POSTING_PROGRESS = "out_extra_wall_posting_progress";
     public static final String OUT_EXTRA_WALL_POSTING_STATUS = "out_extra_wall_posting_status";
     public static final String OUT_EXTRA_WALL_POSTING_TOTAL = "out_extra_wall_posting_total";
+    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_ID = "out_extra_wall_posting_result_data_group_report_bundle_id";
+    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_TIMESTAMP = "out_extra_wall_posting_result_data_group_report_bundle_timestamp";
 
     public static final int WALL_POSTING_STATUS_STARTED = 0;
     public static final int WALL_POSTING_STATUS_FINISHED = 1;
@@ -215,6 +217,14 @@ public class WallPostingService extends IntentService {
         sendBroadcast(intent);
     }
 
+    void sendNewGroupReportBundleEssentials(long groupReportBundleId, long timestamp) {
+        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_RESULT_DATA);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_TIMESTAMP, timestamp);
+        sendBroadcast(intent);
+    }
+
+    // ------------------------------------------
     @DebugLog
     private void onWallPostingSuspend(boolean paused) {
         Timber.i("onWallPostingSuspend: %s", paused);
@@ -258,6 +268,7 @@ public class WallPostingService extends IntentService {
                 Timber.i("Use-Case: succeeded to put GroupReportBundle");
                 postingNotification.updateGroupReportBundleId(WallPostingService.this, bundle.id());
                 sendPostingStartedMessage(WALL_POSTING_STATUS_FINISHED);
+                sendNewGroupReportBundleEssentials(bundle.id(), bundle.timestamp());
             }
 
             @DebugLog @Override
