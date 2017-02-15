@@ -22,8 +22,6 @@ import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.ui.common.injection.KeywordModule;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
-import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
-import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
 import com.orcchg.vikstra.app.ui.common.screen.CollectionFragment;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.DaggerGroupListComponent;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListComponent;
@@ -31,8 +29,12 @@ import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListModule;
 import com.orcchg.vikstra.app.ui.group.list.listview.parent.AddNewKeywordParentViewHolder;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.domain.exception.ProgramException;
+import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.vk.sdk.VKServiceActivity;
+
+import java.util.Collection;
 
 import butterknife.OnClick;
 import hugo.weaving.DebugLog;
@@ -48,9 +50,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     void onRetryClick() {
         presenter.retry();  // override
     }
-
-//    private PostingNotification postingNotification;
-//    private PhotoUploadNotification photoUploadNotification;
 
     private GroupListComponent groupComponent;
     private long keywordBundleId = Constant.BAD_ID;
@@ -126,7 +125,6 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         keywordBundleId = args.getLong(BUNDLE_KEY_KEYWORDS_BUNDLE_ID, Constant.BAD_ID);
         postId = args.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         super.onCreate(savedInstanceState);
-        initNotifications();
 
         IntentFilter filter = new IntentFilter(Constant.Broadcast.WALL_POSTING);
         IntentFilter filterCaptcha = new IntentFilter(VKServiceActivity.VK_SERVICE_BROADCAST);
@@ -203,23 +201,14 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         showContent(RV_TAG, isEmpty);
     }
 
-    /* Notification delegate */
-    // --------------------------------------------------------------------------------------------
-    private void initNotifications() {
-        postingNotification = new PostingNotification(getActivity(), Constant.BAD_ID, keywordBundleId, postId);
-        photoUploadNotification = new PhotoUploadNotification(getActivity());
-    }
-
-    @Override
-    public void updateGroupReportBundleId(long groupReportBundleId) {
-        postingNotification.updateGroupReportBundleId(getActivity(), groupReportBundleId);
+    @DebugLog @Override
+    public void startWallPostingService(long keywordBundleId, Collection<Group> selectedGroups, Post post) {
+        navigationComponent.navigator().startWallPostingService(getActivity(), keywordBundleId, selectedGroups, post);
     }
 
     // ------------------------------------------
     @Override
     public void onPostingProgress(int progress, int total) {
-        postingNotification.onPostingProgress(progress, total);
-
         if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
@@ -229,34 +218,15 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
 
     @Override
     public void onPostingProgressInfinite() {
-        postingNotification.onPostingProgressInfinite();
     }
 
     @Override
     public void onPostingComplete() {
-        postingNotification.onPostingComplete();
-
         if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             StatusDialogFragment dialog = (StatusDialogFragment) fm.findFragmentByTag(StatusDialogFragment.DIALOG_TAG);
             if (dialog != null) dialog.onPostingComplete();
         }
-    }
-
-    // ------------------------------------------
-    @Override
-    public void onPhotoUploadProgress(int progress, int total) {
-        photoUploadNotification.onPhotoUploadProgress(progress, total);
-    }
-
-    @Override
-    public void onPhotoUploadProgressInfinite() {
-        photoUploadNotification.onPhotoUploadProgressInfinite();
-    }
-
-    @Override
-    public void onPhotoUploadComplete() {
-        photoUploadNotification.onPhotoUploadComplete();
     }
 
     /* Internal */

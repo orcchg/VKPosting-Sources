@@ -1,6 +1,6 @@
 package com.orcchg.vikstra.app.ui.common.notification;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
@@ -16,10 +16,10 @@ public class PhotoUploadNotification implements IPhotoUploadNotificationDelegate
 
     private String NOTIFICATION_PHOTO_UPLOAD_COMPLETE;
 
-    public PhotoUploadNotification(Activity activity) {
-        Resources resources = activity.getResources();
-        notificationManager = NotificationManagerCompat.from(activity);
-        notificationBuilderPhotoUpload = new NotificationCompat.Builder(activity)
+    public PhotoUploadNotification(Context context) {
+        Resources resources = context.getResources();
+        notificationManager = NotificationManagerCompat.from(context);
+        notificationBuilderPhotoUpload = new NotificationCompat.Builder(context)
                 .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_collections_white_18dp)
                 .setContentTitle(resources.getString(R.string.notification_photo_upload_title))

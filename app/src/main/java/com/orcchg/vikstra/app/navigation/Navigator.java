@@ -30,9 +30,12 @@ import com.orcchg.vikstra.app.ui.post.list.PostListActivity;
 import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
 import com.orcchg.vikstra.app.ui.report.history.ReportHistoryActivity;
 import com.orcchg.vikstra.app.ui.report.main.ReportActivity;
+import com.orcchg.vikstra.app.ui.report.service.WallPostingService;
 import com.orcchg.vikstra.app.ui.status.StatusActivity;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
+import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
 
@@ -40,6 +43,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -270,6 +274,14 @@ public class Navigator {
     public void openReportHistoryScreen(@NonNull Context context) {
         Intent intent = ReportHistoryActivity.getCallingIntent(context);
         context.startActivity(intent);
+    }
+
+    /* Service */
+    // ------------------------------------------
+    public void startWallPostingService(@NonNull Context context, long keywordBundleId,
+                                        Collection<Group> selectedGroups, Post post) {
+        Intent intent = WallPostingService.getCallingIntent(context, keywordBundleId, selectedGroups, post);
+        context.startService(intent);
     }
 
     /* Settings */

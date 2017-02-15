@@ -42,8 +42,6 @@ import com.orcchg.vikstra.domain.model.KeywordBundle;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.parcelable.ParcelableKeywordBundle;
-import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
-import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.ValueUtility;
@@ -1108,32 +1106,20 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 }
             }
 
-            sendPostingStartedMessage(true);
-
-            // In interactive mode there are different notifications - directly from ReportScreen
-            IPostingNotificationDelegate postingDelegate = null;
-            IPhotoUploadNotificationDelegate photoUploadDelegate = null;
-            if (!AppConfig.INSTANCE.useInteractiveReportScreen()) {
-                // TODO: fix ids inside notifications - they are wrong and causes known crash on PostView screen
-                postingDelegate = getView();
-                photoUploadDelegate = getView();
-            }
-
-            vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, memento.currentPost,
-                    createMakeWallPostCallback(), postingDelegate, photoUploadDelegate);
-
-            if (isViewAttached()) {
-                if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
-                    Timber.d("Open ReportScreen in interactive mode showing posting progress");
+            if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
+                Timber.d("Open ReportScreen in interactive mode showing posting progress");
+                if (isViewAttached()) {
+                    getView().startWallPostingService(memento.inputKeywordBundle.id(), selectedGroups, memento.currentPost);
                     getView().openInteractiveReportScreen(memento.inputKeywordBundle.id(), memento.currentPost.id());
-                    // TODO: report screen could subscribe for posting-progress callback
-                    // TODO:        too late, missing some early reports
-                } else {
-                    Timber.d("Show popup with wall posting progress");
-                    getView().openStatusScreen();
                 }
+                // TODO: report screen could subscribe for posting-progress callback
+                // TODO:        too late, missing some early reports
             } else {
-                Timber.w("No View is attached");
+                Timber.d("Show popup with wall posting progress");
+                sendPostingStartedMessage(true);
+                vkontakteEndpoint.makeWallPostsWithDelegate(selectedGroups, memento.currentPost,
+                        createMakeWallPostCallback(), getView(), null);
+                if (isViewAttached()) getView().openStatusScreen();
             }
         } else {
             Timber.d("No Post was selected, send warning");
@@ -1401,7 +1387,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
                 Timber.i("Use-Case: succeeded to put GroupReportBundle");
                 sendPostingStartedMessage(false);
                 if (isViewAttached()) {
-                    getView().updateGroupReportBundleId(bundle.id());
                     getView().onReportReady(bundle.id(), memento.inputKeywordBundle.id(), memento.currentPost.id());
                 }
             }

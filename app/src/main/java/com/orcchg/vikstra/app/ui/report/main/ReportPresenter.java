@@ -186,7 +186,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             ContentUtility.InMemoryStorage.setProgressCallback(postingProgressCallback);  // subscribe to progress updates
             ContentUtility.InMemoryStorage.setCancelCallback(postingCancelledCallback);   // subscribe to cancellation
             ContentUtility.InMemoryStorage.setFinishCallback(postingFinishedCallback);  // subscribe to finish posting
-            if (isViewAttached()) getView().cancelPreviousNotifications();
         }
     }
 
@@ -401,10 +400,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
             // restore all those GroupReport-s from repository that we had managed to store.
             memento.isFinishedPosting = true;  // assume posting has finished on state restore
-            if (isViewAttached()) {
-                getView().enableButtonsOnPostingFinished();
-                getView().onPostingComplete();  // update notification about finish
-            }
+            if (isViewAttached()) getView().enableButtonsOnPostingFinished();
 
             getGroupReportBundleByIdUseCase.setGroupReportId(memento.storedReportsId);
             getGroupReportBundleByIdUseCase.execute();
@@ -598,7 +594,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             ReportListItemVO viewObject = groupReportEssenceToVoMapper.map(model);
             listAdapter.addInverse(viewObject);  // add items on top of the list
             if (isViewAttached()) {
-                getView().onPostingProgress(index + 1, total);  // update notification about progress
                 getView().showGroupReports(false);  // idempotent call (no-op if list items are already visible)
                 getView().updatePostedCounters(memento.postedWithSuccess, total);
                 getView().getListView(getListTag()).smoothScrollToPosition(0);  // scroll on top of the list as items are incoming
@@ -630,7 +625,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 } else {
                     getView().onPostingCancel();
                 }
-                getView().onPostingComplete();  // update notification about finish
             }
         };
     }
@@ -642,7 +636,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             memento.isFinishedPosting = true;
             if (isViewAttached()) {
                 getView().onPostingFinished(memento.postedWithSuccess, memento.totalForPosting);
-                getView().onPostingComplete();  // update notification about finish
             }
         };
     }

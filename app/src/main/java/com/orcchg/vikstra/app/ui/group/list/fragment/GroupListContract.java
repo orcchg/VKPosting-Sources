@@ -3,13 +3,16 @@ package com.orcchg.vikstra.app.ui.group.list.fragment;
 import com.orcchg.vikstra.app.ui.base.MvpListView;
 import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.common.screen.LceView;
-import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
+import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.endpoint.AccessTokenTracker;
 
+import java.util.Collection;
+
 interface GroupListContract {
     interface View extends AccessTokenTracker, LceView, MvpListView,
-            IPostingNotificationDelegate, IPhotoUploadNotificationDelegate {
+            IPostingNotificationDelegate {
         void enableSwipeToRefresh(boolean isEnabled);
 
         void onReportReady(long groupReportBundleId, long keywordBundleId, long postId);
@@ -19,7 +22,7 @@ interface GroupListContract {
         void openStatusScreen();
 
         void showGroups(boolean isEmpty);
-        void updateGroupReportBundleId(long groupReportBundleId);
+        void startWallPostingService(long keywordBundleId, Collection<Group> selectedGroups, Post post);
     }
 
     // ------------------------------------------
