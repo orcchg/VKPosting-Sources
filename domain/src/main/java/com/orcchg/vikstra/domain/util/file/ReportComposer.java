@@ -12,7 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -30,13 +33,15 @@ public class ReportComposer {
             Timber.w("Input collection of Group-s is null, nothing to be done");
             return false;
         }
+        List<Group> sorted = new ArrayList<>(groups);
+        Collections.sort(sorted);
         try {
             Writer io = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(path), "Cp1251"));
             CSVWriter writer = new CSVWriter(io, ';', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.NO_ESCAPE_CHARACTER);
             String[] header = new String[]{" ", "Keyword", "Group ID", "Link", "Members", "Name", "Screen name", "Selected"};
             writer.writeNext(header);
             int index = 1;
-            for (Group group : groups) {
+            for (Group group : sorted) {
                 if (DomainConfig.INSTANCE.useOnlyGroupsWhereCanPostFreely() && !group.canPost()) {
                     continue;  // skip Group-s where is no access for current user to make wall post
                 }
@@ -49,7 +54,7 @@ public class ReportComposer {
                         Integer.toString(group.membersCount()),
                         group.name().replaceAll("\"", "*"),
                         group.screenName(),
-                        group.isSelected() ? "selected" : ""};
+                        group.isSelected() ? "selected" : " "};
                 writer.writeNext(csv);
                 ++index;
             }
