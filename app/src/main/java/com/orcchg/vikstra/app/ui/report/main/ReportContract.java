@@ -41,6 +41,7 @@ public interface ReportContract {
         void updatePostedCounters(int posted, int total);
 
         void closeView();
+        void cancelPreviousNotifications();
         boolean isForceDisableInteractiveMode();
     }
 
@@ -52,6 +53,7 @@ public interface ReportContract {
     interface Presenter extends MvpPresenter<View>, ListPresenter {
         void onCloseView();
         void onDumpPressed();
+        void onPostingResult(long groupReportBundleId, long timestamp);
         void onSuspendClick();
         void interruptPostingAndClose(boolean shouldClose);
         void performDumping(String path);

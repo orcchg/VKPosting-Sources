@@ -8,6 +8,7 @@ import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
+import com.orcchg.vikstra.app.ui.report.service.WallPostingService;
 import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportEssenceToVoMapper;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportToVoMapper;
@@ -86,6 +87,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         private static final String BUNDLE_KEY_STORED_REPORTS_ID = "bundle_key_stored_reports_id_" + PrID;
         private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id_" + PrID;
         private static final String BUNDLE_KEY_CURRENT_POST = "bundle_key_current_post_" + PrID;
+        private static final String BUNDLE_KEY_SERVICE_GRB_ID = "bundle_key_service_grb_id_" + PrID;
+        private static final String BUNDLE_KEY_SERVICE_GRB_TS = "bundle_key_service_grb_ts_" + PrID;
 
         @InteractiveMode boolean isFinishedPosting;
         @InteractiveMode boolean isWallPostingPaused;
@@ -94,6 +97,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         @InteractiveMode int postedWithSuccess = 0;
         @InteractiveMode int totalForPosting = 0;
         @InteractiveMode long storedReportsId = Constant.BAD_ID;
+
+        /**
+         * This field corresponds to id of {@link GroupReportBundle} actually created and stored to
+         * repository by {@link WallPostingService}, same for timestamp value.
+         */
+        @InteractiveMode long serviceGroupReportBundleId = Constant.BAD_ID;
+        @InteractiveMode long serviceGroupReportBundleTimestamp = 0;
 
         private @Nullable String email;
         private long keywordBundleId = Constant.BAD_ID;
@@ -111,6 +121,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             outState.putString(BUNDLE_KEY_EMAIL, email);
             outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
             outState.putParcelable(BUNDLE_KEY_CURRENT_POST, currentPost);
+            outState.putLong(BUNDLE_KEY_SERVICE_GRB_ID, serviceGroupReportBundleId);
+            outState.putLong(BUNDLE_KEY_SERVICE_GRB_TS, serviceGroupReportBundleTimestamp);
         }
 
         @DebugLog
@@ -126,6 +138,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             memento.email = savedInstanceState.getString(BUNDLE_KEY_EMAIL);
             memento.keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             memento.currentPost = savedInstanceState.getParcelable(BUNDLE_KEY_CURRENT_POST);
+            memento.serviceGroupReportBundleId = savedInstanceState.getLong(BUNDLE_KEY_SERVICE_GRB_ID, Constant.BAD_ID);
+            memento.serviceGroupReportBundleTimestamp = savedInstanceState.getLong(BUNDLE_KEY_SERVICE_GRB_TS, 0);
             return memento;
         }
     }
@@ -279,6 +293,12 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         }
     }
 
+    @DebugLog @Override
+    public void onPostingResult(long groupReportBundleId, long timestamp) {
+        memento.serviceGroupReportBundleId = groupReportBundleId;
+        memento.serviceGroupReportBundleTimestamp = timestamp;
+    }
+
     @InteractiveMode @Override
     public void onSuspendClick() {
         Timber.i("onSuspendClick");
@@ -321,6 +341,19 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     public void performReverting() {
         Timber.i("performReverting");
+        /**
+         * Currently there are two different, but similar {@link GroupReportBundle} items - one from
+         * {@link WallPostingService} - created and then put to repository - and potential item,
+         * which will be composed from {@link ReportPresenter.Memento#storedReports} and then put to
+         * repository with {@link ReportPresenter.Memento#storedReportsId} when ReportScreen will be
+         * in the middle of destruction-restoration process.
+         *
+         * Any reverting performed here will affect the latter {@link GroupReportBundle} and won't
+         * have any effect on the former. But user could still open notification and see the former
+         * item loaded to ReportScreen, missing all revert-statuses. To avoid that, we dismiss notification.
+         */
+        if (isViewAttached()) getView().cancelPreviousNotifications();
+
         List<GroupReport> successReports = new ArrayList<>();
         for (GroupReport report : storedReports) {  // only successful posts can be reverted
             if (report.status() == GroupReport.STATUS_SUCCESS) successReports.add(report);

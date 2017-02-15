@@ -1,7 +1,9 @@
 package com.orcchg.vikstra.app.ui.report.main;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -37,6 +40,7 @@ import com.orcchg.vikstra.app.ui.common.view.PostThumbnail;
 import com.orcchg.vikstra.app.ui.report.main.injection.DaggerReportComponent;
 import com.orcchg.vikstra.app.ui.report.main.injection.ReportComponent;
 import com.orcchg.vikstra.app.ui.report.main.injection.ReportModule;
+import com.orcchg.vikstra.app.ui.report.service.WallPostingService;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
@@ -157,6 +161,9 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         initResources();
         initView();
         initToolbar();
+
+        IntentFilter filterResult = new IntentFilter(Constant.Broadcast.WALL_POSTING_RESULT_DATA);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverResult, filterResult);
     }
 
     @Override
@@ -180,6 +187,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverResult);
         super.onDestroy();
         if (dialog1 != null) dialog1.dismiss();
         if (dialog2 != null) dialog2.dismiss();
@@ -189,6 +197,17 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         if (dialog6 != null) dialog6.dismiss();
         if (dialog7 != null) dialog7.dismiss();
     }
+
+    /* Broadcast receiver */
+    // --------------------------------------------------------------------------------------------
+    private BroadcastReceiver receiverResult = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            long groupReportBundleId = intent.getLongExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
+            long timestamp = intent.getLongExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_TIMESTAMP, 0);
+            presenter.onPostingResult(groupReportBundleId, timestamp);
+        }
+    };
 
     /* Data */
     // --------------------------------------------------------------------------------------------
@@ -471,6 +490,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @Override
     public void closeView() {
         finish();
+    }
+
+    @Override
+    public void cancelPreviousNotifications() {
+        NotificationManagerCompat.from(this).cancel(Constant.NotificationID.POSTING);
+        NotificationManagerCompat.from(this).cancel(Constant.NotificationID.PHOTO_UPLOAD);
     }
 
     @Override
