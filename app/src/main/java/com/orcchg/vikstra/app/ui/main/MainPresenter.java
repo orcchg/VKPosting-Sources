@@ -103,20 +103,14 @@ public class MainPresenter extends BaseCompositePresenter<MainContract.View> imp
         this.keywordListPresenter.setExternalValueEmitter(isSelected -> {
             memento.isKeywordBundleSelected = isSelected;
             long keywordBundleId = isSelected ? keywordListPresenter.getSelectedKeywordBundleId() : Constant.BAD_ID;
-            if (isViewAttached()) {
-                getView().showFab(memento.isKeywordBundleSelected && memento.isPostSelected);
-                getView().updateKeywordBundleId(keywordBundleId);
-            }
+            if (isViewAttached()) getView().showFab(memento.isKeywordBundleSelected && memento.isPostSelected);
         });
         this.postSingleGridPresenter = postSingleGridPresenter;
         this.postSingleGridPresenter.setExternalValueEmitter(isSelected -> {
             memento.isPostSelected = isSelected;
             long postId = isSelected ? postSingleGridPresenter.getSelectedPostId() : Constant.BAD_ID;
             ContentUtility.CurrentSession.setLastSelectedPostId(postId);
-            if (isViewAttached()) {
-                getView().showFab(memento.isKeywordBundleSelected && memento.isPostSelected);
-                getView().updatePostId(postId);
-            }
+            if (isViewAttached()) getView().showFab(memento.isKeywordBundleSelected && memento.isPostSelected);
         });
         this.getGroupBundleByIdUseCase = getGroupBundleByIdUseCase;
         this.getGroupBundleByIdUseCase.setPostExecuteCallback(createGetGroupBundleByIdCallback());

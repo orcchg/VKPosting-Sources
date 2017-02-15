@@ -33,8 +33,6 @@ import com.orcchg.vikstra.app.ui.common.content.IScrollList;
 import com.orcchg.vikstra.app.ui.common.content.ISwipeToDismiss;
 import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.common.injection.PostModule;
-import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
-import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
 import com.orcchg.vikstra.app.ui.common.showcase.SingleShot;
 import com.orcchg.vikstra.app.ui.common.view.AvatarMenuItem;
 import com.orcchg.vikstra.app.ui.group.list.fragment.injection.GroupListModule;
@@ -82,9 +80,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         navigationComponent.navigator().openGroupListScreen(this);
     }
 
-    private PostingNotification postingNotification;
-    private PhotoUploadNotification photoUploadNotification;
-
     private MainComponent mainComponent;
 
     private @Nullable ShowcaseView showcaseView;
@@ -121,7 +116,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         initView();
-        initNotifications();
         initToolbar();
         if (AppConfig.INSTANCE.useTutorialShowcases()) showcaseView = runShowcase(SingleShot.CASE_NEW_LISTS);
     }
@@ -394,60 +388,6 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
                 presenter.removePostGridItem(position);
                 break;
         }
-    }
-
-    /* Notification delegate */
-    // --------------------------------------------------------------------------------------------
-    private void initNotifications() {
-        postingNotification = new PostingNotification(this);
-        photoUploadNotification = new PhotoUploadNotification(this);
-    }
-
-    @Override
-    public void updateGroupReportBundleId(long groupReportBundleId) {
-        postingNotification.updateGroupReportBundleId(this, groupReportBundleId);
-    }
-
-    @Override
-    public void updateKeywordBundleId(long keywordBundleId) {
-        postingNotification.updateKeywordBundleId(this, keywordBundleId);
-    }
-
-    @Override
-    public void updatePostId(long postId) {
-        postingNotification.updatePostId(this, postId);
-    }
-
-    // ------------------------------------------
-    @Override
-    public void onPostingProgress(int progress, int total) {
-        postingNotification.onPostingProgress(progress, total);
-    }
-
-    @Override
-    public void onPostingProgressInfinite() {
-        postingNotification.onPostingProgressInfinite();
-    }
-
-    @Override
-    public void onPostingComplete() {
-        postingNotification.onPostingComplete();
-    }
-
-    // ------------------------------------------
-    @Override
-    public void onPhotoUploadProgress(int progress, int total) {
-        photoUploadNotification.onPhotoUploadProgress(progress, total);
-    }
-
-    @Override
-    public void onPhotoUploadProgressInfinite() {
-        photoUploadNotification.onPhotoUploadProgressInfinite();
-    }
-
-    @Override
-    public void onPhotoUploadComplete() {
-        photoUploadNotification.onPhotoUploadComplete();
     }
 
     /* Internal */

@@ -49,8 +49,8 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         presenter.retry();  // override
     }
 
-    private PostingNotification postingNotification;
-    private PhotoUploadNotification photoUploadNotification;
+//    private PostingNotification postingNotification;
+//    private PhotoUploadNotification photoUploadNotification;
 
     private GroupListComponent groupComponent;
     private long keywordBundleId = Constant.BAD_ID;

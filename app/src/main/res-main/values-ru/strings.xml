@@ -65,6 +65,7 @@
         <item name="101">Память</item>
         <item name="102">Память</item>
     </string-array>
+    <string name="service_wall_posting_name">Постинг ВК</string>
     <string name="snackbar_error_message">Произошла ошибка</string>
     <string name="toast_access_token_has_expired">Ключ доступа устарел. Авторизуйтесь повторно.</string>
     <!-- Group detail screen -->

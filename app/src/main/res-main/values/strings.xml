@@ -73,6 +73,8 @@
         <item name="102">Memory</item>
     </string-array>
 
+    <string name="service_wall_posting_name">VK posting</string>
+
     <string name="snackbar_error_message">An error has occurred</string>
 
     <string name="toast_access_token_has_expired">Access token has expired. Repeat authentication.</string>

@@ -196,7 +196,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         if (isInteractiveMode()) {
             // get id reserved for the item to store in repository next
             memento.storedReportsId = putGroupReportBundleUseCase.getReservedId();
-            if (isViewAttached()) getView().updateGroupReportBundleId(memento.storedReportsId);  // use id in notification later
             // put everything available in 'storedReports' to repository
             List<GroupReportEssence> essences = groupReportEssenceMapper.mapBack(storedReports);  // 'id' and 'timestamp' are ignored
             PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(

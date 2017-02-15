@@ -8,13 +8,10 @@ import com.orcchg.vikstra.app.ui.common.screen.LceView;
 import com.orcchg.vikstra.app.ui.common.screen.ListPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
-import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
-import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.endpoint.AccessTokenTracker;
 
 public interface ReportContract {
-    interface View extends AccessTokenTracker, SubView,
-            IPostingNotificationDelegate, IPhotoUploadNotificationDelegate {
+    interface View extends AccessTokenTracker, SubView {
         void enableSwipeToRefresh(boolean isEnabled);
         void enableButtonsOnPostingFinished();
 
@@ -45,9 +42,6 @@ public interface ReportContract {
 
         void closeView();
         boolean isForceDisableInteractiveMode();
-
-        void cancelPreviousNotifications();
-        void updateGroupReportBundleId(long groupReportBundleId);
     }
 
     interface SubView extends LceView, MvpListView {

@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.domain.model;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -7,7 +8,7 @@ import com.google.auto.value.AutoValue;
 import com.orcchg.vikstra.domain.util.External;
 
 @AutoValue
-public abstract class Group implements Comparable<Group> {
+public abstract class Group implements Comparable<Group>, Parcelable {
 
     private boolean isSelected;
 

@@ -99,6 +99,11 @@
         <activity android:name=".app.ui.status.StatusActivity"
                   android:label="@string/status_screen_title"
                   android:theme="@style/AppTheme"/>
+        
+        <!-- Service -->
+        <service android:name=".app.ui.report.service.WallPostingService"
+                 android:icon="@drawable/ic_cloud_upload_white_18dp"
+                 android:label="@string/service_wall_posting_name"/>
 
         <!-- Provider -->
         <provider
