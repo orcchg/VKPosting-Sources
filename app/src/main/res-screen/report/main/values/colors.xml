@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="report_fab_normal_color">@color/colorAccent</color>
+    <color name="report_fab_normal_ripple_color">#388E3C</color>
+    <color name="report_fab_pause_color">@color/red_button</color>
+    <color name="report_fab_pause_ripple_color">#B71C1C</color>
     <color name="report_progressbar_background_color">#ff9d9e9d</color>
     <color name="report_progressbar_background_center_color">#ff5a5d5a</color>
     <color name="report_progressbar_background_end_color">#ff747674</color>

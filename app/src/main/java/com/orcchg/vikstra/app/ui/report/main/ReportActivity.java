@@ -2,8 +2,10 @@ package com.orcchg.vikstra.app.ui.report.main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
@@ -70,6 +72,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
             EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, EMAIL_BODY, EMAIL_SUBJECT,
             INFO_TITLE, REPORTS_DUMP_FILE_PREFIX,
             SNACKBAR_DUMP_SUCCESS, SNACKBAR_POSTING_FINISHED;
+
+    private @ColorInt int FAB_NORMAL_COLOR, FAB_NORMAL_RIPPLE_COLOR, FAB_PAUSE_COLOR, FAB_PAUSE_RIPPLE_COLOR;
 
     @BindView(R.id.toolbar) Toolbar toolbar;
     @BindView(R.id.ll_container) ViewGroup container;
@@ -231,7 +235,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         updatePostedCounters(0, 0);
 
         if (isInteractiveMode()) {
-            fab.setImageResource(R.drawable.ic_pause_white_24dp);  // pause icon
+            styleFabSuspend(false);  // pause icon
             showFab(true);
             interruptButton.setVisibility(View.VISIBLE);
             revertAllButton.setEnabled(false);
@@ -359,11 +363,10 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         if (isInteractiveMode()) {
             if (paused) {
                 UiUtility.showSnackbar(this, R.string.report_snackbar_posting_paused);
-                fab.setImageResource(R.drawable.ic_play_arrow_white_24dp);
             } else {
                 UiUtility.showSnackbar(this, R.string.report_snackbar_posting_resumed);
-                fab.setImageResource(R.drawable.ic_pause_white_24dp);
             }
+            styleFabSuspend(paused);
             Intent intent = new Intent(Constant.Broadcast.WALL_POSTING);
             intent.putExtra(Constant.Broadcast.WALL_POSTING, paused);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
@@ -606,6 +609,23 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         REPORTS_DUMP_FILE_PREFIX = resources.getString(R.string.report_dump_file_prefix);
         SNACKBAR_DUMP_SUCCESS = resources.getString(R.string.report_snackbar_group_reports_dump_succeeded);
         SNACKBAR_POSTING_FINISHED = resources.getString(R.string.report_snackbar_posting_finished);
+
+        FAB_NORMAL_COLOR = resources.getColor(R.color.report_fab_normal_color);
+        FAB_NORMAL_RIPPLE_COLOR = resources.getColor(R.color.report_fab_normal_ripple_color);
+        FAB_PAUSE_COLOR = resources.getColor(R.color.report_fab_pause_color);
+        FAB_PAUSE_RIPPLE_COLOR = resources.getColor(R.color.report_fab_pause_ripple_color);
+    }
+
+    private void styleFabSuspend(boolean paused) {
+        if (paused) {
+            fab.setBackgroundTintList(ColorStateList.valueOf(FAB_NORMAL_COLOR));
+            fab.setRippleColor(FAB_NORMAL_RIPPLE_COLOR);
+            fab.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+        } else {
+            fab.setBackgroundTintList(ColorStateList.valueOf(FAB_PAUSE_COLOR));
+            fab.setRippleColor(FAB_PAUSE_RIPPLE_COLOR);
+            fab.setImageResource(R.drawable.ic_pause_white_24dp);
+        }
     }
 
     private void showFab(boolean isVisible) {
