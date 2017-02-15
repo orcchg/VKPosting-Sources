@@ -564,7 +564,10 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                         postGroupReportBundleUseCase.execute();  // silent update without callback
                     }
                 }
-                if (isViewAttached()) getView().onPostRevertingFinished();
+                if (isViewAttached()) {
+                    getView().onPostRevertingFinished();
+                    getView().updatePostedCounters(0, memento.totalForPosting);
+                }
             }
 
             @Override
