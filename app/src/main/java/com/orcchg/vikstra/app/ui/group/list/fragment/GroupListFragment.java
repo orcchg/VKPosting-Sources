@@ -12,7 +12,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -99,13 +98,23 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         public void onReceive(Context context, Intent intent) {
             /**
              * Pause / resume wall posting when user has explicitly asked for pause / resume ('paused' == true / false).
-             * Resume wall posting is the process has just recovered from Captcha error successfully.
              */
             boolean paused = intent.getBooleanExtra(Constant.Broadcast.WALL_POSTING, false);
+            Timber.d("Explicit pause: %s", paused);
+            presenter.onWallPostingSuspend(paused);
+        }
+    };
+
+    private BroadcastReceiver receiverCaptcha = new BroadcastReceiver() {
+        @DebugLog @Override
+        public void onReceive(Context context, Intent intent) {
+            /**
+             * Resume wall posting is the process has just recovered from Captcha error successfully.
+             */
             int outerCode = intent.getIntExtra(VKServiceActivity.VK_SERVICE_OUT_KEY_TYPE, -1);
             boolean captchaRecovered = outerCode == VKServiceActivity.VKServiceType.Captcha.getOuterCode();
-            Timber.d("Explicit pause: %s, Captcha(%s): %s", paused, outerCode, captchaRecovered);
-            presenter.onWallPostingSuspend(paused || !captchaRecovered);
+            Timber.d("Captcha(%s): %s", outerCode, captchaRecovered);
+            presenter.onWallPostingSuspend(!captchaRecovered);
         }
     };
 
@@ -120,8 +129,9 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
         initNotifications();
 
         IntentFilter filter = new IntentFilter(Constant.Broadcast.WALL_POSTING);
-        filter.addAction(VKServiceActivity.VK_SERVICE_BROADCAST);
+        IntentFilter filterCaptcha = new IntentFilter(VKServiceActivity.VK_SERVICE_BROADCAST);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiver, filter);
+        LocalBroadcastManager.getInstance(getActivity()).registerReceiver(receiverCaptcha, filterCaptcha);
     }
 
     @Nullable @Override
@@ -137,6 +147,7 @@ public class GroupListFragment extends CollectionFragment<GroupListContract.View
     @Override
     public void onDestroy() {
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
+        LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiverCaptcha);
         super.onDestroy();
     }
 
