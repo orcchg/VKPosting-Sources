@@ -87,7 +87,7 @@
         <activity android:name=".app.ui.report.main.ReportActivity"
                   android:label="@string/report_screen_title"
                   android:theme="@style/AppTheme"
-                  android:launchMode="singleInstance"
+                  android:launchMode="singleTask"
                   android:screenOrientation="portrait"
                   android:parentActivityName=".app.ui.main.MainActivity">
             <meta-data
