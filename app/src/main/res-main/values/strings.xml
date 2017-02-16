@@ -27,7 +27,7 @@
     <string name="button_continue">Continue</string>
     <string name="button_dump">Dump</string>
     <string name="button_edit">Edit</string>
-    <string name="button_interrupt">Interrupt</string>
+    <string name="button_interrupt">Terminate</string>
     <string name="button_logout">Logout</string>
     <string name="button_retry">Retry</string>
     <string name="button_revert">Revert</string>

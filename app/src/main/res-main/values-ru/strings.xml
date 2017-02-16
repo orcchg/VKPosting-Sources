@@ -24,7 +24,7 @@
     <string name="button_continue">Продолжить</string>
     <string name="button_dump">Выгрузить</string>
     <string name="button_edit">Изменить</string>
-    <string name="button_interrupt">Прервать</string>
+    <string name="button_interrupt">Завершить</string>
     <string name="button_logout">Выйти</string>
     <string name="button_retry">Повторить</string>
     <string name="button_revert">Откатить</string>
