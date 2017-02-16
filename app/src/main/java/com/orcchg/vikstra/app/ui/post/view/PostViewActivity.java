@@ -173,6 +173,7 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
         loadingView.setVisibility(View.GONE);
         errorView.setVisibility(View.GONE);
 
+        boolean resize = true;
         mediaContainer.removeAllViews();
         descriptionView.setText(viewObject.description());
         int totalMedia = viewObject.media().size();
@@ -192,16 +193,18 @@ public class PostViewActivity extends BaseActivity<PostViewContract.View, PostVi
                             mediaContainer.addView(thumbView);
                         }
                     }
-                    return;  // ignore media container resizing for more than one media
+                    resize = false;  // ignore media container resizing for more than one media
                 }
             }
         }
 
         // resize media container height to make single media squared
-        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) primaryMediaContainer.getLayoutParams();
-        params.height = PRIMARY_MEDIA_DOUBLE_HEIGHT;
-        primaryMediaContainer.setLayoutParams(params);
-        space.setVisibility(View.GONE);  // remove space separator between primary and secondary medias
+        if (resize) {
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) primaryMediaContainer.getLayoutParams();
+            params.height = PRIMARY_MEDIA_DOUBLE_HEIGHT;
+            primaryMediaContainer.setLayoutParams(params);
+            space.setVisibility(View.GONE);  // remove space separator between primary and secondary medias
+        }
 
         showLink(viewObject.link());
     }
