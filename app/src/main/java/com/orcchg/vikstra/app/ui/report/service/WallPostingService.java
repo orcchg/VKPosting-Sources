@@ -44,6 +44,7 @@ import timber.log.Timber;
 
 public class WallPostingService extends IntentService {
     private static final int FOREGROUND_NOTIFICATION_ID = 777;
+    private static final String INTERNAL_EXTRA_START_SERVICE = "internal_extra_start_service";
 
     public static final String NAME = "wall_posting_service";
     public static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
@@ -77,6 +78,7 @@ public class WallPostingService extends IntentService {
                                           Collection<Group> selectedGroups, Post post) {
         ArrayList<Group> list = new ArrayList<>(selectedGroups);
         Intent intent = new Intent(context, WallPostingService.class);
+        intent.putExtra(INTERNAL_EXTRA_START_SERVICE, true);
         intent.putExtra(EXTRA_KEYWORD_BUNDLE_ID, keywordBundleId);
         intent.putParcelableArrayListExtra(EXTRA_SELECTED_GROUPS, list);
         intent.putExtra(EXTRA_CURRENT_POST, post);
@@ -115,6 +117,12 @@ public class WallPostingService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Timber.i("Enter Wall Posting service");
+        boolean valid = intent.getBooleanExtra(INTERNAL_EXTRA_START_SERVICE, false);
+        if (!valid) {
+            Timber.w("Received intent which is not intended for Wall Posting service. Finish...");
+            return;
+        }
+
         becomeForeground();
 
         component = DaggerWallPostingServiceComponent.builder()
