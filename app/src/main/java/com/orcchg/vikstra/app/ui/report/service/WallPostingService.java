@@ -78,6 +78,9 @@ public class WallPostingService extends IntentService {
 
     public static Intent getCallingIntent(@NonNull Context context, long keywordBundleId,
                                           Collection<Group> selectedGroups, Post post) {
+        Timber.d("getCallingIntent: kw_id=%s, groups=%s, post=%s", keywordBundleId,
+                (selectedGroups != null ? selectedGroups.size() : "null"),
+                (post != null ? post.toString() : "null"));
         ArrayList<Group> list = new ArrayList<>(selectedGroups);
         Intent intent = new Intent(context, WallPostingService.class);
         intent.putExtra(INTERNAL_EXTRA_START_SERVICE, true);
