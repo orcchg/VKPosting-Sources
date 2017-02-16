@@ -232,7 +232,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
             forceDisableInteractiveMode = getIntent().getBooleanExtra(EXTRA_FORCE_DISABLE_INTERACTIVE_MODE, false);
             postingRevertFinished = false;
         }
-        Timber.d("GroupReportBundle id: %s ; Post id: %s", groupReportBundleId, postId);
+        Timber.d("GroupReportBundle id: %s ; KeywordBundle id: %s ; Post id: %s ; forceDisableInMode: %s",
+                groupReportBundleId, keywordBundleId, postId, forceDisableInteractiveMode);
     }
 
     private boolean isInteractiveMode() {
