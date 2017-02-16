@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.drawable.Icon;
+import android.os.Build;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -43,7 +44,8 @@ import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class WallPostingService extends IntentService {
-    private static final int FOREGROUND_NOTIFICATION_ID = 777;
+    private static final int FN_BASE_ID = 777;
+    private static final int FOREGROUND_NOTIFICATION_ID = FN_BASE_ID;
     private static final String INTERNAL_EXTRA_START_SERVICE = "internal_extra_start_service";
 
     public static final String NAME = "wall_posting_service";
@@ -200,10 +202,12 @@ public class WallPostingService extends IntentService {
     // --------------------------------------------------------------------------------------------
     private void becomeForeground() {
         Notification.Builder builder = new Notification.Builder(this)
-                .setLargeIcon(Icon.createWithResource(this, R.drawable.ic_app))
                 .setSmallIcon(R.drawable.ic_app_notification)
                 .setContentTitle(getResources().getString(R.string.notification_posting_title))
                 .setContentText(getResources().getString(R.string.notification_posting_description_progress));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            builder.setLargeIcon(Icon.createWithResource(this, R.drawable.ic_app));
+        }
         Notification notification = builder.build();
         startForeground(FOREGROUND_NOTIFICATION_ID, notification);
     }
