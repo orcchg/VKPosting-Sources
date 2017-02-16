@@ -40,6 +40,7 @@ import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.DebugSake;
+import com.orcchg.vikstra.domain.util.StringUtility;
 import com.orcchg.vikstra.domain.util.ValueUtility;
 import com.vk.sdk.api.VKError;
 import com.vk.sdk.api.model.VKApiCommunityArray;
@@ -51,8 +52,6 @@ import com.vk.sdk.api.model.VKAttachments;
 import com.vk.sdk.api.model.VKList;
 import com.vk.sdk.api.model.VKPhotoArray;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -231,13 +230,7 @@ public class VkontakteEndpoint extends Endpoint {
                 .setMessage(post.description());
 
         if (!TextUtils.isEmpty(post.link())) {
-            String link = post.link();
-            try {
-                link = URLEncoder.encode(link, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                Timber.w(e, "Link wasn't encoded properly!");
-            }
-            paramsBuilder.addAttachment(new VKApiLink(link));
+            paramsBuilder.addAttachment(new VKApiLink(StringUtility.encodeLink(post.link(), "Cp1251")));
         }
 
         List<Media> media = post.media();

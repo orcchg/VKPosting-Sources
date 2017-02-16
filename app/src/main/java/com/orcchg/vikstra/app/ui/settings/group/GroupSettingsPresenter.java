@@ -35,10 +35,10 @@ public class GroupSettingsPresenter extends BasePresenter<GroupSettingsContract.
     private boolean hasChanges = false;
 
     @Inject
-    GroupSettingsPresenter(LoadSettings loadSettingsUseCase, SaveSettings saveSettingsUseCase) {
-        this.loadSettingsUseCase = loadSettingsUseCase;
+    GroupSettingsPresenter(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
+        this.loadSettingsUseCase = new LoadSettings(threadExecutor, postExecuteScheduler);
         this.loadSettingsUseCase.setPostExecuteCallback(createLoadSettingsCallback());
-        this.saveSettingsUseCase = saveSettingsUseCase;
+        this.saveSettingsUseCase = new SaveSettings(threadExecutor, postExecuteScheduler);
         this.saveSettingsUseCase.setPostExecuteCallback(createSaveSettingsCallback());
     }
 
@@ -90,7 +90,7 @@ public class GroupSettingsPresenter extends BasePresenter<GroupSettingsContract.
     /* Use Case */
     // --------------------------------------------------------------------------------------------
     final class LoadSettings extends UseCase<Boolean> {
-        @Inject
+
         LoadSettings(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
             super(threadExecutor, postExecuteScheduler);
         }
@@ -117,7 +117,7 @@ public class GroupSettingsPresenter extends BasePresenter<GroupSettingsContract.
 
     // ------------------------------------------
     final class SaveSettings extends UseCase<Boolean> {
-        @Inject
+
         SaveSettings(ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
             super(threadExecutor, postExecuteScheduler);
         }
