@@ -177,7 +177,7 @@ public class WallPostingService extends IntentService {
     // --------------------------------------------------------------------------------------------
     private void becomeForeground() {
         Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.ic_app);  // TODO: prepare white icon stroked
+                .setSmallIcon(R.drawable.ic_app_notification);
         Notification notification;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
             notification = builder.getNotification();
