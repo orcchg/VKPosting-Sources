@@ -78,11 +78,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @BindView(R.id.coordinator_root) ViewGroup coordinatorRoot;
     @BindView(R.id.toolbar) Toolbar toolbar;
+    @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @BindView(R.id.ll_container) ViewGroup container;
     @BindView(R.id.tv_info_title) TextView reportTextView;
     @BindView(R.id.report_indicator) ProgressBar reportIndicatorView;
     @BindView(R.id.post_thumbnail) PostThumbnail postThumbnail;
-    @BindView(R.id.rl_toolbar_dropshadow) View dropshadowView;
     @BindView(R.id.anchor_view) View achorView;
     @BindView(R.id.btn_posting_interrupt) Button interruptButton;
     @BindView(R.id.btn_posting_revert_all) Button revertAllButton;

@@ -2,8 +2,13 @@ package com.orcchg.vikstra.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import com.orcchg.vikstra.app.ui.common.showcase.SingleShot;
+import com.orcchg.vikstra.app.ui.settings.BaseSetting;
+import com.orcchg.vikstra.app.ui.settings.SettingsFactory;
 import com.orcchg.vikstra.domain.util.Constant;
 
 import javax.inject.Inject;
@@ -35,6 +40,26 @@ public class SharedPrefsManager {
         editor.putLong(MEDIA_UNIQUE_ID, id + 1);
         editor.apply();
         return id;
+    }
+
+    /* Settings */
+    // ------------------------------------------
+    @DebugLog @Nullable
+    public BaseSetting getSetting(String tag) {
+        String json = sharedPreferences.getString(tag, null);
+        if (!TextUtils.isEmpty(json)) {
+            BaseSetting setting = SettingsFactory.create(tag);
+            if (setting != null) setting.fromJson(json);
+            return setting;
+        }
+        return null;
+    }
+
+    @DebugLog
+    public void putSetting(@NonNull BaseSetting setting) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(setting.getTag(), setting.toJson());
+        editor.apply();
     }
 
     /* Showcase */

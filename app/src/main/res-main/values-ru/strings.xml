@@ -39,6 +39,7 @@
     <string name="button_showcase_next">Дальше</string>
     <string name="button_user">Аккаунт</string>
     <string name="button_view">Просмотр</string>
+    <string name="dialog_ask_to_save_changes">Сохранить все изменения?</string>
     <string name="dialog_error_title">Ошибка</string>
     <string name="dialog_input_edit_title">Изменить заголовок</string>
     <string name="dialog_input_edit_title_hint">Введите новый заголовок</string>
@@ -106,7 +107,6 @@
     <string name="keyword_create_bundle_added">Создан новый набор слов</string>
     <string name="keyword_create_bundle_updated">Набор слов был обновлен</string>
     <string name="keyword_create_dialog_save_changes_title">Слова были обновлены</string>
-    <string name="keyword_create_dialog_save_changes_description">Сохранить все изменения?</string>
     <string name="keyword_create_screen_title">Новый набор слов</string>
     <string name="keyword_create_snackbar_failed_to_create_post">Не удалось создать набор слов. Повторите попытку</string>
     <string name="keyword_create_snackbar_failed_to_update_post">Не удалось обновить набор слов. Повторите попытку</string>
@@ -183,6 +183,9 @@
     <string name="report_snackbar_revert_all_wall_posting_started">Началось удаление всех текущих публикаций</string>
     <string name="report_snackbar_revert_all_wall_posting_finished">Удаление всех текущих публикаций завершено</string>
     <string name="report_showcase_report_dump_title">Сохраните отчет о выполненных публикациях</string>
+    <!-- Settings Group screen -->
+    <string name="settings_group_dialog_save_changes_title">Настройки изменены</string>
+    <string name="settings_group_screen_name">Настройки групп</string>
     <!-- Status screen -->
     <string name="status_button_report">Отчет</string>
     <string name="status_screen_title">Прогресс</string>

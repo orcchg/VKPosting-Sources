@@ -95,6 +95,11 @@
                 android:value=".app.ui.main.MainActivity"/>
         </activity>
 
+        <!-- Settings -->
+        <activity android:name=".app.ui.settings.group.GroupSettingsActivity"
+                  android:label="@string/settings_group_screen_name"
+                  android:theme="@style/AppTheme"/>
+
         <!-- Status -->
         <activity android:name=".app.ui.status.StatusActivity"
                   android:label="@string/status_screen_title"

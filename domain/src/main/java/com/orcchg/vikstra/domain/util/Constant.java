@@ -24,6 +24,7 @@ public class Constant {
         public static final int POST_VIEW_SCREEN = 10022;
         public static final int REPORT_SCREEN = 10030;
         public static final int DIALOG_SCREEN = 10050;
+        public static final int SETTINGS_GROUP_SCREEN = 10060;
     }
 
     public static final class Broadcast {
@@ -43,6 +44,7 @@ public class Constant {
         public static final int POST_SINGLE_GRID_SCREEN = 1022;
         public static final int REPORT_SCREEN = 1030;
         public static final int REPORT_HISTORY_SCREEN = 1031;
+        public static final int SETTINGS_GROUP_SCREEN = 1060;
     }
 
     public static final class NotificationID {
@@ -61,5 +63,6 @@ public class Constant {
         public static final int REPORT_PRESENTER = 10030;
         public static final int REPORT_HISTORY_PRESENTER = 10031;
         public static final int MAIN_PRESENTER = 10040;
+        public static final int SETTINGS_GROUP_PRESENTER = 10060;
     }
 }

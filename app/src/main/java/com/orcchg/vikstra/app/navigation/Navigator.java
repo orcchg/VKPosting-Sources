@@ -31,6 +31,7 @@ import com.orcchg.vikstra.app.ui.post.view.PostViewActivity;
 import com.orcchg.vikstra.app.ui.report.history.ReportHistoryActivity;
 import com.orcchg.vikstra.app.ui.report.main.ReportActivity;
 import com.orcchg.vikstra.app.ui.report.service.WallPostingService;
+import com.orcchg.vikstra.app.ui.settings.group.GroupSettingsActivity;
 import com.orcchg.vikstra.app.ui.status.StatusActivity;
 import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
@@ -290,6 +291,11 @@ public class Navigator {
     public void openSettings(@NonNull Context context) {
         Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
         context.startActivity(intent);
+    }
+
+    public void openGroupSettings(@NonNull Activity context) {
+        Intent intent = GroupSettingsActivity.getCallingIntent(context);
+        context.startActivityForResult(intent, GroupSettingsActivity.REQUEST_CODE);
     }
 
     /* Status */

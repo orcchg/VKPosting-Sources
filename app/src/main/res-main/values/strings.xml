@@ -43,6 +43,7 @@
     <string name="button_user">User</string>
     <string name="button_view">View</string>
 
+    <string name="dialog_ask_to_save_changes">Do you want to save changes?</string>
     <string name="dialog_error_title">Error</string>
     <string name="dialog_input_edit_title">Change title</string>
     <string name="dialog_input_edit_title_hint">Enter new title</string>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_group_dialog_save_changes_title">Settings changed</string>
+    <string name="settings_group_screen_name">Group settings</string>
+</resources>

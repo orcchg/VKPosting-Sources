@@ -228,7 +228,7 @@ public class KeywordCreateActivity extends BaseActivity<KeywordCreateContract.Vi
     @Override
     public void openSaveChangesDialog() {
         dialog2 = DialogProvider.showTextDialogTwoButtons(this, R.string.keyword_create_dialog_save_changes_title,
-                R.string.keyword_create_dialog_save_changes_description, R.string.button_save, R.string.button_close,
+                R.string.dialog_ask_to_save_changes, R.string.button_save, R.string.button_close,
                 (dialog, which) -> {
                     dialog.dismiss();
                     presenter.onSavePressed();
