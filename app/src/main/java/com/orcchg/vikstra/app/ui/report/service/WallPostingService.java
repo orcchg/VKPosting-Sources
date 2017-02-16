@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -178,12 +177,7 @@ public class WallPostingService extends IntentService {
     private void becomeForeground() {
         Notification.Builder builder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_app_notification);
-        Notification notification;
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-            notification = builder.getNotification();
-        } else {
-            notification = builder.build();
-        }
+        Notification notification = builder.build();
         startForeground(FOREGROUND_NOTIFICATION_ID, notification);
     }
 
