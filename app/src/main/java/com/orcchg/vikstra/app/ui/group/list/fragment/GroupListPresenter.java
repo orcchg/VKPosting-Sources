@@ -717,6 +717,12 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     @Override
     public long receiveAskForGroupBundleIdToDump() {
+        /**
+         * Save changes of input GroupBundle before dumping. Repository has read-write locking
+         * mechanism, so it guarantees that updating (POST) of GroupBundle finishes before
+         * dumping process will start, retrieving such updated model by id for dumping.
+         */
+        postGroupBundleUpdate();  // save changes before dumping
         return inputGroupBundle != null ? inputGroupBundle.id() : Constant.BAD_ID;
     }
 
