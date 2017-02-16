@@ -16,6 +16,7 @@ import com.orcchg.vikstra.domain.util.Constant;
 public class PostingNotification implements IPostingNotificationDelegate {
 
     private long groupReportBundleId, keywordBundleId, postId;
+    private boolean hasPostingFinished = false;
 
     private NotificationManagerCompat notificationManager;
     private NotificationCompat.Builder notificationBuilderPosting;
@@ -57,6 +58,7 @@ public class PostingNotification implements IPostingNotificationDelegate {
 
     @Override
     public void onPostingProgress(int progress, int total) {
+        hasPostingFinished = false;
         notificationBuilderPosting.setProgress(total, progress, false);
         notificationManager.notify(Constant.NotificationID.POSTING, notificationBuilderPosting.build());
     }
@@ -69,6 +71,7 @@ public class PostingNotification implements IPostingNotificationDelegate {
 
     @Override
     public void onPostingComplete() {
+        hasPostingFinished = true;
         notificationBuilderPosting.setContentText(NOTIFICATION_POSTING_COMPLETE).setProgress(0, 0, false);
         notificationManager.notify(Constant.NotificationID.POSTING, notificationBuilderPosting.build());
     }
@@ -76,7 +79,12 @@ public class PostingNotification implements IPostingNotificationDelegate {
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private PendingIntent makePendingIntent(Context context, long groupReportBundleId, long keywordBundleId, long postId) {
-        Intent intent = ReportActivity.getCallingIntentNoInteractive(context, groupReportBundleId, keywordBundleId, postId);
+        Intent intent;
+        if (hasPostingFinished) {
+            intent = ReportActivity.getCallingIntentNoInteractive(context, groupReportBundleId, keywordBundleId, postId);
+        } else {  // 'groupReportBundleId' could be BAD_ID here, so don't open ReportScreen in non-interactive mode
+            intent = ReportActivity.getCallingIntent(context, groupReportBundleId, keywordBundleId, postId);
+        }
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
         stackBuilder.addParentStack(ReportActivity.class);
         stackBuilder.addNextIntent(intent);

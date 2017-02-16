@@ -167,6 +167,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Timber.i("onNewIntent");
+    }
+
+    @Override
     public void onBackPressed() {
         if (isInteractiveMode()) {
             presenter.onCloseView();
