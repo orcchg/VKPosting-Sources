@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Icon;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -189,7 +190,10 @@ public class WallPostingService extends IntentService {
     // --------------------------------------------------------------------------------------------
     private void becomeForeground() {
         Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.ic_app_notification);
+                .setLargeIcon(Icon.createWithResource(this, R.drawable.ic_app))
+                .setSmallIcon(R.drawable.ic_app_notification)
+                .setContentTitle(getResources().getString(R.string.notification_posting_title))
+                .setContentText(getResources().getString(R.string.notification_posting_description_progress));
         Notification notification = builder.build();
         startForeground(FOREGROUND_NOTIFICATION_ID, notification);
     }
