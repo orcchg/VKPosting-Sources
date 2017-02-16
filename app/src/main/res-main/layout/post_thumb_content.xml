@@ -46,7 +46,8 @@
                 android:layout_gravity="center"
                 android:background="?selectableItemBackgroundBorderless"
                 android:tint="@color/black_40_opacity"
-                android:src="@drawable/ic_refresh_white_24dp"/>
+                android:src="@drawable/ic_refresh_white_24dp"
+                android:contentDescription="@null"/>
         </FrameLayout>
     </LinearLayout>
 

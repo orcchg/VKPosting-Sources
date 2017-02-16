@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.domain.executor;
 
+import android.support.annotation.NonNull;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -46,7 +48,7 @@ public class ThreadExecutor {
         private int counter = 0;
 
         @Override
-        public Thread newThread(Runnable runnable) {
+        public Thread newThread(@NonNull Runnable runnable) {
             return new Thread(runnable, THREAD_NAME + counter++);
         }
     }

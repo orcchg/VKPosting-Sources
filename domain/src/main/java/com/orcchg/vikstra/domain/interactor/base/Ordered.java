@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.domain.interactor.base;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 public class Ordered<Result> implements Comparable<Ordered<Result>> {
@@ -10,7 +11,7 @@ public class Ordered<Result> implements Comparable<Ordered<Result>> {
     public @Nullable IParameters parameters;
 
     @Override
-    public int compareTo(Ordered<Result> o) {
+    public int compareTo(@NonNull Ordered<Result> o) {
         return orderId - o.orderId;
     }
 }

@@ -15,8 +15,6 @@ import com.orcchg.vikstra.domain.model.GroupReport;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import timber.log.Timber;
 
 public abstract class ProcessWallPosts extends MultiUseCase<VkSimpleResponseModel, List<Ordered<VkSimpleResponseModel>>> {

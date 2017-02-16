@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.app.ui.viewobject.mapper;
 
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.model.Media;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.mapper.Mapper;
 
@@ -20,13 +21,14 @@ public class PostToSingleGridVoMapper implements Mapper<Post, PostSingleGridItem
 
     @Override
     public PostSingleGridItemVO map(Post object) {
+        List<Media> media = object.media();
         PostSingleGridItemVO.Builder builder = PostSingleGridItemVO.builder()
                 .setId(object.id())
                 .setDescription(object.description())
-                .setMediaCount(object.media().size())
+                .setMediaCount(media != null ? media.size() : 0)
                 .setTitle(object.title());
-        if (!object.media().isEmpty()) {
-            builder.setMedia(mediaToVoMapper.map(object.media().get(0)));  // use first media item as primary
+        if (media != null && !media.isEmpty()) {
+            builder.setMedia(mediaToVoMapper.map(media.get(0)));  // use first media item as primary
         }
         return builder.build();
     }

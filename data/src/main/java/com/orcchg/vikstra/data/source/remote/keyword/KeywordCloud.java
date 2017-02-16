@@ -22,7 +22,7 @@ public class KeywordCloud implements IKeywordStorage {
     /* Create */
     // ------------------------------------------
     @Override
-    public KeywordBundle addKeywords(KeywordBundle bundle) {
+    public KeywordBundle addKeywords(@NonNull KeywordBundle bundle) {
         return null;
     }
 

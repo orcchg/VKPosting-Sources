@@ -12,7 +12,8 @@
         android:layout_marginStart="@dimen/standard_side_padding_mini"
         android:layout_marginRight="@dimen/standard_side_padding_mini"
         android:layout_marginEnd="@dimen/standard_side_padding_mini"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop"
+        android:contentDescription="@null"/>
 
     <ImageView
         android:id="@+id/iv_corner_icon"
@@ -21,5 +22,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:visibility="invisible"/>
+        android:visibility="invisible"
+        android:contentDescription="@null"/>
 </RelativeLayout>

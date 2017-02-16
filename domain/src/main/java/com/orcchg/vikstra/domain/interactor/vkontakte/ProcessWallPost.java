@@ -14,8 +14,6 @@ import com.vk.sdk.api.VKApiConst;
 import com.vk.sdk.api.VKParameters;
 import com.vk.sdk.api.VKRequest;
 
-import javax.inject.Inject;
-
 import timber.log.Timber;
 
 public abstract class ProcessWallPost extends VkUseCase<VkSimpleResponseModel> {

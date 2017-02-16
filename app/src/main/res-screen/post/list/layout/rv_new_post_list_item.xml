@@ -16,6 +16,7 @@
             android:layout_width="@dimen/standard_icon_big_size"
             android:layout_height="@dimen/standard_icon_big_size"
             android:layout_gravity="center"
-            android:src="@drawable/ic_add_white_48dp"/>
+            android:src="@drawable/ic_add_white_48dp"
+            android:contentDescription="@null"/>
     </FrameLayout>
 </FrameLayout>
