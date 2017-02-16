@@ -21,7 +21,7 @@ public class PostingNotification implements IPostingNotificationDelegate {
     private NotificationManagerCompat notificationManager;
     private NotificationCompat.Builder notificationBuilderPosting;
 
-    private String NOTIFICATION_POSTING_COMPLETE;
+    private String NOTIFICATION_POSTING_COMPLETE, NOTIFICATION_POSTING_INTERRUPT;
 
     public PostingNotification(Context context) {
         this(context, Constant.BAD_ID, Constant.BAD_ID, Constant.BAD_ID);
@@ -42,6 +42,7 @@ public class PostingNotification implements IPostingNotificationDelegate {
                 .setContentIntent(makePendingIntent(context, groupReportBundleId, keywordBundleId, postId));
 
         NOTIFICATION_POSTING_COMPLETE = resources.getString(R.string.notification_posting_description_complete);
+        NOTIFICATION_POSTING_INTERRUPT = resources.getString(R.string.notification_posting_description_interrupt);
     }
 
     public void updateGroupReportBundleId(Context context, long groupReportBundleId) {
@@ -73,6 +74,12 @@ public class PostingNotification implements IPostingNotificationDelegate {
     public void onPostingComplete() {
         hasPostingFinished = true;
         notificationBuilderPosting.setContentText(NOTIFICATION_POSTING_COMPLETE).setProgress(0, 0, false);
+        notificationManager.notify(Constant.NotificationID.POSTING, notificationBuilderPosting.build());
+    }
+
+    public void onPostingInterrupt() {
+        hasPostingFinished = true;
+        notificationBuilderPosting.setContentText(NOTIFICATION_POSTING_INTERRUPT).setProgress(0, 0, false);
         notificationManager.notify(Constant.NotificationID.POSTING, notificationBuilderPosting.build());
     }
 

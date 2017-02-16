@@ -14,7 +14,7 @@ public class PhotoUploadNotification implements IPhotoUploadNotificationDelegate
     private NotificationManagerCompat notificationManager;
     private NotificationCompat.Builder notificationBuilderPhotoUpload;
 
-    private String NOTIFICATION_PHOTO_UPLOAD_COMPLETE;
+    private String NOTIFICATION_PHOTO_UPLOAD_COMPLETE, NOTIFICATION_PHOTO_UPLOAD_INTERRUPT;
 
     public PhotoUploadNotification(Context context) {
         Resources resources = context.getResources();
@@ -26,6 +26,7 @@ public class PhotoUploadNotification implements IPhotoUploadNotificationDelegate
                 .setContentText(resources.getString(R.string.notification_photo_upload_description_progress));
 
         NOTIFICATION_PHOTO_UPLOAD_COMPLETE = resources.getString(R.string.notification_photo_upload_description_complete);
+        NOTIFICATION_PHOTO_UPLOAD_INTERRUPT = resources.getString(R.string.notification_photo_upload_description_interrupt);
     }
 
     @Override
@@ -43,6 +44,11 @@ public class PhotoUploadNotification implements IPhotoUploadNotificationDelegate
     @Override
     public void onPhotoUploadComplete() {
         notificationBuilderPhotoUpload.setContentText(NOTIFICATION_PHOTO_UPLOAD_COMPLETE).setProgress(0, 0, false);
+        notificationManager.notify(Constant.NotificationID.PHOTO_UPLOAD, notificationBuilderPhotoUpload.build());
+    }
+
+    public void onPhotoUploadInterrupt() {
+        notificationBuilderPhotoUpload.setContentText(NOTIFICATION_PHOTO_UPLOAD_INTERRUPT).setProgress(0, 0, false);
         notificationManager.notify(Constant.NotificationID.PHOTO_UPLOAD, notificationBuilderPhotoUpload.build());
     }
 }

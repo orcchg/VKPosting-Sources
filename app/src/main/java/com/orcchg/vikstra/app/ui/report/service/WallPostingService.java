@@ -239,6 +239,8 @@ public class WallPostingService extends IntentService {
     @DebugLog
     private void onWallPostingInterrupt() {
         Timber.i("onWallPostingInterrupt");
+        postingNotification.onPostingInterrupt();
+        photoUploadNotification.onPhotoUploadInterrupt();
         stopSelf();
     }
 
