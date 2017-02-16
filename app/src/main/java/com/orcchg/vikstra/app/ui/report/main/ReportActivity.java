@@ -378,6 +378,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     @DebugLog @Override
+    public void onWallPostingInterrupt() {
+        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_INTERRUPT);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
+    @DebugLog @Override
     public void onWallPostingSuspend(boolean paused) {
         if (isInteractiveMode()) {
             if (paused) {

@@ -91,16 +91,19 @@ public class WallPostingService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
-        IntentFilter filter = new IntentFilter(Constant.Broadcast.WALL_POSTING_SUSPEND);
         IntentFilter filterCaptcha = new IntentFilter(VKServiceActivity.VK_SERVICE_BROADCAST);
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+        IntentFilter filterInterrupt = new IntentFilter(Constant.Broadcast.WALL_POSTING_INTERRUPT);
+        IntentFilter filterSuspend = new IntentFilter(Constant.Broadcast.WALL_POSTING_SUSPEND);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiverCaptcha, filterCaptcha);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverInterrupt, filterInterrupt);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverSuspend, filterSuspend);
     }
 
     @Override
     public void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverCaptcha);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverInterrupt);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverSuspend);
         super.onDestroy();
     }
 
@@ -147,28 +150,38 @@ public class WallPostingService extends IntentService {
 
     /* Broadcast receiver */
     // --------------------------------------------------------------------------------------------
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @DebugLog @Override
-        public void onReceive(Context context, Intent intent) {
-            /**
-             * Pause / resume wall posting when user has explicitly asked for pause / resume ('paused' == true / false).
-             */
-            boolean paused = intent.getBooleanExtra(Constant.Broadcast.WALL_POSTING_SUSPEND, false);
-            Timber.d("Explicit pause: %s", paused);
-            onWallPostingSuspend(paused);
-        }
-    };
-
     private BroadcastReceiver receiverCaptcha = new BroadcastReceiver() {
         @DebugLog @Override
         public void onReceive(Context context, Intent intent) {
             /**
              * Resume wall posting is the process has just recovered from Captcha error successfully.
              */
+            Timber.d("Received Captcha recovered signal");
             int outerCode = intent.getIntExtra(VKServiceActivity.VK_SERVICE_OUT_KEY_TYPE, -1);
             boolean captchaRecovered = outerCode == VKServiceActivity.VKServiceType.Captcha.getOuterCode();
             Timber.d("Captcha(%s): %s", outerCode, captchaRecovered);
             onWallPostingSuspend(!captchaRecovered);
+        }
+    };
+
+    private BroadcastReceiver receiverInterrupt = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Timber.d("Received interrupt signal");
+            onWallPostingInterrupt();
+        }
+    };
+
+    private BroadcastReceiver receiverSuspend = new BroadcastReceiver() {
+        @DebugLog @Override
+        public void onReceive(Context context, Intent intent) {
+            /**
+             * Pause / resume wall posting when user has explicitly asked for pause / resume ('paused' == true / false).
+             */
+            Timber.d("Received suspend signal");
+            boolean paused = intent.getBooleanExtra(Constant.Broadcast.WALL_POSTING_SUSPEND, false);
+            Timber.d("Explicit pause: %s", paused);
+            onWallPostingSuspend(paused);
         }
     };
 
@@ -219,6 +232,12 @@ public class WallPostingService extends IntentService {
     }
 
     // ------------------------------------------
+    @DebugLog
+    private void onWallPostingInterrupt() {
+        Timber.i("onWallPostingInterrupt");
+        stopSelf();
+    }
+
     @DebugLog
     private void onWallPostingSuspend(boolean paused) {
         Timber.i("onWallPostingSuspend: %s", paused);

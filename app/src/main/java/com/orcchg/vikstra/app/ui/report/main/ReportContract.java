@@ -23,6 +23,7 @@ public interface ReportContract {
         void onPostRevertingEmpty();
         void onPostRevertingError();
         void onPostRevertingFinished();
+        void onWallPostingInterrupt();
         void onWallPostingSuspend(boolean paused);
 
         void openCloseWhilePostingDialog();

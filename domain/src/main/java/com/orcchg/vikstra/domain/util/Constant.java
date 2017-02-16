@@ -27,6 +27,7 @@ public class Constant {
     }
 
     public static final class Broadcast {
+        public static final String WALL_POSTING_INTERRUPT = "wall_posting_interrupt";
         public static final String WALL_POSTING_PROGRESS = "wall_posting_progress";
         public static final String WALL_POSTING_RESULT_DATA = "wall_posting_result_data";
         public static final String WALL_POSTING_STATUS = "wall_posting_status";

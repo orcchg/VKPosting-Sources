@@ -322,7 +322,10 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             if (component != null) component.threadExecutor().shutdownNow();
         }
 
-        if (shouldClose && isViewAttached()) getView().closeView();
+        if (isViewAttached()) {
+            getView().onWallPostingInterrupt();
+            if (shouldClose) getView().closeView();
+        }
     }
 
     @DebugLog @Override
