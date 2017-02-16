@@ -92,6 +92,7 @@ public class WallPostingService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        Timber.i("Service onCreate");
         IntentFilter filterCaptcha = new IntentFilter(VKServiceActivity.VK_SERVICE_BROADCAST);
         IntentFilter filterInterrupt = new IntentFilter(Constant.Broadcast.WALL_POSTING_INTERRUPT);
         IntentFilter filterSuspend = new IntentFilter(Constant.Broadcast.WALL_POSTING_SUSPEND);
@@ -102,6 +103,7 @@ public class WallPostingService extends IntentService {
 
     @Override
     public void onDestroy() {
+        Timber.i("Service onDestroy");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverCaptcha);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverInterrupt);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverSuspend);
