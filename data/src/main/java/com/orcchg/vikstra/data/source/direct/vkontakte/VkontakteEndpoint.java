@@ -51,6 +51,8 @@ import com.vk.sdk.api.model.VKAttachments;
 import com.vk.sdk.api.model.VKList;
 import com.vk.sdk.api.model.VKPhotoArray;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -229,7 +231,13 @@ public class VkontakteEndpoint extends Endpoint {
                 .setMessage(post.description());
 
         if (!TextUtils.isEmpty(post.link())) {
-            paramsBuilder.addAttachment(new VKApiLink(post.link()));
+            String link = post.link();
+            try {
+                link = URLEncoder.encode(link, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                Timber.w(e, "Link wasn't encoded properly!");
+            }
+            paramsBuilder.addAttachment(new VKApiLink(link));
         }
 
         List<Media> media = post.media();
