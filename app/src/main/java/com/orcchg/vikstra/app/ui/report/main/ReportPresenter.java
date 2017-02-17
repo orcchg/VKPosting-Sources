@@ -1,6 +1,8 @@
 package com.orcchg.vikstra.app.ui.report.main;
 
 import android.os.Bundle;
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
@@ -40,9 +42,12 @@ import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -73,76 +78,136 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private @Heavy List<GroupReport> storedReports = new ArrayList<>();
     private @Heavy GroupReportBundle inputGroupReportBundle;  // used only in non-interactive mode
 
-    private Memento memento = new Memento();
+    private MementoNormal mementoNormal = new MementoNormal();
+    private MementoInteractive mementoInteractive = new MementoInteractive();
 
     // --------------------------------------------------------------------------------------------
-    private static final class Memento {
-        private static final String BUNDLE_KEY_EMAIL = "bundle_key_email_" + PrID;
-        private static final String BUNDLE_KEY_FLAG_IS_FINISHED_POSTING = "bundle_key_flag_is_finished_posting_" + PrID;
-        private static final String BUNDLE_KEY_FLAG_IS_WALL_POSTING_PAUSED = "bundle_key_flag_is_wall_posting_paused_" + PrID;
-        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL = "bundle_key_flag_posted_with_cancel_" + PrID;
-        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE = "bundle_key_flag_posted_with_failure_" + PrID;
-        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS = "bundle_key_flag_posted_with_success_" + PrID;
-        private static final String BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING = "bundle_key_flag_total_for_posting_" + PrID;
-        private static final String BUNDLE_KEY_STORED_REPORTS_ID = "bundle_key_stored_reports_id_" + PrID;
-        private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id_" + PrID;
-        private static final String BUNDLE_KEY_CURRENT_POST = "bundle_key_current_post_" + PrID;
-        private static final String BUNDLE_KEY_SERVICE_GRB_ID = "bundle_key_service_grb_id_" + PrID;
-        private static final String BUNDLE_KEY_SERVICE_GRB_TS = "bundle_key_service_grb_ts_" + PrID;
+    private static final class StateContainer {
+        @NormalMode
+        private static final class Normal {
+            private static final int ERROR_LOAD = -1;
+            private static final int START = 0;
+            private static final int REPORTS_LOADED = 1;
+            private static final int DELETE_REPORTS_START = 2;
+            private static final int DELETE_REPORTS_FINISH = 3;
+            private static final int REFRESHING = 4;
 
-        @InteractiveMode boolean isFinishedPosting;
-        @InteractiveMode boolean isWallPostingPaused;
-        @InteractiveMode int postedWithCancel = 0;
-        @InteractiveMode int postedWithFailure = 0;
-        @InteractiveMode int postedWithSuccess = 0;
-        @InteractiveMode int totalForPosting = 0;
-        @InteractiveMode long storedReportsId = Constant.BAD_ID;
-
-        /**
-         * This field corresponds to id of {@link GroupReportBundle} actually created and stored to
-         * repository by {@link WallPostingService}, same for timestamp value.
-         */
-        @InteractiveMode long serviceGroupReportBundleId = Constant.BAD_ID;
-        @InteractiveMode long serviceGroupReportBundleTimestamp = 0;
-
-        private @Nullable String email;
-        private long keywordBundleId = Constant.BAD_ID;
-        private Post currentPost;
-
-        @DebugLog
-        private void toBundle(Bundle outState) {
-            outState.putBoolean(BUNDLE_KEY_FLAG_IS_FINISHED_POSTING, isFinishedPosting);
-            outState.putBoolean(BUNDLE_KEY_FLAG_IS_WALL_POSTING_PAUSED, isWallPostingPaused);
-            outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL, postedWithCancel);
-            outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE, postedWithFailure);
-            outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS, postedWithSuccess);
-            outState.putInt(BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING, totalForPosting);
-            outState.putLong(BUNDLE_KEY_STORED_REPORTS_ID, storedReportsId);
-            outState.putString(BUNDLE_KEY_EMAIL, email);
-            outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
-            outState.putParcelable(BUNDLE_KEY_CURRENT_POST, currentPost);
-            outState.putLong(BUNDLE_KEY_SERVICE_GRB_ID, serviceGroupReportBundleId);
-            outState.putLong(BUNDLE_KEY_SERVICE_GRB_TS, serviceGroupReportBundleTimestamp);
+            @IntDef({
+                ERROR_LOAD,
+                START,
+                REPORTS_LOADED,
+                DELETE_REPORTS_START,
+                DELETE_REPORTS_FINISH,
+                REFRESHING
+            })
+            @Retention(RetentionPolicy.SOURCE)
+            @interface State {}
         }
 
-        @DebugLog
-        private static Memento fromBundle(Bundle savedInstanceState) {
-            Memento memento = new Memento();
-            memento.isFinishedPosting = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_FINISHED_POSTING, false);
-            memento.isWallPostingPaused = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_WALL_POSTING_PAUSED, false);
-            memento.postedWithCancel = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL, 0);
-            memento.postedWithFailure = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE, 0);
-            memento.postedWithSuccess = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS, 0);
-            memento.totalForPosting = savedInstanceState.getInt(BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING, 0);
-            memento.storedReportsId = savedInstanceState.getLong(BUNDLE_KEY_STORED_REPORTS_ID, Constant.BAD_ID);
-            memento.email = savedInstanceState.getString(BUNDLE_KEY_EMAIL);
-            memento.keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
-            memento.currentPost = savedInstanceState.getParcelable(BUNDLE_KEY_CURRENT_POST);
-            memento.serviceGroupReportBundleId = savedInstanceState.getLong(BUNDLE_KEY_SERVICE_GRB_ID, Constant.BAD_ID);
-            memento.serviceGroupReportBundleTimestamp = savedInstanceState.getLong(BUNDLE_KEY_SERVICE_GRB_TS, 0);
-            return memento;
+        @InteractiveMode
+        private static final class Interactive {
+            private static final int START = 0;
+            private static final int POSTING_PROGRESS = 1;
+            private static final int POSTING_CANCEL = 2;
+            private static final int POSTING_FINISH = 3;
+            private static final int PAUSE = 4;
+            private static final int RESUME = 5;
+
+            @IntDef({
+                START,
+                POSTING_PROGRESS,
+                POSTING_CANCEL,
+                POSTING_FINISH,
+                PAUSE,
+                RESUME
+            })
+            @Retention(RetentionPolicy.SOURCE)
+            @interface State {}
         }
     }
+
+    // --------------------------------------------------------------------------------------------
+    @NormalMode
+    private static final class MementoNormal {
+        private @StateContainer.Normal.State int state = StateContainer.Normal.START;
+
+        private Post currentPost;
+    }
+
+    // --------------------------------------------------------------------------------------------
+    @InteractiveMode
+    private static final class MementoInteractive {
+        private @StateContainer.Interactive.State int state = StateContainer.Interactive.START;
+    }
+
+//    @Deprecated
+//    private static final class Memento {
+//        private static final String BUNDLE_KEY_EMAIL = "bundle_key_email_" + PrID;
+//        private static final String BUNDLE_KEY_FLAG_IS_FINISHED_POSTING = "bundle_key_flag_is_finished_posting_" + PrID;
+//        private static final String BUNDLE_KEY_FLAG_IS_WALL_POSTING_PAUSED = "bundle_key_flag_is_wall_posting_paused_" + PrID;
+//        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL = "bundle_key_flag_posted_with_cancel_" + PrID;
+//        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE = "bundle_key_flag_posted_with_failure_" + PrID;
+//        private static final String BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS = "bundle_key_flag_posted_with_success_" + PrID;
+//        private static final String BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING = "bundle_key_flag_total_for_posting_" + PrID;
+//        private static final String BUNDLE_KEY_STORED_REPORTS_ID = "bundle_key_stored_reports_id_" + PrID;
+//        private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id_" + PrID;
+//        private static final String BUNDLE_KEY_CURRENT_POST = "bundle_key_current_post_" + PrID;
+//        private static final String BUNDLE_KEY_SERVICE_GRB_ID = "bundle_key_service_grb_id_" + PrID;
+//        private static final String BUNDLE_KEY_SERVICE_GRB_TS = "bundle_key_service_grb_ts_" + PrID;
+//
+//        @InteractiveMode boolean isFinishedPosting;
+//        @InteractiveMode boolean isWallPostingPaused;
+//        @InteractiveMode int postedWithCancel = 0;
+//        @InteractiveMode int postedWithFailure = 0;
+//        @InteractiveMode int postedWithSuccess = 0;
+//        @InteractiveMode int totalForPosting = 0;
+//        @InteractiveMode long storedReportsId = Constant.BAD_ID;
+//
+//        /**
+//         * This field corresponds to id of {@link GroupReportBundle} actually created and stored to
+//         * repository by {@link WallPostingService}, same for timestamp value.
+//         */
+//        @InteractiveMode long serviceGroupReportBundleId = Constant.BAD_ID;
+//        @InteractiveMode long serviceGroupReportBundleTimestamp = 0;
+//
+//        private @Nullable String email;
+//        private long keywordBundleId = Constant.BAD_ID;
+//        private Post currentPost;
+//
+//        @DebugLog
+//        private void toBundle(Bundle outState) {
+//            outState.putBoolean(BUNDLE_KEY_FLAG_IS_FINISHED_POSTING, isFinishedPosting);
+//            outState.putBoolean(BUNDLE_KEY_FLAG_IS_WALL_POSTING_PAUSED, isWallPostingPaused);
+//            outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL, postedWithCancel);
+//            outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE, postedWithFailure);
+//            outState.putInt(BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS, postedWithSuccess);
+//            outState.putInt(BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING, totalForPosting);
+//            outState.putLong(BUNDLE_KEY_STORED_REPORTS_ID, storedReportsId);
+//            outState.putString(BUNDLE_KEY_EMAIL, email);
+//            outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
+//            outState.putParcelable(BUNDLE_KEY_CURRENT_POST, currentPost);
+//            outState.putLong(BUNDLE_KEY_SERVICE_GRB_ID, serviceGroupReportBundleId);
+//            outState.putLong(BUNDLE_KEY_SERVICE_GRB_TS, serviceGroupReportBundleTimestamp);
+//        }
+//
+//        @DebugLog
+//        private static Memento fromBundle(Bundle savedInstanceState) {
+//            Memento memento = new Memento();
+//            memento.isFinishedPosting = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_FINISHED_POSTING, false);
+//            memento.isWallPostingPaused = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_WALL_POSTING_PAUSED, false);
+//            memento.postedWithCancel = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_CANCEL, 0);
+//            memento.postedWithFailure = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE, 0);
+//            memento.postedWithSuccess = savedInstanceState.getInt(BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS, 0);
+//            memento.totalForPosting = savedInstanceState.getInt(BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING, 0);
+//            memento.storedReportsId = savedInstanceState.getLong(BUNDLE_KEY_STORED_REPORTS_ID, Constant.BAD_ID);
+//            memento.email = savedInstanceState.getString(BUNDLE_KEY_EMAIL);
+//            memento.keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
+//            memento.currentPost = savedInstanceState.getParcelable(BUNDLE_KEY_CURRENT_POST);
+//            memento.serviceGroupReportBundleId = savedInstanceState.getLong(BUNDLE_KEY_SERVICE_GRB_ID, Constant.BAD_ID);
+//            memento.serviceGroupReportBundleTimestamp = savedInstanceState.getLong(BUNDLE_KEY_SERVICE_GRB_TS, 0);
+//            return memento;
+//        }
+//    }
 
     // --------------------------------------------------------------------------------------------
     @Inject
@@ -188,6 +253,185 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     protected int getListTag() {
         return ReportFragment.RV_TAG;
+    }
+
+    /* State */
+    // --------------------------------------------------------------------------------------------
+    /**
+     * State machine (Normal mode):
+     *
+     *                            START ----- < ------ < ----- < ----- < ---- ERROR_LOAD  { user retry }
+     *                              |                                              |
+     *                              |                                              |
+     *                       REPORTS_LOADED  or  ---- > ---- > ----- > ---- > ---- #
+     *                          |       |
+     *                          |       ^
+     *                          |       |
+     * { user refresh }  REFRESHING ->--|------------------- < ------------ < ---- #
+     *                                                                             |
+     *                                                                             |
+     * { user delete posts }  DELETE_REPORTS_START -->-- DELETE_REPORTS_FINISH ----|
+     */
+    @DebugLog @NormalMode
+    private void setNormalState(@StateContainer.Normal.State int newState) {
+        @StateContainer.Normal.State int previousState = mementoNormal.state;
+        Timber.i("Previous state [%s], New state: %s", previousState, newState);
+
+        // check consistency between state transitions
+        if (previousState == StateContainer.Normal.ERROR_LOAD && newState != StateContainer.Normal.START ||
+            // forbid transition from any kind of loading to refreshing
+            (previousState != StateContainer.Normal.REPORTS_LOADED && previousState != StateContainer.Normal.REFRESHING)
+                    && newState == StateContainer.Normal.REFRESHING) {
+            Timber.e("Illegal state transition from [%s] to [%s]", previousState, newState);
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Transition from %s to %s", previousState, newState));
+        }
+
+        mementoNormal.state = newState;
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to ERROR_LOAD state, when some critical data was not loaded
+     */
+    @NormalMode
+    private void stateErrorLoad() {
+        Timber.i("stateErrorLoad");
+        setNormalState(StateContainer.Normal.ERROR_LOAD);
+        // enter ERROR_LOAD state logic
+
+        if (isViewAttached()) getView().showError(getListTag());
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to START state, drop all previous values and prepare to fresh start
+     */
+    @NormalMode
+    private void stateStart() {
+        Timber.i("stateStart");
+        setNormalState(StateContainer.Normal.START);
+        // enter START state logic
+
+        inputGroupReportBundle = null;
+        mementoNormal.currentPost = null;
+
+        // TODO: adapter items .clear()
+        listAdapter.clear();  // idempotent operation
+
+        // fresh start - show loading, disable swipe-to-refresh
+        if (isViewAttached()) {
+            getView().enableSwipeToRefresh(false);
+            getView().showLoading(getListTag());
+        }
+
+        // fresh start - load input GroupReportBundle and Post
+        getGroupReportBundleByIdUseCase.execute();
+        getPostByIdUseCase.execute();
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to REPORTS_LOADED state, assign input GroupReportBundle and fill list with items
+     */
+    @NormalMode
+    private void stateReportsLoaded(@NonNull GroupReportBundle bundle) {
+        Timber.i("stateReportsLoaded");
+        setNormalState(StateContainer.Normal.REPORTS_LOADED);
+        // enter REPORTS_LOADED state logic
+
+        inputGroupReportBundle = bundle;  // assign input GroupReportBundle
+
+        // fill items in list
+        List<GroupReport> reports = bundle.groupReports();
+        // TODO: adapter items .clear()
+        listAdapter.clear();  // idempotent operation
+        fillReportsList(bundle);
+
+        // enable swipe-to-refresh after GroupReportBundle loaded, show GroupReport-s in list
+        if (isViewAttached()) {
+            getView().enableSwipeToRefresh(true);
+            getView().showGroupReports(reports.isEmpty());
+        }
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to DELETE_REPORTS_START state, start reverting all reports
+     */
+    @NormalMode
+    private void stateDeleteReportsStart() {
+        Timber.i("stateDeleteReportsStart");
+        setNormalState(StateContainer.Normal.DELETE_REPORTS_START);
+        // enter DELETE_REPORTS_START state logic
+
+        // TODO: impl
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to DELETE_REPORTS_FINISH state, refresh list items with reverted status
+     */
+    @NormalMode
+    private void stateDeleteReportsFinished() {
+        Timber.i("stateDeleteReportsFinished");
+        setNormalState(StateContainer.Normal.DELETE_REPORTS_FINISH);
+        // enter DELETE_REPORTS_FINISH state logic
+
+        // TODO: impl
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to REFRESHING state, reloading GroupReportBundle from repository
+     */
+    @NormalMode
+    private void stateRefreshing() {
+        Timber.i("stateRefreshing");
+        setNormalState(StateContainer.Normal.REFRESHING);
+        // enter REFRESHING state logic
+
+        // disable swipe-to-refresh while another refreshing is in progress
+        if (isViewAttached()) {
+            getView().enableSwipeToRefresh(false);
+            getView().showLoading(getListTag());
+        }
+    }
+
+    // --------------------------------------------------------------------------------------------
+    /**
+     * State machine (Interactive mode):
+     *
+     *                          START
+     *                            |
+     *                            |
+     *    # --- > --- > -- POSTING_PROGRESS ---- > ---- > ---- > ---- #
+     *    |                       |                                   |
+     *    |                       |                                   |
+     *    |                POSTING_FINISH                      POSTING_CANCEL  { user interrupt }
+     *    |                       |                                   |
+     *    |                       |                                   |
+     *    |                       |                                   |
+     *    # ---- < ---- #         # ----- > ----- > ------ > -------- # ------ > ---- REPORTS_LOADED
+     *                  |                                                           { to normal mode }
+     *                  |
+     *   PAUSE -->-- RESUME  { user pause / resume }
+     */
+
+    @DebugLog @InteractiveMode
+    private void setInteractiveState(@StateContainer.Interactive.State int newState) {
+        @StateContainer.Interactive.State int previousState = mementoInteractive.state;
+        Timber.i("Previous state [%s], New state: %s", previousState, newState);
+
+        // check consistency between state transitions
+        if ((previousState != StateContainer.Interactive.START && previousState != StateContainer.Interactive.RESUME
+                    && newState == StateContainer.Interactive.POSTING_PROGRESS) ||
+            (previousState != StateContainer.Interactive.POSTING_CANCEL && previousState != StateContainer.Interactive.POSTING_FINISH
+                    && newState == StateContainer.Normal.REPORTS_LOADED)) {
+            Timber.e("Illegal state transition from [%s] to [%s]", previousState, newState);
+            throw new IllegalStateException(String.format(Locale.ENGLISH, "Transition from %s to %s", previousState, newState));
+        }
+
+        mementoInteractive.state = newState;
     }
 
     /* Lifecycle */
