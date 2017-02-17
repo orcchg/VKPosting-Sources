@@ -29,7 +29,7 @@ public class GroupParentViewHolder extends BaseParentViewHolder<GroupParentItem,
             childItem.setSelected(isNotAllSelected);
         }
         if (onAllGroupsSelectedListener != null) {
-            onAllGroupsSelectedListener.onAllGroupsSelected(parentItem, getAdapterPosition(), isNotAllSelected);
+            onAllGroupsSelectedListener.onAllGroupsSelected(parentItem, getParentAdapterPosition(), isNotAllSelected);
         }
     }
 
