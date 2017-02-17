@@ -63,6 +63,7 @@ public final class ContentUtility {
             sPostingProgress = progress;
             sPostingTotal = total;
 
+            if (progress == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) return;  // skip start event
             if (sProgressCallback != null) sProgressCallback.onDone(progress, total, data);
         }
 

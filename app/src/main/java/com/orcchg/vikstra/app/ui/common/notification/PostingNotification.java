@@ -71,6 +71,11 @@ public class PostingNotification implements IPostingNotificationDelegate {
     }
 
     @Override
+    public void onPostingStarted() {
+        // already initialized in ctor
+    }
+
+    @Override
     public void onPostingComplete() {
         hasPostingFinished = true;
         notificationBuilderPosting.setContentText(NOTIFICATION_POSTING_COMPLETE).setProgress(0, 0, false);

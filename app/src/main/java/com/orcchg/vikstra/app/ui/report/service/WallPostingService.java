@@ -71,6 +71,7 @@ public class WallPostingService extends BaseIntentService {
 
     private final Object lock = new Object();
     private boolean hasFinished = false;
+    private boolean hasPhotoUploadStarted = false;  // don't show notification, if photo uploading doesn't need
 
     private PostingNotification postingNotification;
     private PhotoUploadNotification photoUploadNotification;
@@ -183,7 +184,7 @@ public class WallPostingService extends BaseIntentService {
     };
 
     private BroadcastReceiver receiverInterrupt = new BroadcastReceiver() {
-        @Override
+        @DebugLog @Override
         public void onReceive(Context context, Intent intent) {
             Timber.d("Received interrupt signal");
             onWallPostingInterrupt();
@@ -260,12 +261,13 @@ public class WallPostingService extends BaseIntentService {
         Timber.i("onWallPostingInterrupt: startHandle=%s", wasStartedHandle());
         // check for null in case initial Intent is for receiver, not for 'onHandleIntent'
         if (postingNotification != null) postingNotification.onPostingInterrupt();
-        if (photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
+        if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
 
         synchronized (lock) {
             hasFinished = true;
             lock.notify();
         }
+        Timber.d("Finishing service after wall posting interruption...");
     }
 
     @DebugLog
@@ -326,8 +328,14 @@ public class WallPostingService extends BaseIntentService {
     // --------------------------------------------------------------------------------------------
     private IPostingNotificationDelegate postingDelegate() {
         return new IPostingNotificationDelegate() {
+            @Override
+            public void onPostingStarted() {
+                // no-op
+            }
+
             @DebugLog @Override
             public void onPostingProgress(int progress, int total) {
+                if (progress == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) return;
                 postingNotification.onPostingProgress(progress, total);
                 sendPostingProgress(progress, total);
             }
@@ -346,19 +354,25 @@ public class WallPostingService extends BaseIntentService {
 
     private IPhotoUploadNotificationDelegate photoUploadDelegate() {
         return new IPhotoUploadNotificationDelegate() {
+            @Override
+            public void onPhotoUploaStarted() {
+                hasPhotoUploadStarted = true;
+            }
+
             @DebugLog @Override
             public void onPhotoUploadProgress(int progress, int total) {
+                if (progress == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) return;
                 photoUploadNotification.onPhotoUploadProgress(progress, total);
             }
 
             @Override
             public void onPhotoUploadProgressInfinite() {
-                photoUploadNotification.onPhotoUploadProgressInfinite();
+                if (hasPhotoUploadStarted) photoUploadNotification.onPhotoUploadProgressInfinite();
             }
 
             @Override
             public void onPhotoUploadComplete() {
-                photoUploadNotification.onPhotoUploadComplete();
+                if (hasPhotoUploadStarted) photoUploadNotification.onPhotoUploadComplete();
             }
         };
     };

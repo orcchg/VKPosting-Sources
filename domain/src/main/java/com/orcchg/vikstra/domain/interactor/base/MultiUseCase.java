@@ -6,6 +6,7 @@ import com.orcchg.vikstra.domain.DomainConfig;
 import com.orcchg.vikstra.domain.executor.PausableThreadPoolExecutor;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
+import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.ValueUtility;
 
 import java.util.ArrayList;
@@ -170,6 +171,14 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
 
         // local pool designed to handle highload multi-use-case
         PausableThreadPoolExecutor threadExecutor = createHighloadThreadPoolExecutor();  // could be overriden in sub-classes
+
+        // fire starting callback
+        progressCallbackScheduler.post(new Runnable() {
+            @Override
+            public void run() {
+                if (progressCallback != null) progressCallback.onDone(Constant.INIT_PROGRESS, Constant.INIT_PROGRESS, null);
+            }
+        });
 
         for (int i = 0; i < total; ++i) {
             if (checkInterruption()) return preparedResults(results);  // return results that have been recorded

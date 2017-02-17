@@ -42,6 +42,11 @@ public class PhotoUploadNotification implements IPhotoUploadNotificationDelegate
     }
 
     @Override
+    public void onPhotoUploaStarted() {
+        // already initialized in ctor
+    }
+
+    @Override
     public void onPhotoUploadComplete() {
         notificationBuilderPhotoUpload.setContentText(NOTIFICATION_PHOTO_UPLOAD_COMPLETE).setProgress(0, 0, false);
         notificationManager.notify(Constant.NotificationID.PHOTO_UPLOAD, notificationBuilderPhotoUpload.build());

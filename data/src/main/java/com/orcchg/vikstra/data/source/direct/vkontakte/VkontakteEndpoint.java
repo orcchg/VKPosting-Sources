@@ -298,6 +298,10 @@ public class VkontakteEndpoint extends Endpoint {
         MultiUseCase.ProgressCallback<GroupReportEssence> progressCallback = (index, total, data) -> {
             Timber.d("Make wall posts progress: %s / %s", index + 1, total);
             if (postingNotificationDelegate == null) return;
+            if (index == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) {
+                postingNotificationDelegate.onPostingStarted();
+                return;
+            }
             if (index + 1 < total) {  // progress == index + 1
                 postingNotificationDelegate.onPostingProgress(index + 1, total);
             } else {
@@ -308,6 +312,10 @@ public class VkontakteEndpoint extends Endpoint {
         MultiUseCase.ProgressCallback<VKPhotoArray> photoUploadProgressCb = (index, total, data) -> {
             Timber.d("Photo uploading progress: %s / %s", index + 1, total);
             if (photoUploadNotificationDelegate == null) return;
+            if (index == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) {
+                photoUploadNotificationDelegate.onPhotoUploaStarted();
+                return;
+            }
             if (index + 1 < total) {  // progress == index + 1
                 photoUploadNotificationDelegate.onPhotoUploadProgress(index + 1, total);
             } else {

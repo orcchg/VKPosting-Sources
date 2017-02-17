@@ -4,6 +4,7 @@ public class Constant {
     public static final int BAD_POSITION = -1;
     public static final long BAD_ID = -1;
     public static final long INIT_ID = 0;
+    public static final int INIT_PROGRESS = -1;
     public static final int NO_ERROR = 0;
     public static final String NO_KEYWORD = "no_keyword";
 
