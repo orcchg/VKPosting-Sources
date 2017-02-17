@@ -516,6 +516,13 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         return forceDisableInteractiveMode;
     }
 
+    @DebugLog @Override
+    public void notifyDestroyToService() {
+        Timber.i("notifyDestroyToService");
+        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_SCREEN_DESTROY);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+    }
+
     // ------------------------------------------
     @Override
     public void showGroupReports(boolean isEmpty) {

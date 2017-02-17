@@ -227,6 +227,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             ContentUtility.InMemoryStorage.setProgressCallback(null);  // unsubscribe from progress updates
             ContentUtility.InMemoryStorage.setCancelCallback(null);    // unsubscribe from cancellation
             ContentUtility.InMemoryStorage.setFinishCallback(null);  // unsubscribe from finish posting
+            if (isViewAttached()) getView().notifyDestroyToService();
         }
     }
 

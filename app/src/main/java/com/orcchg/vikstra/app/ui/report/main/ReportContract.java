@@ -44,6 +44,7 @@ public interface ReportContract {
         void closeView();
         void cancelPreviousNotifications();
         boolean isForceDisableInteractiveMode();
+        void notifyDestroyToService();
     }
 
     interface SubView extends LceView, MvpListView {

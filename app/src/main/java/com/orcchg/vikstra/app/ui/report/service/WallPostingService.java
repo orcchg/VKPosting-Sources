@@ -72,6 +72,7 @@ public class WallPostingService extends BaseIntentService {
     private final Object lock = new Object();
     private boolean hasFinished = false;
     private boolean hasPhotoUploadStarted = false;  // don't show notification, if photo uploading doesn't need
+    private boolean wasPaused = false;
 
     private PostingNotification postingNotification;
     private PhotoUploadNotification photoUploadNotification;
@@ -109,9 +110,11 @@ public class WallPostingService extends BaseIntentService {
 
         IntentFilter filterCaptcha = new IntentFilter(VKServiceActivity.VK_SERVICE_BROADCAST);
         IntentFilter filterInterrupt = new IntentFilter(Constant.Broadcast.WALL_POSTING_INTERRUPT);
+        IntentFilter filterScreenDestroy = new IntentFilter(Constant.Broadcast.WALL_POSTING_SCREEN_DESTROY);
         IntentFilter filterSuspend = new IntentFilter(Constant.Broadcast.WALL_POSTING_SUSPEND);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiverCaptcha, filterCaptcha);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiverInterrupt, filterInterrupt);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverScreenDestroy, filterScreenDestroy);
         LocalBroadcastManager.getInstance(this).registerReceiver(receiverSuspend, filterSuspend);
     }
 
@@ -120,6 +123,7 @@ public class WallPostingService extends BaseIntentService {
         Timber.i("Service onDestroy");
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverCaptcha);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverInterrupt);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverScreenDestroy);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverSuspend);
         super.onDestroy();
     }
@@ -191,6 +195,14 @@ public class WallPostingService extends BaseIntentService {
         }
     };
 
+    private BroadcastReceiver receiverScreenDestroy = new BroadcastReceiver() {
+        @DebugLog @Override
+        public void onReceive(Context context, Intent intent) {
+            Timber.d("Received screen destroy signal");
+            onScreenDestroyed();
+        }
+    };
+
     private BroadcastReceiver receiverSuspend = new BroadcastReceiver() {
         @DebugLog @Override
         public void onReceive(Context context, Intent intent) {
@@ -230,10 +242,7 @@ public class WallPostingService extends BaseIntentService {
     private void sendPostingStartedMessage(@WallPostingStatus int status) {
         Timber.d("sendPostingStartedMessage: %s", status);
         if (status != WALL_POSTING_STATUS_STARTED) {
-            synchronized (lock) {
-                hasFinished = true;
-                lock.notify();
-            }
+            wakeUp();
         }
 
         Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_STATUS);
@@ -257,16 +266,19 @@ public class WallPostingService extends BaseIntentService {
 
     // ------------------------------------------
     @DebugLog
+    private void onScreenDestroyed() {
+        Timber.i("onScreenDestroyed");
+        if (wasPaused) wakeUp();  // stop self after pause when ReportScreen gets destroyed, releasing Service
+    }
+
+    @DebugLog
     private void onWallPostingInterrupt() {
         Timber.i("onWallPostingInterrupt: startHandle=%s", wasStartedHandle());
         // check for null in case initial Intent is for receiver, not for 'onHandleIntent'
         if (postingNotification != null) postingNotification.onPostingInterrupt();
         if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
 
-        synchronized (lock) {
-            hasFinished = true;
-            lock.notify();
-        }
+        wakeUp();
         Timber.d("Finishing service after wall posting interruption...");
     }
 
@@ -274,6 +286,7 @@ public class WallPostingService extends BaseIntentService {
     private void onWallPostingSuspend(boolean paused) {
         Timber.i("onWallPostingSuspend: paused=%s, startHandle=%s, component=%s",
                 paused, wasStartedHandle(), (component != null ? component.hashCode() : "null"));
+        wasPaused = paused;
         if (paused) {
             component.vkontakteEndpoint().pauseWallPosting();
         } else {
@@ -376,4 +389,13 @@ public class WallPostingService extends BaseIntentService {
             }
         };
     };
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    private void wakeUp() {
+        synchronized (lock) {
+            hasFinished = true;
+            lock.notify();
+        }
+    }
 }
