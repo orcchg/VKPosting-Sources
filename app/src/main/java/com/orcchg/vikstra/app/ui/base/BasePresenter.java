@@ -66,7 +66,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     @DebugLog @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onCreate");
+        Timber.i("onCreate(presenter=%s)", hashCode());
         injectSharedPrefsManager();
         isStateRestored = savedInstanceState != null;
         this.savedInstanceState = savedInstanceState;
@@ -76,7 +76,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     @DebugLog @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onActivityResult");
+        Timber.i("onActivityResult(presenter=%s)", hashCode());
         wasOnActivityResultHappened = true;
         // to override
     }
@@ -84,7 +84,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     @Override
     public void onStart() {
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onStart");
+        Timber.i("onStart(presenter=%s)", hashCode());
         if (isFresh) {
             /**
              * {@link BasePresenter#isStateRestored} flag is sticky - is doesn't get dropped when the
@@ -94,11 +94,11 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
              */
             if (isStateRestored) {
                 Timber.tag(getClass().getSimpleName());
-                Timber.i("State restored on fresh start");
+                Timber.i("State restored on fresh start. (presenter=%s)", hashCode());
                 onRestoreState();
             } else {
                 Timber.tag(getClass().getSimpleName());
-                Timber.i("Fresh start");
+                Timber.i("Fresh start. (presenter=%s)", hashCode());
                 freshStart();
             }
             isFresh = false;
@@ -109,35 +109,35 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
     @Override
     public void onResume() {
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onResume");
+        Timber.i("onResume(presenter=%s)", hashCode());
         // to override
     }
 
     @Override
     public void onPause() {
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onPause");
+        Timber.i("onPause(presenter=%s)", hashCode());
         // to override
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onSaveInstanceState");
+        Timber.i("onSaveInstanceState(presenter=%s)", hashCode());
         // to override
     }
 
     @Override
     public void onStop() {
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onStop");
+        Timber.i("onStop(presenter=%s)", hashCode());
         // to override
     }
 
     @Override
     public void onDestroy() {
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onDestroy");
+        Timber.i("onDestroy(presenter=%s)", hashCode());
         // to override
     }
 
@@ -153,7 +153,7 @@ public abstract class BasePresenter<V extends MvpView> implements MvpPresenter<V
             return ((BaseFragment) view).getApplicationComponent();
         }
         Timber.tag(getClass().getSimpleName());
-        Timber.d("Application component is null - either view is not attached or it is not an instance of Base* class");
+        Timber.d("Application component is null - either view is not attached or it is not an instance of Base* class. (presenter=%s)", hashCode());
         return null;
     }
 

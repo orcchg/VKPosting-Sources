@@ -77,6 +77,6 @@ public abstract class GroupBundle implements Comparable<GroupBundle>, Iterable<G
 
     @Override
     public Iterator<Group> iterator() {
-        return null;
+        return groups().iterator();
     }
 }

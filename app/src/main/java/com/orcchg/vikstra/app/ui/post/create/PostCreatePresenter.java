@@ -127,6 +127,7 @@ public class PostCreatePresenter extends BasePresenter<PostCreateContract.View> 
                     int columnIndex = cursor.getColumnIndex(pathColumns[0]);
                     String imagePath = cursor.getString(columnIndex);
                     Timber.d("Selected image from Gallery, url: %s", imagePath);
+                    // TODO: imagePath could be null - crash on File.fixSlashes()
                     if (isViewAttached()) getView().addMediaThumbnail(imagePath);
                     // try to find image in cache, if it has already been uploaded and hence - cached with id, assigned by endpoint
                     long mediaId = attachLocalCache.getIdByPhotoPath(imagePath);  // if BAD_ID - then generate a unique one

@@ -38,7 +38,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onCreate");
+        Timber.i("onCreate(fragment=%s)", hashCode());
         isStateRestored = savedInstanceState != null;
         injectNavigator();
         injectSharedPrefsManager();
@@ -52,7 +52,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onActivityResult");
+        Timber.i("onActivityResult(fragment=%s)", hashCode());
         presenter.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -60,7 +60,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     public void onStart() {
         super.onStart();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onStart");
+        Timber.i("onStart(fragment=%s)", hashCode());
         presenter.onStart();
     }
 
@@ -68,7 +68,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     public void onResume() {
         super.onResume();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onResume");
+        Timber.i("onResume(fragment=%s)", hashCode());
         presenter.onResume();
     }
 
@@ -76,7 +76,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     public void onPause() {
         super.onPause();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onPause");
+        Timber.i("onPause(fragment=%s)", hashCode());
         presenter.onPause();
     }
 
@@ -84,7 +84,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onSaveInstanceState");
+        Timber.i("onSaveInstanceState(fragment=%s)", hashCode());
         presenter.onSaveInstanceState(outState);
     }
 
@@ -92,7 +92,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     public void onStop() {
         super.onStop();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onStop");
+        Timber.i("onStop(fragment=%s)", hashCode());
         presenter.onStop();
     }
 
@@ -100,7 +100,7 @@ public abstract class BaseFragment<V extends MvpView, P extends MvpPresenter<V>>
     public void onDestroy() {
         super.onDestroy();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onDestroy");
+        Timber.i("onDestroy(fragment=%s)", hashCode());
         presenter.onDestroy();
         presenter.detachView();
         navigationComponent.navigator().onDestroy();

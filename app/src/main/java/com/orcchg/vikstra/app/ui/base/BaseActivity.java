@@ -53,7 +53,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
         isDestroying = false;
         super.onCreate(savedInstanceState);
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onCreate, smallest width: %s", UiUtility.getSmallestWidth(this));
+        Timber.i("onCreate(activity=%s), smallest width: %s", hashCode(), UiUtility.getSmallestWidth(this));
         injectNavigator();
         injectPermissionManager();
         injectSharedPrefsManager();
@@ -67,7 +67,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onActivityResult");
+        Timber.i("onActivityResult(activity=%s)", hashCode());
         presenter.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -75,7 +75,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     protected void onStart() {
         super.onStart();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onStart");
+        Timber.i("onStart(activity=%s)", hashCode());
         presenter.onStart();
     }
 
@@ -83,7 +83,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     protected void onResume() {
         super.onResume();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onResume");
+        Timber.i("onResume(activity=%s)", hashCode());
         presenter.onResume();
     }
 
@@ -91,7 +91,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     protected void onPause() {
         super.onPause();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onPause");
+        Timber.i("onPause(activity=%s)", hashCode());
         presenter.onPause();
     }
 
@@ -99,7 +99,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onSaveInstanceState");
+        Timber.i("onSaveInstanceState(activity=%s)", hashCode());
         presenter.onSaveInstanceState(outState);
     }
 
@@ -107,7 +107,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
     protected void onStop() {
         super.onStop();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onStop");
+        Timber.i("onStop(activity=%s)", hashCode());
         presenter.onStop();
     }
 
@@ -116,7 +116,7 @@ public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
         isDestroying = true;
         super.onDestroy();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onDestroy");
+        Timber.i("onDestroy(activity=%s)", hashCode());
         presenter.onDestroy();
         presenter.detachView();
         navigationComponent.navigator().onDestroy();

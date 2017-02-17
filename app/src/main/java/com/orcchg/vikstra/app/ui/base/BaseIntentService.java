@@ -21,13 +21,13 @@ public abstract class BaseIntentService extends IntentService {
     public void onCreate() {
         super.onCreate();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onCreate");
+        Timber.i("onCreate(intent service=%s)", hashCode());
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onHandleIntent");
+        Timber.i("onHandleIntent(intent service=%s)", hashCode());
         startedHandle = true;
     }
 
@@ -35,6 +35,6 @@ public abstract class BaseIntentService extends IntentService {
     public void onDestroy() {
         super.onDestroy();
         Timber.tag(getClass().getSimpleName());
-        Timber.i("onDestroy");
+        Timber.i("onDestroy(intent service=%s)", hashCode());
     }
 }
