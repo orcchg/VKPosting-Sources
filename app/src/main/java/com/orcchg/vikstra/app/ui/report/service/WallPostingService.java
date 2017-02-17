@@ -16,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import com.orcchg.vikstra.R;
 import com.orcchg.vikstra.app.AndroidApplication;
+import com.orcchg.vikstra.app.ui.base.BaseIntentService;
 import com.orcchg.vikstra.app.ui.common.notification.PhotoUploadNotification;
 import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
 import com.orcchg.vikstra.app.ui.report.service.injection.DaggerWallPostingServiceComponent;
@@ -43,7 +44,7 @@ import java.util.List;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
-public class WallPostingService extends IntentService {
+public class WallPostingService extends BaseIntentService {
     private static final int FN_BASE_ID = 777;
     private static final int FOREGROUND_NOTIFICATION_ID = FN_BASE_ID;
     private static final String INTERNAL_EXTRA_START_SERVICE = "internal_extra_start_service";
@@ -100,6 +101,11 @@ public class WallPostingService extends IntentService {
     public void onCreate() {
         super.onCreate();
         Timber.i("Service onCreate");
+        component = DaggerWallPostingServiceComponent.builder()
+                .applicationComponent(((AndroidApplication) getApplication()).getApplicationComponent())
+                .wallPostingServiceModule(new WallPostingServiceModule())
+                .build();
+
         IntentFilter filterCaptcha = new IntentFilter(VKServiceActivity.VK_SERVICE_BROADCAST);
         IntentFilter filterInterrupt = new IntentFilter(Constant.Broadcast.WALL_POSTING_INTERRUPT);
         IntentFilter filterSuspend = new IntentFilter(Constant.Broadcast.WALL_POSTING_SUSPEND);
@@ -121,6 +127,7 @@ public class WallPostingService extends IntentService {
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onHandleIntent(Intent intent) {
+        super.onHandleIntent(intent);
         Timber.i("Enter Wall Posting service");
         boolean valid = intent.getBooleanExtra(INTERNAL_EXTRA_START_SERVICE, false);
         if (!valid) {
@@ -128,18 +135,13 @@ public class WallPostingService extends IntentService {
             return;
         }
 
-        becomeForeground();
-
-        component = DaggerWallPostingServiceComponent.builder()
-                .applicationComponent(((AndroidApplication) getApplication()).getApplicationComponent())
-                .wallPostingServiceModule(new WallPostingServiceModule())
-                .build();
-
         ArrayList<Group> selectedGroups = intent.getParcelableArrayListExtra(EXTRA_SELECTED_GROUPS);
         keywordBundleId = intent.getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
         currentPost = intent.getParcelableExtra(EXTRA_CURRENT_POST);
 
         initNotifications();  // cancel all previous notification and init the new ones
+
+        becomeForeground();
 
         sendPostingStartedMessage(WALL_POSTING_STATUS_STARTED);
         component.vkontakteEndpoint().makeWallPostsWithDelegate(selectedGroups, currentPost,
@@ -255,15 +257,21 @@ public class WallPostingService extends IntentService {
     // ------------------------------------------
     @DebugLog
     private void onWallPostingInterrupt() {
-        Timber.i("onWallPostingInterrupt");
-        postingNotification.onPostingInterrupt();
-        photoUploadNotification.onPhotoUploadInterrupt();
-        stopSelf();
+        Timber.i("onWallPostingInterrupt: startHandle=%s", wasStartedHandle());
+        // check for null in case initial Intent is for receiver, not for 'onHandleIntent'
+        if (postingNotification != null) postingNotification.onPostingInterrupt();
+        if (photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
+
+        synchronized (lock) {
+            hasFinished = true;
+            lock.notify();
+        }
     }
 
     @DebugLog
     private void onWallPostingSuspend(boolean paused) {
-        Timber.i("onWallPostingSuspend: %s", paused);
+        Timber.i("onWallPostingSuspend: paused=%s, startHandle=%s, component=%s",
+                paused, wasStartedHandle(), (component != null ? component.hashCode() : "null"));
         if (paused) {
             component.vkontakteEndpoint().pauseWallPosting();
         } else {
