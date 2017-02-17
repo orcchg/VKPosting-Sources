@@ -1242,7 +1242,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
     // ------------------------------------------
     private boolean shouldDeleteEmptyCreatedKeywordBundle() {
-        return memento.wasInputKeywordBundleCreated && !sendAskForTitleChanged() && memento.inputKeywordBundle.keywords().isEmpty();
+        return memento.wasInputKeywordBundleCreated &&
+               !sendAskForTitleChanged() &&
+               memento.inputKeywordBundle != null &&
+               memento.inputKeywordBundle.keywords().isEmpty();
     }
 
     /* Callback */
