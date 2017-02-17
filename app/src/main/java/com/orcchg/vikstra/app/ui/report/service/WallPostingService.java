@@ -231,9 +231,7 @@ public class WallPostingService extends BaseIntentService {
     }
 
     private void initNotifications() {
-        NotificationManagerCompat.from(this).cancel(Constant.NotificationID.POSTING);
-        NotificationManagerCompat.from(this).cancel(Constant.NotificationID.PHOTO_UPLOAD);
-
+        dropAllNotifications();
         postingNotification = new PostingNotification(this, Constant.BAD_ID, keywordBundleId, currentPost.id());
         photoUploadNotification = new PhotoUploadNotification(this);
     }
@@ -268,7 +266,10 @@ public class WallPostingService extends BaseIntentService {
     @DebugLog
     private void onScreenDestroyed() {
         Timber.i("onScreenDestroyed");
-        if (wasPaused) wakeUp();  // stop self after pause when ReportScreen gets destroyed, releasing Service
+        if (wasPaused) {
+            dropAllNotifications();
+            wakeUp();  // stop self after pause when ReportScreen gets destroyed, releasing Service
+        }
     }
 
     @DebugLog
@@ -392,6 +393,11 @@ public class WallPostingService extends BaseIntentService {
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
+    private void dropAllNotifications() {
+        NotificationManagerCompat.from(this).cancel(Constant.NotificationID.POSTING);
+        NotificationManagerCompat.from(this).cancel(Constant.NotificationID.PHOTO_UPLOAD);
+    }
+
     private void wakeUp() {
         synchronized (lock) {
             hasFinished = true;

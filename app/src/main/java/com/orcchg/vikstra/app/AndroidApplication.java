@@ -38,7 +38,7 @@ public class AndroidApplication extends Application {
         initResources();
         initializeCrashlytics();
         initializeInjector();
-        initializeLeakDetection();
+//        initializeLeakDetection();
         initializeLogger();
         initializeRealmEngine();
         initializeVkontakteSdk();
