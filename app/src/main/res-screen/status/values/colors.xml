@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <color name="status_loader_fill_color">@color/colorAccent</color>
-    <color name="status_loader_stroke_color">#0097A7</color>
-    <color name="status_progress_main_color">#76FF03</color>
-    <color name="status_progress_secondary_color">#FFC400</color>
-    <color name="status_progress_text_color">@color/textPrimary</color>
-</resources>

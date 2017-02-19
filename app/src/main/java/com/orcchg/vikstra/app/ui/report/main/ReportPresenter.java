@@ -10,17 +10,13 @@ import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
-import com.orcchg.vikstra.app.ui.report.service.WallPostingService;
 import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportEssenceToVoMapper;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportToVoMapper;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.PostToSingleGridVoMapper;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
-import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.exception.ProgramException;
-import com.orcchg.vikstra.domain.exception.vkontakte.Api220VkUseCaseException;
-import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
-import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
+import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseExceptionFactory;
 import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
@@ -29,8 +25,6 @@ import com.orcchg.vikstra.domain.interactor.report.DumpGroupReports;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
 import com.orcchg.vikstra.domain.interactor.report.PostGroupReportBundle;
 import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
-import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost;
-import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Heavy;
@@ -41,6 +35,7 @@ import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
+import com.vk.sdk.api.VKError;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -70,16 +65,12 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final GroupReportEssenceToVoMapper groupReportEssenceToVoMapper;
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
-    // used only in interactive mode {@link InteractiveMode}
-    private final MultiUseCase.ProgressCallback<GroupReportEssence> postingProgressCallback;
-    private final MultiUseCase.CancelCallback postingCancelledCallback;
-    private final MultiUseCase.FinishCallback postingFinishedCallback;
-
-    private @Heavy List<GroupReport> storedReports = new ArrayList<>();
+    private @InteractiveMode @Heavy List<GroupReport> storedReports = new ArrayList<>();
     private @Heavy GroupReportBundle inputGroupReportBundle;  // used only in non-interactive mode
 
-    private MementoNormal mementoNormal = new MementoNormal();
+    private MementoCommon mementoCommon = new MementoCommon();
     private MementoInteractive mementoInteractive = new MementoInteractive();
+    private MementoNormal mementoNormal = new MementoNormal();
 
     // --------------------------------------------------------------------------------------------
     private static final class StateContainer {
@@ -90,7 +81,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             private static final int REPORTS_LOADED = 1;
             private static final int DELETE_REPORTS_START = 2;
             private static final int DELETE_REPORTS_FINISH = 3;
-            private static final int REFRESHING = 4;
+            private static final int DELETE_REPORTS_ERROR = 4;
+            private static final int REFRESHING = 5;
 
             @IntDef({
                 ERROR_LOAD,
@@ -98,6 +90,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 REPORTS_LOADED,
                 DELETE_REPORTS_START,
                 DELETE_REPORTS_FINISH,
+                DELETE_REPORTS_ERROR,
                 REFRESHING
             })
             @Retention(RetentionPolicy.SOURCE)
@@ -106,20 +99,20 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
         @InteractiveMode
         private static final class Interactive {
-            private static final int START = 0;
+            private static final int BEGIN = 0;
             private static final int POSTING_PROGRESS = 1;
             private static final int POSTING_CANCEL = 2;
             private static final int POSTING_FINISH = 3;
             private static final int PAUSE = 4;
             private static final int RESUME = 5;
+            private static final int INTERRUPT = 6;
 
             @IntDef({
-                START,
+                BEGIN,
                 POSTING_PROGRESS,
                 POSTING_CANCEL,
                 POSTING_FINISH,
-                PAUSE,
-                RESUME
+                PAUSE, RESUME, INTERRUPT
             })
             @Retention(RetentionPolicy.SOURCE)
             @interface State {}
@@ -127,17 +120,30 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     }
 
     // --------------------------------------------------------------------------------------------
+    private static final class MementoCommon {
+        private @Nullable String email;
+        private long keywordBundleId = Constant.BAD_ID;
+//        int postedWithCancel = 0;
+//        int postedWithFailure = 0;
+//        int postedWithSuccess = 0;
+//        int totalForPosting = 0;
+    }
+
+    // ------------------------------------------
+    @InteractiveMode
+    private static final class MementoInteractive {
+        private @StateContainer.Interactive.State int state = StateContainer.Interactive.BEGIN;
+
+        boolean isFinishedPosting;
+        boolean isWallPostingPaused;
+    }
+
+    // ------------------------------------------
     @NormalMode
     private static final class MementoNormal {
         private @StateContainer.Normal.State int state = StateContainer.Normal.START;
 
         private Post currentPost;
-    }
-
-    // --------------------------------------------------------------------------------------------
-    @InteractiveMode
-    private static final class MementoInteractive {
-        private @StateContainer.Interactive.State int state = StateContainer.Interactive.START;
     }
 
 //    @Deprecated
@@ -233,11 +239,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         this.groupReportEssenceMapper = groupReportEssenceMapper;
         this.groupReportEssenceToVoMapper = groupReportEssenceToVoMapper;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
-        this.postingProgressCallback = createPostingProgressCallback();
-        this.postingCancelledCallback = createPostingCancelledCallback();
-        this.postingFinishedCallback = createPostingFinishedCallback();
 
-        memento.keywordBundleId = getKeywordBundleByIdUseCase.getKeywordBundleId();  // use-case only to provide value
+        mementoCommon.keywordBundleId = getKeywordBundleByIdUseCase.getKeywordBundleId();  // use-case only to provide value
     }
 
     @Override
@@ -270,7 +273,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
      * { user refresh }  REFRESHING ->--|------------------- < ------------ < ---- #
      *                                                                             |
      *                                                                             |
-     * { user delete posts }  DELETE_REPORTS_START -->-- DELETE_REPORTS_FINISH ----|
+     * { user delete posts }  DELETE_REPORTS_START -->-- DELETE_REPORTS_FINISH ----|-- > -- DELETE_REPORTS_ERROR
      */
     @DebugLog @NormalMode
     private void setNormalState(@StateContainer.Normal.State int newState) {
@@ -287,6 +290,12 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         }
 
         mementoNormal.state = newState;
+    }
+
+    @DebugLog @NormalMode
+    private void assignNormalState(@StateContainer.Normal.State int newState) {
+        Timber.d("assignNormalState: %s", newState);
+        setNormalState(newState);  // verbose call
     }
 
     // ------------------------------------------
@@ -314,9 +323,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
         inputGroupReportBundle = null;
         mementoNormal.currentPost = null;
+        mementoCommon.postedWithCancel  = 0;  // drop counter
+        mementoCommon.postedWithFailure = 0;  // drop counter
+        mementoCommon.postedWithSuccess = 0;  // drop counter
+        mementoCommon.totalForPosting = 0;
 
-        // TODO: adapter items .clear()
         listAdapter.clear();  // idempotent operation
+        dropListStat();
 
         // fresh start - show loading, disable swipe-to-refresh
         if (isViewAttached()) {
@@ -343,14 +356,16 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
         // fill items in list
         List<GroupReport> reports = bundle.groupReports();
-        // TODO: adapter items .clear()
         listAdapter.clear();  // idempotent operation
         fillReportsList(bundle);
+
+        int[] counters = bundle.statusCount();
 
         // enable swipe-to-refresh after GroupReportBundle loaded, show GroupReport-s in list
         if (isViewAttached()) {
             getView().enableSwipeToRefresh(true);
             getView().showGroupReports(reports.isEmpty());
+            getView().updatePostedCounters(counters[GroupReport.STATUS_SUCCESS], bundle.groupReports().size());
         }
     }
 
@@ -364,20 +379,56 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         setNormalState(StateContainer.Normal.DELETE_REPORTS_START);
         // enter DELETE_REPORTS_START state logic
 
-        // TODO: impl
+        runDeletionOverAllSuccessReports(inputGroupReportBundle.groupReports());
     }
 
     // ------------------------------------------
     /**
-     * Go to DELETE_REPORTS_FINISH state, refresh list items with reverted status
+     * Go to DELETE_REPORTS_FINISH state, refresh list items with reverted status and go to idle
      */
     @NormalMode
-    private void stateDeleteReportsFinished() {
+    private void stateDeleteReportsFinished(boolean result) {
         Timber.i("stateDeleteReportsFinished");
         setNormalState(StateContainer.Normal.DELETE_REPORTS_FINISH);
         // enter DELETE_REPORTS_FINISH state logic
 
-        // TODO: impl
+        if (result) {
+            List<GroupReport> storedReports = inputGroupReportBundle.groupReports();
+            int totalReverted = setListItemsReverted(storedReports);
+            if (totalReverted > 0) {
+                Timber.d("Update GroupReport-s in repository in non-interactive mode or after state restored");
+                GroupReportBundle bundle = GroupReportBundle.builder()
+                        .setId(inputGroupReportBundle.id())
+                        .setGroupReports(storedReports)
+                        .setKeywordBundleId(mementoCommon.keywordBundleId)
+                        .setPostId(mementoNormal.currentPost.id())
+                        .setTimestamp(inputGroupReportBundle.timestamp())
+                        .build();
+                postGroupReportBundleUseCase.setParameters(new PostGroupReportBundle.Parameters(bundle));
+                postGroupReportBundleUseCase.execute();  // silent update without callback
+            }
+            if (isViewAttached()) {
+                getView().onPostRevertingFinished();
+                getView().updatePostedCounters(0, mementoCommon.totalForPosting);
+            }
+        }
+
+        assignNormalState(StateContainer.Normal.REPORTS_LOADED);  // get to the final state
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to DELETE_REPORTS_ERROR state, show notification and go to idle
+     */
+    @NormalMode
+    private void stateDeleteReportsError() {
+        Timber.i("stateDeleteReportsError");
+        setNormalState(StateContainer.Normal.DELETE_REPORTS_ERROR);
+        // enter DELETE_REPORTS_ERROR sate logic
+
+        if (isViewAttached()) getView().onPostRevertingError();
+
+        assignNormalState(StateContainer.Normal.REPORTS_LOADED);  // get to the final state
     }
 
     // ------------------------------------------
@@ -401,7 +452,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     /**
      * State machine (Interactive mode):
      *
-     *                          START
+     *                          BEGIN
      *                            |
      *                            |
      *    # --- > --- > -- POSTING_PROGRESS ---- > ---- > ---- > ---- #
@@ -413,8 +464,11 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
      *    |                       |                                   |
      *    # ---- < ---- #         # ----- > ----- > ------ > -------- # ------ > ---- REPORTS_LOADED
      *                  |                                                           { to normal mode }
-     *                  |
-     *   PAUSE -->-- RESUME  { user pause / resume }
+     *                  |                                                                    |
+     *   PAUSE -->-- RESUME  { user pause / resume }                                         ^
+     *                                                                                       |
+     *                                                                                       |
+     *   { user interrupt }  INTERRUPT  --------- > ------ > ----------------- > ----------- #
      */
 
     @DebugLog @InteractiveMode
@@ -423,10 +477,10 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         Timber.i("Previous state [%s], New state: %s", previousState, newState);
 
         // check consistency between state transitions
-        if ((previousState != StateContainer.Interactive.START && previousState != StateContainer.Interactive.RESUME
-                    && newState == StateContainer.Interactive.POSTING_PROGRESS) ||
+        if ((previousState != StateContainer.Interactive.BEGIN && previousState != StateContainer.Interactive.RESUME
+                    && newState == StateContainer.Interactive.POSTING_PROGRESS)/* ||
             (previousState != StateContainer.Interactive.POSTING_CANCEL && previousState != StateContainer.Interactive.POSTING_FINISH
-                    && newState == StateContainer.Normal.REPORTS_LOADED)) {
+                    && newState == StateContainer.Normal.REPORTS_LOADED)*/) {
             Timber.e("Illegal state transition from [%s] to [%s]", previousState, newState);
             throw new IllegalStateException(String.format(Locale.ENGLISH, "Transition from %s to %s", previousState, newState));
         }
@@ -434,19 +488,156 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         mementoInteractive.state = newState;
     }
 
-    /* Lifecycle */
-    // --------------------------------------------------------------------------------------------
-    @DebugLog @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    // ------------------------------------------
+    /**
+     * Go to BEGIN state, prepare to receive incoming items
+     */
+    @InteractiveMode
+    private void stateBegin() {
+        Timber.i("stateBegin");
+        setInteractiveState(StateContainer.Interactive.BEGIN);
+        // enter BEGIN state logic
+
+        mementoInteractive.isFinishedPosting = false;
+        mementoInteractive.isWallPostingPaused = false;
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to POSTING_PROGRESS state, parse essence and make GroupReport item from it, add this item
+     * to list in reversed order and update counters.
+     */
+    @InteractiveMode @SuppressWarnings("unchecked")
+    private void statePostingProgress(int success, int failure, int cancel, int total, GroupReportEssence model) {
+        Timber.i("statePostingProgress");
+        setInteractiveState(StateContainer.Interactive.POSTING_PROGRESS);
+        // enter POSTING_PROGRESS state logic
+
+        mementoCommon.totalForPosting = total;  // save counter to use further
+
+        Timber.v("Posting stat: success [%s], failure [%s], cancel [%s], total [%s]", success, failure, cancel, total);
+        // TODO: not properly counted if there are retry-failed use-cases
+        if (!mementoInteractive.isFinishedPosting) {
+            mementoInteractive.isFinishedPosting = cancel + failure + success == total;
+        }
+
+        ReportListItemVO viewObject = groupReportEssenceToVoMapper.map(model);
+        listAdapter.addInverse(viewObject);  // add items on top of the list
+        if (isViewAttached()) {
+            getView().showGroupReports(false);  // idempotent call (no-op if list items are already visible)
+            getView().updatePostedCounters(success, total);
+            getView().getListView(getListTag()).smoothScrollToPosition(0);  // scroll on top of the list as items are incoming
+            // TODO: estimate time to complete posting, use DomainConfig.INSTANCE.multiUseCaseSleepInterval
+        }
+
+        long timestamp = System.currentTimeMillis();
+        groupReportEssenceMapper.setGroupReportId(Constant.INIT_ID);  // fictive id
+        groupReportEssenceMapper.setTimestamp(timestamp);
+        storedReports.add(groupReportEssenceMapper.map(model));
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to POSTING_FINISH state, notify posting finished and show popup with counters
+     */
+    @InteractiveMode
+    private void statePostingFinish() {
+        Timber.i("statePostingFinish");
+        setInteractiveState(StateContainer.Interactive.POSTING_FINISH);
+        // enter POSTING_FINISH state logic
+
+        mementoInteractive.isFinishedPosting = true;
+
+        if (isViewAttached()) {
+            getView().onPostingFinished(mementoCommon.postedWithSuccess, mementoCommon.totalForPosting);
+        }
+
+        Timber.i("Posting has been finished");
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to POSTING_CANCEL state, notify posting cancelled and check access token
+     */
+    @InteractiveMode
+    private void statePostingCancel(Throwable reason) {
+        Timber.i("statePostingCancel");
+        setInteractiveState(StateContainer.Interactive.POSTING_CANCEL);
+        // enter POSTING_CANCEL state logic
+
+        mementoInteractive.isFinishedPosting = true;
+
+        if (EndpointUtility.hasAccessTokenExhausted(reason)) {
+            Timber.w("Access Token has exhausted !");
+            if (isViewAttached()) getView().onAccessTokenExhausted();
+        } else {
+            if (isViewAttached()) getView().onPostingCancel();
+        }
+
+        Timber.i("Posting has been cancelled");
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to PAUSE state, notify posting paused
+     */
+    @InteractiveMode
+    private void statePause() {
+        Timber.i("statePause");
+        setInteractiveState(StateContainer.Interactive.PAUSE);
+        // enter PAUSE state logic
+
+        mementoInteractive.isWallPostingPaused = true;
+
+        if (isViewAttached()) getView().onWallPostingSuspend(true);
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to RESUME state, notify posting resumed
+     */
+    @InteractiveMode
+    private void stateResume() {
+        Timber.i("stateResume");
+        setInteractiveState(StateContainer.Interactive.RESUME);
+        // enter RESUME state logic
+
+        mementoInteractive.isWallPostingPaused = false;
+
+        if (isViewAttached()) getView().onWallPostingSuspend(false);
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to INTERRUPT state, notify posting terminated and shutdown thread pool executor
+     */
+    @InteractiveMode
+    private void stateInterrupt(boolean shouldClose) {
+        Timber.i("stateInterrupt: %s", shouldClose);
+        setInteractiveState(StateContainer.Interactive.INTERRUPT);
+        // enter INTERRUPT state logic
+
+        if (mementoInteractive.isFinishedPosting) return;  // no-op if no posting is in progress
+
         if (isInteractiveMode()) {
-            Timber.d("Subscribe on posting progress callback on ReportScreen");
-            ContentUtility.InMemoryStorage.setProgressCallback(postingProgressCallback);  // subscribe to progress updates
-            ContentUtility.InMemoryStorage.setCancelCallback(postingCancelledCallback);   // subscribe to cancellation
-            ContentUtility.InMemoryStorage.setFinishCallback(postingFinishedCallback);  // subscribe to finish posting
+            /**
+             * Setting this flag we disable warning popup on back pressed. But this will be set in
+             * anyway in {@link ReportPresenter#createPostingFinishedCallback()} callback.
+             */
+            mementoInteractive.isFinishedPosting = true;
+
+            ApplicationComponent component = getApplicationComponent();
+            if (component != null) component.threadExecutor().shutdownNow();
+        }
+
+        if (isViewAttached()) {
+            getView().onWallPostingInterrupt();
+            if (shouldClose) getView().closeView();
         }
     }
 
+    /* Lifecycle */
+    // --------------------------------------------------------------------------------------------
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -463,25 +654,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         memento.toBundle(outState);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (isInteractiveMode()) {
-            Timber.d("Unsubscribe from posting progress callback on ReportScreen");
-            ContentUtility.InMemoryStorage.setProgressCallback(null);  // unsubscribe from progress updates
-            ContentUtility.InMemoryStorage.setCancelCallback(null);    // unsubscribe from cancellation
-            ContentUtility.InMemoryStorage.setFinishCallback(null);  // unsubscribe from finish posting
-            if (isViewAttached()) getView().notifyDestroyToService();
-        }
-    }
-
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
     public void onCloseView() {
         Timber.i("onCloseView");
         if (isViewAttached()) {
-            if (isInteractiveMode() && !memento.isFinishedPosting) {
+            if (isInteractiveMode() && !mementoInteractive.isFinishedPosting) {
                 getView().openCloseWhilePostingDialog();
             } else {
                 getView().closeView();
@@ -504,7 +683,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         Timber.i("onDumpPressed");
         boolean notReady = true;
         if (isInteractiveMode()) {
-            if (memento.isFinishedPosting && !storedReports.isEmpty()) {
+            if (mementoInteractive.isFinishedPosting && !storedReports.isEmpty()) {
                 dumpGroupReportsUseCase.setParameters(new DumpGroupReports.Parameters(storedReports));
                 notReady = false;
             }
@@ -538,39 +717,35 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         }
     }
 
-    @DebugLog @Override
-    public void onPostingResult(long groupReportBundleId, long timestamp) {
-        memento.serviceGroupReportBundleId = groupReportBundleId;
-        memento.serviceGroupReportBundleTimestamp = timestamp;
+    @Override
+    public void onPostingCancel() {
+        statePostingCancel(null);  // TODO: reason properly
+    }
+
+    @Override
+    public void onPostingFinish() {
+        statePostingFinish();
+    }
+
+    @InteractiveMode @Override
+    public void onPostingResult(int success, int failure, int cancel, int total, GroupReportEssence model) {
+        statePostingProgress(success, failure, cancel, total, model);
     }
 
     @InteractiveMode @Override
     public void onSuspendClick() {
         Timber.i("onSuspendClick");
-        memento.isWallPostingPaused = !memento.isWallPostingPaused;
-        if (isViewAttached()) getView().onWallPostingSuspend(memento.isWallPostingPaused);
+        if (mementoInteractive.isWallPostingPaused) {
+            stateResume();
+        } else {
+            statePause();
+        }
     }
 
     @InteractiveMode @Override
     public void interruptPostingAndClose(boolean shouldClose) {
         Timber.i("interruptPostingAndClose: %s", shouldClose);
-        if (memento.isFinishedPosting) return;  // no-op if no posting is in progress
-
-        if (isInteractiveMode()) {
-            /**
-             * Setting this flag we disable warning popup on back pressed. But this will be set in
-             * anyway in {@link ReportPresenter#createPostingFinishedCallback()} callback.
-             */
-            memento.isFinishedPosting = true;
-
-            ApplicationComponent component = getApplicationComponent();
-            if (component != null) component.threadExecutor().shutdownNow();
-        }
-
-        if (isViewAttached()) {
-            getView().onWallPostingInterrupt();
-            if (shouldClose) getView().closeView();
-        }
+        stateInterrupt(shouldClose);
     }
 
     @DebugLog @Override
@@ -581,7 +756,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @DebugLog @Override
     public void performDumping(String path, @Nullable String email) {
         Timber.i("performDumping: path=%s, email=%s", path, email);
-        memento.email = email;
+        mementoCommon.email = email;
         dumpGroupReportsUseCase.setPath(path);
         dumpGroupReportsUseCase.execute();
     }
@@ -589,43 +764,37 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     public void performReverting() {
         Timber.i("performReverting");
-        /**
-         * Currently there are two different, but similar {@link GroupReportBundle} items - one from
-         * {@link WallPostingService} - created and then put to repository - and potential item,
-         * which will be composed from {@link ReportPresenter.Memento#storedReports} and then put to
-         * repository with {@link ReportPresenter.Memento#storedReportsId} when ReportScreen will be
-         * in the middle of destruction-restoration process.
-         *
-         * Any reverting performed here will affect the latter {@link GroupReportBundle} and won't
-         * have any effect on the former. But user could still open notification and see the former
-         * item loaded to ReportScreen, missing all revert-statuses. To avoid that, we dismiss notification.
-         */
-        if (isViewAttached()) getView().cancelPreviousNotifications();
-
-        List<GroupReport> successReports = new ArrayList<>();
-        for (GroupReport report : storedReports) {  // only successful posts can be reverted
-            if (report.status() == GroupReport.STATUS_SUCCESS) successReports.add(report);
-        }
-        if (successReports.isEmpty()) {
-            // TODO: exclude success reports from 'storeReports' after revert
-            if (isViewAttached()) getView().onPostRevertingEmpty();
-        } else {
-            if (isViewAttached()) getView().onPostRevertingStarted();
-            vkontakteEndpoint.deleteWallPosts(successReports, createDeleteWallPostsCallback());
-        }
+        stateDeleteReportsStart();
+//        /**
+//         * Currently there are two different, but similar {@link GroupReportBundle} items - one from
+//         * {@link WallPostingService} - created and then put to repository - and potential item,
+//         * which will be composed from {@link ReportPresenter.Memento#storedReports} and then put to
+//         * repository with {@link ReportPresenter.Memento#storedReportsId} when ReportScreen will be
+//         * in the middle of destruction-restoration process.
+//         *
+//         * Any reverting performed here will affect the latter {@link GroupReportBundle} and won't
+//         * have any effect on the former. But user could still open notification and see the former
+//         * item loaded to ReportScreen, missing all revert-statuses. To avoid that, we dismiss notification.
+//         */
+//        if (isViewAttached()) getView().cancelPreviousNotifications();
+//
+//        List<GroupReport> successReports = new ArrayList<>();
+//        for (GroupReport report : storedReports) {  // only successful posts can be reverted
+//            if (report.status() == GroupReport.STATUS_SUCCESS) successReports.add(report);
+//        }
+//        if (successReports.isEmpty()) {
+//            // TODO: exclude success reports from 'storeReports' after revert
+//            if (isViewAttached()) getView().onPostRevertingEmpty();
+//        } else {
+//            if (isViewAttached()) getView().onPostRevertingStarted();
+//            vkontakteEndpoint.deleteWallPosts(successReports, createDeleteWallPostsCallback());
+//        }
     }
 
     @Override
     public void retry() {
         Timber.i("retry");
-        memento.postedWithSuccess = 0;  // drop counter
-        memento.postedWithFailure = 0;  // drop counter
-        memento.currentPost = null;
-        inputGroupReportBundle = null;
-        storedReports.clear();
-        listAdapter.clear();
-        dropListStat();
-        freshStart();
+        stateStart();
     }
 
     @Override
@@ -650,22 +819,31 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     // --------------------------------------------------------------------------------------------
     @Override
     protected void freshStart() {
-        if (isViewAttached()) getView().showLoading(getListTag());
-        /**
-         * Load GroupReportBundle from repository either if we aren't in interactive mode or we are
-         * in such mode, but have also restored everything from repository that we had previously
-         * managed to store. So, now it is allowed to swipe-to-refresh (by default) and this will lead
-         * {@link ReportPresenter#retry()} method to be invoked, and then {@link ReportPresenter#freshStart()},
-         * and we will get here, but still in interactive mode - so, we just retry and reload items
-         * from repository.
-         */
-        if (!isInteractiveMode() || isStateRestored()) {
-            getGroupReportBundleByIdUseCase.execute();
-        } else if (isViewAttached()) {
-            // disable swipe-to-refresh when GroupReport-s are coming interactively
-            getView().enableSwipeToRefresh(false);
+        if (isInteractiveMode()) {
+            /**
+             * TODO: fresh start occurs in onStart(), but we could have already received some items
+             * TODO: in onCreate() since we subscribe there. So that, there could be state-inconsistency/
+             */
+            stateBegin();
+        } else {
+            stateStart();
         }
-        getPostByIdUseCase.execute();
+//        if (isViewAttached()) getView().showLoading(getListTag());
+//        /**
+//         * Load GroupReportBundle from repository either if we aren't in interactive mode or we are
+//         * in such mode, but have also restored everything from repository that we had previously
+//         * managed to store. So, now it is allowed to swipe-to-refresh (by default) and this will lead
+//         * {@link ReportPresenter#retry()} method to be invoked, and then {@link ReportPresenter#freshStart()},
+//         * and we will get here, but still in interactive mode - so, we just retry and reload items
+//         * from repository.
+//         */
+//        if (!isInteractiveMode() || isStateRestored()) {
+//            getGroupReportBundleByIdUseCase.execute();
+//        } else if (isViewAttached()) {
+//            // disable swipe-to-refresh when GroupReport-s are coming interactively
+//            getView().enableSwipeToRefresh(false);
+//        }
+//        getPostByIdUseCase.execute();
     }
 
     @Override
@@ -690,6 +868,21 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         }
     }
 
+    private void runDeletionOverAllSuccessReports(List<GroupReport> storedReports) {
+        List<GroupReport> successReports = new ArrayList<>();
+        for (GroupReport report : storedReports) {  // only successful posts can be reverted
+            if (report.status() == GroupReport.STATUS_SUCCESS) successReports.add(report);
+        }
+        // TODO: exclude success reports from 'storeReports' after revert
+
+        if (successReports.isEmpty()) {
+            if (isViewAttached()) getView().onPostRevertingEmpty();
+        } else {
+            if (isViewAttached()) getView().onPostRevertingStarted();
+            vkontakteEndpoint.deleteWallPosts(successReports, createDeleteWallPostsCallback());
+        }
+    }
+
     /* Callback */
     // --------------------------------------------------------------------------------------------
     @SuppressWarnings("unchecked")
@@ -697,53 +890,43 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
             @DebugLog @Override
             public void onFinish(@Nullable GroupReportBundle bundle) {
-                inputGroupReportBundle = bundle;
                 long groupReportBundleId = getGroupReportBundleByIdUseCase.getGroupReportId();
                 if (bundle == null || bundle.groupReports() == null) {
                     Timber.e("GroupReportBundle wasn't found by id [%s], or groupReports property is null", groupReportBundleId);
                     throw new ProgramException();
-                } else if (bundle.groupReports().isEmpty()) {
-                    Timber.i("Use-Case: succeeded to get GroupReportBundle by id");
-                    if (isViewAttached()) getView().showEmptyList(getListTag());
-                } else {
-                    Timber.i("Use-Case: succeeded to get GroupReportBundle by id");
-                    int[] counters = bundle.statusCount();
-                    List<ReportListItemVO> vos = groupReportToVoMapper.map(bundle.groupReports());
-                    if (isInteractiveMode()) {
-                        /**
-                         * In interactive mode items are incoming from the oldest to the recents,
-                         * this order is reverse to the order these items are stored in GroupReportBundle.
-                         *
-                         * We can reach this place in interactive mode only when ReportScreen is restored
-                         * and hence fetched all it's data from repository, where order is direct.
-                         * So, in order to keep user experience, we must populate list with restored
-                         * items in reversed order.
-                         */
-                        listAdapter.populateInverse(vos, false);  // items was restored from repository in interactive mode
-                    } else {
-                        listAdapter.populate(vos, false);
-                    }
-                    if (isViewAttached()) {
-                        getView().showGroupReports(vos == null || vos.isEmpty());
-                        getView().updatePostedCounters(counters[GroupReport.STATUS_SUCCESS], bundle.groupReports().size());
-                    }
-
-                    /**
-                     * Populate {@link ReportPresenter#storedReports} when get GroupReportBundle
-                     * use-case has finished with data inside. In interactive mode, this is only
-                     * possible when the entire ReportScreen is restored after destruction, i.e.
-                     * {@link ReportPresenter#onRestoreState()} is the only place where
-                     * {@link GetGroupReportBundleById} use-case is executed.
-                     */
-                    storedReports.clear();
-                    storedReports.addAll(bundle.groupReports());
                 }
+                Timber.i("Use-Case: succeeded to get GroupReportBundle by id");
+                stateReportsLoaded(bundle);
+//                    if (isInteractiveMode()) {
+//                        /**
+//                         * In interactive mode items are incoming from the oldest to the recents,
+//                         * this order is reverse to the order these items are stored in GroupReportBundle.
+//                         *
+//                         * We can reach this place in interactive mode only when ReportScreen is restored
+//                         * and hence fetched all it's data from repository, where order is direct.
+//                         * So, in order to keep user experience, we must populate list with restored
+//                         * items in reversed order.
+//                         */
+//                        listAdapter.populateInverse(vos, false);  // items was restored from repository in interactive mode
+//                    } else {
+//                        listAdapter.populate(vos, false);
+//                    }
+//
+//                    /**
+//                     * Populate {@link ReportPresenter#storedReports} when get GroupReportBundle
+//                     * use-case has finished with data inside. In interactive mode, this is only
+//                     * possible when the entire ReportScreen is restored after destruction, i.e.
+//                     * {@link ReportPresenter#onRestoreState()} is the only place where
+//                     * {@link GetGroupReportBundleById} use-case is executed.
+//                     */
+//                    storedReports.clear();
+//                    storedReports.addAll(bundle.groupReports());
             }
 
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get GroupReportBundle by id");
-                if (isViewAttached()) getView().showError(getListTag());
+                stateErrorLoad();
             }
         };
     }
@@ -753,13 +936,14 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             @DebugLog @Override
             public void onFinish(@Nullable Post post) {
                 Timber.i("Use-Case: succeeded to get Post by id");
-                memento.currentPost = post;
+                mementoNormal.currentPost = post;
                 applyPost(post);
             }
 
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to get Post by id");
+                mementoNormal.currentPost = null;  // post has been dropped
                 if (isViewAttached()) getView().showErrorPost();
             }
         };
@@ -779,9 +963,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                             if (isViewAttached()) getView().showDumpSuccess(path);
                             break;
                         case AppConfig.SEND_DUMP_EMAIL:
-                            if (!TextUtils.isEmpty(memento.email)) {
+                            if (!TextUtils.isEmpty(mementoCommon.email)) {
                                 Timber.d("Report-s have been dumped to file [%s]. Now send it via email", path);
-                                String[] recipients = memento.email.split(",");
+                                String[] recipients = mementoCommon.email.split(",");
                                 builder.setRecipients(Arrays.asList(recipients));
                             }
                             // proceed opening email screen without break
@@ -809,114 +993,48 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             @Override
             public void onFinish(@Nullable Boolean result) {
                 Timber.i("Use-Case: succeeded to delete wall Post-s");
-                int totalReverted = 0;
-                int position = 0;
-                for (GroupReport report : storedReports) {  // only successful posts can be reverted
-                    if (report.status() == GroupReport.STATUS_SUCCESS) {
-                        ++totalReverted;
-                        report.setReverted(true);
-                        int xposition = position;
-                        if (isInteractiveMode()) {
-                            // in interactive mode items in list adapter have reversed order
-                            xposition = storedReports.size() - 1 - position;
-                        }
-                        ((ReportAdapter) listAdapter).setItemRevertedSilent(xposition, true);
-                    }
-                    ++position;
-                }
-                if (totalReverted > 0) {
-                    Timber.d("Total reverted successful posts: %s", totalReverted);
-                    listAdapter.notifyDataSetChanged();  // visual changes
-                    if (!isInteractiveMode() || isStateRestored()) {
-                        Timber.d("Update GroupReport-s in repository in non-interactive mode or after state restored");
-                        GroupReportBundle bundle = GroupReportBundle.builder()
-                                .setId(inputGroupReportBundle.id())
-                                .setGroupReports(storedReports)
-                                .setKeywordBundleId(memento.keywordBundleId)
-                                .setPostId(memento.currentPost.id())
-                                .setTimestamp(inputGroupReportBundle.timestamp())
-                                .build();
-                        postGroupReportBundleUseCase.setParameters(new PostGroupReportBundle.Parameters(bundle));
-                        postGroupReportBundleUseCase.execute();  // silent update without callback
-                    }
-                }
-                if (isViewAttached()) {
-                    getView().onPostRevertingFinished();
-                    getView().updatePostedCounters(0, memento.totalForPosting);
-                }
+                stateDeleteReportsFinished(result != null ? result : false);
+//                int totalReverted = 0;
+//                int position = 0;
+//                for (GroupReport report : storedReports) {  // only successful posts can be reverted
+//                    if (report.status() == GroupReport.STATUS_SUCCESS) {
+//                        ++totalReverted;
+//                        report.setReverted(true);
+//                        int xposition = position;
+//                        if (isInteractiveMode()) {
+//                            // in interactive mode items in list adapter have reversed order
+//                            xposition = storedReports.size() - 1 - position;
+//                        }
+//                        ((ReportAdapter) listAdapter).setItemRevertedSilent(xposition, true);
+//                    }
+//                    ++position;
+//                }
+//                if (totalReverted > 0) {
+//                    Timber.d("Total reverted successful posts: %s", totalReverted);
+//                    listAdapter.notifyDataSetChanged();  // visual changes
+//                    if (!isInteractiveMode() || isStateRestored()) {
+//                        Timber.d("Update GroupReport-s in repository in non-interactive mode or after state restored");
+//                        GroupReportBundle bundle = GroupReportBundle.builder()
+//                                .setId(inputGroupReportBundle.id())
+//                                .setGroupReports(storedReports)
+//                                .setKeywordBundleId(memento.keywordBundleId)
+//                                .setPostId(memento.currentPost.id())
+//                                .setTimestamp(inputGroupReportBundle.timestamp())
+//                                .build();
+//                        postGroupReportBundleUseCase.setParameters(new PostGroupReportBundle.Parameters(bundle));
+//                        postGroupReportBundleUseCase.execute();  // silent update without callback
+//                    }
+//                }
+//                if (isViewAttached()) {
+//                    getView().onPostRevertingFinished();
+//                    getView().updatePostedCounters(0, memento.totalForPosting);
+//                }
             }
 
             @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to delete wall Post-s");
-                if (isViewAttached()) getView().onPostRevertingError();
-            }
-        };
-    }
-
-    // ------------------------------------------
-    @InteractiveMode @SuppressWarnings("unchecked")
-    private MultiUseCase.ProgressCallback<GroupReportEssence> createPostingProgressCallback() {
-        return (index, total, item) -> {
-            Timber.v("Posting progress: %s / %s", index + 1, total);
-            MakeWallPost.Parameters params = (MakeWallPost.Parameters) item.parameters;
-            Group group = params.getGroup();  // null parameters are impossible because this is checked inside the use-case
-            Timber.v("%s", group.toString());
-            // TODO: use terminal error from proper UseCase instead of hardcoded one
-            GroupReportEssence model = VkontakteEndpoint.refineModel(item, group, Api5VkUseCaseException.class, Api220VkUseCaseException.class);
-            if (item.data != null)  ++memento.postedWithSuccess;  // count successful posting
-            if (item.error != null) ++memento.postedWithFailure;  // count failed posting
-            /**
-             * Flag {@link Ordered#cancelled} is not checked here because it could be true and
-             * {@link Ordered#data} or {@link Ordered#error} could not be null at the same time.
-             */
-            if (item.data == null && item.error == null) ++memento.postedWithCancel;  // count cancelled posting
-
-            ReportListItemVO viewObject = groupReportEssenceToVoMapper.map(model);
-            listAdapter.addInverse(viewObject);  // add items on top of the list
-            if (isViewAttached()) {
-                getView().showGroupReports(false);  // idempotent call (no-op if list items are already visible)
-                getView().updatePostedCounters(memento.postedWithSuccess, total);
-                getView().getListView(getListTag()).smoothScrollToPosition(0);  // scroll on top of the list as items are incoming
-                // TODO: estimate time to complete posting, use DomainConfig.INSTANCE.multiUseCaseSleepInterval
-            }
-
-            long timestamp = System.currentTimeMillis();
-            groupReportEssenceMapper.setGroupReportId(Constant.INIT_ID);  // fictive id
-            groupReportEssenceMapper.setTimestamp(timestamp);
-            storedReports.add(groupReportEssenceMapper.map(model));
-
-            Timber.v("Posting stat: success [%s], failure [%s], cancel [%s], total [%s]",
-                    memento.postedWithSuccess, memento.postedWithFailure, memento.postedWithCancel, total);
-            // TODO: not properly counted if there are retry-failed use-cases
-            if (!memento.isFinishedPosting) memento.isFinishedPosting = memento.postedWithCancel + memento.postedWithFailure + memento.postedWithSuccess == total;
-            memento.totalForPosting = total;  // save counter to use further
-        };
-    }
-
-    @DebugLog @InteractiveMode
-    private MultiUseCase.CancelCallback createPostingCancelledCallback() {
-        return (reason) -> {
-            Timber.i("Posting has been cancelled");
-            memento.isFinishedPosting = true;
-            if (isViewAttached()) {
-                if (EndpointUtility.hasAccessTokenExhausted(reason)) {
-                    Timber.w("Access Token has exhausted !");
-                    getView().onAccessTokenExhausted();
-                } else {
-                    getView().onPostingCancel();
-                }
-            }
-        };
-    }
-
-    @DebugLog @InteractiveMode
-    private MultiUseCase.FinishCallback createPostingFinishedCallback() {
-        return () -> {
-            Timber.i("Posting has been finished");
-            memento.isFinishedPosting = true;
-            if (isViewAttached()) {
-                getView().onPostingFinished(memento.postedWithSuccess, memento.totalForPosting);
+                stateDeleteReportsError();
             }
         };
     }
@@ -935,6 +1053,35 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     private boolean isInteractiveMode() {
         boolean flag = isViewAttached() && getView().isForceDisableInteractiveMode();
-        return AppConfig.INSTANCE.useInteractiveReportScreen() && !flag;
+        return !flag;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void fillReportsList(@NonNull GroupReportBundle bundle) {
+        List<ReportListItemVO> vos = groupReportToVoMapper.map(bundle.groupReports());
+        listAdapter.populate(vos, false);
+    }
+
+    private int setListItemsReverted(List<GroupReport> storedReports) {
+        int totalReverted = 0;
+        int position = 0;
+        for (GroupReport report : storedReports) {  // only successful posts can be reverted
+            if (report.status() == GroupReport.STATUS_SUCCESS) {
+                ++totalReverted;
+                report.setReverted(true);
+                int xposition = position;
+                if (isInteractiveMode()) {
+                    // in interactive mode items in list adapter have reversed order
+                    xposition = storedReports.size() - 1 - position;
+                }
+                ((ReportAdapter) listAdapter).setItemRevertedSilent(xposition, true);
+            }
+            ++position;
+        }
+        if (totalReverted > 0) {
+            Timber.d("Total reverted successful posts: %s", totalReverted);
+            listAdapter.notifyDataSetChanged();  // visual changes
+        }
+        return totalReverted;
     }
 }

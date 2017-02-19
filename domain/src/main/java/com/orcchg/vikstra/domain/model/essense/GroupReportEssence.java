@@ -1,11 +1,13 @@
 package com.orcchg.vikstra.domain.model.essense;
 
+import android.os.Parcelable;
+
 import com.google.auto.value.AutoValue;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReport;
 
 @AutoValue
-public abstract class GroupReportEssence implements Essence {
+public abstract class GroupReportEssence implements Essence, Parcelable {
 
     private boolean wasReverted = false;
 

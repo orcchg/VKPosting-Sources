@@ -37,9 +37,6 @@ public enum AppConfig {
     public boolean showSettingsMenuOnGroupListScreen() {
         return BuildConfig.showSettingsMenuOnGroupListScreen;
     }
-    public boolean useInteractiveReportScreen() {
-        return BuildConfig.useInteractiveReportScreen;
-    }
     public boolean useTutorialShowcases() {
         return BuildConfig.useTutorialShowcases;
     }
@@ -59,7 +56,6 @@ public enum AppConfig {
                 .append(", isAllGroupsSelected=").append(isAllGroupsSelected())
                 .append(", isAllGroupsSortedByMembersCount=").append(isAllGroupsSortedByMembersCount())
                 .append(", showSettingsMenuOnGroupListScreen=").append(showSettingsMenuOnGroupListScreen())
-                .append(", useInteractiveReportScreen=").append(useInteractiveReportScreen())
                 .append(", useTutorialShowcases=").append(useTutorialShowcases())
                 .append(", interceptKeywordClickOnVH=").append(shouldInterceptKeywordClickOnVH())
                 .toString();

@@ -14,7 +14,6 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -43,6 +42,7 @@ import com.orcchg.vikstra.app.ui.report.main.injection.ReportModule;
 import com.orcchg.vikstra.app.ui.report.service.WallPostingService;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
@@ -106,10 +106,6 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private long keywordBundleId = Constant.BAD_ID;  // TODO: initialize from extra
     private long postId = Constant.BAD_ID;
 
-    /**
-     * This flag overrides {@link AppConfig#useInteractiveReportScreen()} global configuration on
-     * this ReportScreen, but doesn't affect the others.
-     */
     private boolean forceDisableInteractiveMode = false;
     private boolean postingRevertFinished = false;
 
@@ -162,8 +158,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         initView();
         initToolbar();
 
-        IntentFilter filterResult = new IntentFilter(Constant.Broadcast.WALL_POSTING_RESULT_DATA);
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiverResult, filterResult);
+        if (isInteractiveMode()) {
+            Timber.d("Subscribe on posting progress callback on ReportScreen");
+            IntentFilter filterResult = new IntentFilter(Constant.Broadcast.WALL_POSTING_RESULT_DATA);
+            LocalBroadcastManager.getInstance(this).registerReceiver(receiverResult, filterResult);
+        }
     }
 
     @Override
@@ -193,7 +192,14 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     @Override
     protected void onDestroy() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverResult);
+        if (isInteractiveMode()) {
+            Timber.d("Unsubscribe from posting progress callback on ReportScreen");
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverResult);
+
+            Timber.d("notify Activity destroyed to Service");
+            Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_SCREEN_DESTROY);
+            LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        }
         super.onDestroy();
         if (dialog1 != null) dialog1.dismiss();
         if (dialog2 != null) dialog2.dismiss();
@@ -206,12 +212,29 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     /* Broadcast receiver */
     // --------------------------------------------------------------------------------------------
+    private BroadcastReceiver receiverCancel = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            presenter.onPostingCancel();
+        }
+    };
+
+    private BroadcastReceiver receiverFinish = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            presenter.onPostingFinish();
+        }
+    };
+
     private BroadcastReceiver receiverResult = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            long groupReportBundleId = intent.getLongExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
-            long timestamp = intent.getLongExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_TIMESTAMP, 0);
-            presenter.onPostingResult(groupReportBundleId, timestamp);
+            int success = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_SUCCESS, 0);
+            int failure = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_FAILURE, 0);
+            int cancel = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_CANCEL, 0);
+            int total = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_TOTAL, 0);
+            GroupReportEssence model = intent.getParcelableExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_MODEL);
+            presenter.onPostingResult(success, failure, cancel,total, model);
         }
     };
 
@@ -237,7 +260,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     private boolean isInteractiveMode() {
-        return AppConfig.INSTANCE.useInteractiveReportScreen() && !forceDisableInteractiveMode;
+        return !forceDisableInteractiveMode;
     }
 
     /* Permissions */
@@ -506,21 +529,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     @Override
-    public void cancelPreviousNotifications() {
-        NotificationManagerCompat.from(this).cancel(Constant.NotificationID.POSTING);
-        NotificationManagerCompat.from(this).cancel(Constant.NotificationID.PHOTO_UPLOAD);
-    }
-
-    @Override
     public boolean isForceDisableInteractiveMode() {
         return forceDisableInteractiveMode;
-    }
-
-    @DebugLog @Override
-    public void notifyDestroyToService() {
-        Timber.i("notifyDestroyToService");
-        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_SCREEN_DESTROY);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     // ------------------------------------------

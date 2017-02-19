@@ -22,10 +22,15 @@ import com.orcchg.vikstra.app.ui.common.notification.PostingNotification;
 import com.orcchg.vikstra.app.ui.report.service.injection.DaggerWallPostingServiceComponent;
 import com.orcchg.vikstra.app.ui.report.service.injection.WallPostingServiceComponent;
 import com.orcchg.vikstra.app.ui.report.service.injection.WallPostingServiceModule;
+import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.exception.ProgramException;
+import com.orcchg.vikstra.domain.exception.vkontakte.Api220VkUseCaseException;
+import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
+import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
+import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Post;
@@ -53,11 +58,11 @@ public class WallPostingService extends BaseIntentService {
     public static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     public static final String EXTRA_SELECTED_GROUPS = "extra_selected_groups";
     public static final String EXTRA_CURRENT_POST = "extra_current_post";
-    public static final String OUT_EXTRA_WALL_POSTING_PROGRESS = "out_extra_wall_posting_progress";
-    public static final String OUT_EXTRA_WALL_POSTING_STATUS = "out_extra_wall_posting_status";
-    public static final String OUT_EXTRA_WALL_POSTING_TOTAL = "out_extra_wall_posting_total";
-    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_ID = "out_extra_wall_posting_result_data_group_report_bundle_id";
-    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_TIMESTAMP = "out_extra_wall_posting_result_data_group_report_bundle_timestamp";
+    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_SUCCESS = "out_extra_wall_posting_result_counter_success";
+    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_FAILURE = "out_extra_wall_posting_result_counter_failure";
+    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_CANCEL = "out_extra_wall_posting_result_counter_cancel";
+    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_TOTAL = "out_extra_wall_posting_result_counter_total";
+    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_MODEL = "out_extra_wall_posting_result_data_model";
 
     public static final int WALL_POSTING_STATUS_STARTED = 0;
     public static final int WALL_POSTING_STATUS_FINISHED = 1;
@@ -79,6 +84,11 @@ public class WallPostingService extends BaseIntentService {
 
     private WallPostingServiceComponent component;
 
+    int postedWithCancel = 0;
+    int postedWithFailure = 0;
+    int postedWithSuccess = 0;
+
+    // --------------------------------------------------------------------------------------------
     public static Intent getCallingIntent(@NonNull Context context, long keywordBundleId,
                                           Collection<Group> selectedGroups, Post post) {
         Timber.d("getCallingIntent: kw_id=%s, groups=%s, post=%s", keywordBundleId,
@@ -150,7 +160,8 @@ public class WallPostingService extends BaseIntentService {
 
         sendPostingStartedMessage(WALL_POSTING_STATUS_STARTED);
         component.vkontakteEndpoint().makeWallPostsWithDelegate(selectedGroups, currentPost,
-                createMakeWallPostCallback(), postingDelegate(), photoUploadDelegate());
+                createMakeWallPostCallback(), createProgressCallback(), this::sendPostingFinished,
+                this::sendPostingCancelled, postingDelegate(), photoUploadDelegate());
 
         // wait for job's done
         synchronized (lock) {
@@ -236,33 +247,36 @@ public class WallPostingService extends BaseIntentService {
         photoUploadNotification = new PhotoUploadNotification(this);
     }
 
+    /* Broadcasts */
+    // --------------------------------------------------------------------------------------------
     @DebugLog
     private void sendPostingStartedMessage(@WallPostingStatus int status) {
         Timber.d("sendPostingStartedMessage: %s", status);
-        if (status != WALL_POSTING_STATUS_STARTED) {
-            wakeUp();
-        }
-
-        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_STATUS);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_STATUS, status);
-        sendBroadcast(intent);
+        if (status != WALL_POSTING_STATUS_STARTED) wakeUp();
     }
 
-    void sendPostingProgress(int progress, int total) {
-        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_PROGRESS);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_PROGRESS, progress);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_TOTAL, total);
-        sendBroadcast(intent);
-    }
-
-    void sendNewGroupReportBundleEssentials(long groupReportBundleId, long timestamp) {
+    @DebugLog
+    void sendPostingResult(int success, int failure, int cancel, int total, GroupReportEssence model) {
         Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_RESULT_DATA);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_GROUP_REPORT_BUNDLE_TIMESTAMP, timestamp);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_SUCCESS, success);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_FAILURE, failure);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_CANCEL, cancel);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_TOTAL, total);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_MODEL, model);
         sendBroadcast(intent);
     }
 
-    // ------------------------------------------
+    @DebugLog
+    void sendPostingFinished() {
+        sendBroadcast(new Intent(Constant.Broadcast.WALL_POSTING_FINISHED));
+    }
+
+    @DebugLog
+    void sendPostingCancelled(Throwable reason) {
+        sendBroadcast(new Intent(Constant.Broadcast.WALL_POSTING_CANCELLED));
+    }
+
+    // --------------------------------------------------------------------------------------------
     @DebugLog
     private void onScreenDestroyed() {
         Timber.i("onScreenDestroyed");
@@ -328,7 +342,6 @@ public class WallPostingService extends BaseIntentService {
                 Timber.i("Use-Case: succeeded to put GroupReportBundle");
                 postingNotification.updateGroupReportBundleId(WallPostingService.this, bundle.id());
                 sendPostingStartedMessage(WALL_POSTING_STATUS_FINISHED);
-                sendNewGroupReportBundleEssentials(bundle.id(), bundle.timestamp());
             }
 
             @DebugLog @Override
@@ -340,6 +353,29 @@ public class WallPostingService extends BaseIntentService {
     }
 
     // --------------------------------------------------------------------------------------------
+    private MultiUseCase.ProgressCallback<GroupReportEssence> createProgressCallback() {
+        return (index, total, item) -> {
+            Timber.v("Posting progress: %s / %s", index + 1, total);
+            if (item.data != null)  ++postedWithSuccess;  // count successful posting
+            if (item.error != null) ++postedWithFailure;  // count failed posting
+            /**
+             * Flag {@link Ordered#cancelled} is not checked here because it could be true and
+             * {@link Ordered#data} or {@link Ordered#error} could not be null at the same time.
+             */
+            if (item.data == null && item.error == null) ++postedWithCancel;  // count cancelled posting
+
+            // prepare model from data
+            MakeWallPost.Parameters params = (MakeWallPost.Parameters) item.parameters;
+            Group group = params.getGroup();  // null parameters are impossible because this is checked inside the use-case
+            Timber.v("%s", group.toString());
+            // TODO: use terminal error from proper UseCase instead of hardcoded one
+            GroupReportEssence model = VkontakteEndpoint.refineModel(item, group, Api5VkUseCaseException.class, Api220VkUseCaseException.class);
+
+            sendPostingResult(postedWithSuccess, postedWithFailure, postedWithCancel, total, model);
+        };
+    }
+
+    // ------------------------------------------
     private IPostingNotificationDelegate postingDelegate() {
         return new IPostingNotificationDelegate() {
             @Override
@@ -351,7 +387,6 @@ public class WallPostingService extends BaseIntentService {
             public void onPostingProgress(int progress, int total) {
                 if (progress == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) return;
                 postingNotification.onPostingProgress(progress, total);
-                sendPostingProgress(progress, total);
             }
 
             @Override

@@ -3,15 +3,11 @@ package com.orcchg.vikstra.data.source.memory;
 import android.content.Context;
 import android.os.Environment;
 
-import com.orcchg.vikstra.domain.interactor.base.MultiUseCase;
-import com.orcchg.vikstra.domain.interactor.base.Ordered;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
 
 import java.io.File;
 import java.io.IOException;
-
-import hugo.weaving.DebugLog;
 
 /**
  * In-memory global storage.
@@ -49,52 +45,6 @@ public final class ContentUtility {
 
         public static String getLastStoredInternalImageUrl() {
             return sLastStoredInternalImageUrl;
-        }
-
-        /* Posting progress & result & cancel */
-        // --------------------------------------
-        private static int sPostingProgress, sPostingTotal;
-        private static MultiUseCase.ProgressCallback sProgressCallback;
-        private static MultiUseCase.CancelCallback sCancelCallback;
-        private static MultiUseCase.FinishCallback sFinishCallback;
-
-        @DebugLog @SuppressWarnings("unchecked")
-        public static <Data> void setPostingProgress(int progress, int total, Ordered<Data> data) {
-            sPostingProgress = progress;
-            sPostingTotal = total;
-
-            if (progress == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) return;  // skip start event
-            if (sProgressCallback != null) sProgressCallback.onDone(progress, total, data);
-        }
-
-        @DebugLog
-        public static void onPostingCancelled(Throwable reason) {
-            if (sCancelCallback != null) sCancelCallback.onCancel(reason);
-        }
-
-        @DebugLog
-        public static void onPostingFinished() {
-            if (sFinishCallback != null) sFinishCallback.onFinish();
-        }
-
-        public static void setProgressCallback(MultiUseCase.ProgressCallback callback) {
-            sProgressCallback = callback;
-        }
-
-        public static void setCancelCallback(MultiUseCase.CancelCallback callback) {
-            sCancelCallback = callback;
-        }
-
-        public static void setFinishCallback(MultiUseCase.FinishCallback callback) {
-            sFinishCallback = callback;
-        }
-
-        public static int getPostingProgress() {
-            return sPostingProgress;
-        }
-
-        public static int getPostingTotal() {
-            return sPostingTotal;
         }
 
         private InMemoryStorage() {}

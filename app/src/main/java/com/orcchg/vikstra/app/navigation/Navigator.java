@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
@@ -32,8 +31,6 @@ import com.orcchg.vikstra.app.ui.report.history.ReportHistoryActivity;
 import com.orcchg.vikstra.app.ui.report.main.ReportActivity;
 import com.orcchg.vikstra.app.ui.report.service.WallPostingService;
 import com.orcchg.vikstra.app.ui.settings.group.GroupSettingsActivity;
-import com.orcchg.vikstra.app.ui.status.StatusActivity;
-import com.orcchg.vikstra.app.ui.status.StatusDialogFragment;
 import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.model.Group;
 import com.orcchg.vikstra.domain.model.Post;
@@ -296,18 +293,6 @@ public class Navigator {
     public void openGroupSettings(@NonNull Activity context) {
         Intent intent = GroupSettingsActivity.getCallingIntent(context);
         context.startActivityForResult(intent, GroupSettingsActivity.REQUEST_CODE);
-    }
-
-    /* Status */
-    // ------------------------------------------
-    public void openStatusDialog(FragmentManager fm, String tag) {
-        StatusDialogFragment dialog = StatusDialogFragment.newInstance();
-        dialog.show(fm, tag);
-    }
-
-    public void openStatusScreen(@NonNull Context context) {
-        Intent intent = StatusActivity.getCallingIntent(context);
-        context.startActivity(intent);
     }
 
     /* Internal */
