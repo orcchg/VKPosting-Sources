@@ -32,9 +32,11 @@ import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
 import com.orcchg.vikstra.domain.interactor.vkontakte.MakeWallPost;
 import com.orcchg.vikstra.domain.model.Group;
+import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Post;
 import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
+import com.orcchg.vikstra.domain.model.misc.PostingUnit;
 import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
@@ -58,11 +60,7 @@ public class WallPostingService extends BaseIntentService {
     public static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     public static final String EXTRA_SELECTED_GROUPS = "extra_selected_groups";
     public static final String EXTRA_CURRENT_POST = "extra_current_post";
-    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_SUCCESS = "out_extra_wall_posting_result_counter_success";
-    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_FAILURE = "out_extra_wall_posting_result_counter_failure";
-    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_CANCEL = "out_extra_wall_posting_result_counter_cancel";
-    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_TOTAL = "out_extra_wall_posting_result_counter_total";
-    public static final String OUT_EXTRA_WALL_POSTING_RESULT_DATA_MODEL = "out_extra_wall_posting_result_data_model";
+    public static final String OUT_EXTRA_WALL_POSTING_RESULT = "out_extra_wall_posting_result";
 
     public static final int WALL_POSTING_STATUS_STARTED = 0;
     public static final int WALL_POSTING_STATUS_FINISHED = 1;
@@ -87,6 +85,8 @@ public class WallPostingService extends BaseIntentService {
     int postedWithCancel = 0;
     int postedWithFailure = 0;
     int postedWithSuccess = 0;
+
+    private List<GroupReport> storedReports = new ArrayList<>();
 
     // --------------------------------------------------------------------------------------------
     public static Intent getCallingIntent(@NonNull Context context, long keywordBundleId,
@@ -256,13 +256,9 @@ public class WallPostingService extends BaseIntentService {
     }
 
     @DebugLog
-    void sendPostingResult(int success, int failure, int cancel, int total, GroupReportEssence model) {
+    void sendPostingResult(PostingUnit postingUnit) {
         Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_RESULT_DATA);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_SUCCESS, success);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_FAILURE, failure);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_CANCEL, cancel);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_TOTAL, total);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT_DATA_MODEL, model);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT, postingUnit);
         sendBroadcast(intent);
     }
 
@@ -355,6 +351,8 @@ public class WallPostingService extends BaseIntentService {
     // --------------------------------------------------------------------------------------------
     private MultiUseCase.ProgressCallback<GroupReportEssence> createProgressCallback() {
         return (index, total, item) -> {
+            if (index == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) return;  // skip start event
+
             Timber.v("Posting progress: %s / %s", index + 1, total);
             if (item.data != null)  ++postedWithSuccess;  // count successful posting
             if (item.error != null) ++postedWithFailure;  // count failed posting
@@ -369,9 +367,23 @@ public class WallPostingService extends BaseIntentService {
             Group group = params.getGroup();  // null parameters are impossible because this is checked inside the use-case
             Timber.v("%s", group.toString());
             // TODO: use terminal error from proper UseCase instead of hardcoded one
-            GroupReportEssence model = VkontakteEndpoint.refineModel(item, group, Api5VkUseCaseException.class, Api220VkUseCaseException.class);
+            GroupReportEssence essence = VkontakteEndpoint.refineModel(item, group, Api5VkUseCaseException.class, Api220VkUseCaseException.class);
 
-            sendPostingResult(postedWithSuccess, postedWithFailure, postedWithCancel, total, model);
+            long timestamp = System.currentTimeMillis();
+            component.groupReportEssenceMapper().setGroupReportId(Constant.INIT_ID);  // fictive id
+            component.groupReportEssenceMapper().setTimestamp(timestamp);
+            GroupReport model = component.groupReportEssenceMapper().map(essence);
+            storedReports.add(model);
+
+            PostingUnit unit = PostingUnit.builder()
+                    .setCancelCount(postedWithCancel)
+                    .setFailureCount(postedWithFailure)
+                    .setSuccessCount(postedWithSuccess)
+                    .setTotalCount(total)
+                    .setGroupReport(model)
+                    .build();
+
+            sendPostingResult(unit);
         };
     }
 

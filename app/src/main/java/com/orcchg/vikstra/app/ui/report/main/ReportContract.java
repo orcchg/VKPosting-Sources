@@ -7,8 +7,8 @@ import com.orcchg.vikstra.app.ui.base.MvpPresenter;
 import com.orcchg.vikstra.app.ui.common.screen.LceView;
 import com.orcchg.vikstra.app.ui.common.screen.ListPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
-import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
+import com.orcchg.vikstra.domain.model.misc.PostingUnit;
 import com.orcchg.vikstra.domain.util.endpoint.AccessTokenTracker;
 
 public interface ReportContract {
@@ -54,14 +54,18 @@ public interface ReportContract {
     interface Presenter extends MvpPresenter<View>, ListPresenter {
         void onCloseView();
         void onDumpPressed();
+        void onSuspendClick();
+
         void onPostingCancel();
         void onPostingFinish();
-        void onPostingResult(int success, int failure, int cancel, int total, GroupReportEssence model);
-        void onSuspendClick();
+        void onPostingResult(PostingUnit postingUnit);
+
         void interruptPostingAndClose(boolean shouldClose);
+
         void performDumping(String path);
         void performDumping(String path, @Nullable String email);
         void performReverting();
+
         void retry();
         void retryPost();
     }

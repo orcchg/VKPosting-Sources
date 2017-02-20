@@ -42,8 +42,8 @@ import com.orcchg.vikstra.app.ui.report.main.injection.ReportModule;
 import com.orcchg.vikstra.app.ui.report.service.WallPostingService;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
-import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
+import com.orcchg.vikstra.domain.model.misc.PostingUnit;
 import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
 
@@ -229,12 +229,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private BroadcastReceiver receiverResult = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int success = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_SUCCESS, 0);
-            int failure = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_FAILURE, 0);
-            int cancel = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_CANCEL, 0);
-            int total = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_COUNTER_TOTAL, 0);
-            GroupReportEssence model = intent.getParcelableExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT_DATA_MODEL);
-            presenter.onPostingResult(success, failure, cancel,total, model);
+            PostingUnit postingUnit = intent.getParcelableExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT);
+            presenter.onPostingResult(postingUnit);
         }
     };
 
