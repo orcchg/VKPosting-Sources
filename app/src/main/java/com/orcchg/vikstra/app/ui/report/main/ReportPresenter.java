@@ -22,7 +22,6 @@ import com.orcchg.vikstra.domain.interactor.post.GetPostById;
 import com.orcchg.vikstra.domain.interactor.report.DumpGroupReports;
 import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundleById;
 import com.orcchg.vikstra.domain.interactor.report.PostGroupReportBundle;
-import com.orcchg.vikstra.domain.interactor.report.PutGroupReportBundle;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Heavy;
@@ -51,11 +50,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private static final int PrID = Constant.PresenterId.REPORT_PRESENTER;
 
     private final GetGroupReportBundleById getGroupReportBundleByIdUseCase;
-    private final GetKeywordBundleById getKeywordBundleByIdUseCase;
     private final GetPostById getPostByIdUseCase;
     private final DumpGroupReports dumpGroupReportsUseCase;
     private final PostGroupReportBundle postGroupReportBundleUseCase;
-    private final PutGroupReportBundle putGroupReportBundleUseCase;
     private final VkontakteEndpoint vkontakteEndpoint;
 
     private final GroupReportToVoMapper groupReportToVoMapper;
@@ -104,13 +101,15 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             private static final int PAUSE = 5;
             private static final int RESUME = 6;
             private static final int INTERRUPT = 7;
+            private static final int FETCH_REPORTS = 8;
 
             @IntDef({
                 BEGIN, READY,
                 POSTING_PROGRESS,
                 POSTING_CANCEL,
                 POSTING_FINISH,
-                PAUSE, RESUME, INTERRUPT
+                PAUSE, RESUME, INTERRUPT,
+                FETCH_REPORTS
             })
             @Retention(RetentionPolicy.SOURCE)
             @interface State {}
@@ -119,6 +118,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     // --------------------------------------------------------------------------------------------
     private static final class MementoCommon {
+        private static final String BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE = "bundle_key_flag_is_interactive_mode_" + PrID;
         private static final String BUNDLE_KEY_EMAIL = "bundle_key_email_" + PrID;
         private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id_" + PrID;
         private static final String BUNDLE_KEY_CURRENT_POST = "bundle_key_current_post_" + PrID;
@@ -126,6 +126,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         private static final String BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE = "bundle_key_flag_posted_with_failure_" + PrID;
         private static final String BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS = "bundle_key_flag_posted_with_success_" + PrID;
         private static final String BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING = "bundle_key_flag_total_for_posting_" + PrID;
+
+        private boolean isInteractiveMode = true;  // this flag may change over time
 
         private @Nullable String email;
         private long keywordBundleId = Constant.BAD_ID;
@@ -137,6 +139,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
         @DebugLog
         private void toBundle(Bundle outState) {
+            outState.putBoolean(BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE, isInteractiveMode);
             outState.putString(BUNDLE_KEY_EMAIL, email);
             outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
             outState.putParcelable(BUNDLE_KEY_CURRENT_POST, currentPost);
@@ -149,6 +152,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         @DebugLog
         private static MementoCommon fromBundle(Bundle savedInstanceState) {
             MementoCommon memento = new MementoCommon();
+            memento.isInteractiveMode = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE, false);
             memento.email = savedInstanceState.getString(BUNDLE_KEY_EMAIL);
             memento.keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             memento.currentPost = savedInstanceState.getParcelable(BUNDLE_KEY_CURRENT_POST);
@@ -178,7 +182,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             outState.putBoolean(BUNDLE_KEY_FLAG_IS_WALL_POSTING_PAUSED, isWallPostingPaused);
         }
 
-        @DebugLog
+        @DebugLog @SuppressWarnings("ResourceType")
         private static MementoInteractive fromBundle(Bundle savedInstanceState) {
             MementoInteractive memento = new MementoInteractive();
             memento.state = savedInstanceState.getInt(BUNDLE_KEY_STATE_INTERACTIVE, StateContainer.Interactive.BEGIN);
@@ -200,7 +204,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             outState.putInt(BUNDLE_KEY_STATE_NORMAL, state);
         }
 
-        @DebugLog
+        @DebugLog @SuppressWarnings("ResourceType")
         private static MementoNormal fromBundle(Bundle savedInstanceState) {
             MementoNormal memento = new MementoNormal();
             memento.state = savedInstanceState.getInt(BUNDLE_KEY_STATE_NORMAL, StateContainer.Normal.START);
@@ -210,25 +214,24 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     // --------------------------------------------------------------------------------------------
     @Inject
-    ReportPresenter(GetGroupReportBundleById getGroupReportBundleByIdUseCase,
+    ReportPresenter(Holder holder, GetGroupReportBundleById getGroupReportBundleByIdUseCase,
                     GetKeywordBundleById getKeywordBundleByIdUseCase, GetPostById getPostByIdUseCase,
                     DumpGroupReports dumpGroupReportsUseCase, PostGroupReportBundle postGroupReportBundleUseCase,
-                    PutGroupReportBundle putGroupReportBundleUseCase, VkontakteEndpoint vkontakteEndpoint,
+                    VkontakteEndpoint vkontakteEndpoint,
                     GroupReportToVoMapper groupReportToVoMapper, PostToSingleGridVoMapper postToSingleGridVoMapper) {
         this.listAdapter = createListAdapter();
         this.getGroupReportBundleByIdUseCase = getGroupReportBundleByIdUseCase;
         this.getGroupReportBundleByIdUseCase.setPostExecuteCallback(createGetGroupReportBundleByIdCallback());
-        this.getKeywordBundleByIdUseCase = getKeywordBundleByIdUseCase;  // this use-case never executes
         this.getPostByIdUseCase = getPostByIdUseCase;
         this.getPostByIdUseCase.setPostExecuteCallback(createGetPostByIdCallback());
         this.dumpGroupReportsUseCase = dumpGroupReportsUseCase;
         this.dumpGroupReportsUseCase.setPostExecuteCallback(createDumpGroupReportsCallback());
         this.postGroupReportBundleUseCase = postGroupReportBundleUseCase;  // no callback - background task
-        this.putGroupReportBundleUseCase = putGroupReportBundleUseCase;  // no callback - background task
         this.vkontakteEndpoint = vkontakteEndpoint;
         this.groupReportToVoMapper = groupReportToVoMapper;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
 
+        mementoCommon.isInteractiveMode = holder.isInteractiveMode();
         mementoCommon.keywordBundleId = getKeywordBundleByIdUseCase.getKeywordBundleId();  // use-case only to provide value
     }
 
@@ -252,17 +255,17 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     /**
      * State machine (Normal mode):
      *
-     *                            START ----- < ------ < ----- < ----- < ---- ERROR_LOAD  { user retry }
+     *          { user refresh }  START ----- < ------ < ----- < ----- < ---- ERROR_LOAD  { user retry }
      *                              |                                              |
      *                              |                                              |
      *                       REPORTS_LOADED  or  ---- > ---- > ----- > ---- > ---- #
-     *                          |       |
-     *                          |       ^
-     *                          |       |
-     * { user refresh }  REFRESHING ->--|------------------- < ------------ < ---- #
+     *                              |
+     *                              ^
+     *                              |
+     *                              # ------- < ---- < ----- < ------------ < ---- #
      *                                                                             |
      *                                                                             |
-     * { user delete posts }  DELETE_REPORTS_START -->-- DELETE_REPORTS_FINISH ----|-- > -- DELETE_REPORTS_ERROR
+     * { user delete posts }  DELETE_REPORTS_START -->-- DELETE_REPORTS_FINISH --- # -- > -- DELETE_REPORTS_ERROR
      */
 
     @DebugLog @NormalMode
@@ -408,23 +411,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         assignNormalState(StateContainer.Normal.REPORTS_LOADED);  // get to the final state
     }
 
-    // ------------------------------------------
-    /**
-     * Go to REFRESHING state, reloading GroupReportBundle from repository
-     */
-    @NormalMode
-    private void stateRefreshing() {
-        Timber.i("stateRefreshing");
-        setNormalState(StateContainer.Normal.REFRESHING);
-        // enter REFRESHING state logic
-
-        // disable swipe-to-refresh while another refreshing is in progress
-        if (isViewAttached()) {
-            getView().enableSwipeToRefresh(false);
-            getView().showLoading(getListTag());
-        }
-    }
-
     // --------------------------------------------------------------------------------------------
     /**
      * State machine (Interactive mode):
@@ -443,13 +429,13 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
      *    |                       |                                   |
      *    |                       |                                   |
      *    |                       |                                   |
-     *    # ---- < ---- #         # ----- > ----- > ------ > -------- # ------ > ---- REPORTS_LOADED
-     *                  |                                                           { to normal mode }
-     *                  |                                                                    |
-     *   PAUSE -->-- RESUME  { user pause / resume }                                         ^
-     *                                                                                       |
-     *                                                                                       |
-     *   { user interrupt }  INTERRUPT  --------- > ------ > ----------------- > ----------- #
+     *    # ---- < ---- #         # ----- > ----- > ------ #          |                      REPORTS_LOADED
+     *                  |                                  |          |                    { to normal mode }
+     *                  |                                  |          |                             |
+     *   PAUSE -->-- RESUME  { user pause / resume }       # --- > -- # --- FETCH_REPORTS --- > --- #
+     *                                                                |  { to normal mode }
+     *                                                                |
+     *   { user interrupt }  INTERRUPT  --------- > ------ > -------- #
      */
 
     @DebugLog @InteractiveMode
@@ -460,6 +446,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         // check consistency between state transitions
         if ((previousState != StateContainer.Interactive.BEGIN && newState == StateContainer.Interactive.READY) ||
             (previousState != StateContainer.Interactive.READY && previousState != StateContainer.Interactive.RESUME
+                    && previousState != StateContainer.Interactive.POSTING_PROGRESS
                     && newState == StateContainer.Interactive.POSTING_PROGRESS)/* ||
             (previousState != StateContainer.Interactive.POSTING_CANCEL && previousState != StateContainer.Interactive.POSTING_FINISH
                     && newState == StateContainer.Normal.REPORTS_LOADED)*/) {
@@ -513,7 +500,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
      * Go to POSTING_PROGRESS state, parse essence and make GroupReport item from it, add this item
      * to list in reversed order and update counters.
      */
-    @InteractiveMode @SuppressWarnings("unchecked")
+    @InteractiveMode
     private void statePostingProgress(PostingUnit postingUnit) {
         Timber.i("statePostingProgress");
         setInteractiveState(StateContainer.Interactive.POSTING_PROGRESS);
@@ -527,7 +514,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
      * Go to POSTING_FINISH state, notify posting finished and show popup with counters
      */
     @InteractiveMode
-    private void statePostingFinish() {
+    private void statePostingFinish(long groupReportBundleId) {
         Timber.i("statePostingFinish");
         setInteractiveState(StateContainer.Interactive.POSTING_FINISH);
         // enter POST_FINISH state logic
@@ -539,6 +526,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         }
 
         Timber.i("Posting has been finished");
+        stateFetchReports(groupReportBundleId);  // proceed to the next state - FETCH_REPORTS
     }
 
     // ------------------------------------------
@@ -546,7 +534,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
      * Go to POSTING_CANCEL state, notify posting cancelled and check access token
      */
     @InteractiveMode
-    private void statePostingCancel(Throwable reason) {
+    private void statePostingCancel(Throwable reason, long groupReportBundleId) {
         Timber.i("statePostingCancel");
         setInteractiveState(StateContainer.Interactive.POSTING_CANCEL);
         // enter POSTING_CANCEL state logic
@@ -561,6 +549,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         }
 
         Timber.i("Posting has been cancelled");
+        stateFetchReports(groupReportBundleId);  // proceed to the next state - FETCH_REPORTS
     }
 
     // ------------------------------------------
@@ -620,6 +609,21 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             getView().onWallPostingInterrupt();
             if (shouldClose) getView().closeView();
         }
+    }
+
+    // ------------------------------------------
+    /**
+     * Go to FETCH_REPORTS state, load GroupReportBundle stored to repository by Service
+     */
+    @InteractiveMode
+    private void stateFetchReports(long groupReportBundleId) {
+        Timber.i("stateFetchReports");
+        setInteractiveState(StateContainer.Interactive.FETCH_REPORTS);
+        // enter FETCH_REPORTS state logic
+
+        // fetch GroupReportBundle stored to repository by Service when it has finished
+        getGroupReportBundleByIdUseCase.setGroupReportId(groupReportBundleId);
+        getGroupReportBundleByIdUseCase.execute();
     }
 
     /* Lifecycle */
@@ -718,17 +722,17 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     // ------------------------------------------
     @Override
-    public void onPostingCancel() {
-        statePostingCancel(null);  // TODO: reason properly
+    public void onPostingCancel(Throwable reason, long groupReportBundleId) {
+        statePostingCancel(reason, groupReportBundleId);
     }
 
     @Override
-    public void onPostingFinish() {
-        statePostingFinish();
+    public void onPostingFinish(long groupReportBundleId) {
+        statePostingFinish(groupReportBundleId);
     }
 
-    @InteractiveMode @Override
-    public void onPostingResult(PostingUnit postingUnit) {
+    @DebugLog @InteractiveMode @Override
+    public void onPostingProgress(PostingUnit postingUnit) {
         /**
          * ReportScreen is subscribed to receive incoming data from {@link WallPostingService}
          * in it's onCreate(), but get's ready to actually visualize it and do the rest stuff in onStart(),
@@ -899,6 +903,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     /**
      * Extract data from {@link PostingUnit}, assign counters and add list item.
      */
+    @SuppressWarnings("unchecked")
     private void deployPostingUnit(PostingUnit postingUnit) {
         // save counters to use further
         mementoCommon.postedWithCancel  = postingUnit.cancelCount();
@@ -936,7 +941,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     /* Callback */
     // --------------------------------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
     private UseCase.OnPostExecuteCallback<GroupReportBundle> createGetGroupReportBundleByIdCallback() {
         return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
             @DebugLog @Override
@@ -948,30 +952,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 }
                 Timber.i("Use-Case: succeeded to get GroupReportBundle by id");
                 stateReportsLoaded(bundle);
-//                    if (isInteractiveMode()) {
-//                        /**
-//                         * In interactive mode items are incoming from the oldest to the recents,
-//                         * this order is reverse to the order these items are stored in GroupReportBundle.
-//                         *
-//                         * We can reach this place in interactive mode only when ReportScreen is restored
-//                         * and hence fetched all it's data from repository, where order is direct.
-//                         * So, in order to keep user experience, we must populate list with restored
-//                         * items in reversed order.
-//                         */
-//                        listAdapter.populateInverse(vos, false);  // items was restored from repository in interactive mode
-//                    } else {
-//                        listAdapter.populate(vos, false);
-//                    }
-//
-//                    /**
-//                     * Populate {@link ReportPresenter#storedReports} when get GroupReportBundle
-//                     * use-case has finished with data inside. In interactive mode, this is only
-//                     * possible when the entire ReportScreen is restored after destruction, i.e.
-//                     * {@link ReportPresenter#onRestoreState()} is the only place where
-//                     * {@link GetGroupReportBundleById} use-case is executed.
-//                     */
-//                    storedReports.clear();
-//                    storedReports.addAll(bundle.groupReports());
             }
 
             @DebugLog @Override
@@ -1103,14 +1083,24 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     }
 
     private boolean isInteractiveMode() {
-        boolean flag = isViewAttached() && getView().isForceDisableInteractiveMode();
-        return !flag;
+        return mementoCommon.isInteractiveMode;
     }
 
     @SuppressWarnings("unchecked")
     private void fillReportsList(@NonNull GroupReportBundle bundle) {
         List<ReportListItemVO> vos = groupReportToVoMapper.map(bundle.groupReports());
-        listAdapter.populate(vos, false);
+        if (isInteractiveMode()) {
+            /**
+             * In interactive mode items are incoming from the oldest to the recents,
+             * this order is reverse to the order these items are stored in GroupReportBundle.
+             *
+             * So, in order to keep user experience, we must populate list with restored
+             * items in reversed order.
+             */
+            listAdapter.populateInverse(vos, false);  // items was restored from repository in interactive mode
+        } else {
+            listAdapter.populate(vos, false);
+        }
     }
 
     private int setListItemsReverted(List<GroupReport> storedReports) {

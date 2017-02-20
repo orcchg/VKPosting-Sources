@@ -137,11 +137,6 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         this.cancelCallback = cancelCallback;
     }
 
-    // ------------------------------------------
-    public interface FinishCallback {  // this cb could be used in conjunction with OnPostExecuteCallback
-        void onFinish();
-    }
-
     /* Internal */
     // --------------------------------------------------------------------------------------------
     protected abstract List<? extends UseCase<Result>> createUseCases();

@@ -17,13 +17,17 @@ import com.orcchg.vikstra.app.injection.component.SharedPrefsManagerComponent;
 import com.orcchg.vikstra.app.injection.module.PermissionManagerModule;
 import com.orcchg.vikstra.app.injection.module.SharedPrefsManagerModule;
 import com.orcchg.vikstra.app.navigation.NavigatorHolder;
+import com.orcchg.vikstra.app.ui.util.MainLooperSpy;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
+import com.orcchg.vikstra.domain.util.DebugSake;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public abstract class BaseActivity<V extends MvpView, P extends MvpPresenter<V>>
         extends AppCompatActivity implements MvpView {
+
+    protected final @DebugSake MainLooperSpy mainLooperSpy = new MainLooperSpy();
 
     protected P presenter;
     protected NavigationComponent navigationComponent;

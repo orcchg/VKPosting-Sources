@@ -62,11 +62,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id";
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     private static final String BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED = "bundle_key_flag_posting_revert_finished";
-    private static final String BUNDLE_KEY_FLAG_FORCE_DISABLE_INTERACTIVE_MODE = "bundle_key_flag_force_disable_interactive_mode";
+    private static final String BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE = "bundle_key_flag_is_interactive_mode";
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     private static final String EXTRA_POST_ID = "extra_post_id";
-    private static final String EXTRA_FORCE_DISABLE_INTERACTIVE_MODE = "extra_force_disable_interactive_mode";
+    private static final String EXTRA_IS_INTERACTIVE_MODE = "extra_is_interactive_mode";
     public static final int REQUEST_CODE = Constant.RequestCode.REPORT_SCREEN;
 
     private String DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT,
@@ -106,7 +106,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private long keywordBundleId = Constant.BAD_ID;  // TODO: initialize from extra
     private long postId = Constant.BAD_ID;
 
-    private boolean forceDisableInteractiveMode = false;
+    private boolean isInteractiveMode = true;
     private boolean postingRevertFinished = false;
 
     private @Nullable ShowcaseView showcaseView;
@@ -125,7 +125,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     public static Intent getCallingIntentNoInteractive(@NonNull Context context, long groupReportBundleId,
                                                        long keywordBundleId, long postId) {
         Intent intent = getCallingIntent(context, groupReportBundleId, keywordBundleId, postId);
-        intent.putExtra(EXTRA_FORCE_DISABLE_INTERACTIVE_MODE, true);
+        intent.putExtra(EXTRA_IS_INTERACTIVE_MODE, false);
         return intent;
     }
 
@@ -137,7 +137,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @Override
     protected void injectDependencies() {
         ReportModule reportModule = new ReportModule(groupReportBundleId, keywordBundleId,
-                FileUtility.getDumpGroupReportsFileName(this, true /* external */));
+                FileUtility.getDumpGroupReportsFileName(this, true /* external */), isInteractiveMode);
         reportComponent = DaggerReportComponent.builder()
                 .applicationComponent(getApplicationComponent())
                 .postModule(new PostModule(postId))
@@ -157,10 +157,18 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         initResources();
         initView();
         initToolbar();
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         if (isInteractiveMode()) {
             Timber.d("Subscribe on posting progress callback on ReportScreen");
-            IntentFilter filterResult = new IntentFilter(Constant.Broadcast.WALL_POSTING_RESULT_DATA);
+            IntentFilter filterCancel = new IntentFilter(Constant.Broadcast.WALL_POSTING_CANCELLED);
+            IntentFilter filterFinish = new IntentFilter(Constant.Broadcast.WALL_POSTING_FINISHED);
+            IntentFilter filterResult = new IntentFilter(Constant.Broadcast.WALL_POSTING_PROGRESS_UNIT);
+            LocalBroadcastManager.getInstance(this).registerReceiver(receiverCancel, filterCancel);
+            LocalBroadcastManager.getInstance(this).registerReceiver(receiverFinish, filterFinish);
             LocalBroadcastManager.getInstance(this).registerReceiver(receiverResult, filterResult);
         }
     }
@@ -186,21 +194,29 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         outState.putLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
         outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
         outState.putLong(BUNDLE_KEY_POST_ID, postId);
-        outState.putBoolean(BUNDLE_KEY_FLAG_FORCE_DISABLE_INTERACTIVE_MODE, forceDisableInteractiveMode);
+        outState.putBoolean(BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE, isInteractiveMode);
         outState.putBoolean(BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED, postingRevertFinished);
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
+        super.onStop();
         if (isInteractiveMode()) {
             Timber.d("Unsubscribe from posting progress callback on ReportScreen");
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverCancel);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverFinish);
             LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverResult);
+        }
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (isInteractiveMode()) {
             Timber.d("notify Activity destroyed to Service");
             Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_SCREEN_DESTROY);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
-        super.onDestroy();
         if (dialog1 != null) dialog1.dismiss();
         if (dialog2 != null) dialog2.dismiss();
         if (dialog3 != null) dialog3.dismiss();
@@ -213,24 +229,37 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     /* Broadcast receiver */
     // --------------------------------------------------------------------------------------------
     private BroadcastReceiver receiverCancel = new BroadcastReceiver() {
-        @Override
+        @DebugLog @Override
         public void onReceive(Context context, Intent intent) {
-            presenter.onPostingCancel();
+            long groupReportBundleId = intent.getLongExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
+            String className = intent.getStringExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_CANCEL_REASON_CLASS_NAME);
+            Throwable reason = null;
+//            if (!TextUtils.isEmpty(className)) {
+//                try {
+//                    Class clazz = Class.forName(className);
+//                    clazz.newInstance();
+//                } catch (ClassNotFoundException e) {
+//                    Timber.w("Not found class for name [%s] to construct Throwable reason from Intent extra", className);
+//                }
+//            }
+            // TODO: reason properly
+            presenter.onPostingCancel(reason, groupReportBundleId);
         }
     };
 
     private BroadcastReceiver receiverFinish = new BroadcastReceiver() {
-        @Override
+        @DebugLog @Override
         public void onReceive(Context context, Intent intent) {
-            presenter.onPostingFinish();
+            long groupReportBundleId = intent.getLongExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
+            presenter.onPostingFinish(groupReportBundleId);
         }
     };
 
     private BroadcastReceiver receiverResult = new BroadcastReceiver() {
-        @Override
+        @DebugLog @Override
         public void onReceive(Context context, Intent intent) {
-            PostingUnit postingUnit = intent.getParcelableExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_RESULT);
-            presenter.onPostingResult(postingUnit);
+            PostingUnit postingUnit = intent.getParcelableExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_PROGRESS_UNIT);
+            presenter.onPostingProgress(postingUnit);
         }
     };
 
@@ -242,21 +271,21 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
             groupReportBundleId = savedInstanceState.getLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
             keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
-            forceDisableInteractiveMode = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_FORCE_DISABLE_INTERACTIVE_MODE, false);
+            isInteractiveMode = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE, true);
             postingRevertFinished = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED, false);
         } else {
             groupReportBundleId = getIntent().getLongExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
             keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
-            forceDisableInteractiveMode = getIntent().getBooleanExtra(EXTRA_FORCE_DISABLE_INTERACTIVE_MODE, false);
+            isInteractiveMode = true;
             postingRevertFinished = false;
         }
-        Timber.d("GroupReportBundle id: %s ; KeywordBundle id: %s ; Post id: %s ; forceDisableInMode: %s",
-                groupReportBundleId, keywordBundleId, postId, forceDisableInteractiveMode);
+        Timber.d("GroupReportBundle id: %s ; KeywordBundle id: %s ; Post id: %s ; isInteractiveMode: %s",
+                groupReportBundleId, keywordBundleId, postId, isInteractiveMode);
     }
 
     private boolean isInteractiveMode() {
-        return !forceDisableInteractiveMode;
+        return isInteractiveMode;
     }
 
     /* Permissions */
@@ -343,12 +372,6 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     public void enableSwipeToRefresh(boolean isEnabled) {
         ReportFragment fragment = getFragment();
         if (fragment != null) fragment.enableSwipeToRefresh(isEnabled);
-    }
-
-    @Override
-    public void enableButtonsOnPostingFinished() {
-        interruptButton.setEnabled(false);
-        revertAllButton.setEnabled(!postingRevertFinished);
     }
 
     // ------------------------------------------
@@ -524,11 +547,6 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         finish();
     }
 
-    @Override
-    public boolean isForceDisableInteractiveMode() {
-        return forceDisableInteractiveMode;
-    }
-
     // ------------------------------------------
     @Override
     public void showGroupReports(boolean isEmpty) {
@@ -588,6 +606,11 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private ReportFragment getFragment() {
         FragmentManager fm = getSupportFragmentManager();
         return (ReportFragment) fm.findFragmentByTag(FRAGMENT_TAG);
+    }
+
+    private void enableButtonsOnPostingFinished() {
+        interruptButton.setEnabled(false);
+        revertAllButton.setEnabled(!postingRevertFinished);
     }
 
     /* Resources */

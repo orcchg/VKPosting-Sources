@@ -1,6 +1,7 @@
 package com.orcchg.vikstra.app.ui.report.main.injection;
 
 import com.orcchg.vikstra.app.injection.PerActivity;
+import com.orcchg.vikstra.app.ui.report.main.Holder;
 import com.orcchg.vikstra.domain.executor.PostExecuteScheduler;
 import com.orcchg.vikstra.domain.executor.ThreadExecutor;
 import com.orcchg.vikstra.domain.interactor.keyword.GetKeywordBundleById;
@@ -19,11 +20,13 @@ public class ReportModule {
     protected final long groupReportBundleId;
     protected final long keywordBundleId;
     private final String pathToDumpFile;
+    private final boolean isInteractiveMode;
 
-    public ReportModule(long groupReportBundleId, long keywordBundleId, String pathToDumpFile) {
+    public ReportModule(long groupReportBundleId, long keywordBundleId, String pathToDumpFile, boolean isInteractiveMode) {
         this.groupReportBundleId = groupReportBundleId;
         this.keywordBundleId = keywordBundleId;
         this.pathToDumpFile = pathToDumpFile;
+        this.isInteractiveMode = isInteractiveMode;
     }
 
     @Provides @PerActivity
@@ -42,5 +45,10 @@ public class ReportModule {
     protected DumpGroupReports provideDumpGroupReports(ReportComposer reportComposer, IReportRepository reportRepository,
            ThreadExecutor threadExecutor, PostExecuteScheduler postExecuteScheduler) {
         return new DumpGroupReports(pathToDumpFile, reportComposer, reportRepository, threadExecutor, postExecuteScheduler);
+    }
+
+    @Provides @PerActivity
+    protected Holder provideHolder() {
+        return new Holder(isInteractiveMode);
     }
 }

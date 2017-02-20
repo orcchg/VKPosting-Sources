@@ -60,7 +60,9 @@ public class WallPostingService extends BaseIntentService {
     public static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
     public static final String EXTRA_SELECTED_GROUPS = "extra_selected_groups";
     public static final String EXTRA_CURRENT_POST = "extra_current_post";
-    public static final String OUT_EXTRA_WALL_POSTING_RESULT = "out_extra_wall_posting_result";
+    public static final String OUT_EXTRA_WALL_POSTING_PROGRESS_UNIT = "out_extra_wall_posting_progress_unit";
+    public static final String OUT_EXTRA_WALL_POSTING_CANCEL_REASON_CLASS_NAME = "out_extra_wall_posting_cancel_reason_class_name";
+    public static final String OUT_EXTRA_WALL_POSTING_GROUP_REPORT_BUNDLE_ID = "out_extra_wall_posting_group_report_bundle_id";
 
     public static final int WALL_POSTING_STATUS_STARTED = 0;
     public static final int WALL_POSTING_STATUS_FINISHED = 1;
@@ -86,7 +88,7 @@ public class WallPostingService extends BaseIntentService {
     int postedWithFailure = 0;
     int postedWithSuccess = 0;
 
-    private List<GroupReport> storedReports = new ArrayList<>();
+    private List<GroupReportEssence> storedReports = new ArrayList<>();
 
     // --------------------------------------------------------------------------------------------
     public static Intent getCallingIntent(@NonNull Context context, long keywordBundleId,
@@ -158,10 +160,10 @@ public class WallPostingService extends BaseIntentService {
 
         becomeForeground();
 
-        sendPostingStartedMessage(WALL_POSTING_STATUS_STARTED);
+        notifyPostingStatus(WALL_POSTING_STATUS_STARTED);
         component.vkontakteEndpoint().makeWallPostsWithDelegate(selectedGroups, currentPost,
-                createMakeWallPostCallback(), createProgressCallback(), this::sendPostingFinished,
-                this::sendPostingCancelled, postingDelegate(), photoUploadDelegate());
+                createMakeWallPostCallback(), createProgressCallback(),
+                createPostingCancelledCallback(), postingDelegate(), photoUploadDelegate());
 
         // wait for job's done
         synchronized (lock) {
@@ -250,26 +252,32 @@ public class WallPostingService extends BaseIntentService {
     /* Broadcasts */
     // --------------------------------------------------------------------------------------------
     @DebugLog
-    private void sendPostingStartedMessage(@WallPostingStatus int status) {
-        Timber.d("sendPostingStartedMessage: %s", status);
+    private void notifyPostingStatus(@WallPostingStatus int status) {
+        Timber.d("notifyPostingStatus: %s", status);
         if (status != WALL_POSTING_STATUS_STARTED) wakeUp();
     }
 
+    // ------------------------------------------
     @DebugLog
     void sendPostingResult(PostingUnit postingUnit) {
-        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_RESULT_DATA);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_RESULT, postingUnit);
-        sendBroadcast(intent);
+        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_PROGRESS_UNIT);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_PROGRESS_UNIT, postingUnit);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @DebugLog
-    void sendPostingFinished() {
-        sendBroadcast(new Intent(Constant.Broadcast.WALL_POSTING_FINISHED));
+    void sendPostingFinished(long groupReportBundleId) {
+        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_FINISHED);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     @DebugLog
-    void sendPostingCancelled(Throwable reason) {
-        sendBroadcast(new Intent(Constant.Broadcast.WALL_POSTING_CANCELLED));
+    void sendPostingCancelled(Throwable reason, long groupReportBundleId) {
+        Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_CANCELLED);
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_CANCEL_REASON_CLASS_NAME, reason.getClass().getCanonicalName());
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     // --------------------------------------------------------------------------------------------
@@ -285,12 +293,28 @@ public class WallPostingService extends BaseIntentService {
     @DebugLog
     private void onWallPostingInterrupt() {
         Timber.i("onWallPostingInterrupt: startHandle=%s", wasStartedHandle());
+        persistReports(storedReports, new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
+            @Override
+            public void onFinish(@Nullable GroupReportBundle bundle) {
+                if (bundle == null) {
+                    Timber.e("Failed to put new GroupReportBundle to repository - item not created, as expected");
+                    throw new ProgramException();
+                }
+                Timber.i("Use-Case: succeeded to put GroupReportBundle");
+                notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
+                Timber.d("Finishing service after wall posting interruption...");
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                Timber.e("Use-Case: failed to put GroupReportBundle");
+                notifyPostingStatus(WALL_POSTING_STATUS_ERROR);
+            }
+        });
+
         // check for null in case initial Intent is for receiver, not for 'onHandleIntent'
         if (postingNotification != null) postingNotification.onPostingInterrupt();
         if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
-
-        wakeUp();
-        Timber.d("Finishing service after wall posting interruption...");
     }
 
     @DebugLog
@@ -310,19 +334,18 @@ public class WallPostingService extends BaseIntentService {
         return new UseCase.OnPostExecuteCallback<List<GroupReportEssence>>() {
             @DebugLog @Override
             public void onFinish(@Nullable List<GroupReportEssence> reports) {
+                if (reports == null) {
+                    Timber.e("Make wall posting has finished with null data - it could be empty at least");
+                    throw new ProgramException();
+                }
                 Timber.i("Use-Case: succeeded to make wall posting");
-                PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(
-                        reports, keywordBundleId, currentPost.id());
-                PutGroupReportBundle useCase = component.putGroupReportBundleUseCase();
-                useCase.setPostExecuteCallback(createPutGroupReportBundleCallback());
-                useCase.setParameters(parameters);
-                useCase.execute();
+                persistReports(reports, createPutGroupReportBundleCallback());
             }
 
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to make wall posting");
-                sendPostingStartedMessage(WALL_POSTING_STATUS_ERROR);
+                notifyPostingStatus(WALL_POSTING_STATUS_ERROR);
             }
         };
     }
@@ -337,18 +360,40 @@ public class WallPostingService extends BaseIntentService {
                 }
                 Timber.i("Use-Case: succeeded to put GroupReportBundle");
                 postingNotification.updateGroupReportBundleId(WallPostingService.this, bundle.id());
-                sendPostingStartedMessage(WALL_POSTING_STATUS_FINISHED);
+                sendPostingFinished(bundle.id());
+                notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
             }
 
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case: failed to put GroupReportBundle");
-                sendPostingStartedMessage(WALL_POSTING_STATUS_ERROR);
+                notifyPostingStatus(WALL_POSTING_STATUS_ERROR);
             }
         };
     }
 
     // --------------------------------------------------------------------------------------------
+    private MultiUseCase.CancelCallback createPostingCancelledCallback() {
+        return (reason) -> persistReports(storedReports, new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
+                @Override
+                public void onFinish(@Nullable GroupReportBundle bundle) {
+                    if (bundle == null) {
+                        Timber.e("Failed to put new GroupReportBundle to repository - item not created, as expected");
+                        throw new ProgramException();
+                    }
+                    Timber.i("Use-Case: succeeded to put GroupReportBundle");
+                    sendPostingCancelled(reason, bundle.id());
+                    notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Timber.e("Use-Case: failed to put GroupReportBundle");
+                    notifyPostingStatus(WALL_POSTING_STATUS_ERROR);
+                }
+            });
+    }
+
     private MultiUseCase.ProgressCallback<GroupReportEssence> createProgressCallback() {
         return (index, total, item) -> {
             if (index == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) return;  // skip start event
@@ -368,12 +413,12 @@ public class WallPostingService extends BaseIntentService {
             Timber.v("%s", group.toString());
             // TODO: use terminal error from proper UseCase instead of hardcoded one
             GroupReportEssence essence = VkontakteEndpoint.refineModel(item, group, Api5VkUseCaseException.class, Api220VkUseCaseException.class);
+            storedReports.add(essence);
 
             long timestamp = System.currentTimeMillis();
             component.groupReportEssenceMapper().setGroupReportId(Constant.INIT_ID);  // fictive id
             component.groupReportEssenceMapper().setTimestamp(timestamp);
             GroupReport model = component.groupReportEssenceMapper().map(essence);
-            storedReports.add(model);
 
             PostingUnit unit = PostingUnit.builder()
                     .setCancelCount(postedWithCancel)
@@ -436,13 +481,25 @@ public class WallPostingService extends BaseIntentService {
                 if (hasPhotoUploadStarted) photoUploadNotification.onPhotoUploadComplete();
             }
         };
-    };
+    }
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
     private void dropAllNotifications() {
         NotificationManagerCompat.from(this).cancel(Constant.NotificationID.POSTING);
         NotificationManagerCompat.from(this).cancel(Constant.NotificationID.PHOTO_UPLOAD);
+    }
+
+    /**
+     * PUT all {@link WallPostingService#storedReports} that we have managed to obtain to repository.
+     */
+    private void persistReports(List<GroupReportEssence> reports, UseCase.OnPostExecuteCallback<GroupReportBundle> callback) {
+        PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(
+                reports, keywordBundleId, currentPost.id());
+        PutGroupReportBundle useCase = component.putGroupReportBundleUseCase();
+        useCase.setPostExecuteCallback(callback);
+        useCase.setParameters(parameters);
+        useCase.execute();
     }
 
     private void wakeUp() {

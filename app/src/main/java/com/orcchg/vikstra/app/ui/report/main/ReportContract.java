@@ -14,7 +14,6 @@ import com.orcchg.vikstra.domain.util.endpoint.AccessTokenTracker;
 public interface ReportContract {
     interface View extends AccessTokenTracker, SubView {
         void enableSwipeToRefresh(boolean isEnabled);
-        void enableButtonsOnPostingFinished();
 
         String getDumpFilename();
 
@@ -43,7 +42,6 @@ public interface ReportContract {
         void updatePostedCounters(int posted, int total);
 
         void closeView();
-        boolean isForceDisableInteractiveMode();
     }
 
     interface SubView extends LceView, MvpListView {
@@ -56,9 +54,9 @@ public interface ReportContract {
         void onDumpPressed();
         void onSuspendClick();
 
-        void onPostingCancel();
-        void onPostingFinish();
-        void onPostingResult(PostingUnit postingUnit);
+        void onPostingCancel(Throwable reason, long groupReportBundleId);
+        void onPostingFinish(long groupReportBundleId);
+        void onPostingProgress(PostingUnit postingUnit);
 
         void interruptPostingAndClose(boolean shouldClose);
 
