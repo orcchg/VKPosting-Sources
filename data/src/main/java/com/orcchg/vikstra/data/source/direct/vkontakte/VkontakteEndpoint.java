@@ -239,10 +239,14 @@ public class VkontakteEndpoint extends Endpoint {
             refreshIdsForUploadedMedia(post);  // go to declaration for full explanation of this call
 
             // checking cache to get already uploaded media
-            List<Media> cached = new ArrayList<>();
-            List<Media> retained = new ArrayList<>();
+            final List<Media> cached = new ArrayList<>();
+            final List<Media> retained = new ArrayList<>();
             attachLocalCache.retain(media, cached, retained);
             Timber.v("Total media: cached: %s, retained: %s", cached.size(), retained.size());
+
+            cached.clear();
+            retained.clear();  // TODO: temp disabled caching
+            retained.addAll(media);
 
             /**
              * For each already cached media we just make wall post with attached image ids directly.
