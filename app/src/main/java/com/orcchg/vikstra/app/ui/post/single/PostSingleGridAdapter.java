@@ -94,6 +94,14 @@ public class PostSingleGridAdapter extends BaseSelectAdapter<PostSingleGridViewH
 
     /* Data access */
     // --------------------------------------------------------------------------------------------
+    @Override
+    public void remove(int modelPosition) {
+        if (models.size() > modelPosition && modelPosition >= 0) {
+            models.remove(modelPosition);
+            notifyItemRemoved(modelPosition + (withAddItem ? 1 : 0));
+        }
+    }
+
     public boolean withAddItem() {
         return withAddItem;
     }

@@ -173,7 +173,7 @@ public class PostSingleGridPresenter extends BaseListPresenter<PostSingleGridCon
         deletePostUseCase.execute();  // silent delete without callback
 
         memento.posts.remove(modelPosition);
-        listAdapter.remove(position);
+        listAdapter.remove(modelPosition);
 
         if (memento.posts.isEmpty()) {
             dropSelection();
