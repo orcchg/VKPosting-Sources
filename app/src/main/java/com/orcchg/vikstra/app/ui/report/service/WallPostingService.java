@@ -255,7 +255,8 @@ public class WallPostingService extends BaseIntentService {
     }
 
     private void initNotifications() {
-        dropAllNotifications();
+        dropPostingNotification();
+        dropPhotoUploadNotification();
         postingNotification = new PostingNotification(this, Constant.BAD_ID, keywordBundleId, currentPost.id());
         photoUploadNotification = new PhotoUploadNotification(this);
     }
@@ -297,7 +298,7 @@ public class WallPostingService extends BaseIntentService {
     private void onScreenDestroyed() {
         Timber.i("onScreenDestroyed, paused=%s", wasPaused);
         if (wasPaused) {
-            dropAllNotifications();
+            dropPhotoUploadNotification();  // don't drop posting notification - we use it to access to stored reports
             Timber.d("Attempting to persist all report that Service has managed to retrieve");
             persistReports(storedReports, new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
                 @Override
@@ -307,6 +308,14 @@ public class WallPostingService extends BaseIntentService {
                         throw new ProgramException();
                     }
                     Timber.i("Use-Case [Screen destroy]: succeeded to put GroupReportBundle");
+                    if (postingNotification != null) postingNotification.onPostingComplete();
+                    if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadComplete();
+                    /**
+                     * Here we update ids of notifications after call
+                     * {@link PostingNotification#onPostingComplete()}, since we need to setup
+                     * {@link PostingNotification#hasPostingFinished} flag properly before making
+                     * a new pending intent with updated id and this flag.
+                     */
                     updateGroupReportBundleIdForNotifications(bundle.id());
                     notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
                     Timber.d("Finishing service after ReportScreen destroyed...");
@@ -499,8 +508,11 @@ public class WallPostingService extends BaseIntentService {
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    private void dropAllNotifications() {
+    private void dropPostingNotification() {
         NotificationManagerCompat.from(this).cancel(Constant.NotificationID.POSTING);
+    }
+
+    private void dropPhotoUploadNotification() {
         NotificationManagerCompat.from(this).cancel(Constant.NotificationID.PHOTO_UPLOAD);
     }
 
