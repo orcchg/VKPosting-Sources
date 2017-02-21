@@ -157,11 +157,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         initResources();
         initView();
         initToolbar();
-    }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
         if (isInteractiveMode()) {
             Timber.d("Subscribe on posting progress callback on ReportScreen");
             IntentFilter filterCancel = new IntentFilter(Constant.Broadcast.WALL_POSTING_CANCELLED);
@@ -199,20 +195,14 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         if (isInteractiveMode()) {
             Timber.d("Unsubscribe from posting progress callback on ReportScreen");
             LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverCancel);
             LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverFinish);
             LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverResult);
-        }
-    }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (isInteractiveMode()) {
             Timber.d("notify Activity destroyed to Service");
             Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_SCREEN_DESTROY);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
