@@ -484,7 +484,10 @@ public class WallPostingService extends BaseIntentService {
 
             @Override
             public void onPhotoUploadComplete() {
-                if (hasPhotoUploadStarted) photoUploadNotification.onPhotoUploadComplete();
+                if (hasPhotoUploadStarted) {
+                    hasPhotoUploadStarted = false;
+                    photoUploadNotification.onPhotoUploadComplete();
+                }
             }
         };
     }
