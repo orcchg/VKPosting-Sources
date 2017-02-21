@@ -36,10 +36,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Queue;
 
 import javax.inject.Inject;
 
@@ -375,7 +373,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             List<GroupReport> storedReports = inputGroupReportBundle.groupReports();
             int totalReverted = setListItemsReverted(storedReports);
             if (totalReverted > 0) {
-                Timber.d("Update GroupReport-s in repository in non-interactive mode or after state restored");
+                Timber.d("Updating GroupReportBundle in repository...");
                 GroupReportBundle bundle = GroupReportBundle.builder()
                         .setId(inputGroupReportBundle.id())
                         .setGroupReports(storedReports)
