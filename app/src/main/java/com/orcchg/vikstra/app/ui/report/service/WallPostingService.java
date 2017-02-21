@@ -183,8 +183,8 @@ public class WallPostingService extends BaseIntentService {
          * it's use-cases are called from some {@link PostExecuteScheduler} corresponding to the
          * main (ui) thread. So, this scheduler will then notify service to continue and finish.
          */
-        stopForeground(true);
         Timber.i("Exit Wall Posting service");
+        stopForeground(true);
     }
 
     /* Broadcast receiver */
@@ -287,7 +287,7 @@ public class WallPostingService extends BaseIntentService {
     // --------------------------------------------------------------------------------------------
     @DebugLog
     private void onScreenDestroyed() {
-        Timber.i("onScreenDestroyed");
+        Timber.i("onScreenDestroyed, paused=%s", wasPaused);
         if (wasPaused) {
             dropAllNotifications();
             wakeUp();  // stop self after pause when ReportScreen gets destroyed, releasing Service
