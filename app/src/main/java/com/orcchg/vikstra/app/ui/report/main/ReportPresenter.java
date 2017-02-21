@@ -729,10 +729,12 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
          * which is illegal transition.
          *
          * So, we must deploy all incoming data items, if any, while ReportScreen is paused.
+         * Same is true for interruption - after change to state {@link StateContainer.Interactive.INTERRUPT}.
          */
         switch (mementoInteractive.state) {
             case StateContainer.Interactive.BEGIN:
             case StateContainer.Interactive.PAUSE:
+            case StateContainer.Interactive.INTERRUPT:
                 Timber.w("Received tardy posting unit after suspension - deploy w/o state transition");
                 deployPostingUnit(postingUnit);  // visualize item w/o state transition
                 return;
