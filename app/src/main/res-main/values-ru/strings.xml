@@ -188,7 +188,4 @@
     <!-- Settings Group screen -->
     <string name="settings_group_dialog_save_changes_title">Настройки изменены</string>
     <string name="settings_group_screen_name">Настройки групп</string>
-    <!-- Status screen -->
-    <string name="status_button_report">Отчет</string>
-    <string name="status_screen_title">Прогресс</string>
 </resources>
