@@ -37,7 +37,7 @@ public class PostingNotification implements IPostingNotificationDelegate {
                 .setSmallIcon(R.drawable.ic_cloud_upload_white_18dp)
                 .setContentTitle(resources.getString(R.string.notification_posting_title))
                 .setContentText(NOTIFICATION_POSTING_PROGRESS)
-                .setContentIntent(makePendingIntent(context, groupReportBundleId, keywordBundleId, postId));
+                .setContentIntent(makePendingIntent(context, hasPostingFinished, groupReportBundleId, keywordBundleId, postId));
 
         NOTIFICATION_POSTING_COMPLETE = resources.getString(R.string.notification_posting_description_complete);
         NOTIFICATION_POSTING_INTERRUPT = resources.getString(R.string.notification_posting_description_interrupt);
@@ -46,15 +46,15 @@ public class PostingNotification implements IPostingNotificationDelegate {
     }
 
     public void updateGroupReportBundleId(Context context, long groupReportBundleId) {
-        notificationBuilderPosting.setContentIntent(makePendingIntent(context, groupReportBundleId, keywordBundleId, postId));
+        notificationBuilderPosting.setContentIntent(makePendingIntent(context, hasPostingFinished, groupReportBundleId, keywordBundleId, postId));
     }
 
     public void updateKeywordBundleId(Context context, long keywordBundleId) {
-        notificationBuilderPosting.setContentIntent(makePendingIntent(context, groupReportBundleId, keywordBundleId, postId));
+        notificationBuilderPosting.setContentIntent(makePendingIntent(context, hasPostingFinished, groupReportBundleId, keywordBundleId, postId));
     }
 
     public void updatePostId(Context context, long postId) {
-        notificationBuilderPosting.setContentIntent(makePendingIntent(context, groupReportBundleId, keywordBundleId, postId));
+        notificationBuilderPosting.setContentIntent(makePendingIntent(context, hasPostingFinished, groupReportBundleId, keywordBundleId, postId));
     }
 
     @DebugLog @Override
@@ -97,7 +97,8 @@ public class PostingNotification implements IPostingNotificationDelegate {
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
-    private PendingIntent makePendingIntent(Context context, long groupReportBundleId, long keywordBundleId, long postId) {
+    public static PendingIntent makePendingIntent(Context context, boolean hasPostingFinished,
+            long groupReportBundleId, long keywordBundleId, long postId) {
         Intent intent;
         if (hasPostingFinished) {
             intent = ReportActivity.getCallingIntentNoInteractive(context, groupReportBundleId, keywordBundleId, postId);

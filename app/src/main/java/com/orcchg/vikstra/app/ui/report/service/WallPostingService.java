@@ -2,6 +2,7 @@ package com.orcchg.vikstra.app.ui.report.service;
 
 import android.app.IntentService;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -82,6 +83,7 @@ public class WallPostingService extends BaseIntentService {
 
     private PostingNotification postingNotification;
     private PhotoUploadNotification photoUploadNotification;
+    private Notification.Builder serviceNotificationBuilder;
 
     private WallPostingServiceComponent component;
 
@@ -235,14 +237,17 @@ public class WallPostingService extends BaseIntentService {
     /* Notification delegate */
     // --------------------------------------------------------------------------------------------
     private void becomeForeground() {
-        Notification.Builder builder = new Notification.Builder(this)
+        PendingIntent intent = PostingNotification.makePendingIntent(this, hasFinished,
+                Constant.BAD_ID, keywordBundleId, currentPost.id());
+        serviceNotificationBuilder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_app_notification)
                 .setContentTitle(getResources().getString(R.string.notification_posting_title))
-                .setContentText(getResources().getString(R.string.notification_posting_description_progress));
+                .setContentText(getResources().getString(R.string.notification_posting_description_progress))
+                .setContentIntent(intent);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            builder.setLargeIcon(Icon.createWithResource(this, R.drawable.ic_app));
+            serviceNotificationBuilder.setLargeIcon(Icon.createWithResource(this, R.drawable.ic_app));
         }
-        Notification notification = builder.build();
+        Notification notification = serviceNotificationBuilder.build();
         startForeground(FOREGROUND_NOTIFICATION_ID, notification);
     }
 
@@ -365,7 +370,7 @@ public class WallPostingService extends BaseIntentService {
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put GroupReportBundle");
-                postingNotification.updateGroupReportBundleId(WallPostingService.this, bundle.id());
+                updateGroupReportBundleIdForNotification(bundle.id());
                 sendPostingFinished(bundle.id());
                 notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
             }
@@ -506,7 +511,7 @@ public class WallPostingService extends BaseIntentService {
     }
 
     /**
-     * PUT all {@link WallPostingService#storedReports} that we have managed to obtain to repository.
+     * PUT all {@param reports} that we have managed to obtain to repository.
      */
     private void persistReports(List<GroupReportEssence> reports, UseCase.OnPostExecuteCallback<GroupReportBundle> callback) {
         PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(
@@ -515,6 +520,24 @@ public class WallPostingService extends BaseIntentService {
         useCase.setPostExecuteCallback(callback);
         useCase.setParameters(parameters);
         useCase.execute();
+    }
+
+    /**
+     * When Service has finished, it PUT all 'reports' to repository and retrieves the id
+     * of the corresponding newly created GroupReportBundle. Now it's time to pass this id
+     * to notifications in order to open ReportScreen with proper input GroupReportBundle's
+     * by these notifications.
+     */
+    @DebugLog
+    private void updateGroupReportBundleIdForNotification(long groupReportBundleId) {
+        PendingIntent intent = PostingNotification.makePendingIntent(this, hasFinished,
+                groupReportBundleId, keywordBundleId, currentPost.id());
+        serviceNotificationBuilder.setContentIntent(intent);
+        Notification notification = serviceNotificationBuilder.build();
+        NotificationManagerCompat.from(this).notify(FOREGROUND_NOTIFICATION_ID, notification);
+
+        // this call will automatically trigger notification manager to update posting notification
+        postingNotification.updateGroupReportBundleId(this, groupReportBundleId);
     }
 
     private void wakeUp() {
