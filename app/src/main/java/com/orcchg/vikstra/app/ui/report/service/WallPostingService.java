@@ -80,6 +80,8 @@ public class WallPostingService extends BaseIntentService {
     private boolean hasFinished = false;
     private boolean hasPhotoUploadStarted = false;  // don't show notification, if photo uploading doesn't need
     private boolean wasPaused = false;
+    private boolean wasCancelled = false;
+    private Throwable cancelReason;
 
     private PostingNotification postingNotification;
     private PhotoUploadNotification photoUploadNotification;
@@ -90,6 +92,7 @@ public class WallPostingService extends BaseIntentService {
     int postedWithCancel = 0;
     int postedWithFailure = 0;
     int postedWithSuccess = 0;
+    int totalForPosting = 0;
 
     private List<GroupReportEssence> storedReports = new ArrayList<>();
 
@@ -295,32 +298,32 @@ public class WallPostingService extends BaseIntentService {
         Timber.i("onScreenDestroyed, paused=%s", wasPaused);
         if (wasPaused) {
             dropAllNotifications();
-            wakeUp();  // stop self after pause when ReportScreen gets destroyed, releasing Service
+            Timber.d("Attempting to persist all report that Service has managed to retrieve");
+            persistReports(storedReports, new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
+                @Override
+                public void onFinish(@Nullable GroupReportBundle bundle) {
+                    if (bundle == null) {
+                        Timber.e("[Screen destroy]: Failed to put new GroupReportBundle to repository - item not created, as expected");
+                        throw new ProgramException();
+                    }
+                    Timber.i("Use-Case [Screen destroy]: succeeded to put GroupReportBundle");
+                    updateGroupReportBundleIdForNotifications(bundle.id());
+                    notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
+                    Timber.d("Finishing service after ReportScreen destroyed...");
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Timber.e("Use-Case [Screen destroy]: failed to put GroupReportBundle");
+                    notifyPostingStatus(WALL_POSTING_STATUS_ERROR);
+                }
+            });
         }
     }
 
     @DebugLog
     private void onWallPostingInterrupt() {
         Timber.i("onWallPostingInterrupt: startHandle=%s", wasStartedHandle());
-        persistReports(storedReports, new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
-            @Override
-            public void onFinish(@Nullable GroupReportBundle bundle) {
-                if (bundle == null) {
-                    Timber.e("Failed to put new GroupReportBundle to repository - item not created, as expected");
-                    throw new ProgramException();
-                }
-                Timber.i("Use-Case: succeeded to put GroupReportBundle");
-                notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
-                Timber.d("Finishing service after wall posting interruption...");
-            }
-
-            @Override
-            public void onError(Throwable e) {
-                Timber.e("Use-Case: failed to put GroupReportBundle");
-                notifyPostingStatus(WALL_POSTING_STATUS_ERROR);
-            }
-        });
-
         // check for null in case initial Intent is for receiver, not for 'onHandleIntent'
         if (postingNotification != null) postingNotification.onPostingInterrupt();
         if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
@@ -370,8 +373,12 @@ public class WallPostingService extends BaseIntentService {
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put GroupReportBundle");
-                updateGroupReportBundleIdForNotification(bundle.id());
-                sendPostingFinished(bundle.id());
+                updateGroupReportBundleIdForNotifications(bundle.id());
+                if (wasCancelled) {
+                    sendPostingCancelled(cancelReason, bundle.id());
+                } else {
+                    sendPostingFinished(bundle.id());
+                }
                 notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
             }
 
@@ -385,24 +392,10 @@ public class WallPostingService extends BaseIntentService {
 
     // --------------------------------------------------------------------------------------------
     private MultiUseCase.CancelCallback createPostingCancelledCallback() {
-        return (reason) -> persistReports(storedReports, new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
-                @Override
-                public void onFinish(@Nullable GroupReportBundle bundle) {
-                    if (bundle == null) {
-                        Timber.e("Failed to put new GroupReportBundle to repository - item not created, as expected");
-                        throw new ProgramException();
-                    }
-                    Timber.i("Use-Case: succeeded to put GroupReportBundle");
-                    sendPostingCancelled(reason, bundle.id());
-                    notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Timber.e("Use-Case: failed to put GroupReportBundle");
-                    notifyPostingStatus(WALL_POSTING_STATUS_ERROR);
-                }
-            });
+        return (reason) -> {
+            wasCancelled = true;
+            cancelReason = reason;
+        };
     }
 
     private MultiUseCase.ProgressCallback<GroupReportEssence> createProgressCallback() {
@@ -410,6 +403,7 @@ public class WallPostingService extends BaseIntentService {
             if (index == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) return;  // skip start event
 
             Timber.v("Posting progress: %s / %s", index + 1, total);
+            totalForPosting = total;
             if (item.data != null)  ++postedWithSuccess;  // count successful posting
             if (item.error != null) ++postedWithFailure;  // count failed posting
             /**
@@ -514,6 +508,7 @@ public class WallPostingService extends BaseIntentService {
      * PUT all {@param reports} that we have managed to obtain to repository.
      */
     private void persistReports(List<GroupReportEssence> reports, UseCase.OnPostExecuteCallback<GroupReportBundle> callback) {
+        Timber.d("Persisting reports of size [%s / %s] to repository...", reports.size(), totalForPosting);
         PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(
                 reports, keywordBundleId, currentPost.id());
         PutGroupReportBundle useCase = component.putGroupReportBundleUseCase();
@@ -523,13 +518,13 @@ public class WallPostingService extends BaseIntentService {
     }
 
     /**
-     * When Service has finished, it PUT all 'reports' to repository and retrieves the id
+     * When Service has finished, it PUTs all 'reports' to repository and retrieves the id
      * of the corresponding newly created GroupReportBundle. Now it's time to pass this id
      * to notifications in order to open ReportScreen with proper input GroupReportBundle's
      * by these notifications.
      */
     @DebugLog
-    private void updateGroupReportBundleIdForNotification(long groupReportBundleId) {
+    private void updateGroupReportBundleIdForNotifications(long groupReportBundleId) {
         PendingIntent intent = PostingNotification.makePendingIntent(this, hasFinished,
                 groupReportBundleId, keywordBundleId, currentPost.id());
         serviceNotificationBuilder.setContentIntent(intent);
