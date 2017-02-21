@@ -1,0 +1,431 @@
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:GroupListPresenter:164: onFabClick
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra V/GroupListPresenter: ⇢ postToGroups()
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1081: postToGroups
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1083: Selected single Post, start wall posting...
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1097: Total selected Group-s: 4
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1100: Selected Group: [23082086] клан GoldenGun на сервере Tiguar.ru 1
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1100: Selected Group: [23390524] Клан  Narkozz на серве  tiguar.ru 1
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1100: Selected Group: [26760366] Lineage 2 Intrelude (Tiguar) 12
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1100: Selected Group: [28392948] Tiguar-KP 3
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra V/GroupListFragment: ⇢ startWallPostingService(keywordBundleId=1, selectedGroups=[Group{id=23082086, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club23082086, membersCount=1, name=клан GoldenGun на сервере Tiguar.ru, screenName=club23082086, webSite=http:/tiguar.ru/}, Group{id=23390524, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club23390524, membersCount=1, name=Клан  Narkozz на серве  tiguar.ru, screenName=club23390524, webSite=}, Group{id=26760366, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club26760366, membersCount=12, name=Lineage 2 Intrelude (Tiguar), screenName=club26760366, webSite=http://tiguar.ru/index.php}, Group{id=28392948, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club28392948, membersCount=3, name=Tiguar-KP, screenName=club28392948, webSite=}], post=Post{id=1, description=Hellooooo, link=http://Yandex.ru, media=[Media{id=456239443, url=/storage/sdcard/Android/data/com.orcchg.dev.maxa.vikstra/files/Pictures/ViKStra_2017-02-20_13-16-00_-31171020.jpg}], timestamp=1487614562899, title=})
+02-21 02:24:25.160 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.160 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.160 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.160 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.160 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.160 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressStandard.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressStandard.ogg
+02-21 02:24:25.160 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressSpacebar.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressSpacebar.ogg
+02-21 02:24:25.160 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressDelete.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressDelete.ogg
+02-21 02:24:25.160 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressReturn.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressReturn.ogg
+02-21 02:24:25.160 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressInvalid.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressInvalid.ogg
+02-21 02:24:25.160 1642-1702/system_process W/AudioService: onLoadSoundEffects(), Error -1 while loading samples
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:WallPostingService:97: getCallingIntent: kw_id=1, groups=4, post=Post{id=1, description=Hellooooo, link=http://Yandex.ru, media=[Media{id=456239443, url=/storage/sdcard/Android/data/com.orcchg.dev.maxa.vikstra/files/Pictures/ViKStra_2017-02-20_13-16-00_-31171020.jpg}], timestamp=1487614562899, title=}
+02-21 02:24:25.160 3735-3735/com.orcchg.dev.maxa.vikstra V/GroupListFragment: ⇠ startWallPostingService [5ms]
+                                                                              
+                                                                              --------- beginning of /dev/log/system
+02-21 02:24:25.160 1642-1796/system_process I/ActivityManager: START u0 {cmp=com.orcchg.dev.maxa.vikstra/com.orcchg.vikstra.app.ui.report.main.ReportActivity (has extras)} from pid 3735
+02-21 02:24:25.170 3735-3735/com.orcchg.dev.maxa.vikstra V/GroupListPresenter: ⇠ postToGroups [11ms]
+02-21 02:24:25.170 3735-3735/com.orcchg.dev.maxa.vikstra I/WallPostingService: onCreate(intent service=-1657949776)
+02-21 02:24:25.170 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:WallPostingService:118: Service onCreate
+02-21 02:24:25.170 3735-3893/com.orcchg.dev.maxa.vikstra I/WallPostingService: onHandleIntent(intent service=-1657949776)
+02-21 02:24:25.170 3735-3893/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:WallPostingService:149: Enter Wall Posting service
+02-21 02:24:25.180 3735-3893/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ notifyPostingStatus(status=0) [Thread:"IntentService[wall_posting_service]"]
+02-21 02:24:25.180 3735-3893/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:WallPostingService:257: notifyPostingStatus: 0
+02-21 02:24:25.180 3735-3893/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ notifyPostingStatus [0ms]
+02-21 02:24:25.180 3735-3893/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:VkontakteEndpoint:221: Found some media in attachments to Post, uploading not cached media first before wall posting
+02-21 02:24:25.180 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListFragment: onPause(fragment=-1655797280)
+02-21 02:24:25.180 3735-3893/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:VkontakteEndpoint:228: Total media: cached: 1, retained: 0
+02-21 02:24:25.180 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListPresenter: onPause(presenter=-1656612072)
+02-21 02:24:25.180 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListActivity: onPause(activity=-1655878840)
+02-21 02:24:25.180 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListPresenter: onPause(presenter=-1654383728)
+02-21 02:24:25.190 3735-3893/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:VkontakteEndpoint:234: Some media [size = 1] have already been cached, attach it directly
+02-21 02:24:25.190 3735-3893/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:VkontakteEndpoint:240: No media will be uploaded to endpoint before making wall post - all is in cache
+02-21 02:24:25.190 3735-3893/com.orcchg.dev.maxa.vikstra D/MakeWallPostToGroups: Executing Use-Case...
+02-21 02:24:25.190 3735-3793/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:MakeWallPostToGroups:113: Wall posting, total count: 4
+02-21 02:24:25.190 3735-3793/com.orcchg.dev.maxa.vikstra V/MakeWallPostToGroups: Performing multiple requests, total: 4, different use-cases: 4
+02-21 02:24:25.190 3735-3793/com.orcchg.dev.maxa.vikstra V/MakeWallPostToGroups: Allowed errors total: 1
+02-21 02:24:25.190 3735-3793/com.orcchg.dev.maxa.vikstra V/MakeWallPostToGroups: Request [1 / 4]
+                                                                                 
+                                                                                 [ 02-21 02:24:25.190  3735: 3894 V/         ]
+                                                                                 Performing request [1] at time 17218 07:24:25
+02-21 02:24:25.190 3735-3894/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:MakeWallPost:115: MakeWallPost.Parameters {group=Group{id=26760366, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club26760366, membersCount=12, name=Lineage 2 Intrelude (Tiguar), screenName=club26760366, webSite=http://tiguar.ru/index.php}, message=Hellooooo, attach=http://yandex.ru,photo355126456_456239443}
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:ReportActivity:273: GroupReportBundle id: -1 ; KeywordBundle id: 1 ; Post id: 1 ; isInteractiveMode: true
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseActivity: ⇢ onCreate(savedInstanceState=null)
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra I/ReportActivity: onCreate(activity=-1659993816), smallest width: 360.0
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra V/BasePresenter: ⇢ attachView(view=com.orcchg.vikstra.app.ui.report.main.ReportActivity@9d0e8128)
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra V/BasePresenter: ⇠ attachView [0ms]
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListPresenter: ⇢ onCreate(savedInstanceState=null)
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra V/BasePresenter: ⇢ onCreate(savedInstanceState=null)
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra I/ReportPresenter: onCreate(presenter=-1656453472)
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra V/BasePresenter: ⇠ onCreate [0ms]
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListPresenter: ⇠ onCreate [0ms]
+02-21 02:24:25.200 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseActivity: ⇠ onCreate [4ms]
+02-21 02:24:25.220 3735-3735/com.orcchg.dev.maxa.vikstra D/dalvikvm: GC_FOR_ALLOC freed 778K, 13% free 12785K/14680K, paused 4ms, total 4ms
+02-21 02:24:25.230 3735-3735/com.orcchg.dev.maxa.vikstra D/dalvikvm: GC_FOR_ALLOC freed 36K, 11% free 13090K/14680K, paused 3ms, total 3ms
+02-21 02:24:25.230 3735-3735/com.orcchg.dev.maxa.vikstra D/dalvikvm: GC_FOR_ALLOC freed 21K, 11% free 13410K/15024K, paused 2ms, total 2ms
+02-21 02:24:25.240 3735-3735/com.orcchg.dev.maxa.vikstra D/dalvikvm: GC_FOR_ALLOC freed 5815K, 49% free 7936K/15368K, paused 3ms, total 3ms
+02-21 02:24:25.240 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListFragment: ⇢ onCreate(savedInstanceState=null)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseFragment: ⇢ onCreate(savedInstanceState=null)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/ReportFragment: onCreate(fragment=-1660199040)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BasePresenter: ⇢ attachView(view=ReportFragment{9d0b5f80 #0 id=0x7f0f009f report_fragment_tag})
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BasePresenter: ⇠ attachView [0ms]
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BasePresenter: ⇢ onCreate(savedInstanceState=null)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/SimpleBasePresenter: onCreate(presenter=-1660011472)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BasePresenter: ⇠ onCreate [0ms]
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseFragment: ⇠ onCreate [0ms]
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListFragment: ⇠ onCreate [0ms]
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/CollectionFragment: ⇢ onCreateView(inflater=com.android.internal.policy.impl.PhoneLayoutInflater@9d0dfa60, container=android.widget.FrameLayout{9d11b508 V.E..... ......I. 0,0-0,0 #7f0f009f app:id/container}, savedInstanceState=null)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/CollectionFragment: ⇠ onCreateView [2ms] = android.support.design.widget.CoordinatorLayout{9d0e8670 V.E..... ......I. 0,0-0,0}
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/ReportFragment: onStart(fragment=-1660199040)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/SimpleBasePresenter: onStart(presenter=-1660011472)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/SimpleBasePresenter: Fresh start. (presenter=-1660011472)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseFragment: ⇢ isStateRestored()
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseFragment: ⇠ isStateRestored [0ms] = false
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/ReportActivity: onStart(activity=-1659993816)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/ReportPresenter: onStart(presenter=-1656453472)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/ReportPresenter: Fresh start. (presenter=-1656453472)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:466: stateBegin
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ setInteractiveState(newState=0)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:444: Previous state [0], New state: 0
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ setInteractiveState [0ms]
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra D/GetPostById: Executing Use-Case...
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ReportPresenter:479: Total queued items: 0
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:493: stateReady
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ setInteractiveState(newState=1)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:444: Previous state [0], New state: 1
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ setInteractiveState [0ms]
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListFragment: ⇢ getListView(tag=1030)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListFragment: ⇠ getListView [0ms] = android.support.v7.widget.RecyclerView{9d4a5fc8 GFED.V.. ......I. 0,0-0,0 #7f0f00eb app:id/rv_items}
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:ReportActivity:166: Subscribe on posting progress callback on ReportScreen
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/ReportActivity: onResume(activity=-1659993816)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/ReportPresenter: onResume(presenter=-1656453472)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/ReportFragment: onResume(fragment=-1660199040)
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra I/SimpleBasePresenter: onResume(presenter=-1660011472)
+02-21 02:24:25.250 3735-3771/com.orcchg.dev.maxa.vikstra D/GetPostById: Finished Use-Case execution
+02-21 02:24:25.250 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:VkontakteEndpoint:285: Make wall posts progress: 0 / -1
+02-21 02:24:25.310 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ onFinish(post=Post{id=1, description=Hellooooo, link=http://Yandex.ru, media=[Media{id=456239443, url=/storage/sdcard/Android/data/com.orcchg.dev.maxa.vikstra/files/Pictures/ViKStra_2017-02-20_13-16-00_-31171020.jpg}], timestamp=1487614562899, title=})
+02-21 02:24:25.310 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:914: Use-Case: succeeded to get Post by id
+02-21 02:24:25.310 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ onFinish [0ms]
+02-21 02:24:25.400 1642-1658/system_process I/ActivityManager: Displayed com.orcchg.dev.maxa.vikstra/com.orcchg.vikstra.app.ui.report.main.ReportActivity: +215ms
+                                                               
+                                                               [ 02-21 02:24:25.400  3735: 3735 I/         ]
+                                                               Successfully received response: {"response":{"post_id":364}}
+                                                               
+                                                               [ 02-21 02:24:25.400  3735: 3894 V/         ]
+                                                               Finished while-loop
+02-21 02:24:25.450 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:VkontakteEndpoint:285: Make wall posts progress: 1 / 4
+02-21 02:24:25.460 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:WallPostingService:403: Posting progress: 1 / 4
+02-21 02:24:25.460 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:WallPostingService:415: Group{id=26760366, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club26760366, membersCount=12, name=Lineage 2 Intrelude (Tiguar), screenName=club26760366, webSite=http://tiguar.ru/index.php}
+02-21 02:24:25.460 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ sendPostingResult(postingUnit=PostingUnit{cancelCount=0, failureCount=0, successCount=1, totalCount=4, groupReport=GroupReport{id=0, cancelled=false, errorCode=0, group=Group{id=26760366, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club26760366, membersCount=12, name=Lineage 2 Intrelude (Tiguar), screenName=club26760366, webSite=http://tiguar.ru/index.php}, timestamp=0, wallPostId=364}})
+02-21 02:24:25.460 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ sendPostingResult [0ms]
+02-21 02:24:25.460 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ onPostingProgress(progress=1, total=4)
+02-21 02:24:25.460 3735-3735/com.orcchg.dev.maxa.vikstra V/PostingNotification: ⇢ onPostingProgress(progress=1, total=4)
+02-21 02:24:25.460 3735-3735/com.orcchg.dev.maxa.vikstra V/PostingNotification: ⇠ onPostingProgress [0ms]
+02-21 02:24:25.460 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ onPostingProgress [1ms]
+02-21 02:24:25.480 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇢ onReceive(context=com.orcchg.vikstra.app.AndroidApplication@9d07f438, intent=Intent { act=wall_posting_progress_unit (has extras) })
+02-21 02:24:25.480 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ onPostingProgress(postingUnit=PostingUnit{cancelCount=0, failureCount=0, successCount=1, totalCount=4, groupReport=GroupReport{id=0, cancelled=false, errorCode=0, group=Group{id=26760366, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club26760366, membersCount=12, name=Lineage 2 Intrelude (Tiguar), screenName=club26760366, webSite=http://tiguar.ru/index.php}, timestamp=0, wallPostId=364}})
+02-21 02:24:25.480 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:505: statePostingProgress
+02-21 02:24:25.480 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ setInteractiveState(newState=2)
+02-21 02:24:25.480 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:444: Previous state [1], New state: 2
+02-21 02:24:25.480 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ setInteractiveState [0ms]
+02-21 02:24:25.490 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListFragment: ⇢ getListView(tag=1030)
+02-21 02:24:25.490 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListFragment: ⇠ getListView [0ms] = android.support.v7.widget.RecyclerView{9d4a5fc8 VFED.V.. .F....ID 0,0-1080,1182 #7f0f00eb app:id/rv_items}
+02-21 02:24:25.490 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ onPostingProgress [1ms]
+02-21 02:24:25.490 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇠ onReceive [2ms]
+02-21 02:24:25.740 1162-1162/? W/SurfaceFlinger: couldn't log to binary event log: overflow.
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListFragment: onSaveInstanceState(fragment=-1655797280)
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListPresenter: onSaveInstanceState(presenter=-1656612072)
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra V/Memento: ⇢ toBundle(outState=Bundle[{bundle_key_lm_state=android.support.v7.widget.LinearLayoutManager$SavedState@9d43fd98}])
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra V/Memento: ⇠ toBundle [0ms]
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListActivity: onSaveInstanceState(activity=-1655878840)
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListPresenter: onSaveInstanceState(presenter=-1654383728)
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra V/Memento: ⇢ toBundle(outState=Bundle[{android:viewHierarchyState=Bundle[{android:views={16908290=android.view.AbsSavedState$1@9ce9dc60, 2131689611=android.view.AbsSavedState$1@9ce9dc60, 2131689612=android.view.AbsSavedState$1@9ce9dc60, 2131689632=android.support.design.widget.CoordinatorLayout$SavedState@9d109db0, 2131689633=android.view.AbsSavedState$1@9ce9dc60, 2131689634=android.view.AbsSavedState$1@9ce9dc60, 2131689635=android.view.AbsSavedState$1@9ce9dc60, 2131689636=android.view.AbsSavedState$1@9ce9dc60, 2131689637=android.view.AbsSavedState$1@9ce9dc60, 2131689638=android.view.AbsSavedState$1@9ce9dc60, 2131689639=android.view.AbsSavedState$1@9ce9dc60, 2131689640=android.view.AbsSavedState$1@9ce9dc60, 2131689641=android.view.AbsSavedState$1@9ce9dc60, 2131689661=android.view.AbsSavedState$1@9ce9dc60, 2131689679=android.view.AbsSavedState$1@9ce9dc60, 2131689680=android.support.v7.widget.Toolbar$SavedState@9d3b6090, 2131689697=android.view.AbsSavedState$1@9ce9dc60, 2131689698=android.view.AbsSavedState$1@9ce9dc60, 2131689758=android.view.AbsSavedState$1@9ce9dc60, 2131689759=android.view.AbsSavedState$1@9ce9dc60, 2131689760=android.view.AbsSavedState$1@9ce9dc60, 2131689761=android.view.AbsSavedState$1@9ce9dc60, 2131689762=android.view.AbsSavedState$1@9ce9dc60, 2131689763=android.view.AbsSavedState$1@9ce9dc60, 2131689780=android.view.AbsSavedState$1@9ce9dc60}, android:focusedViewId=2131689707}], android:support:fragments=android.support.v4.app.FragmentManagerState@9d4f6d80}])
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra V/Memento: ⇠ toBundle [0ms]
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListFragment: onStop(fragment=-1655797280)
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListPresenter: onStop(presenter=-1656612072)
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1120: postGroupBundleUpdate: false
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1143: Input GroupBundle wasn't changed
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1148: postKeywordBundleUpdate: false
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:GroupListPresenter:1171: Input KeywordBundle wasn't changed
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListActivity: onStop(activity=-1655878840)
+02-21 02:24:25.750 3735-3735/com.orcchg.dev.maxa.vikstra I/GroupListPresenter: onStop(presenter=-1654383728)
+02-21 02:24:25.840 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:707: onSuspendClick
+02-21 02:24:25.840 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:561: statePause
+02-21 02:24:25.840 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ setInteractiveState(newState=5)
+02-21 02:24:25.840 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:444: Previous state [2], New state: 5
+02-21 02:24:25.840 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ setInteractiveState [0ms]
+02-21 02:24:25.840 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇢ onWallPostingSuspend(paused=true)
+02-21 02:24:25.840 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.840 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.840 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.840 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.840 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:25.840 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressStandard.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressStandard.ogg
+02-21 02:24:25.840 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressSpacebar.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressSpacebar.ogg
+02-21 02:24:25.840 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressDelete.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressDelete.ogg
+02-21 02:24:25.840 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressReturn.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressReturn.ogg
+02-21 02:24:25.840 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressInvalid.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressInvalid.ogg
+02-21 02:24:25.840 1642-1702/system_process W/AudioService: onLoadSoundEffects(), Error -1 while loading samples
+02-21 02:24:25.850 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇠ onWallPostingSuspend [5ms]
+02-21 02:24:25.870 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ onReceive(context=com.orcchg.vikstra.app.AndroidApplication@9d07f438, intent=Intent { act=wall_posting_suspend (has extras) })
+02-21 02:24:25.870 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:WallPostingService:226: Received suspend signal
+02-21 02:24:25.870 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:WallPostingService:228: Explicit pause: true
+02-21 02:24:25.870 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ onWallPostingSuspend(paused=true)
+02-21 02:24:25.870 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:WallPostingService:324: onWallPostingSuspend: paused=true, startHandle=true, component=-1657942048
+02-21 02:24:25.870 3735-3735/com.orcchg.dev.maxa.vikstra D/MakeWallPostToGroups: Toggled suspend: true
+02-21 02:24:25.870 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ onWallPostingSuspend [0ms]
+02-21 02:24:25.870 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ onReceive [2ms]
+02-21 02:24:26.200 3735-3793/com.orcchg.dev.maxa.vikstra V/MakeWallPostToGroups: Request [2 / 4]
+02-21 02:24:26.200 3735-3793/com.orcchg.dev.maxa.vikstra D/MakeWallPostToGroups: Execution has been paused
+02-21 02:24:28.070 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:707: onSuspendClick
+02-21 02:24:28.070 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:576: stateResume
+02-21 02:24:28.070 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ setInteractiveState(newState=6)
+02-21 02:24:28.070 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:444: Previous state [5], New state: 6
+02-21 02:24:28.070 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ setInteractiveState [0ms]
+02-21 02:24:28.070 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇢ onWallPostingSuspend(paused=false)
+02-21 02:24:28.080 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇠ onWallPostingSuspend [3ms]
+02-21 02:24:28.080 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:28.080 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:28.080 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:28.080 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:28.080 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:28.080 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressStandard.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressStandard.ogg
+02-21 02:24:28.080 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressSpacebar.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressSpacebar.ogg
+02-21 02:24:28.080 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressDelete.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressDelete.ogg
+02-21 02:24:28.080 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressReturn.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressReturn.ogg
+02-21 02:24:28.080 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressInvalid.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressInvalid.ogg
+02-21 02:24:28.080 1642-1702/system_process W/AudioService: onLoadSoundEffects(), Error -1 while loading samples
+02-21 02:24:28.100 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ onReceive(context=com.orcchg.vikstra.app.AndroidApplication@9d07f438, intent=Intent { act=wall_posting_suspend (has extras) })
+02-21 02:24:28.100 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:WallPostingService:226: Received suspend signal
+02-21 02:24:28.100 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:WallPostingService:228: Explicit pause: false
+02-21 02:24:28.100 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ onWallPostingSuspend(paused=false)
+02-21 02:24:28.100 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:WallPostingService:324: onWallPostingSuspend: paused=false, startHandle=true, component=-1657942048
+02-21 02:24:28.100 3735-3735/com.orcchg.dev.maxa.vikstra D/MakeWallPostToGroups: Toggled suspend: false
+02-21 02:24:28.110 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ onWallPostingSuspend [0ms]
+02-21 02:24:28.110 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ onReceive [1ms]
+02-21 02:24:29.120 3735-3793/com.orcchg.dev.maxa.vikstra V/MakeWallPostToGroups: Request [3 / 4]
+02-21 02:24:29.120 3735-3793/com.orcchg.dev.maxa.vikstra D/MakeWallPostToGroups: Execution has been resumed
+                                                                                 
+                                                                                 [ 02-21 02:24:29.120  3735: 3901 V/         ]
+                                                                                 Performing request [2] at time 17218 07:24:29
+02-21 02:24:29.120 3735-3901/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:MakeWallPost:115: MakeWallPost.Parameters {group=Group{id=28392948, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club28392948, membersCount=3, name=Tiguar-KP, screenName=club28392948, webSite=}, message=Hellooooo, attach=http://yandex.ru,photo355126456_456239443}
+                                                                                                         
+                                                                                                         [ 02-21 02:24:29.120  3735: 3902 V/         ]
+                                                                                                         Performing request [3] at time 17218 07:24:29
+02-21 02:24:29.120 3735-3902/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:MakeWallPost:115: MakeWallPost.Parameters {group=Group{id=23082086, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club23082086, membersCount=1, name=клан GoldenGun на сервере Tiguar.ru, screenName=club23082086, webSite=http:/tiguar.ru/}, message=Hellooooo, attach=http://yandex.ru,photo355126456_456239443}
+                                                                                                         
+                                                                                                         [ 02-21 02:24:29.170  3735: 3735 E/         ]
+                                                                                                         Failed to receive response: VKError (API errorVKError (code: 214; ; Access to adding post denied: access to the wall is closed))
+02-21 02:24:29.170 3735-3735/com.orcchg.dev.maxa.vikstra E/com.orcchg.dev.maxa.vikstra:VkUseCaseExceptionFactory:13: Error: code [-101], message [null], reason [null]
+02-21 02:24:29.170 3735-3735/com.orcchg.dev.maxa.vikstra E/com.orcchg.dev.maxa.vikstra:VkUseCaseExceptionFactory:16: API error: VKError (code: 214; ; Access to adding post denied: access to the wall is closed)
+02-21 02:24:29.170 3735-3902/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+02-21 02:24:29.170 3735-3902/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+02-21 02:24:29.170 3735-3902/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+                                                                                                        
+                                                                                                        [ 02-21 02:24:29.170  3735: 3902 W/         ]
+                                                                                                        Unhandled exception: VKError (code: 214; ; Access to adding post denied: access to the wall is closed)
+                                                                                                        
+                                                                                                        [ 02-21 02:24:29.180  3735: 3902 V/         ]
+                                                                                                        Finished while-loop
+02-21 02:24:29.180 3735-3735/com.orcchg.dev.maxa.vikstra D/dalvikvm: GC_FOR_ALLOC freed 726K, 43% free 8801K/15368K, paused 7ms, total 7ms
+02-21 02:24:29.180 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:VkontakteEndpoint:285: Make wall posts progress: 3 / 4
+02-21 02:24:29.180 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:WallPostingService:403: Posting progress: 3 / 4
+02-21 02:24:29.180 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:WallPostingService:415: Group{id=23082086, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club23082086, membersCount=1, name=клан GoldenGun на сервере Tiguar.ru, screenName=club23082086, webSite=http:/tiguar.ru/}
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ sendPostingResult(postingUnit=PostingUnit{cancelCount=0, failureCount=1, successCount=1, totalCount=4, groupReport=GroupReport{id=0, cancelled=false, errorCode=214, group=Group{id=23082086, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club23082086, membersCount=1, name=клан GoldenGun на сервере Tiguar.ru, screenName=club23082086, webSite=http:/tiguar.ru/}, timestamp=0, wallPostId=-1}})
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ sendPostingResult [0ms]
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ onPostingProgress(progress=3, total=4)
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/PostingNotification: ⇢ onPostingProgress(progress=3, total=4)
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/PostingNotification: ⇠ onPostingProgress [0ms]
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ onPostingProgress [1ms]
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇢ onReceive(context=com.orcchg.vikstra.app.AndroidApplication@9d07f438, intent=Intent { act=wall_posting_progress_unit (has extras) })
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ onPostingProgress(postingUnit=PostingUnit{cancelCount=0, failureCount=1, successCount=1, totalCount=4, groupReport=GroupReport{id=0, cancelled=false, errorCode=214, group=Group{id=23082086, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club23082086, membersCount=1, name=клан GoldenGun на сервере Tiguar.ru, screenName=club23082086, webSite=http:/tiguar.ru/}, timestamp=0, wallPostId=-1}})
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:505: statePostingProgress
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ setInteractiveState(newState=2)
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:444: Previous state [6], New state: 2
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ setInteractiveState [0ms]
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:CollectionFragment:131: List items are already visible
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListFragment: ⇢ getListView(tag=1030)
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListFragment: ⇠ getListView [0ms] = android.support.v7.widget.RecyclerView{9d4a5fc8 VFED.V.. .F....I. 0,0-1080,1182 #7f0f00eb app:id/rv_items}
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ onPostingProgress [2ms]
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇠ onReceive [2ms]
+                                                                           
+                                                                           [ 02-21 02:24:29.190  3735: 3735 E/         ]
+                                                                           Failed to receive response: VKError (API errorVKError (code: 214; ; Access to adding post denied: access to the wall is closed))
+02-21 02:24:29.190 3735-3735/com.orcchg.dev.maxa.vikstra E/com.orcchg.dev.maxa.vikstra:VkUseCaseExceptionFactory:13: Error: code [-101], message [null], reason [null]
+02-21 02:24:29.200 3735-3735/com.orcchg.dev.maxa.vikstra E/com.orcchg.dev.maxa.vikstra:VkUseCaseExceptionFactory:16: API error: VKError (code: 214; ; Access to adding post denied: access to the wall is closed)
+02-21 02:24:29.200 3735-3901/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+02-21 02:24:29.200 3735-3901/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+02-21 02:24:29.200 3735-3901/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+                                                                                                        
+                                                                                                        [ 02-21 02:24:29.200  3735: 3901 W/         ]
+                                                                                                        Unhandled exception: VKError (code: 214; ; Access to adding post denied: access to the wall is closed)
+                                                                                                        
+                                                                                                        [ 02-21 02:24:29.200  3735: 3901 V/         ]
+                                                                                                        Finished while-loop
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:VkontakteEndpoint:285: Make wall posts progress: 2 / 4
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:WallPostingService:403: Posting progress: 2 / 4
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:WallPostingService:415: Group{id=28392948, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club28392948, membersCount=3, name=Tiguar-KP, screenName=club28392948, webSite=}
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ sendPostingResult(postingUnit=PostingUnit{cancelCount=0, failureCount=2, successCount=1, totalCount=4, groupReport=GroupReport{id=0, cancelled=false, errorCode=214, group=Group{id=28392948, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club28392948, membersCount=3, name=Tiguar-KP, screenName=club28392948, webSite=}, timestamp=0, wallPostId=-1}})
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ sendPostingResult [0ms]
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ onPostingProgress(progress=2, total=4)
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/PostingNotification: ⇢ onPostingProgress(progress=2, total=4)
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/PostingNotification: ⇠ onPostingProgress [1ms]
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ onPostingProgress [1ms]
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇢ onReceive(context=com.orcchg.vikstra.app.AndroidApplication@9d07f438, intent=Intent { act=wall_posting_progress_unit (has extras) })
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ onPostingProgress(postingUnit=PostingUnit{cancelCount=0, failureCount=2, successCount=1, totalCount=4, groupReport=GroupReport{id=0, cancelled=false, errorCode=214, group=Group{id=28392948, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club28392948, membersCount=3, name=Tiguar-KP, screenName=club28392948, webSite=}, timestamp=0, wallPostId=-1}})
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:505: statePostingProgress
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ setInteractiveState(newState=2)
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:444: Previous state [2], New state: 2
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ setInteractiveState [0ms]
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:CollectionFragment:131: List items are already visible
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListFragment: ⇢ getListView(tag=1030)
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/BaseListFragment: ⇠ getListView [0ms] = android.support.v7.widget.RecyclerView{9d4a5fc8 VFED.V.. .F....I. 0,0-1080,1182 #7f0f00eb app:id/rv_items}
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ onPostingProgress [0ms]
+02-21 02:24:29.210 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇠ onReceive [0ms]
+02-21 02:24:30.110 3735-3793/com.orcchg.dev.maxa.vikstra V/MakeWallPostToGroups: Request [4 / 4]
+                                                                                 
+                                                                                 [ 02-21 02:24:30.110  3735: 3903 V/         ]
+                                                                                 Performing request [4] at time 17218 07:24:30
+02-21 02:24:30.110 3735-3903/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:MakeWallPost:115: MakeWallPost.Parameters {group=Group{id=23390524, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club23390524, membersCount=1, name=Клан  Narkozz на серве  tiguar.ru, screenName=club23390524, webSite=}, message=Hellooooo, attach=http://yandex.ru,photo355126456_456239443}
+02-21 02:24:30.150 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:707: onSuspendClick
+02-21 02:24:30.150 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:561: statePause
+02-21 02:24:30.150 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ setInteractiveState(newState=5)
+02-21 02:24:30.150 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:444: Previous state [2], New state: 5
+02-21 02:24:30.150 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇠ setInteractiveState [0ms]
+02-21 02:24:30.150 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇢ onWallPostingSuspend(paused=true)
+02-21 02:24:30.150 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:30.150 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:30.150 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:30.150 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:30.150 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/Effect_Tick.ogg
+02-21 02:24:30.150 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressStandard.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressStandard.ogg
+02-21 02:24:30.150 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressSpacebar.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressSpacebar.ogg
+02-21 02:24:30.150 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressDelete.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressDelete.ogg
+02-21 02:24:30.150 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressReturn.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressReturn.ogg
+02-21 02:24:30.150 1642-1702/system_process E/SoundPool: error loading /system/media/audio/ui/KeypressInvalid.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: Soundpool could not load file: /system/media/audio/ui/KeypressInvalid.ogg
+02-21 02:24:30.150 1642-1702/system_process W/AudioService: onLoadSoundEffects(), Error -1 while loading samples
+02-21 02:24:30.160 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇠ onWallPostingSuspend [2ms]
+02-21 02:24:30.180 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ onReceive(context=com.orcchg.vikstra.app.AndroidApplication@9d07f438, intent=Intent { act=wall_posting_suspend (has extras) })
+02-21 02:24:30.180 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:WallPostingService:226: Received suspend signal
+02-21 02:24:30.180 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:WallPostingService:228: Explicit pause: true
+02-21 02:24:30.180 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ onWallPostingSuspend(paused=true)
+02-21 02:24:30.180 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:WallPostingService:324: onWallPostingSuspend: paused=true, startHandle=true, component=-1657942048
+02-21 02:24:30.180 3735-3735/com.orcchg.dev.maxa.vikstra D/MakeWallPostToGroups: Toggled suspend: true
+02-21 02:24:30.180 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ onWallPostingSuspend [0ms]
+02-21 02:24:30.180 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ onReceive [0ms]
+                                                                               
+                                                                               [ 02-21 02:24:30.180  3735: 3735 E/         ]
+                                                                               Failed to receive response: VKError (API errorVKError (code: 214; ; Access to adding post denied: access to the wall is closed))
+02-21 02:24:30.180 3735-3735/com.orcchg.dev.maxa.vikstra E/com.orcchg.dev.maxa.vikstra:VkUseCaseExceptionFactory:13: Error: code [-101], message [null], reason [null]
+02-21 02:24:30.180 3735-3735/com.orcchg.dev.maxa.vikstra E/com.orcchg.dev.maxa.vikstra:VkUseCaseExceptionFactory:16: API error: VKError (code: 214; ; Access to adding post denied: access to the wall is closed)
+02-21 02:24:30.180 3735-3903/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+02-21 02:24:30.180 3735-3903/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+02-21 02:24:30.180 3735-3903/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+                                                                                                        
+                                                                                                        [ 02-21 02:24:30.180  3735: 3903 W/         ]
+                                                                                                        Unhandled exception: VKError (code: 214; ; Access to adding post denied: access to the wall is closed)
+                                                                                                        
+                                                                                                        [ 02-21 02:24:30.180  3735: 3903 V/         ]
+                                                                                                        Finished while-loop
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra D/com.orcchg.dev.maxa.vikstra:VkontakteEndpoint:285: Make wall posts progress: 4 / 4
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:WallPostingService:403: Posting progress: 4 / 4
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:WallPostingService:415: Group{id=23390524, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club23390524, membersCount=1, name=Клан  Narkozz на серве  tiguar.ru, screenName=club23390524, webSite=}
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra V/com.orcchg.dev.maxa.vikstra:ValueUtility:71: Item class: Api214VkUseCaseException
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇢ sendPostingResult(postingUnit=PostingUnit{cancelCount=0, failureCount=3, successCount=1, totalCount=4, groupReport=GroupReport{id=0, cancelled=false, errorCode=214, group=Group{id=23390524, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club23390524, membersCount=1, name=Клан  Narkozz на серве  tiguar.ru, screenName=club23390524, webSite=}, timestamp=0, wallPostId=-1}})
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra V/WallPostingService: ⇠ sendPostingResult [0ms]
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra V/PostingNotification: ⇢ onPostingComplete()
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra V/PostingNotification: ⇠ onPostingComplete [1ms]
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportActivity: ⇢ onReceive(context=com.orcchg.vikstra.app.AndroidApplication@9d07f438, intent=Intent { act=wall_posting_progress_unit (has extras) })
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ onPostingProgress(postingUnit=PostingUnit{cancelCount=0, failureCount=3, successCount=1, totalCount=4, groupReport=GroupReport{id=0, cancelled=false, errorCode=214, group=Group{id=23390524, canPost=true, keyword=Keyword{keyword=Tiguar}, link=https://vk.com/club23390524, membersCount=1, name=Клан  Narkozz на серве  tiguar.ru, screenName=club23390524, webSite=}, timestamp=0, wallPostId=-1}})
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:505: statePostingProgress
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra V/ReportPresenter: ⇢ setInteractiveState(newState=2)
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra I/com.orcchg.dev.maxa.vikstra:ReportPresenter:444: Previous state [5], New state: 2
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra E/com.orcchg.dev.maxa.vikstra:ReportPresenter:453: Illegal state transition from [5] to [2]
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra D/AndroidRuntime: Shutting down VM
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra W/dalvikvm: threadid=1: thread exiting with uncaught exception (group=0x9cd4fb20)
+02-21 02:24:30.200 3735-3735/com.orcchg.dev.maxa.vikstra E/AndroidRuntime: FATAL EXCEPTION: main
+                                                                           Process: com.orcchg.dev.maxa.vikstra, PID: 3735
+                                                                           java.lang.IllegalStateException: Transition from 5 to 2
+                                                                               at com.orcchg.vikstra.app.ui.report.main.ReportPresenter.setInteractiveState_aroundBody4(ReportPresenter.java:454)
+                                                                               at com.orcchg.vikstra.app.ui.report.main.ReportPresenter$AjcClosure5.run(ReportPresenter.java:1)
+                                                                               at org.aspectj.runtime.reflect.JoinPointImpl.proceed(JoinPointImpl.java:149)
+                                                                               at hugo.weaving.internal.Hugo.logAndExecute(Hugo.java:39)
+                                                                               at com.orcchg.vikstra.app.ui.report.main.ReportPresenter.setInteractiveState(ReportPresenter.java:443)
+                                                                               at com.orcchg.vikstra.app.ui.report.main.ReportPresenter.statePostingProgress(ReportPresenter.java:506)
+                                                                               at com.orcchg.vikstra.app.ui.report.main.ReportPresenter.onPostingProgress_aroundBody6(ReportPresenter.java:737)
+                                                                               at com.orcchg.vikstra.app.ui.report.main.ReportPresenter$AjcClosure7.run(ReportPresenter.java:1)
+                                                                               at org.aspectj.runtime.reflect.JoinPointImpl.proceed(JoinPointImpl.java:149)
+                                                                               at hugo.weaving.internal.Hugo.logAndExecute(Hugo.java:39)
+                                                                               at com.orcchg.vikstra.app.ui.report.main.ReportPresenter.onPostingProgress(ReportPresenter.java:734)
+                                                                               at com.orcchg.vikstra.app.ui.report.main.ReportActivity$3.onReceive_aroundBody0(ReportActivity.java:252)
+                                                                               at com.orcchg.vikstra.app.ui.report.main.ReportActivity$3$AjcClosure1.run(ReportActivity.java:1)
+                                                                               at org.aspectj.runtime.reflect.JoinPointImpl.proceed(JoinPointImpl.java:149)
+                                                                               at hugo.weaving.internal.Hugo.logAndExecute(Hugo.java:39)
+                                                                               at com.orcchg.vikstra.app.ui.report.main.ReportActivity$3.onReceive(ReportActivity.java:251)
+                                                                               at android.support.v4.content.LocalBroadcastManager.executePendingBroadcasts(LocalBroadcastManager.java:297)
+                                                                               at android.support.v4.content.LocalBroadcastManager.access$000(LocalBroadcastManager.java:46)
+                                                                               at android.support.v4.content.LocalBroadcastManager$1.handleMessage(LocalBroadcastManager.java:116)
+                                                                               at android.os.Handler.dispatchMessage(Handler.java:102)
+                                                                               at android.os.Looper.loop(Looper.java:136)
+                                                                               at android.app.ActivityThread.main(ActivityThread.java:5017)
+                                                                               at java.lang.reflect.Method.invokeNative(Native Method)
+                                                                               at java.lang.reflect.Method.invoke(Method.java:515)
+                                                                               at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:779)
+                                                                               at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:595)
+                                                                               at dalvik.system.NativeStart.main(Native Method)
+02-21 02:24:30.200 1642-1923/system_process W/ActivityManager:   Force finishing activity com.orcchg.dev.maxa.vikstra/com.orcchg.vikstra.app.ui.report.main.ReportActivity
+02-21 02:24:30.210 1642-1659/system_process D/dalvikvm: GC_FOR_ALLOC freed 557K, 18% free 12062K/14620K, paused 8ms, total 8ms
+02-21 02:24:30.210 1642-1659/system_process I/dalvikvm-heap: Grow heap (frag case) to 12.071MB for 225516-byte allocation
+02-21 02:24:30.220 1642-1659/system_process D/dalvikvm: GC_FOR_ALLOC freed 18K, 18% free 12264K/14844K, paused 6ms, total 6ms
+02-21 02:24:30.240 1642-1659/system_process D/dalvikvm: GC_FOR_ALLOC freed 84K, 18% free 12181K/14844K, paused 6ms, total 6ms
+02-21 02:24:30.240 1642-1659/system_process I/dalvikvm-heap: Grow heap (frag case) to 14.391MB for 2536932-byte allocation
+02-21 02:24:30.250 1642-1651/system_process D/dalvikvm: GC_FOR_ALLOC freed <1K, 16% free 14658K/17324K, paused 10ms, total 10ms
+                                                        
+                                                        [ 02-21 02:24:30.300  1642: 1659 D/         ]
+                                                        HostConnection::get() New Host Connection established 0xb864a490, tid 1659
+02-21 02:24:30.710 1642-1659/system_process W/ActivityManager: Activity pause timeout for ActivityRecord{9da6f808 u0 com.orcchg.dev.maxa.vikstra/com.orcchg.vikstra.app.ui.report.main.ReportActivity t7 f}
+02-21 02:24:31.120 3735-3793/com.orcchg.dev.maxa.vikstra V/MakeWallPostToGroups: Multi Use-Case: total results: 4
+02-21 02:24:31.120 3735-3793/com.orcchg.dev.maxa.vikstra D/MakeWallPostToGroups: Finished Use-Case execution
+02-21 02:24:40.210 1642-1659/system_process W/ActivityManager: Launch timeout has expired, giving up wake lock!
