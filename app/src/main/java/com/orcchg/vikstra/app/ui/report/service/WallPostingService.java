@@ -171,6 +171,7 @@ public class WallPostingService extends BaseIntentService {
             while (!hasFinished) {
                 try {
                     lock.wait();
+                    Timber.v("Service idling... [%s]", hasFinished);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
@@ -182,6 +183,7 @@ public class WallPostingService extends BaseIntentService {
          * it's use-cases are called from some {@link PostExecuteScheduler} corresponding to the
          * main (ui) thread. So, this scheduler will then notify service to continue and finish.
          */
+        stopForeground(true);
         Timber.i("Exit Wall Posting service");
     }
 
