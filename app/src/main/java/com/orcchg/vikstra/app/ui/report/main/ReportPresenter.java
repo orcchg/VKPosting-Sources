@@ -59,7 +59,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private final PostToSingleGridVoMapper postToSingleGridVoMapper;
 
     private @InteractiveMode @Heavy List<GroupReport> storedReports = new ArrayList<>();
-    private @InteractiveMode @Heavy Queue<PostingUnit> pendingProgressItems = new LinkedList<>();
     private @Heavy GroupReportBundle inputGroupReportBundle;  // used only in non-interactive mode
 
     private MementoCommon mementoCommon = new MementoCommon();
@@ -470,16 +469,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         mementoInteractive.isFinishedPosting = false;
         mementoInteractive.isWallPostingPaused = false;
         storedReports.clear();
-        pendingProgressItems.clear();
         freshClearAndPrepare();
 
         getPostByIdUseCase.execute();  // fresh start - load Post
-
-        // deploy all queued items
-        Timber.v("Total queued items: %s", pendingProgressItems.size());
-        while (!pendingProgressItems.isEmpty()) {
-            deployPostingUnit(pendingProgressItems.poll());
-        }
 
         stateReady();  // proceed to the next state - READY
     }
@@ -726,16 +718,26 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @DebugLog @InteractiveMode @Override
     public void onPostingProgress(PostingUnit postingUnit) {
         /**
-         * ReportScreen is subscribed to receive incoming data from {@link WallPostingService}
-         * in it's onCreate(), but get's ready to actually visualize it and do the rest stuff in onStart(),
-         * when it actually gets to the state {@link StateContainer.Interactive.READY}. While it will
-         * haven't happened, all incoming data items are queued.
+         * Sometimes user can click suspend button in the middle of some single wall posting executes,
+         * and this execution will then finish (all new ones just get suspended) finish as usual,
+         * delivering it's result via callback to {@link WallPostingService} and the latter, in turn,
+         * will broadcast an intent with extras here to ReportScreen. This result is 'tardy'.
+         *
+         * But the state of ReportScreen has previously changed to {@link StateContainer.Interactive.PAUSE},
+         * as user had clicked suspend button before. Thus, any incoming intent with progress unit
+         * will attempt to change state again to {@link StateContainer.Interactive.POSTING_PROGRESS},
+         * which is illegal transition.
+         *
+         * So, we must deploy all incoming data items, if any, while ReportScreen is paused.
          */
-        if (mementoInteractive.state == StateContainer.Interactive.BEGIN) {
-            pendingProgressItems.add(postingUnit);
-        } else {
-            statePostingProgress(postingUnit);
+        switch (mementoInteractive.state) {
+            case StateContainer.Interactive.BEGIN:
+            case StateContainer.Interactive.PAUSE:
+                Timber.w("Received tardy posting unit after suspension - deploy w/o state transition");
+                deployPostingUnit(postingUnit);  // visualize item w/o state transition
+                return;
         }
+        statePostingProgress(postingUnit);
     }
 
     // ------------------------------------------
