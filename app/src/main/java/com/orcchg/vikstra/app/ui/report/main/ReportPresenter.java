@@ -534,14 +534,14 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
      * Go to POSTING_CANCEL state, notify posting cancelled and check access token
      */
     @InteractiveMode
-    private void statePostingCancel(Throwable reason, long groupReportBundleId) {
+    private void statePostingCancel(int apiErrorCode, long groupReportBundleId) {
         Timber.i("statePostingCancel");
         setInteractiveState(StateContainer.Interactive.POSTING_CANCEL);
         // enter POSTING_CANCEL state logic
 
         mementoInteractive.isFinishedPosting = true;
 
-        if (EndpointUtility.hasAccessTokenExhausted(reason)) {
+        if (EndpointUtility.hasAccessTokenExhausted(apiErrorCode)) {
             Timber.w("Access Token has exhausted !");
             if (isViewAttached()) getView().onAccessTokenExhausted();
         } else {
@@ -632,14 +632,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (isInteractiveMode()) {
-//            // get id reserved for the item to store in repository next
-//            memento.storedReportsId = putGroupReportBundleUseCase.getReservedId();
-//            // put everything available in 'storedReports' to repository
-//            List<GroupReportEssence> essences = groupReportEssenceMapper.mapBack(storedReports);  // 'id' and 'timestamp' are ignored
-//            PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(
-//                    essences, memento.keywordBundleId, memento.currentPost.id());
-//            putGroupReportBundleUseCase.setParameters(parameters);
-//            putGroupReportBundleUseCase.execute();  // silent create without callback
             mementoInteractive.toBundle(outState);
         } else {
             mementoNormal.toBundle(outState);
@@ -722,8 +714,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     // ------------------------------------------
     @Override
-    public void onPostingCancel(Throwable reason, long groupReportBundleId) {
-        statePostingCancel(reason, groupReportBundleId);
+    public void onPostingCancel(int apiErrorCode, long groupReportBundleId) {
+        statePostingCancel(apiErrorCode, groupReportBundleId);
     }
 
     @Override
@@ -771,30 +763,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     public void performReverting() {
         Timber.i("performReverting");
         stateDeleteReportsStart();
-//        /**
-//         * Currently there are two different, but similar {@link GroupReportBundle} items - one from
-//         * {@link WallPostingService} - created and then put to repository - and potential item,
-//         * which will be composed from {@link ReportPresenter.Memento#storedReports} and then put to
-//         * repository with {@link ReportPresenter.Memento#storedReportsId} when ReportScreen will be
-//         * in the middle of destruction-restoration process.
-//         *
-//         * Any reverting performed here will affect the latter {@link GroupReportBundle} and won't
-//         * have any effect on the former. But user could still open notification and see the former
-//         * item loaded to ReportScreen, missing all revert-statuses. To avoid that, we dismiss notification.
-//         */
-//        if (isViewAttached()) getView().cancelPreviousNotifications();
-//
-//        List<GroupReport> successReports = new ArrayList<>();
-//        for (GroupReport report : storedReports) {  // only successful posts can be reverted
-//            if (report.status() == GroupReport.STATUS_SUCCESS) successReports.add(report);
-//        }
-//        if (successReports.isEmpty()) {
-//            // TODO: exclude success reports from 'storeReports' after revert
-//            if (isViewAttached()) getView().onPostRevertingEmpty();
-//        } else {
-//            if (isViewAttached()) getView().onPostRevertingStarted();
-//            vkontakteEndpoint.deleteWallPosts(successReports, createDeleteWallPostsCallback());
-//        }
     }
 
     // ------------------------------------------
@@ -835,22 +803,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         } else {
             stateStart();
         }
-//        if (isViewAttached()) getView().showLoading(getListTag());
-//        /**
-//         * Load GroupReportBundle from repository either if we aren't in interactive mode or we are
-//         * in such mode, but have also restored everything from repository that we had previously
-//         * managed to store. So, now it is allowed to swipe-to-refresh (by default) and this will lead
-//         * {@link ReportPresenter#retry()} method to be invoked, and then {@link ReportPresenter#freshStart()},
-//         * and we will get here, but still in interactive mode - so, we just retry and reload items
-//         * from repository.
-//         */
-//        if (!isInteractiveMode() || isStateRestored()) {
-//            getGroupReportBundleByIdUseCase.execute();
-//        } else if (isViewAttached()) {
-//            // disable swipe-to-refresh when GroupReport-s are coming interactively
-//            getView().enableSwipeToRefresh(false);
-//        }
-//        getPostByIdUseCase.execute();
     }
 
     @Override
@@ -866,13 +818,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             applyPost(mementoCommon.currentPost);  // restore Post
 
             // TODO: re-attach to running service
-
-//            // restore all those GroupReport-s from repository that we had managed to store.
-//            memento.isFinishedPosting = true;  // assume posting has finished on state restore
-//            if (isViewAttached()) getView().enableButtonsOnPostingFinished();
-//
-//            getGroupReportBundleByIdUseCase.setGroupReportId(memento.storedReportsId);
-//            getGroupReportBundleByIdUseCase.execute();
         } else {
             mementoNormal = MementoNormal.fromBundle(savedInstanceState);
             freshStart();  // nothing to be restored
@@ -1025,41 +970,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             public void onFinish(@Nullable Boolean result) {
                 Timber.i("Use-Case: succeeded to delete wall Post-s");
                 stateDeleteReportsFinished(result != null ? result : false);
-//                int totalReverted = 0;
-//                int position = 0;
-//                for (GroupReport report : storedReports) {  // only successful posts can be reverted
-//                    if (report.status() == GroupReport.STATUS_SUCCESS) {
-//                        ++totalReverted;
-//                        report.setReverted(true);
-//                        int xposition = position;
-//                        if (isInteractiveMode()) {
-//                            // in interactive mode items in list adapter have reversed order
-//                            xposition = storedReports.size() - 1 - position;
-//                        }
-//                        ((ReportAdapter) listAdapter).setItemRevertedSilent(xposition, true);
-//                    }
-//                    ++position;
-//                }
-//                if (totalReverted > 0) {
-//                    Timber.d("Total reverted successful posts: %s", totalReverted);
-//                    listAdapter.notifyDataSetChanged();  // visual changes
-//                    if (!isInteractiveMode() || isStateRestored()) {
-//                        Timber.d("Update GroupReport-s in repository in non-interactive mode or after state restored");
-//                        GroupReportBundle bundle = GroupReportBundle.builder()
-//                                .setId(inputGroupReportBundle.id())
-//                                .setGroupReports(storedReports)
-//                                .setKeywordBundleId(memento.keywordBundleId)
-//                                .setPostId(memento.currentPost.id())
-//                                .setTimestamp(inputGroupReportBundle.timestamp())
-//                                .build();
-//                        postGroupReportBundleUseCase.setParameters(new PostGroupReportBundle.Parameters(bundle));
-//                        postGroupReportBundleUseCase.execute();  // silent update without callback
-//                    }
-//                }
-//                if (isViewAttached()) {
-//                    getView().onPostRevertingFinished();
-//                    getView().updatePostedCounters(0, memento.totalForPosting);
-//                }
             }
 
             @Override

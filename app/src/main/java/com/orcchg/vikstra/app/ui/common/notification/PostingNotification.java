@@ -13,6 +13,8 @@ import com.orcchg.vikstra.app.ui.report.main.ReportActivity;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
 
+import hugo.weaving.DebugLog;
+
 public class PostingNotification implements IPostingNotificationDelegate {
 
     private long groupReportBundleId, keywordBundleId, postId;
@@ -22,10 +24,6 @@ public class PostingNotification implements IPostingNotificationDelegate {
     private NotificationCompat.Builder notificationBuilderPosting;
 
     private String NOTIFICATION_POSTING_COMPLETE, NOTIFICATION_POSTING_INTERRUPT;
-
-    public PostingNotification(Context context) {
-        this(context, Constant.BAD_ID, Constant.BAD_ID, Constant.BAD_ID);
-    }
 
     public PostingNotification(Context context, long groupReportBundleId, long keywordBundleId, long postId) {
         this.groupReportBundleId = groupReportBundleId;
@@ -57,31 +55,32 @@ public class PostingNotification implements IPostingNotificationDelegate {
         notificationBuilderPosting.setContentIntent(makePendingIntent(context, groupReportBundleId, keywordBundleId, postId));
     }
 
-    @Override
+    @DebugLog @Override
     public void onPostingProgress(int progress, int total) {
         hasPostingFinished = false;
         notificationBuilderPosting.setProgress(total, progress, false);
         notificationManager.notify(Constant.NotificationID.POSTING, notificationBuilderPosting.build());
     }
 
-    @Override
+    @DebugLog @Override
     public void onPostingProgressInfinite() {
         notificationBuilderPosting.setProgress(0, 0, true);
         notificationManager.notify(Constant.NotificationID.POSTING, notificationBuilderPosting.build());
     }
 
-    @Override
+    @DebugLog @Override
     public void onPostingStarted() {
         // already initialized in ctor
     }
 
-    @Override
+    @DebugLog @Override
     public void onPostingComplete() {
         hasPostingFinished = true;
         notificationBuilderPosting.setContentText(NOTIFICATION_POSTING_COMPLETE).setProgress(0, 0, false);
         notificationManager.notify(Constant.NotificationID.POSTING, notificationBuilderPosting.build());
     }
 
+    @DebugLog
     public void onPostingInterrupt() {
         hasPostingFinished = true;
         notificationBuilderPosting.setContentText(NOTIFICATION_POSTING_INTERRUPT).setProgress(0, 0, false);

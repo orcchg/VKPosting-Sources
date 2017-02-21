@@ -54,7 +54,7 @@ public interface ReportContract {
         void onDumpPressed();
         void onSuspendClick();
 
-        void onPostingCancel(Throwable reason, long groupReportBundleId);
+        void onPostingCancel(int apiErrorCode, long groupReportBundleId);
         void onPostingFinish(long groupReportBundleId);
         void onPostingProgress(PostingUnit postingUnit);
 

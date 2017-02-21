@@ -40,6 +40,7 @@ import com.orcchg.vikstra.domain.model.misc.PostingUnit;
 import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.vk.sdk.VKServiceActivity;
 
 import java.lang.annotation.Retention;
@@ -61,7 +62,7 @@ public class WallPostingService extends BaseIntentService {
     public static final String EXTRA_SELECTED_GROUPS = "extra_selected_groups";
     public static final String EXTRA_CURRENT_POST = "extra_current_post";
     public static final String OUT_EXTRA_WALL_POSTING_PROGRESS_UNIT = "out_extra_wall_posting_progress_unit";
-    public static final String OUT_EXTRA_WALL_POSTING_CANCEL_REASON_CLASS_NAME = "out_extra_wall_posting_cancel_reason_class_name";
+    public static final String OUT_EXTRA_WALL_POSTING_CANCEL_REASON_CODE = "out_extra_wall_posting_cancel_reason_class_name";
     public static final String OUT_EXTRA_WALL_POSTING_GROUP_REPORT_BUNDLE_ID = "out_extra_wall_posting_group_report_bundle_id";
 
     public static final int WALL_POSTING_STATUS_STARTED = 0;
@@ -274,8 +275,9 @@ public class WallPostingService extends BaseIntentService {
 
     @DebugLog
     void sendPostingCancelled(Throwable reason, long groupReportBundleId) {
+        int apiErrorCode = EndpointUtility.errorCode(reason);
         Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_CANCELLED);
-        intent.putExtra(OUT_EXTRA_WALL_POSTING_CANCEL_REASON_CLASS_NAME, reason.getClass().getCanonicalName());
+        intent.putExtra(OUT_EXTRA_WALL_POSTING_CANCEL_REASON_CODE, apiErrorCode);
         intent.putExtra(OUT_EXTRA_WALL_POSTING_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }

@@ -232,18 +232,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         @DebugLog @Override
         public void onReceive(Context context, Intent intent) {
             long groupReportBundleId = intent.getLongExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
-            String className = intent.getStringExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_CANCEL_REASON_CLASS_NAME);
-            Throwable reason = null;
-//            if (!TextUtils.isEmpty(className)) {
-//                try {
-//                    Class clazz = Class.forName(className);
-//                    clazz.newInstance();
-//                } catch (ClassNotFoundException e) {
-//                    Timber.w("Not found class for name [%s] to construct Throwable reason from Intent extra", className);
-//                }
-//            }
-            // TODO: reason properly
-            presenter.onPostingCancel(reason, groupReportBundleId);
+            int apiErrorCode = intent.getIntExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_CANCEL_REASON_CODE, 0);
+            presenter.onPostingCancel(apiErrorCode, groupReportBundleId);
         }
     };
 
@@ -277,7 +267,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
             groupReportBundleId = getIntent().getLongExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
             keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
-            isInteractiveMode = true;
+            isInteractiveMode = getIntent().getBooleanExtra(EXTRA_IS_INTERACTIVE_MODE, true);
             postingRevertFinished = false;
         }
         Timber.d("GroupReportBundle id: %s ; KeywordBundle id: %s ; Post id: %s ; isInteractiveMode: %s",
