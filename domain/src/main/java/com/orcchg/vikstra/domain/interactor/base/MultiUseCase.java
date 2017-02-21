@@ -176,6 +176,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         });
 
         for (int i = 0; i < total; ++i) {
+            // leave immediately, if main thread executor has shutdown
             if (checkInterruption()) return preparedResults(results);  // return results that have been recorded
 
             Timber.tag(getClass().getSimpleName());
@@ -324,6 +325,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
          * and output results.
          */
         synchronized (lock) {
+            // wait for all use-cases to finish or leave immediately, if main thread executor has shutdown
             while (!ValueUtility.isAllTrue(doneFlags) && !checkInterruption()) {
                 try {
                     lock.wait();  // waiting all tasks to finish, releasing lock
