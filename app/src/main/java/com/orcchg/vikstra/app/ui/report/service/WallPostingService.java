@@ -448,7 +448,10 @@ public class WallPostingService extends BaseIntentService {
 
             @DebugLog @Override
             public void onPostingProgress(int progress, int total) {
-                if (progress == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) return;
+                if (wasPaused ||  // ignore tardy progress unit after pause and starting callback
+                    progress == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) {
+                    return;
+                }
                 postingNotification.onPostingProgress(progress, total);
             }
 
@@ -473,7 +476,10 @@ public class WallPostingService extends BaseIntentService {
 
             @DebugLog @Override
             public void onPhotoUploadProgress(int progress, int total) {
-                if (progress == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) return;
+                if (wasPaused ||  // ignore tardy progress unit after pause and starting callback
+                    progress == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) {
+                    return;
+                }
                 photoUploadNotification.onPhotoUploadProgress(progress, total);
             }
 
