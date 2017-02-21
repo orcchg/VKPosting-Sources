@@ -69,6 +69,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private static final String EXTRA_IS_INTERACTIVE_MODE = "extra_is_interactive_mode";
     public static final int REQUEST_CODE = Constant.RequestCode.REPORT_SCREEN;
 
+    private static boolean isAlive = true;
+
     private String DUMP_FILE_DIALOG_TITLE, DUMP_FILE_DIALOG_HINT,
             EMAIL_FILE_DIALOG_TITLE, EMAIL_FILE_DIALOG_HINT, EMAIL_BODY, EMAIL_SUBJECT,
             INFO_TITLE, REPORTS_DUMP_FILE_PREFIX,
@@ -129,6 +131,10 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         return intent;
     }
 
+    public static boolean isAlive() {
+        return isAlive;
+    }
+
     @NonNull @Override
     protected ReportContract.Presenter createPresenter() {
         return reportComponent.presenter();
@@ -150,6 +156,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     // --------------------------------------------------------------------------------------------
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        isAlive = true;
         initData(savedInstanceState);  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_report);
@@ -214,6 +221,8 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         if (dialog5 != null) dialog5.dismiss();
         if (dialog6 != null) dialog6.dismiss();
         if (dialog7 != null) dialog7.dismiss();
+
+        isAlive = false;
     }
 
     /* Broadcast receiver */

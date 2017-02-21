@@ -105,10 +105,16 @@ public class PostingNotification implements IPostingNotificationDelegate {
         } else {  // 'groupReportBundleId' could be BAD_ID here, so don't open ReportScreen in non-interactive mode
             intent = ReportActivity.getCallingIntent(context, groupReportBundleId, keywordBundleId, postId);
         }
-//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-//        stackBuilder.addParentStack(ReportActivity.class);
-//        stackBuilder.addNextIntent(intent);
-//        return stackBuilder.getPendingIntent(ReportActivity.REQUEST_CODE, PendingIntent.FLAG_UPDATE_CURRENT);
-        return PendingIntent.getActivity(context, ReportActivity.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        PendingIntent pendingIntent;
+//        if (ReportActivity.isAlive()) {
+            pendingIntent = PendingIntent.getActivity(context, ReportActivity.REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        } else {
+//            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+//            stackBuilder.addParentStack(ReportActivity.class);
+//            stackBuilder.addNextIntent(intent);
+//            pendingIntent = stackBuilder.getPendingIntent(ReportActivity.REQUEST_CODE, PendingIntent.FLAG_UPDATE_CURRENT);
+//        }
+        return pendingIntent;
     }
 }
