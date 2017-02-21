@@ -1439,7 +1439,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         return (reason) -> {
             Timber.i("Searching for Group-s has been cancelled");
             if (isViewAttached()) {
-                if (EndpointUtility.hasAccessTokenExhausted(reason)) {
+                int apiErrorCode = EndpointUtility.errorCode(reason);
+                if (EndpointUtility.hasAccessTokenExhausted(apiErrorCode)) {
                     Timber.w("Access Token has exhausted !");
                     getView().onAccessTokenExhausted();
                 } else {
