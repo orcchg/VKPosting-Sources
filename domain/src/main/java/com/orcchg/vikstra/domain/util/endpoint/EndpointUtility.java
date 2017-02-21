@@ -1,11 +1,13 @@
 package com.orcchg.vikstra.domain.util.endpoint;
 
-import android.support.annotation.Nullable;
-
 import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
+import com.orcchg.vikstra.domain.exception.vkontakte.VkUseCaseExceptionFactory;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKSdk;
 
+/**
+ * Designed to work with Vkontakte at the moment.
+ */
 public class EndpointUtility {
 
     public static final long BAD_VK_USER_ID = 0;
@@ -18,7 +20,11 @@ public class EndpointUtility {
                 : BAD_VK_USER_ID;
     }
 
-    public static boolean hasAccessTokenExhausted(@Nullable Throwable reason) {
-        return !VKSdk.isLoggedIn() || Api5VkUseCaseException.class.isInstance(reason);
+    public static int errorCode(Throwable reason) {
+        return VkUseCaseExceptionFactory.errorCode(reason);
+    }
+
+    public static boolean hasAccessTokenExhausted(int apiErrorCode) {
+        return !VKSdk.isLoggedIn() || apiErrorCode == Api5VkUseCaseException.ERROR_CODE;
     }
 }
