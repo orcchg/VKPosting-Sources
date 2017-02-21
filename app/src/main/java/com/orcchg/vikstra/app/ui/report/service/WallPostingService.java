@@ -327,6 +327,8 @@ public class WallPostingService extends BaseIntentService {
                 paused, wasStartedHandle(), (component != null ? component.hashCode() : "null"));
         wasPaused = paused;
         if (paused) {
+            if (postingNotification != null) postingNotification.onPostingPaused();
+            if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadPaused();
             component.vkontakteEndpoint().pauseWallPosting();
         } else {
             component.vkontakteEndpoint().resumeWallPosting();
@@ -465,7 +467,7 @@ public class WallPostingService extends BaseIntentService {
     private IPhotoUploadNotificationDelegate photoUploadDelegate() {
         return new IPhotoUploadNotificationDelegate() {
             @Override
-            public void onPhotoUploaStarted() {
+            public void onPhotoUploadStarted() {
                 hasPhotoUploadStarted = true;
             }
 

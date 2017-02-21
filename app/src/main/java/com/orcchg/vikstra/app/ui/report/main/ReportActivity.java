@@ -97,7 +97,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         openRevertAllWarningDialog();
     }
     @OnClick(R.id.fab)
-    void onSuspenClick() {
+    void onSuspendClick() {
         presenter.onSuspendClick();
     }
 

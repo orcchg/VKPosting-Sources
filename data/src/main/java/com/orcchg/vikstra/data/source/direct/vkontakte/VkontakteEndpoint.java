@@ -7,7 +7,6 @@ import android.text.TextUtils;
 
 import com.orcchg.vikstra.data.source.direct.Endpoint;
 import com.orcchg.vikstra.data.source.direct.ImageLoader;
-import com.orcchg.vikstra.data.source.memory.ContentUtility;
 import com.orcchg.vikstra.domain.DomainConfig;
 import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.exception.vkontakte.Api5VkUseCaseException;
@@ -300,7 +299,7 @@ public class VkontakteEndpoint extends Endpoint {
             Timber.d("Photo uploading progress: %s / %s", index + 1, total);
             if (photoUploadNotificationDelegate == null) return;
             if (index == Constant.INIT_PROGRESS && total == Constant.INIT_PROGRESS) {
-                photoUploadNotificationDelegate.onPhotoUploaStarted();
+                photoUploadNotificationDelegate.onPhotoUploadStarted();
                 return;
             }
             if (index + 1 < total) {  // progress == index + 1
