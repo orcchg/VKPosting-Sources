@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.amlcurran.showcaseview.OnShowcaseEventListener;
 import com.github.amlcurran.showcaseview.ShowcaseView;
@@ -37,10 +38,10 @@ import com.orcchg.vikstra.app.ui.group.list.fragment.GroupListFragment;
 import com.orcchg.vikstra.app.ui.util.ShadowHolder;
 import com.orcchg.vikstra.app.ui.util.UiUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.domain.DomainConfig;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
-import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
 
 import java.util.Locale;
@@ -95,7 +96,7 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     private long keywordBundleId = Constant.BAD_ID;
     private long postId = Constant.BAD_ID;
 
-    private @DebugSake int chosenSettingVariant = 0;  // for DEBUG
+    private int chosenSettingVariant = DomainConfig.INSTANCE.choosenVariantSleepInterval();
 
     private @Nullable ShowcaseView showcaseView;
 
@@ -165,11 +166,11 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
     private void initData(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             Timber.d("Restore state");
-            chosenSettingVariant = savedInstanceState.getInt(BUNDLE_KEY_CHOSEN_SETTING_VARIANT, 0);
+            chosenSettingVariant = savedInstanceState.getInt(BUNDLE_KEY_CHOSEN_SETTING_VARIANT, DomainConfig.INSTANCE.choosenVariantSleepInterval());
             keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
         } else {
-            chosenSettingVariant = 0;
+            chosenSettingVariant = DomainConfig.INSTANCE.choosenVariantSleepInterval();
             keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
         }
@@ -207,13 +208,13 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
         toolbar.setNavigationOnClickListener((view) -> onBackPressed());  // finish with current result
         switch (AppConfig.INSTANCE.sendDumpFilesVia()) {
             case AppConfig.SEND_DUMP_FILE:
-                toolbar.inflateMenu(R.menu.edit_dump);
+                toolbar.inflateMenu(R.menu.edit_dump_settings);
                 break;
             case AppConfig.SEND_DUMP_EMAIL:
-                toolbar.inflateMenu(R.menu.edit_send);
+                toolbar.inflateMenu(R.menu.edit_send_settings);
                 break;
             case AppConfig.SEND_DUMP_SHARE:
-                toolbar.inflateMenu(R.menu.edit_share);
+                toolbar.inflateMenu(R.menu.edit_share_settings);
                 break;
         }
         toolbar.setOnMenuItemClickListener((item) -> {
@@ -233,7 +234,10 @@ public class GroupListActivity extends BasePermissionActivity<GroupListContract.
                             .setSingleChoiceItems(variants, chosenSettingVariant, (dialog, which) -> {
                                 dialog.dismiss();
                                 chosenSettingVariant = which;
-                                int timeout = Integer.parseInt(variants[which].toString());
+                                int timeout = (int) (Float.parseFloat(variants[which].toString()) * 1000);
+                                if (timeout <= 1000) {
+                                    Toast.makeText(GroupListActivity.this, R.string.group_list_settings_posting_interval_warning, Toast.LENGTH_SHORT).show();
+                                }
                                 presenter.setPostingTimeout(timeout);
                             }).show();
                     return true;

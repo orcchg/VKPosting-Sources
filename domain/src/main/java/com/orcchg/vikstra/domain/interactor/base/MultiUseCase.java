@@ -58,6 +58,8 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
 
     @DebugLog
     public void setSleepInterval(int interval) {
+        Timber.d("setSleepInterval: %s", interval);
+        if (interval <= 0) return;  // don't set invalid values
         sleepInterval = interval;
     }
 
@@ -315,7 +317,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
             });
 
             // optional pause before starting next use-case execution
-            if (total > 1 && sleepInterval > 0) {
+            if (total > 1 && sleepInterval > 0 && index + 1 < total) {
                 try {
                     Thread.sleep(sleepInterval);
                 } catch (InterruptedException e) {

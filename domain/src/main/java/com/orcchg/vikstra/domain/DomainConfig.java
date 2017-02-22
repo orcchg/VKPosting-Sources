@@ -3,6 +3,9 @@ package com.orcchg.vikstra.domain;
 public enum DomainConfig {
     INSTANCE;
 
+    public int choosenVariantSleepInterval() {
+        return BuildConfig.choosenVariantSleepInterval;
+    }
     public int multiUseCaseSleepInterval() {
         return BuildConfig.multiUseCaseSleepInterval;
     }

@@ -7,7 +7,6 @@ import com.orcchg.vikstra.app.ui.base.MvpView;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
-import com.orcchg.vikstra.domain.util.DebugSake;
 
 interface GroupListContract {
     interface View extends MvpView {
@@ -59,8 +58,6 @@ interface GroupListContract {
         void performDumping(String path, @Nullable String email);
         void retry();
         void retryPost();
-
-        @DebugSake
         void setPostingTimeout(int timeout);
     }
 }

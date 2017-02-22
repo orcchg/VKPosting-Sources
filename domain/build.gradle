@@ -45,7 +45,8 @@ android {
         publishNonDefault true
 
         // see: http://stackoverflow.com/questions/17197636/is-it-possible-to-declare-a-variable-in-gradle-usable-in-java
-        buildConfigField "int", "multiUseCaseSleepInterval", "1000"  // to avoid Captcha error, interval in ms
+        buildConfigField "int", "choosenVariantSleepInterval", "1"  // corresponds to 1500 ms
+        buildConfigField "int", "multiUseCaseSleepInterval", "1500"  // to avoid Captcha error, interval in ms
         buildConfigField "int", "limitItemsPerRequest", "20"
         buildConfigField "int", "loadMoreThreshold", "1"
         buildConfigField "boolean", "useOnlyGroupsWhereCanPostFreely", "true"

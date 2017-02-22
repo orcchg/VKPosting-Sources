@@ -105,6 +105,8 @@
     <string name="group_list_showcase_add_keyword_description">По этим словам приложение найдет самые популярные группы с открытой стеной</string>
     <string name="group_list_showcase_make_wall_posting">Запустите публикацию по всем выбранным группам</string>
     <string name="group_list_showcase_select_post_title">Создайте новый пост или выберите существующий</string>
+    <string name="group_list_settings_posting_interval_title">Интервал публикаций</string>
+    <string name="group_list_settings_posting_interval_warning">Если интервал меньше 1 секунды, возможно появление капчи</string>
     <!-- Keyword create screen -->
     <string name="keyword_create_bundle_added">Создан новый набор слов</string>
     <string name="keyword_create_bundle_updated">Набор слов был обновлен</string>

@@ -16,12 +16,12 @@ import com.orcchg.vikstra.app.ui.post.create.PostCreateActivity;
 import com.orcchg.vikstra.app.ui.post.list.PostListActivity;
 import com.orcchg.vikstra.app.ui.util.ContextUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
+import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.group.DumpGroups;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.util.Constant;
-import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
 
 import java.util.Arrays;
@@ -217,11 +217,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         sendAskForRetryPost();
     }
 
-    /* Debugging */
-    // ------------------------------------------
-    @DebugSake @Override
+    @Override
     public void setPostingTimeout(int timeout) {
-        sendPostingTimeout(timeout);
+        Timber.i("setPostingTimeout: %s", timeout);
+        VkontakteEndpoint.sConfig.postingInterval = timeout;
     }
 
     /* Mediator */
@@ -356,13 +355,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     @Override
     public void sendPostToGroupsRequest() {
         mediatorComponent.mediator().sendPostToGroupsRequest();
-    }
-
-    /* Debugging */
-    // ------------------------------------------
-    @DebugSake @Override
-    public void sendPostingTimeout(int timeout) {
-        mediatorComponent.mediator().sendPostingTimeout(timeout);
     }
 
     /* Internal */

@@ -32,13 +32,14 @@
     <string name="group_list_showcase_select_post_title">Create new post or select existing one</string>
 
     <string-array name="group_list_settings_posting_interval_variants" translatable="false">
-        <item name="group_list_settings_posting_interval_variant_333">333</item>
-        <item name="group_list_settings_posting_interval_variant_500">500</item>
-        <item name="group_list_settings_posting_interval_variant_700">700</item>
-        <item name="group_list_settings_posting_interval_variant_1000">1000</item>
-        <item name="group_list_settings_posting_interval_variant_1500">1500</item>
-        <item name="group_list_settings_posting_interval_variant_2000">2000</item>
-        <item name="group_list_settings_posting_interval_variant_3000">3000</item>
+        <item name="group_list_settings_posting_interval_variant_1">1</item>
+        <item name="group_list_settings_posting_interval_variant_2">1.5</item>
+        <item name="group_list_settings_posting_interval_variant_3">2</item>
+        <item name="group_list_settings_posting_interval_variant_4">5</item>
+        <item name="group_list_settings_posting_interval_variant_5">15</item>
+        <item name="group_list_settings_posting_interval_variant_6">30</item>
+        <item name="group_list_settings_posting_interval_variant_7">60</item>
     </string-array>
-    <string name="group_list_settings_posting_interval_title" translatable="false">Set interval</string>
+    <string name="group_list_settings_posting_interval_title">Posting interval</string>
+    <string name="group_list_settings_posting_interval_warning">If interval is less than 1 second, captcha could emerge</string>
 </resources>

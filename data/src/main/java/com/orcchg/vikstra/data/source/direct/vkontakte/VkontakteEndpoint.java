@@ -38,7 +38,6 @@ import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.notification.IPhotoUploadNotificationDelegate;
 import com.orcchg.vikstra.domain.notification.IPostingNotificationDelegate;
 import com.orcchg.vikstra.domain.util.Constant;
-import com.orcchg.vikstra.domain.util.DebugSake;
 import com.orcchg.vikstra.domain.util.StringUtility;
 import com.orcchg.vikstra.domain.util.ValueUtility;
 import com.vk.sdk.api.VKError;
@@ -65,6 +64,13 @@ import timber.log.Timber;
 @Singleton
 public class VkontakteEndpoint extends Endpoint {
 
+    public static final class Config {
+        public int postingInterval = 0;  // use default sleep interval
+    }
+
+    public static final Config sConfig = new Config();
+
+    // --------------------------------------------------------------------------------------------
     private final PostPost postPostUseCase;
     private final ImageLoader imageLoader;
     private final VkAttachLocalCache attachLocalCache;
@@ -80,8 +86,6 @@ public class VkontakteEndpoint extends Endpoint {
     private volatile boolean makeWallPostingUseCase_pendingSuspend = false;
     private volatile boolean uploadPhotosUseCase_pendingSuspend = false;
 
-    private @DebugSake int postingInterval = 0;  // use default sleep interval
-
     public static class Scope {
         public static final String PHOTOS = "photos";
         public static final String WALL = "wall";
@@ -94,11 +98,6 @@ public class VkontakteEndpoint extends Endpoint {
         this.postPostUseCase = postPostUseCase;
         this.imageLoader = imageLoader;
         this.attachLocalCache = attachLocalCache;
-    }
-
-    @DebugLog @DebugSake
-    public void setPostingInterval(int interval) {
-        postingInterval = interval;
     }
 
     /* Communication */
@@ -545,7 +544,7 @@ public class VkontakteEndpoint extends Endpoint {
                 if (callback != null) callback.onError(e);
             }
         });
-        if (postingInterval > 0) useCase.setSleepInterval(postingInterval);
+        if (sConfig.postingInterval > 0) useCase.setSleepInterval(sConfig.postingInterval);
         makeWallPostingUseCase = useCase;
         useCase.execute();
         handlePendingSuspend_makeWallPosting();
@@ -616,7 +615,7 @@ public class VkontakteEndpoint extends Endpoint {
      *
      * Internally-generated id and id assigned by endpoint can'not be distinguished properly,
      * but we assume, that an endpoint's id has quite large value (>10_000_000), when an internal
-     * id has quite small value (around {@link Constant.INIT_ID}). These ids are unlikely to
+     * id has quite small value (around {@link Constant#INIT_ID}). These ids are unlikely to
      * overlap, because the threshold is quite big - no user can reach this threshold and attach
      * such number of media manually. But if they do overlap, then some media items uploaded to
      * endpoint have the same ids as some not uploaded ones, and when user attaches such

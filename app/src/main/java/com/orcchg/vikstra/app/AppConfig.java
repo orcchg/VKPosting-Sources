@@ -3,7 +3,6 @@ package com.orcchg.vikstra.app;
 import android.support.annotation.IntDef;
 
 import com.orcchg.vikstra.BuildConfig;
-import com.orcchg.vikstra.domain.util.DebugSake;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -33,7 +32,6 @@ public enum AppConfig {
     public boolean isAllGroupsSortedByMembersCount() {
         return BuildConfig.isAllGroupsSortedByMembersCount;
     }
-    @DebugSake
     public boolean showSettingsMenuOnGroupListScreen() {
         return BuildConfig.showSettingsMenuOnGroupListScreen;
     }

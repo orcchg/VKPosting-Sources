@@ -10,7 +10,6 @@ import com.orcchg.vikstra.app.ui.util.ContextUtility;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.Keyword;
 import com.orcchg.vikstra.domain.util.Constant;
-import com.orcchg.vikstra.domain.util.DebugSake;
 
 import javax.inject.Inject;
 
@@ -65,13 +64,6 @@ public class GroupListMediator extends BaseMediator<ActivityMediator.Receiver, F
     @Override
     public void sendPostToGroupsRequest() {
         if (clientSecond != null) clientSecond.receivePostToGroupsRequest();
-    }
-
-    /* Debugging */
-    // ------------------------------------------
-    @DebugSake @Override
-    public void sendPostingTimeout(int timeout) {
-        if (clientSecond != null) clientSecond.receivePostingTimeout(timeout);
     }
 
     // --------------------------------------------------------------------------------------------
