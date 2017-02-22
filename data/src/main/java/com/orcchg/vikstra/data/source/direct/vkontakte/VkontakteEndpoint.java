@@ -226,6 +226,11 @@ public class VkontakteEndpoint extends Endpoint {
             attachLocalCache.retain(media, cached, retained);
             Timber.v("Total media: cached: %s, retained: %s", cached.size(), retained.size());
 
+            // TODO: DISABLE cache
+            cached.clear();
+            retained.clear();
+            retained.addAll(media);
+
             /**
              * For each already cached media we just make wall post with attached image ids directly.
              */
