@@ -380,12 +380,12 @@ public class WallPostingService extends BaseIntentService {
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to put GroupReportBundle");
-                updateGroupReportBundleIdForNotifications(bundle.id());
                 if (wasCancelled) {
                     sendPostingCancelled(cancelReason, bundle.id());
                 } else {
                     sendPostingFinished(bundle.id());
                 }
+                updateGroupReportBundleIdForNotifications(bundle.id());
                 notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
             }
 
@@ -402,6 +402,17 @@ public class WallPostingService extends BaseIntentService {
         return (reason) -> {
             wasCancelled = true;
             cancelReason = reason;
+            /**
+             * Cancel means the same as interruption: both will set
+             * {@link PostingNotification#hasPostingFinished} flag properly and then we fallback to
+             * {@link WallPostingService#createPutGroupReportBundleCallback()}'s onFinish() method,
+             * where we update GroupReportBundle id in notification.
+             *
+             * If both flag and id are properly set, notification will open ReportScreen
+             * in non-interactive mode with the most actual data.
+             */
+            if (postingNotification != null) postingNotification.onPostingInterrupt();
+            if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
         };
     }
 
@@ -628,6 +639,9 @@ public class WallPostingService extends BaseIntentService {
                          * {@link PostingNotification#onPostingComplete()}, since we need to setup
                          * {@link PostingNotification#hasPostingFinished} flag properly before making
                          * a new pending intent with updated id and this flag.
+                         *
+                         * If both flag and id are properly set, notification will open ReportScreen
+                         * in non-interactive mode with the most actual data.
                          */
                         updateGroupReportBundleIdForNotifications(bundle.id());
                         notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
