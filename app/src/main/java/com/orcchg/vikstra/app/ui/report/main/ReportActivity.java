@@ -55,6 +55,8 @@ import butterknife.OnClick;
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
+import static com.orcchg.vikstra.R.id.fab;
+
 public class ReportActivity extends BasePermissionActivity<ReportContract.View, ReportContract.Presenter>
         implements ReportContract.View, IScrollList, OnShowcaseEventListener {
     private static final String FRAGMENT_TAG = "report_fragment_tag";
@@ -88,7 +90,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @BindView(R.id.anchor_view) View achorView;
     @BindView(R.id.btn_posting_interrupt) Button interruptButton;
     @BindView(R.id.btn_posting_revert_all) Button revertAllButton;
-    @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(fab) FloatingActionButton fabSuspend;
     @OnClick(R.id.btn_posting_interrupt)
     void onInterruptPostingClick() {
         presenter.interruptPostingAndClose(false);  // don't close on interruption
@@ -98,7 +100,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     void onRevertAllPostingClick() {
         openRevertAllWarningDialog();
     }
-    @OnClick(R.id.fab)
+    @OnClick(fab)
     void onSuspendClick() {
         presenter.onSuspendClick();
     }
@@ -625,21 +627,21 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     private void styleFabSuspend(boolean paused) {
         if (paused) {
-            fab.setBackgroundTintList(ColorStateList.valueOf(FAB_NORMAL_COLOR));
-            fab.setRippleColor(FAB_NORMAL_RIPPLE_COLOR);
-            fab.setImageResource(R.drawable.ic_play_arrow_white_24dp);
+            fabSuspend.setBackgroundTintList(ColorStateList.valueOf(FAB_NORMAL_COLOR));
+            fabSuspend.setRippleColor(FAB_NORMAL_RIPPLE_COLOR);
+            fabSuspend.setImageResource(R.drawable.ic_play_arrow_white_24dp);
         } else {
-            fab.setBackgroundTintList(ColorStateList.valueOf(FAB_PAUSE_COLOR));
-            fab.setRippleColor(FAB_PAUSE_RIPPLE_COLOR);
-            fab.setImageResource(R.drawable.ic_pause_white_24dp);
+            fabSuspend.setBackgroundTintList(ColorStateList.valueOf(FAB_PAUSE_COLOR));
+            fabSuspend.setRippleColor(FAB_PAUSE_RIPPLE_COLOR);
+            fabSuspend.setImageResource(R.drawable.ic_pause_white_24dp);
         }
     }
 
     private void showFab(boolean isVisible) {
         if (isVisible) {
-            fab.show();
+            fabSuspend.show();
         } else {
-            fab.hide();
+            fabSuspend.hide();
         }
     }
 
