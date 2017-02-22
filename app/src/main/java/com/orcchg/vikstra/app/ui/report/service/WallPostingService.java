@@ -516,6 +516,11 @@ public class WallPostingService extends BaseIntentService {
      */
     private void persistReports(List<GroupReportEssence> reports, UseCase.OnPostExecuteCallback<GroupReportBundle> callback) {
         Timber.d("Persisting reports of size [%s / %s] to repository...", reports.size(), totalForPosting);
+        if (reports.isEmpty()) {
+            Timber.d("Nothing to be stored to repository");
+            return;
+        }
+
         PutGroupReportBundle.Parameters parameters = new PutGroupReportBundle.Parameters(
                 reports, keywordBundleId, currentPost.id());
         PutGroupReportBundle useCase = component.putGroupReportBundleUseCase();
