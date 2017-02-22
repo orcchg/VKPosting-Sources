@@ -29,4 +29,11 @@ public class VkUseCaseExceptionFactory {
         }
         return new VkUseCaseException(error);
     }
+
+    public static int errorCode(Throwable reason) {
+        if (VkUseCaseException.class.isInstance(reason)) {
+            return ((VkUseCaseException) reason).getErrorCode();
+        }
+        return 0;
+    }
 }

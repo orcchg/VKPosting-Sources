@@ -236,10 +236,10 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
      *                          |       |
      *                          |       ^
      *                          |       |
-     * { user refresh }  REFRESHING ->--|----------- < ------- < ---------|
-     *                                                                    |
-     *                                                                    |
-     * { user add keyword }  ADD_KEYWORD_START -->-- ADD_KEYWORD_FINISH --|
+     * { user refresh }  REFRESHING ->--|----------- < ------- < ---------- #
+     *                                                                      |
+     *                                                                      |
+     * { user add keyword }  ADD_KEYWORD_START -->-- ADD_KEYWORD_FINISH ----|
      *
      *
      * { user remove keyword }  background execution
@@ -253,7 +253,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         // check consistency between state transitions
         if (previousState == StateContainer.ERROR_LOAD && newState != StateContainer.START ||
             // forbid transition from any kind of loading to refreshing
-            (previousState != StateContainer.GROUPS_LOADED && previousState != StateContainer.REFRESHING) && newState == StateContainer.REFRESHING) {
+            (previousState != StateContainer.GROUPS_LOADED && previousState != StateContainer.REFRESHING)
+                    && newState == StateContainer.REFRESHING) {
             Timber.e("Illegal state transition from [%s] to [%s]", previousState, newState);
             throw new IllegalStateException(String.format(Locale.ENGLISH, "Transition from %s to %s", previousState, newState));
         }
@@ -679,12 +680,6 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
-    public void onPostingResult(long groupReportBundleId) {
-        if (isViewAttached()) getView().onReportReady(groupReportBundleId, memento.inputKeywordBundle.id(), memento.currentPost.id());
-    }
-
-    // ------------------------------------------
-    @Override
     public void removeChildListItem(int position, int parentPosition) {
         Timber.i("removeChildListItem: %s, %s", position, parentPosition);
         removeGroupAtPosition(position, parentPosition);
@@ -1108,15 +1103,9 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
 
             if (isViewAttached()) {
                 getView().startWallPostingService(memento.inputKeywordBundle.id(), selectedGroups, memento.currentPost);
-                if (AppConfig.INSTANCE.useInteractiveReportScreen()) {
-                    Timber.d("Open ReportScreen in interactive mode showing posting progress");
-                    getView().openInteractiveReportScreen(memento.inputKeywordBundle.id(), memento.currentPost.id());
-                    // TODO: report screen could subscribe for posting-progress callback
-                    // TODO:        too late, missing some early reports
-                } else {
-                    Timber.d("Show popup with wall posting progress");
-                    getView().openStatusScreen();
-                }
+                getView().openInteractiveReportScreen(memento.inputKeywordBundle.id(), memento.currentPost.id());
+                // TODO: report screen could subscribe for posting-progress callback
+                // TODO:        too late, missing some early reports
             } else {
                 Timber.w("Unable to start Wall Posting Service: view isn't attached!");
             }
@@ -1450,7 +1439,8 @@ public class GroupListPresenter extends BasePresenter<GroupListContract.View> im
         return (reason) -> {
             Timber.i("Searching for Group-s has been cancelled");
             if (isViewAttached()) {
-                if (EndpointUtility.hasAccessTokenExhausted(reason)) {
+                int apiErrorCode = EndpointUtility.errorCode(reason);
+                if (EndpointUtility.hasAccessTokenExhausted(apiErrorCode)) {
                     Timber.w("Access Token has exhausted !");
                     getView().onAccessTokenExhausted();
                 } else {

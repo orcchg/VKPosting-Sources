@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 public class ImageLoader extends Endpoint {
@@ -25,6 +26,9 @@ public class ImageLoader extends Endpoint {
     private final RequestManager glide;
     private int width = 400;
     private int height = 400;
+
+    // references to communicate with use-cases
+    private LoadPhotos loadPhotosUseCase;
 
     @Inject
     public ImageLoader(RequestManager glide, ThreadExecutor threadExecutor,
@@ -41,28 +45,56 @@ public class ImageLoader extends Endpoint {
         this.height = height;
     }
 
-    public void loadImage(Media media, @Nullable UseCase.OnPostExecuteCallback<Bitmap> callback) {
-        Timber.d("Loading single media");
-        LoadPhoto useCase = new LoadPhoto(media, this, threadExecutor, postExecuteScheduler);
-        useCase.setPostExecuteCallback(callback);
-        useCase.execute();
-    }
-
-    public void loadImages(List<Media> media, @Nullable UseCase.OnPostExecuteCallback<List<Ordered<Bitmap>>> callback) {
-        loadImages(media, callback, null);
-    }
-
     public void loadImages(List<Media> media, @Nullable UseCase.OnPostExecuteCallback<List<Ordered<Bitmap>>> callback,
                            @Nullable MultiUseCase.ProgressCallback progressCallback) {
         if (media != null && !media.isEmpty()) {
             Timber.d("Loading media, total count: %s", media.size());
             LoadPhotos useCase = new LoadPhotos(media, this, threadExecutor, postExecuteScheduler);
             useCase.setProgressCallback(progressCallback);
-            useCase.setPostExecuteCallback(callback);
+            useCase.setPostExecuteCallback(createLoadPhotosCallback(callback));
+            loadPhotosUseCase = useCase;
             useCase.execute();
         } else {
             Timber.d("Nothing to be done with empty list of media");
         }
+    }
+
+    /* Communication */
+    // ------------------------------------------
+    @DebugLog
+    public boolean pauseLoadPhotos() {
+        Timber.d("pauseLoadPhotos");
+        // communication with use-case is ignored if use-case hasn't started or has finished
+        if (loadPhotosUseCase != null) loadPhotosUseCase.pause();
+        return loadPhotosUseCase != null;
+    }
+
+    @DebugLog
+    public boolean resumeLoadPhotos() {
+        Timber.d("resumeLoadPhotos");
+        // communication with use-case is ignored if use-case hasn't started or has finished
+        if (loadPhotosUseCase != null) loadPhotosUseCase.resume();
+        return loadPhotosUseCase != null;
+    }
+
+    /* Internal */
+    // --------------------------------------------------------------------------------------------
+    private UseCase.OnPostExecuteCallback<List<Ordered<Bitmap>>> createLoadPhotosCallback(
+            UseCase.OnPostExecuteCallback<List<Ordered<Bitmap>>> callback
+    ) {
+        return new UseCase.OnPostExecuteCallback<List<Ordered<Bitmap>>>() {
+            @Override
+            public void onFinish(@Nullable List<Ordered<Bitmap>> values) {
+                loadPhotosUseCase = null;  // unsubscribe from communication
+                if (callback != null) callback.onFinish(values);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                loadPhotosUseCase = null;  // unsubscribe from communication
+                if (callback != null) callback.onError(e);
+            }
+        };
     }
 
     /* Internal use-cases */

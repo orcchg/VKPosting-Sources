@@ -8,12 +8,12 @@ import com.orcchg.vikstra.app.ui.common.screen.LceView;
 import com.orcchg.vikstra.app.ui.common.screen.ListPresenter;
 import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
+import com.orcchg.vikstra.domain.model.misc.PostingUnit;
 import com.orcchg.vikstra.domain.util.endpoint.AccessTokenTracker;
 
 public interface ReportContract {
     interface View extends AccessTokenTracker, SubView {
         void enableSwipeToRefresh(boolean isEnabled);
-        void enableButtonsOnPostingFinished();
 
         String getDumpFilename();
 
@@ -42,9 +42,6 @@ public interface ReportContract {
         void updatePostedCounters(int posted, int total);
 
         void closeView();
-        void cancelPreviousNotifications();
-        boolean isForceDisableInteractiveMode();
-        void notifyDestroyToService();
     }
 
     interface SubView extends LceView, MvpListView {
@@ -55,12 +52,18 @@ public interface ReportContract {
     interface Presenter extends MvpPresenter<View>, ListPresenter {
         void onCloseView();
         void onDumpPressed();
-        void onPostingResult(long groupReportBundleId, long timestamp);
         void onSuspendClick();
+
+        void onPostingCancel(int apiErrorCode, long groupReportBundleId);
+        void onPostingFinish(long groupReportBundleId);
+        void onPostingProgress(PostingUnit postingUnit);
+
         void interruptPostingAndClose(boolean shouldClose);
+
         void performDumping(String path);
         void performDumping(String path, @Nullable String email);
         void performReverting();
+
         void retry();
         void retryPost();
     }

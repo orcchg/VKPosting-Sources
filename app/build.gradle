@@ -60,7 +60,6 @@ android {
         buildConfigField "boolean", "isAllGroupsSelected", "true"
         buildConfigField "boolean", "isAllGroupsSortedByMembersCount", "true"
         buildConfigField "boolean", "showSettingsMenuOnGroupListScreen", "true"
-        buildConfigField "boolean", "useInteractiveReportScreen", "true"
         buildConfigField "boolean", "useTutorialShowcases", "false"
         buildConfigField "boolean", "interceptKeywordClickOnVH", "false"
 
@@ -149,8 +148,7 @@ android {
                            'src/main/res-screen/post/view',
                            'src/main/res-screen/report/history',
                            'src/main/res-screen/report/main',
-                           'src/main/res-screen/settings/group',
-                           'src/main/res-screen/status']
+                           'src/main/res-screen/settings/group']
             file('src/main/res-screen')
                     .listFiles()
                     .each { res.srcDirs += it.path }

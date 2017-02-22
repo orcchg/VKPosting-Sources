@@ -128,8 +128,10 @@ public abstract class BaseAdapter<ModelViewHolder extends NormalViewHolder<Model
 
     public void clear() {
         isInError = false;
-        models.clear();
-        notifyDataSetChanged();
+        if (models != null && !models.isEmpty()) {
+            models.clear();
+            notifyDataSetChanged();
+        }
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.orcchg.vikstra.domain.model;
 
+import android.os.Parcelable;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
@@ -9,7 +10,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @AutoValue
-public abstract class GroupReport implements Comparable<GroupReport> {
+public abstract class GroupReport implements Comparable<GroupReport>, Parcelable {
     public static final int STATUS_CANCEL = 0;
     public static final int STATUS_SUCCESS = 1;
     public static final int STATUS_FAILURE = 2;

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 
 import com.orcchg.vikstra.R;
@@ -14,6 +15,7 @@ import com.orcchg.vikstra.app.ui.common.dialog.DialogProvider;
 import com.orcchg.vikstra.app.ui.dialog.DialogActivity;
 import com.orcchg.vikstra.app.ui.util.ContextUtility;
 import com.orcchg.vikstra.data.source.direct.vkontakte.VkontakteEndpoint;
+import com.orcchg.vikstra.domain.util.Constant;
 import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.vk.sdk.VKAccessToken;
 import com.vk.sdk.VKCallback;
@@ -36,6 +38,7 @@ public class StartActivity extends SimpleBaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sendStartScreenInited();
         initVkLogin();
     }
 
@@ -99,5 +102,10 @@ public class StartActivity extends SimpleBaseActivity {
     void goToMainScreen() {
         navigationComponent.navigator().openMainScreen(this);
         finish();
+    }
+
+    private void sendStartScreenInited() {
+        Intent intent = new Intent(Constant.Broadcast.START_SCREEN_OPENED);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 }

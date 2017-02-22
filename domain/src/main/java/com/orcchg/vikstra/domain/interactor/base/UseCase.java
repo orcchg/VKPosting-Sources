@@ -99,6 +99,13 @@ public abstract class UseCase<Result> implements Runnable {
         threadExecutor.execute(this);
     }
 
+    /**
+     * Allows to check whether {@link UseCase#threadExecutor} has shutdown,
+     * so this {@link UseCase} can use this information and continue to execute
+     * with awareness.
+     *
+     * @return true, if {@link UseCase#threadExecutor} has shutdown.
+     */
     protected boolean checkInterruption() {
         if (Thread.currentThread().isInterrupted()) {
             Timber.tag(getClass().getSimpleName());

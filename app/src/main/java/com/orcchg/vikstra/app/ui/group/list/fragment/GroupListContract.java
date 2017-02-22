@@ -13,11 +13,9 @@ interface GroupListContract {
     interface View extends AccessTokenTracker, LceView, MvpListView {
         void enableSwipeToRefresh(boolean isEnabled);
 
-        void onReportReady(long groupReportBundleId, long keywordBundleId, long postId);
         void onSearchingGroupsCancel();
         void openInteractiveReportScreen(long keywordBundleId, long postId);
         void openGroupDetailScreen(long groupId);
-        void openStatusScreen();
 
         void showGroups(boolean isEmpty);
         void startWallPostingService(long keywordBundleId, Collection<Group> selectedGroups, Post post);
@@ -26,7 +24,6 @@ interface GroupListContract {
     // ------------------------------------------
     interface Presenter extends MvpPresenter<View>,
             FragmentMediator.Receiver, FragmentMediator.Sender {
-        void onPostingResult(long groupReportBundleId);
         void removeChildListItem(int position, int parentPosition);
         void removeParentListItem(int position);
         void refresh();

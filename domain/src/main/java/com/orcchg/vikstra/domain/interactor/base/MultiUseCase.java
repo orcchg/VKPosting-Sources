@@ -72,6 +72,8 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     }
 
     private void suspend(boolean paused) {
+        if (isSuspended.get() == paused) return;  // idempotent operation
+
         isSuspended.getAndSet(paused);  // atomic operation
         synchronized (lock) {
             Timber.tag(getClass().getSimpleName());
@@ -137,11 +139,6 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         this.cancelCallback = cancelCallback;
     }
 
-    // ------------------------------------------
-    public interface FinishCallback {  // this cb could be used in conjunction with OnPostExecuteCallback
-        void onFinish();
-    }
-
     /* Internal */
     // --------------------------------------------------------------------------------------------
     protected abstract List<? extends UseCase<Result>> createUseCases();
@@ -181,6 +178,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         });
 
         for (int i = 0; i < total; ++i) {
+            // leave immediately, if main thread executor has shutdown
             if (checkInterruption()) return preparedResults(results);  // return results that have been recorded
 
             Timber.tag(getClass().getSimpleName());
@@ -215,7 +213,8 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                         }
                     }
                 }
-            } else {  // resumed
+            }
+            if (!isSuspended.get()) {  // resumed
                 if (threadExecutor.isPaused()) {
                     Timber.tag(getClass().getSimpleName());
                     Timber.d("Execution has been resumed");
@@ -223,6 +222,8 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                 }
             }
 
+            Timber.tag(getClass().getSimpleName());
+            Timber.v("Executing...");
             threadExecutor.execute(new Runnable() {
                 @Override
                 public void run() {
@@ -328,7 +329,10 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
          * will anyway be recorded to preserve correct ordering and correspondence between input use-cases
          * and output results.
          */
+        Timber.tag(getClass().getSimpleName());
+        Timber.v("All tasks have been sent. Awaiting them to finish...");
         synchronized (lock) {
+            // wait for all use-cases to finish or leave immediately, if main thread executor has shutdown
             while (!ValueUtility.isAllTrue(doneFlags) && !checkInterruption()) {
                 try {
                     lock.wait();  // waiting all tasks to finish, releasing lock
@@ -345,7 +349,8 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                             Timber.d("Execution has been paused");
                             threadExecutor.pause();
                         }
-                    } else {  // resumed
+                    }
+                    if (!isSuspended.get()) {  // resumed
                         if (threadExecutor.isPaused()) {
                             Timber.tag(getClass().getSimpleName());
                             Timber.d("Execution has been resumed");

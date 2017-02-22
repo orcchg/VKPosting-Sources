@@ -167,7 +167,8 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
         // check consistency between state transitions
         if (previousState == StateContainer.ERROR_LOAD && newState != StateContainer.START ||
             // forbid transition from any kind of loading to refreshing
-            (previousState != StateContainer.IDLE && previousState != StateContainer.REFRESHING) && newState == StateContainer.REFRESHING) {
+            (previousState != StateContainer.IDLE && previousState != StateContainer.REFRESHING)
+                    && newState == StateContainer.REFRESHING) {
             Timber.e("Illegal state transition from [%s] to [%s]", previousState, newState);
             throw new IllegalStateException(String.format(Locale.ENGLISH, "Transition from %s to %s", previousState, newState));
         }

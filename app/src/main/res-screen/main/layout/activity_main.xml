@@ -121,9 +121,9 @@
         android:layout_width="@dimen/floating_action_button_size_normal"
         android:layout_height="@dimen/floating_action_button_size_normal"
         android:layout_gravity="bottom|right"
-        android:layout_marginRight="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginRight="@dimen/standard_fab_margin"
+        android:layout_marginEnd="@dimen/standard_fab_margin"
+        android:layout_marginBottom="@dimen/standard_fab_margin"
         android:src="@drawable/ic_file_upload_white_24dp"
         android:elevation="6dp"
         app:layout_behavior="com.orcchg.vikstra.app.ui.common.view.behavior.FabSnackbarHideBehavior"
@@ -134,9 +134,9 @@
         android:layout_width="2dp"
         android:layout_height="2dp"
         android:layout_gravity="bottom|right"
-        android:layout_marginRight="44dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginBottom="44dp"
+        android:layout_marginRight="38dp"
+        android:layout_marginEnd="38dp"
+        android:layout_marginBottom="38dp"
         android:visibility="invisible"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -95,9 +95,9 @@
         android:layout_width="@dimen/floating_action_button_size_normal_borderless"
         android:layout_height="@dimen/floating_action_button_size_normal_borderless"
         android:layout_gravity="bottom|right"
-        android:layout_marginRight="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginRight="@dimen/standard_fab_margin"
+        android:layout_marginEnd="@dimen/standard_fab_margin"
+        android:layout_marginBottom="@dimen/standard_fab_margin"
         app:layout_behavior="com.orcchg.vikstra.app.ui.common.view.behavior.FabSnackbarHideBehavior">
 
         <android.support.design.widget.FloatingActionButton

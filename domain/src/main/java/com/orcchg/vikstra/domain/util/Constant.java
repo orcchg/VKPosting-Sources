@@ -29,11 +29,13 @@ public class Constant {
     }
 
     public static final class Broadcast {
+        public static final String START_SCREEN_OPENED = "start_screen_opened";
+
+        public static final String WALL_POSTING_CANCELLED = "wall_posting_cancelled";
         public static final String WALL_POSTING_INTERRUPT = "wall_posting_interrupt";
-        public static final String WALL_POSTING_PROGRESS = "wall_posting_progress";
-        public static final String WALL_POSTING_RESULT_DATA = "wall_posting_result_data";
+        public static final String WALL_POSTING_FINISHED = "wall_posting_finished";
+        public static final String WALL_POSTING_PROGRESS_UNIT = "wall_posting_progress_unit";
         public static final String WALL_POSTING_SCREEN_DESTROY = "wall_posting_screen_destroy";
-        public static final String WALL_POSTING_STATUS = "wall_posting_status";
         public static final String WALL_POSTING_SUSPEND = "wall_posting_suspend";
     }
 

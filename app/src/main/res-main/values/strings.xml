@@ -63,10 +63,12 @@
     <string name="notification_posting_title">Wall posting</string>
     <string name="notification_posting_description_complete">Posting has completed</string>
     <string name="notification_posting_description_interrupt">Posting has been terminated</string>
+    <string name="notification_posting_description_pause">Posting paused</string>
     <string name="notification_posting_description_progress">Posting in progress</string>
     <string name="notification_photo_upload_title">Photo uploading</string>
     <string name="notification_photo_upload_description_complete">All photos uploaded</string>
     <string name="notification_photo_upload_description_interrupt">Photo uploading has been terminated</string>
+    <string name="notification_photo_upload_description_pause">Photo uploading paused</string>
     <string name="notification_photo_upload_description_progress">Photo upload in progress</string>
 
     <string name="permission_not_granted_message">You should grant \"%s\" permission in application settings.</string>
