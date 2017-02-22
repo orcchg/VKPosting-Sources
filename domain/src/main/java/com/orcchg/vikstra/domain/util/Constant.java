@@ -29,6 +29,8 @@ public class Constant {
     }
 
     public static final class Broadcast {
+        public static final String START_SCREEN_OPENED = "start_screen_opened";
+
         public static final String WALL_POSTING_CANCELLED = "wall_posting_cancelled";
         public static final String WALL_POSTING_INTERRUPT = "wall_posting_interrupt";
         public static final String WALL_POSTING_FINISHED = "wall_posting_finished";

@@ -184,6 +184,9 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
             LocalBroadcastManager.getInstance(this).registerReceiver(receiverFinish, filterFinish);
             LocalBroadcastManager.getInstance(this).registerReceiver(receiverResult, filterResult);
         }
+
+        IntentFilter filterStartScreen = new IntentFilter(Constant.Broadcast.START_SCREEN_OPENED);
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiverStartScreen, filterStartScreen);
     }
 
     @Override
@@ -226,6 +229,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
             Intent intent = new Intent(Constant.Broadcast.WALL_POSTING_SCREEN_DESTROY);
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
         }
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiverStartScreen);
         if (dialog1 != null) dialog1.dismiss();
         if (dialog2 != null) dialog2.dismiss();
         if (dialog3 != null) dialog3.dismiss();
@@ -262,6 +266,15 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
             hasFirstPostingUnitArrived = true;  // enable 'interrupt' button as first result arrives.
             PostingUnit postingUnit = intent.getParcelableExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_PROGRESS_UNIT);
             presenter.onPostingProgress(postingUnit);
+        }
+    };
+
+    // ------------------------------------------
+    private BroadcastReceiver receiverStartScreen = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Timber.d("StartScreen is foreground now. Close ReportScreen as it is staled now");
+            closeView();
         }
     };
 
