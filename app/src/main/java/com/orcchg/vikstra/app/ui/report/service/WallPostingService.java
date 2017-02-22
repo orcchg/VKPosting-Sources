@@ -582,9 +582,13 @@ public class WallPostingService extends BaseIntentService {
         if (alreadyQueuedTask(TASK_INTERRUPT)) return;
 
         tasks.add(new Task(TASK_INTERRUPT, () -> {
-            // check for null in case initial Intent is for receiver, not for 'onHandleIntent'
-            if (postingNotification != null) postingNotification.onPostingInterrupt();
-            if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
+            if (shouldUploadMedia) {  // we are loading / uploading photos, wall posting will follow
+                Timber.d("Interrupt while uploading photos");
+                if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
+            } else {  // finished photo upload or completely avoided that
+                Timber.d("Interrupt while wall posting");
+                if (postingNotification != null) postingNotification.onPostingInterrupt();
+            }
         }));
 
         wakeUp();

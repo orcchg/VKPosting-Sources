@@ -582,8 +582,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         setInteractiveState(StateContainer.Interactive.INTERRUPT);
         // enter INTERRUPT state logic
 
-        if (mementoInteractive.isFinishedPosting) return;  // no-op if no posting is in progress
-
         if (isInteractiveMode()) {
             /**
              * Setting this flag we disable warning popup on back pressed. But this will be set in

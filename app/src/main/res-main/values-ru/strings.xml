@@ -178,6 +178,7 @@
     <string name="report_snackbar_group_reports_dump_failed">Не удалось выгрузить отчеты в файл</string>
     <string name="report_snackbar_group_reports_dump_succeeded">Выгружено&#58; %s</string>
     <string name="report_snackbar_posting_interrupted">Публикация прервана</string>
+    <string name="report_snackbar_posting_interrupt_disallowed">Нельзя прерваться, пока идет загрузка фото</string>
     <string name="report_snackbar_posting_finished">Публикация успешно завершилась. Опубликовано в %1$s из %2$s группах.</string>
     <string name="report_snackbar_posting_paused">Публикация приостановлена</string>
     <string name="report_snackbar_posting_resumed">Публикация возобновлена</string>

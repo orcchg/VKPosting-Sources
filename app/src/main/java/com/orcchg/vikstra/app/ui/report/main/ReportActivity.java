@@ -64,6 +64,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id";
     private static final String BUNDLE_KEY_POST_ID = "bundle_key_post_id";
     private static final String BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED = "bundle_key_flag_posting_revert_finished";
+    private static final String BUNDLE_KEY_FLAG_HAS_FIRST_POSTING_UNIT_ARRIVED = "bundle_key_flag_has_first_posting_unit_arrived";
     private static final String BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE = "bundle_key_flag_is_interactive_mode";
     private static final String EXTRA_GROUP_REPORT_BUNDLE_ID = "extra_group_report_bundle_id";
     private static final String EXTRA_KEYWORD_BUNDLE_ID = "extra_keyword_bundle_id";
@@ -93,8 +94,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     @BindView(fab) FloatingActionButton fabSuspend;
     @OnClick(R.id.btn_posting_interrupt)
     void onInterruptPostingClick() {
-        presenter.interruptPostingAndClose(false);  // don't close on interruption
-        UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_posting_interrupted);
+        if (hasFirstPostingUnitArrived) {
+            presenter.interruptPostingAndClose(false);  // don't close on interruption
+            UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_posting_interrupted);
+        } else {
+            UiUtility.showSnackbar(coordinatorRoot, R.string.report_snackbar_posting_interrupt_disallowed);
+        }
     }
     @OnClick(R.id.btn_posting_revert_all)
     void onRevertAllPostingClick() {
@@ -107,9 +112,10 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     private ReportComponent reportComponent;
     private long groupReportBundleId = Constant.BAD_ID;  // if BAD_ID will not change later, then update reports interactively
-    private long keywordBundleId = Constant.BAD_ID;  // TODO: initialize from extra
+    private long keywordBundleId = Constant.BAD_ID;
     private long postId = Constant.BAD_ID;
 
+    private boolean hasFirstPostingUnitArrived = false;
     private boolean isInteractiveMode = true;
     private boolean postingRevertFinished = false;
 
@@ -199,6 +205,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         outState.putLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
         outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
         outState.putLong(BUNDLE_KEY_POST_ID, postId);
+        outState.putBoolean(BUNDLE_KEY_FLAG_HAS_FIRST_POSTING_UNIT_ARRIVED, hasFirstPostingUnitArrived);
         outState.putBoolean(BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE, isInteractiveMode);
         outState.putBoolean(BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED, postingRevertFinished);
     }
@@ -249,6 +256,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     private BroadcastReceiver receiverResult = new BroadcastReceiver() {
         @DebugLog @Override
         public void onReceive(Context context, Intent intent) {
+            hasFirstPostingUnitArrived = true;  // enable 'interrupt' button as first result arrives.
             PostingUnit postingUnit = intent.getParcelableExtra(WallPostingService.OUT_EXTRA_WALL_POSTING_PROGRESS_UNIT);
             presenter.onPostingProgress(postingUnit);
         }
@@ -262,12 +270,14 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
             groupReportBundleId = savedInstanceState.getLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
             keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             postId = savedInstanceState.getLong(BUNDLE_KEY_POST_ID, Constant.BAD_ID);
+            hasFirstPostingUnitArrived = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_HAS_FIRST_POSTING_UNIT_ARRIVED, false);
             isInteractiveMode = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE, true);
             postingRevertFinished = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_POSTING_REVERT_FINISHED, false);
         } else {
             groupReportBundleId = getIntent().getLongExtra(EXTRA_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
             keywordBundleId = getIntent().getLongExtra(EXTRA_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             postId = getIntent().getLongExtra(EXTRA_POST_ID, Constant.BAD_ID);
+            hasFirstPostingUnitArrived = false;
             isInteractiveMode = getIntent().getBooleanExtra(EXTRA_IS_INTERACTIVE_MODE, true);
             postingRevertFinished = false;
         }
