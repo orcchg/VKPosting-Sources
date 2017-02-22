@@ -81,7 +81,7 @@ public class WallPostingService extends BaseIntentService {
     private Post currentPost;
 
     private final Object lock = new Object();
-    private boolean hasFinished = false;
+    private volatile boolean hasFinished = false;
     private boolean hasPhotoUploadStarted = false;  // don't show notification, if photo uploading doesn't need
     private boolean shouldUploadMedia = false;
     private boolean wasPaused = false;
@@ -155,6 +155,8 @@ public class WallPostingService extends BaseIntentService {
                 .wallPostingServiceModule(new WallPostingServiceModule())
                 .build();
 
+        becomeForeground();
+
         IntentFilter filterCaptcha = new IntentFilter(VKServiceActivity.VK_SERVICE_BROADCAST);
         IntentFilter filterInterrupt = new IntentFilter(Constant.Broadcast.WALL_POSTING_INTERRUPT);
         IntentFilter filterScreenDestroy = new IntentFilter(Constant.Broadcast.WALL_POSTING_SCREEN_DESTROY);
@@ -193,8 +195,6 @@ public class WallPostingService extends BaseIntentService {
         currentPost = intent.getParcelableExtra(EXTRA_CURRENT_POST);
 
         initNotifications();  // cancel all previous notification and init the new ones
-
-        becomeForeground();
 
         notifyPostingStatus(WALL_POSTING_STATUS_STARTED);
         shouldUploadMedia = component.vkontakteEndpoint().makeWallPostsWithDelegate(selectedGroups, currentPost,
@@ -273,13 +273,11 @@ public class WallPostingService extends BaseIntentService {
     /* Notification delegate */
     // --------------------------------------------------------------------------------------------
     private void becomeForeground() {
-        PendingIntent intent = PostingNotification.makePendingIntent(this, hasFinished,
-                Constant.BAD_ID, keywordBundleId, currentPost.id());
         serviceNotificationBuilder = new Notification.Builder(this)
                 .setSmallIcon(R.drawable.ic_app_notification)
                 .setContentTitle(getResources().getString(R.string.notification_posting_title))
                 .setContentText(getResources().getString(R.string.notification_posting_description_progress))
-                .setContentIntent(intent);
+                .setOngoing(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             serviceNotificationBuilder.setLargeIcon(Icon.createWithResource(this, R.drawable.ic_app));
         }
@@ -288,6 +286,12 @@ public class WallPostingService extends BaseIntentService {
     }
 
     private void initNotifications() {
+        PendingIntent intent = PostingNotification.makePendingIntent(this, hasFinished,
+                Constant.BAD_ID, keywordBundleId, currentPost.id());
+        serviceNotificationBuilder.setContentIntent(intent);
+        Notification notification = serviceNotificationBuilder.build();
+        NotificationManagerCompat.from(this).notify(FOREGROUND_NOTIFICATION_ID, notification);
+
         dropPostingNotification();
         dropPhotoUploadNotification();
         postingNotification = new PostingNotification(this, Constant.BAD_ID, keywordBundleId, currentPost.id());
