@@ -69,7 +69,16 @@ public class VkontakteEndpoint extends Endpoint {
     private final ImageLoader imageLoader;
     private final VkAttachLocalCache attachLocalCache;
 
-    private MakeWallPostToGroups makeWallPostingUseCase;  // reference to communicate with use-case
+    // references to communicate with use-cases
+    private MakeWallPostToGroups makeWallPostingUseCase;
+    private UploadPhotos uploadPhotosUseCase;
+
+    /**
+     * Pending suspension signal for use-cases: suspend signal can arrive before use-case actually
+     * starts, but it should be handled in any way. 'true' means PAUSE, 'false' means RESUME.
+     */
+    private volatile boolean makeWallPostingUseCase_pendingSuspend = false;
+    private volatile boolean uploadPhotosUseCase_pendingSuspend = false;
 
     private @DebugSake int postingInterval = 0;  // use default sleep interval
 
@@ -95,13 +104,76 @@ public class VkontakteEndpoint extends Endpoint {
     /* Communication */
     // ------------------------------------------
     @DebugLog
-    public void pauseWallPosting() {
-        makeWallPostingUseCase.pause();
+    public boolean pausePhotoUploading() {
+        Timber.d("pausePhotoUploading");
+        // communication with use-case is ignored if use-case hasn't started or has finished
+        boolean result = imageLoader.pauseLoadPhotos();
+        if (uploadPhotosUseCase != null) {
+            uploadPhotosUseCase.pause();
+        } else {
+            uploadPhotosUseCase_pendingSuspend = true;
+        }
+        return result && uploadPhotosUseCase != null;
     }
 
     @DebugLog
-    public void resumeWallPosting() {
-        makeWallPostingUseCase.resume();
+    public boolean pauseWallPosting() {
+        Timber.d("pauseWallPosting");
+        // communication with use-case is ignored if use-case hasn't started or has finished
+        if (makeWallPostingUseCase != null) {
+            makeWallPostingUseCase.pause();
+        } else {
+            makeWallPostingUseCase_pendingSuspend = true;
+        }
+        return makeWallPostingUseCase != null;
+    }
+
+    @DebugLog
+    public boolean resumePhotoUploading() {
+        Timber.d("resumePhotoUploading");
+        // communication with use-case is ignored if use-case hasn't started or has finished
+        boolean result = imageLoader.resumeLoadPhotos();
+        if (uploadPhotosUseCase != null) {
+            uploadPhotosUseCase.resume();
+        } else {
+            uploadPhotosUseCase_pendingSuspend = false;
+        }
+        return result && uploadPhotosUseCase != null;
+    }
+
+    @DebugLog
+    public boolean resumeWallPosting() {
+        Timber.d("resumeWallPosting");
+        // communication with use-case is ignored if use-case hasn't started or has finished
+        if (makeWallPostingUseCase != null) {
+            makeWallPostingUseCase.resume();
+        } else {
+            makeWallPostingUseCase_pendingSuspend = false;
+        }
+        return makeWallPostingUseCase != null;
+    }
+
+    // ------------------------------------------
+    private void handlePendingSuspend_makeWallPosting() {
+        boolean flag = makeWallPostingUseCase_pendingSuspend;
+        Timber.d("handlePendingSuspend_makeWallPosting: %s", flag);
+        // handle pending suspension signals
+        if (flag) {
+            makeWallPostingUseCase.pause();
+        } else {
+            makeWallPostingUseCase.resume();
+        }
+    }
+
+    private void handlePendingSuspend_uploadPhotos() {
+        boolean flag = uploadPhotosUseCase_pendingSuspend;
+        Timber.d("handlePendingSuspend_uploadPhotos: %s", flag);
+        // handle pending suspension signals
+        if (flag) {
+            uploadPhotosUseCase.pause();
+        } else {
+            uploadPhotosUseCase.resume();
+        }
     }
 
     /* API */
@@ -197,12 +269,14 @@ public class VkontakteEndpoint extends Endpoint {
     /* Post */
     // ------------------------------------------
     // TODO: implement various Media types {photo, video, file, ...}
-    public void makeWallPosts(Collection<Group> groups, @NonNull Post post,
+    public boolean makeWallPosts(Collection<Group> groups, @NonNull Post post,
                               @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                               @Nullable MultiUseCase.ProgressCallback<GroupReportEssence> progressCallback,
                               @Nullable MultiUseCase.CancelCallback cancelCallback,
                               @Nullable MultiUseCase.ProgressCallback<VKPhotoArray> photoUploadProgressCb,
                               @Nullable MultiUseCase.ProgressCallback<Bitmap> photoPrepareProgressCb) {
+
+        boolean shouldUploadMedia = false;  // this value is returned
 
         List<Group> sortedGroups = new ArrayList<>(groups);  // preserve ordering between groups and reports in future
         Collections.sort(sortedGroups);
@@ -243,7 +317,7 @@ public class VkontakteEndpoint extends Endpoint {
             if (retained.isEmpty()) {
                 Timber.d("No media will be uploaded to endpoint before making wall post - all is in cache");
                 makeWallPosts(paramsBuilder.build(), callback, progressCallback, cancelCallback);
-                return;  // not need to load media before making wall posting - already uploaded
+                return false;  // not need to load media before making wall posting - already uploaded
             }
 
             /**
@@ -255,6 +329,7 @@ public class VkontakteEndpoint extends Endpoint {
              * Nothing will be done is 'retained' list is empty or NULL
              */
             Timber.d("Some media [size = %s] should be uploaded to endpoint before making wall posting", retained.size());
+            shouldUploadMedia = true;
             imageLoader.loadImages(retained, new UseCase.OnPostExecuteCallback<List<Ordered<Bitmap>>>() {
                 @DebugLog @Override
                 public void onFinish(@Nullable List<Ordered<Bitmap>> bitmaps) {
@@ -264,7 +339,9 @@ public class VkontakteEndpoint extends Endpoint {
                     useCase.setProgressCallback(photoUploadProgressCb);
                     useCase.setPostExecuteCallback(createUploadPhotosCallback(retained, paramsBuilder,
                             callback, progressCallback, cancelCallback));
+                    uploadPhotosUseCase = useCase;
                     useCase.execute();
+                    handlePendingSuspend_uploadPhotos();
                 }
 
                 @DebugLog @Override
@@ -277,9 +354,10 @@ public class VkontakteEndpoint extends Endpoint {
             Timber.d("No media attached to Post, make wall posting directly");
             makeWallPosts(paramsBuilder.build(), callback, progressCallback, cancelCallback);
         }
+        return shouldUploadMedia;
     }
 
-    public void makeWallPostsWithDelegate(Collection<Group> groups, @NonNull Post post,
+    public boolean makeWallPostsWithDelegate(Collection<Group> groups, @NonNull Post post,
                                           @Nullable final UseCase.OnPostExecuteCallback<List<GroupReportEssence>> callback,
                                           @Nullable MultiUseCase.ProgressCallback<GroupReportEssence> xprogressCallback,
                                           @Nullable MultiUseCase.CancelCallback cancelCallback,
@@ -321,7 +399,7 @@ public class VkontakteEndpoint extends Endpoint {
             }
         };
 
-        makeWallPosts(groups, post, callback, progressCallback, cancelCallback,
+        return makeWallPosts(groups, post, callback, progressCallback, cancelCallback,
                 photoUploadProgressCb, photoPrepareProgressCb);
     }
 
@@ -427,6 +505,7 @@ public class VkontakteEndpoint extends Endpoint {
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to make wall posting");
+                makeWallPostingUseCase = null;  // unsubscribe from communication
                 int index = 0;
                 List<GroupReportEssence> refinedReports = new ArrayList<>();
                 // loop over all available results (there could a bit cancelled ones)
@@ -462,12 +541,14 @@ public class VkontakteEndpoint extends Endpoint {
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case [Vkontakte Endpoint]: failed to get make wall posting");
+                makeWallPostingUseCase = null;  // unsubscribe from communication
                 if (callback != null) callback.onError(e);
             }
         });
         if (postingInterval > 0) useCase.setSleepInterval(postingInterval);
         makeWallPostingUseCase = useCase;
         useCase.execute();
+        handlePendingSuspend_makeWallPosting();
     }
 
     // ------------------------------------------
@@ -488,6 +569,7 @@ public class VkontakteEndpoint extends Endpoint {
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case [Vkontakte Endpoint]: succeeded to upload photos");
+                uploadPhotosUseCase = null;  // unsubscribe from communication
                 VKAttachments attachments = new VKAttachments();
                 List<VKPhotoArray> refinedPhotos = ValueUtility.unwrap(photos);
                 int index = 0;
@@ -503,6 +585,7 @@ public class VkontakteEndpoint extends Endpoint {
             @DebugLog @Override
             public void onError(Throwable e) {
                 Timber.e("Use-Case [Vkontakte Endpoint]: failed to upload photos");
+                uploadPhotosUseCase = null;  // unsubscribe from communication
                 if (callback != null) callback.onError(e);
             }
         };

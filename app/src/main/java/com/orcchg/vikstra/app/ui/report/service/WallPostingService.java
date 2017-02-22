@@ -48,7 +48,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 import hugo.weaving.DebugLog;
 import timber.log.Timber;
@@ -73,12 +75,15 @@ public class WallPostingService extends BaseIntentService {
     @Retention(RetentionPolicy.SOURCE)
     public @interface WallPostingStatus {}
 
+    private Queue<Task> tasks = new LinkedList<>();
+
     private long keywordBundleId = Constant.BAD_ID;
     private Post currentPost;
 
     private final Object lock = new Object();
     private boolean hasFinished = false;
     private boolean hasPhotoUploadStarted = false;  // don't show notification, if photo uploading doesn't need
+    private boolean shouldUploadMedia = false;
     private boolean wasPaused = false;
     private boolean wasCancelled = false;
     private Throwable cancelReason;
@@ -95,6 +100,30 @@ public class WallPostingService extends BaseIntentService {
     int totalForPosting = 0;
 
     private List<GroupReportEssence> storedReports = new ArrayList<>();
+
+    // --------------------------------------------------------------------------------------------
+    private static final int TASK_INTERRUPT = 0;
+    private static final int TASK_SCREEN_DESTROY = 1;
+    private static final int TASK_SUSPEND_PAUSE = 2;
+    private static final int TASK_SUSPEND_RESUME = 3;
+    @IntDef({
+        TASK_INTERRUPT,
+        TASK_SCREEN_DESTROY,
+        TASK_SUSPEND_PAUSE,
+        TASK_SUSPEND_RESUME
+    })
+    @Retention(RetentionPolicy.SOURCE)
+    private @interface TaskId {}
+
+    private static final class Task {
+        private final @TaskId int id;
+        private final Runnable runnable;
+
+        private Task(@TaskId int id, Runnable runnable) {
+            this.id = id;
+            this.runnable = runnable;
+        }
+    }
 
     // --------------------------------------------------------------------------------------------
     public static Intent getCallingIntent(@NonNull Context context, long keywordBundleId,
@@ -152,6 +181,7 @@ public class WallPostingService extends BaseIntentService {
     protected void onHandleIntent(Intent intent) {
         super.onHandleIntent(intent);
         Timber.i("Enter Wall Posting service");
+
         boolean valid = intent.getBooleanExtra(INTERNAL_EXTRA_START_SERVICE, false);
         if (!valid) {
             Timber.w("Received intent which is not intended for Wall Posting service. Finish...");
@@ -167,7 +197,7 @@ public class WallPostingService extends BaseIntentService {
         becomeForeground();
 
         notifyPostingStatus(WALL_POSTING_STATUS_STARTED);
-        component.vkontakteEndpoint().makeWallPostsWithDelegate(selectedGroups, currentPost,
+        shouldUploadMedia = component.vkontakteEndpoint().makeWallPostsWithDelegate(selectedGroups, currentPost,
                 createMakeWallPostCallback(), createProgressCallback(),
                 createPostingCancelledCallback(), postingDelegate(), photoUploadDelegate());
 
@@ -176,9 +206,12 @@ public class WallPostingService extends BaseIntentService {
             while (!hasFinished) {
                 try {
                     lock.wait();
-                    Timber.v("Service idling... [%s]", hasFinished);
+                    Timber.v("Service idling... [hasFinished=%s], tasks=%s", hasFinished, tasks.size());
+                    pollTasksAndRun();
                 } catch (InterruptedException e) {
+                    Timber.w("Interrupted exception on Service");
                     Thread.currentThread().interrupt();
+                    pollTasksAndRun();  // ensure all tasks are performed
                 }
             }
         }
@@ -266,7 +299,7 @@ public class WallPostingService extends BaseIntentService {
     @DebugLog
     private void notifyPostingStatus(@WallPostingStatus int status) {
         Timber.d("notifyPostingStatus: %s", status);
-        if (status != WALL_POSTING_STATUS_STARTED) wakeUp();
+        if (status != WALL_POSTING_STATUS_STARTED) leave();
     }
 
     // ------------------------------------------
@@ -297,59 +330,20 @@ public class WallPostingService extends BaseIntentService {
     @DebugLog
     private void onScreenDestroyed() {
         Timber.i("onScreenDestroyed, paused=%s", wasPaused);
-        if (wasPaused) {
-            dropPhotoUploadNotification();  // don't drop posting notification - we use it to access to stored reports
-            Timber.d("Attempting to persist all report that Service has managed to retrieve");
-            persistReports(storedReports, new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
-                @Override
-                public void onFinish(@Nullable GroupReportBundle bundle) {
-                    if (bundle == null) {
-                        Timber.e("[Screen destroy]: Failed to put new GroupReportBundle to repository - item not created, as expected");
-                        throw new ProgramException();
-                    }
-                    Timber.i("Use-Case [Screen destroy]: succeeded to put GroupReportBundle");
-                    if (postingNotification != null) postingNotification.onPostingComplete();
-                    if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadComplete();
-                    /**
-                     * Here we update ids of notifications after call
-                     * {@link PostingNotification#onPostingComplete()}, since we need to setup
-                     * {@link PostingNotification#hasPostingFinished} flag properly before making
-                     * a new pending intent with updated id and this flag.
-                     */
-                    updateGroupReportBundleIdForNotifications(bundle.id());
-                    notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
-                    Timber.d("Finishing service after ReportScreen destroyed...");
-                }
-
-                @Override
-                public void onError(Throwable e) {
-                    Timber.e("Use-Case [Screen destroy]: failed to put GroupReportBundle");
-                    notifyPostingStatus(WALL_POSTING_STATUS_ERROR);
-                }
-            });
-        }
+        performScreenDestroyed();
     }
 
     @DebugLog
     private void onWallPostingInterrupt() {
-        Timber.i("onWallPostingInterrupt: startHandle=%s", wasStartedHandle());
-        // check for null in case initial Intent is for receiver, not for 'onHandleIntent'
-        if (postingNotification != null) postingNotification.onPostingInterrupt();
-        if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
+        Timber.i("onWallPostingInterrupt");
+        performInterruption();
     }
 
     @DebugLog
     private void onWallPostingSuspend(boolean paused) {
-        Timber.i("onWallPostingSuspend: paused=%s, startHandle=%s, component=%s",
-                paused, wasStartedHandle(), (component != null ? component.hashCode() : "null"));
-        wasPaused = paused;
-        if (paused) {
-            if (postingNotification != null) postingNotification.onPostingPaused();
-            if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadPaused();
-            component.vkontakteEndpoint().pauseWallPosting();
-        } else {
-            component.vkontakteEndpoint().resumeWallPosting();
-        }
+        Timber.i("onWallPostingSuspend: paused=%s, component=%s",
+                paused, (component != null ? component.hashCode() : "null"));
+        performSuspension(paused);
     }
 
     // --------------------------------------------------------------------------------------------
@@ -500,6 +494,7 @@ public class WallPostingService extends BaseIntentService {
             public void onPhotoUploadComplete() {
                 if (hasPhotoUploadStarted) {
                     hasPhotoUploadStarted = false;
+                    shouldUploadMedia = false;  // finished loading / uploading photos
                     photoUploadNotification.onPhotoUploadComplete();
                 }
             }
@@ -547,10 +542,128 @@ public class WallPostingService extends BaseIntentService {
         postingNotification.updateGroupReportBundleId(this, groupReportBundleId);
     }
 
+    /* Tasks in Service thread */
+    // --------------------------------------------------------------------------------------------
+    // prevents from execution of repeating tasks, if any (user can click buttons too quickly)
+    private boolean alreadyQueuedTask(@TaskId int id) {
+        for (Task task : tasks) {
+            if (task.id == id) return true;
+        }
+        return false;
+    }
+
+    private void pollTasksAndRun() {
+        while (!tasks.isEmpty()) {
+            Task task = tasks.poll();
+            if (task != null) {
+                Timber.d("Running task with id: %s", task.id);
+                task.runnable.run();  // performed in Service thread
+            }
+        }
+    }
+
     private void wakeUp() {
+        synchronized (lock) {
+            lock.notify();
+        }
+    }
+
+    private void leave() {
         synchronized (lock) {
             hasFinished = true;
             lock.notify();
         }
+    }
+
+    /**
+     * Schedules to perform interruption in Service thread.
+     */
+    private void performInterruption() {
+        if (alreadyQueuedTask(TASK_INTERRUPT)) return;
+
+        tasks.add(new Task(TASK_INTERRUPT, () -> {
+            // check for null in case initial Intent is for receiver, not for 'onHandleIntent'
+            if (postingNotification != null) postingNotification.onPostingInterrupt();
+            if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadInterrupt();
+        }));
+
+        wakeUp();
+    }
+
+    /**
+     * Schedules to perform screen destroy reaction in Service thread.
+     */
+    private void performScreenDestroyed() {
+        if (alreadyQueuedTask(TASK_SCREEN_DESTROY)) return;
+
+        tasks.add(new Task(TASK_SCREEN_DESTROY, () -> {
+            if (wasPaused) {
+                dropPhotoUploadNotification();  // don't drop posting notification - we use it to access to stored reports
+                Timber.d("Attempting to persist all report that Service has managed to retrieve");
+                persistReports(storedReports, new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
+                    @Override
+                    public void onFinish(@Nullable GroupReportBundle bundle) {
+                        if (bundle == null) {
+                            Timber.e("[Screen destroy]: Failed to put new GroupReportBundle to repository - item not created, as expected");
+                            throw new ProgramException();
+                        }
+                        Timber.i("Use-Case [Screen destroy]: succeeded to put GroupReportBundle");
+                        if (postingNotification != null) postingNotification.onPostingComplete();
+                        if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadComplete();
+                        /**
+                         * Here we update ids of notifications after call
+                         * {@link PostingNotification#onPostingComplete()}, since we need to setup
+                         * {@link PostingNotification#hasPostingFinished} flag properly before making
+                         * a new pending intent with updated id and this flag.
+                         */
+                        updateGroupReportBundleIdForNotifications(bundle.id());
+                        notifyPostingStatus(WALL_POSTING_STATUS_FINISHED);
+                        Timber.d("Finishing service after ReportScreen destroyed...");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.e("Use-Case [Screen destroy]: failed to put GroupReportBundle");
+                        notifyPostingStatus(WALL_POSTING_STATUS_ERROR);
+                    }
+                });
+            }
+        }));
+
+        wakeUp();
+    }
+
+    /**
+     * Schedules to perform suspend in Service thread.
+     */
+    private void performSuspension(boolean paused) {
+        @TaskId int taskId = paused ? TASK_SUSPEND_PAUSE : TASK_SUSPEND_RESUME;
+        if (alreadyQueuedTask(taskId)) return;
+
+        tasks.add(new Task(taskId, () -> {
+            wasPaused = paused;
+
+            if (shouldUploadMedia) {  // we are loading / uploading photos, wall posting will follow
+                Timber.d("Suspend while uploading photos");
+                if (paused) {
+                    if (hasPhotoUploadStarted && photoUploadNotification != null) photoUploadNotification.onPhotoUploadPaused();
+                    component.vkontakteEndpoint().pausePhotoUploading();
+                } else {
+                    // don't update notification, it will be auto-update via progress callback
+                    component.vkontakteEndpoint().resumePhotoUploading();
+                }
+            } else {  // finished photo upload or completely avoided that
+                Timber.d("Suspend while wall posting");
+                if (paused) {
+                    if (postingNotification != null) postingNotification.onPostingPaused();
+                    component.vkontakteEndpoint().pauseWallPosting();
+                } else {
+                    // don't update notification, it will be auto-update via progress callback
+                    component.vkontakteEndpoint().resumeWallPosting();
+                }
+            }
+        }));
+
+        wakeUp();
     }
 }
