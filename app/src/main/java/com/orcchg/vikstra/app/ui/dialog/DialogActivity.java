@@ -59,13 +59,13 @@ public class DialogActivity extends SimpleBaseActivity {
         dialog1 = DialogProvider.getTextDialog(this, DIALOG_TITLE, DIALOG_DESCRIPTION, DIALOG_YES_BUTTON_LABEL,
                 (xdialog, which) -> {
                     xdialog.dismiss();
+                    Intent data = new Intent();
                     if (finishApp) {
-                        Intent data = new Intent();
-                        data.putExtra(OUT_BUNDLE_KEY_FINISH_APP, finishApp);
-                        setResult(Activity.RESULT_OK, data);
+                        data.putExtra(OUT_BUNDLE_KEY_FINISH_APP, true);
                     } else {
                         navigationComponent.navigator().openStartScreen(this);
                     }
+                    setResult(Activity.RESULT_OK, data);
                     finish();
                 });
         dialog1.setCancelable(false);

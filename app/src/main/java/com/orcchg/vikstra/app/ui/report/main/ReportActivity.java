@@ -45,6 +45,7 @@ import com.orcchg.vikstra.app.ui.viewobject.PostSingleGridItemVO;
 import com.orcchg.vikstra.domain.model.misc.EmailContent;
 import com.orcchg.vikstra.domain.model.misc.PostingUnit;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 import com.orcchg.vikstra.domain.util.file.FileUtility;
 
 import java.util.Locale;
@@ -167,6 +168,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         isAlive = true;
         initData(savedInstanceState);  // init data needed for injected dependencies
         super.onCreate(savedInstanceState);
+        checkForAccessToken();
         setContentView(R.layout.activity_report);
         ButterKnife.bind(this);
         initResources();
@@ -188,6 +190,7 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         Timber.i("onNewIntent");
+        checkForAccessToken();
     }
 
     @Override
@@ -603,6 +606,13 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
 
     /* Internal */
     // --------------------------------------------------------------------------------------------
+    private void checkForAccessToken() {
+        if (EndpointUtility.hasAccessTokenExhausted()) {
+            Timber.w("Access Token has exhausted !");
+            onAccessTokenExhausted();
+        }
+    }
+
     @Nullable
     private ReportFragment getFragment() {
         FragmentManager fm = getSupportFragmentManager();

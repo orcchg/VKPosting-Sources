@@ -1,5 +1,7 @@
 package com.orcchg.vikstra.app.ui.report.main;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
@@ -10,6 +12,7 @@ import com.orcchg.vikstra.app.AppConfig;
 import com.orcchg.vikstra.app.injection.component.ApplicationComponent;
 import com.orcchg.vikstra.app.ui.base.BaseListPresenter;
 import com.orcchg.vikstra.app.ui.base.adapter.BaseAdapter;
+import com.orcchg.vikstra.app.ui.dialog.DialogActivity;
 import com.orcchg.vikstra.app.ui.report.service.WallPostingService;
 import com.orcchg.vikstra.app.ui.viewobject.ReportListItemVO;
 import com.orcchg.vikstra.app.ui.viewobject.mapper.GroupReportToVoMapper;
@@ -616,6 +619,19 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     /* Lifecycle */
     // --------------------------------------------------------------------------------------------
+    @DebugLog @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case DialogActivity.REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK && isViewAttached()) {
+                    Timber.d("Closing ReportScreen as soon as DialogScreen closed");
+                    getView().closeView();
+                }
+                break;
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

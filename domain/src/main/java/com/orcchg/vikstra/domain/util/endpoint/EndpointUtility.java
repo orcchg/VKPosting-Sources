@@ -24,6 +24,10 @@ public class EndpointUtility {
         return VkUseCaseExceptionFactory.errorCode(reason);
     }
 
+    public static boolean hasAccessTokenExhausted() {
+        return !VKSdk.isLoggedIn();
+    }
+
     public static boolean hasAccessTokenExhausted(int apiErrorCode) {
         return !VKSdk.isLoggedIn() || apiErrorCode == Api5VkUseCaseException.ERROR_CODE;
     }
