@@ -734,6 +734,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 Timber.w("Received tardy posting unit after suspension - deploy w/o state transition");
                 deployPostingUnit(postingUnit);  // visualize item w/o state transition
                 return;
+            case StateContainer.Interactive.FETCH_REPORTS:
+                Timber.w("Received tardy posting unit while fetching final results - skip this unit");
+                return;
         }
         statePostingProgress(postingUnit);
     }
