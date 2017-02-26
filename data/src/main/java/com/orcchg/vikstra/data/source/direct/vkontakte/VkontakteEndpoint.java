@@ -415,6 +415,7 @@ public class VkontakteEndpoint extends Endpoint {
         DeleteWallPosts useCase = new DeleteWallPosts(threadExecutor, postExecuteScheduler);
         useCase.setParameters(new DeleteWallPosts.Parameters(reports));
         useCase.setPostExecuteCallback(wrapCallbackForList(callback));
+        if (sConfig.postingInterval > 0) useCase.setSleepInterval(sConfig.postingInterval);
         useCase.execute();
     }
 
@@ -429,6 +430,7 @@ public class VkontakteEndpoint extends Endpoint {
         RestoreWallPosts useCase = new RestoreWallPosts(threadExecutor, postExecuteScheduler);
         useCase.setParameters(new RestoreWallPosts.Parameters(reports));
         useCase.setPostExecuteCallback(wrapCallbackForList(callback));
+        if (sConfig.postingInterval > 0) useCase.setSleepInterval(sConfig.postingInterval);
         useCase.execute();
     }
 
