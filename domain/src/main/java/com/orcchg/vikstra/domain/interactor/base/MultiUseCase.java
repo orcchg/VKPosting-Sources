@@ -41,6 +41,7 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
     private Throwable cancellationReason;
 
     private final Object lock = new Object();
+    private Object lockSuspend = new Object();
     private int sleepInterval = DomainConfig.INSTANCE.multiUseCaseSleepInterval();  // to avoid Captcha error, interval in ms
 
     private final PostExecuteScheduler progressCallbackScheduler;  // where to observe progress callbacks
@@ -77,10 +78,10 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
         if (isSuspended.get() == paused) return;  // idempotent operation
 
         isSuspended.getAndSet(paused);  // atomic operation
-        synchronized (lock) {
+        synchronized (lockSuspend) {
             Timber.tag(getClass().getSimpleName());
             Timber.d("Toggled suspend: %s", paused);
-            lock.notify();  // wake-up main thread
+            lockSuspend.notify();  // wake-up main thread
         }
     }
 
@@ -205,9 +206,9 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                     Timber.tag(getClass().getSimpleName());
                     Timber.d("Execution has been paused");
                     threadExecutor.pause();
-                    synchronized (lock) {
+                    synchronized (lockSuspend) {
                         try {
-                            lock.wait();
+                            lockSuspend.wait();
                         } catch (InterruptedException e) {
                             Timber.w("Interruption during suspension");
                             Thread.currentThread().interrupt();
@@ -325,6 +326,26 @@ public abstract class MultiUseCase<Result, L extends List<Ordered<Result>>> exte
                 }
             }
         }
+
+        /**
+         * Lock and Lock-Suspend are separated until all tasks are enqueued. While not all tasks
+         * are enqueued, this {@link MultiUseCase} can be suspended either directly (by user) or
+         * indirectly (if any of {@link MultiUseCase#suspendErrors} has occurred). In the latter
+         * case a certain task will continue it's execution and then notify this {@link MultiUseCase}
+         * on finish. So, this {@link MultiUseCase} was in the middle of pushing tasks, when it has
+         * been suspended, it must not be resumed by this notification of some finishing tasks,
+         * because this will drop suspension and the rest tasks will be enqueued then, as usual.
+         *
+         * On the other hand, if this {@link MultiUseCase} has just finished pushing tasks, it is
+         * waiting for them to finish and also should react on direct and indirect suspend signals.
+         * But now it is waiting on {@link MultiUseCase#lock}, despite direct suspensions will trigger
+         * {@link MultiUseCase#lockSuspend}, and indirect will trigger {@link MultiUseCase#lock} as
+         * usual. The latter case is OK now, because we are no longer afraid of simultaneous massive
+         * pushing of all the rest tasks since they have already been pushed to the queue.
+         * But this {@link MultiUseCase} still must react on direct suspend signals, so we have to
+         * re-assign the lock which is triggered with such direct signals.
+         */
+        lockSuspend = lock;
 
         /**
          * Waiting for all use-cases to finish. Even if some use-cases were cancelled, their results
