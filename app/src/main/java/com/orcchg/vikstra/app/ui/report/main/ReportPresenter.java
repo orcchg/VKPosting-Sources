@@ -63,6 +63,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     private MementoInteractive mementoInteractive = new MementoInteractive();
     private MementoNormal mementoNormal = new MementoNormal();
 
+    private boolean isInteractiveMode = true;  // this flag may change over time
+
     // --------------------------------------------------------------------------------------------
     private static final class StateContainer {
         @NormalMode
@@ -115,7 +117,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
     // --------------------------------------------------------------------------------------------
     private static final class MementoCommon {
-        private static final String BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE = "bundle_key_flag_is_interactive_mode_" + PrID;
         private static final String BUNDLE_KEY_EMAIL = "bundle_key_email_" + PrID;
         private static final String BUNDLE_KEY_KEYWORD_BUNDLE_ID = "bundle_key_keyword_bundle_id_" + PrID;
         private static final String BUNDLE_KEY_CURRENT_POST = "bundle_key_current_post_" + PrID;
@@ -123,8 +124,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         private static final String BUNDLE_KEY_FLAG_POSTED_WITH_FAILURE = "bundle_key_flag_posted_with_failure_" + PrID;
         private static final String BUNDLE_KEY_FLAG_POSTED_WITH_SUCCESS = "bundle_key_flag_posted_with_success_" + PrID;
         private static final String BUNDLE_KEY_FLAG_TOTAL_FOR_POSTING = "bundle_key_flag_total_for_posting_" + PrID;
-
-        private boolean isInteractiveMode = true;  // this flag may change over time
 
         private @Nullable String email;
         private long keywordBundleId = Constant.BAD_ID;
@@ -136,7 +135,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
         @DebugLog
         private void toBundle(Bundle outState) {
-            outState.putBoolean(BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE, isInteractiveMode);
             outState.putString(BUNDLE_KEY_EMAIL, email);
             outState.putLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, keywordBundleId);
             outState.putParcelable(BUNDLE_KEY_CURRENT_POST, currentPost);
@@ -149,7 +147,6 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         @DebugLog
         private static MementoCommon fromBundle(Bundle savedInstanceState) {
             MementoCommon memento = new MementoCommon();
-            memento.isInteractiveMode = savedInstanceState.getBoolean(BUNDLE_KEY_FLAG_IS_INTERACTIVE_MODE, false);
             memento.email = savedInstanceState.getString(BUNDLE_KEY_EMAIL);
             memento.keywordBundleId = savedInstanceState.getLong(BUNDLE_KEY_KEYWORD_BUNDLE_ID, Constant.BAD_ID);
             memento.currentPost = savedInstanceState.getParcelable(BUNDLE_KEY_CURRENT_POST);
@@ -193,18 +190,22 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @NormalMode
     private static final class MementoNormal {
         private static final String BUNDLE_KEY_STATE_NORMAL = "bundle_key_state_normal_" + PrID;
+        private static final String BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID = "bundle_key_group_report_bundle_id_" + PrID;
 
         private @StateContainer.Normal.State int state = StateContainer.Normal.START;
+        private long groupReportBundleId = Constant.BAD_ID;
 
         @DebugLog
         private void toBundle(Bundle outState) {
             outState.putInt(BUNDLE_KEY_STATE_NORMAL, state);
+            outState.putLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, groupReportBundleId);
         }
 
         @DebugLog @SuppressWarnings("ResourceType")
         private static MementoNormal fromBundle(Bundle savedInstanceState) {
             MementoNormal memento = new MementoNormal();
             memento.state = savedInstanceState.getInt(BUNDLE_KEY_STATE_NORMAL, StateContainer.Normal.START);
+            memento.groupReportBundleId = savedInstanceState.getLong(BUNDLE_KEY_GROUP_REPORT_BUNDLE_ID, Constant.BAD_ID);
             return memento;
         }
     }
@@ -228,7 +229,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         this.groupReportToVoMapper = groupReportToVoMapper;
         this.postToSingleGridVoMapper = postToSingleGridVoMapper;
 
-        mementoCommon.isInteractiveMode = holder.isInteractiveMode();
+        isInteractiveMode = holder.isInteractiveMode();
         mementoCommon.keywordBundleId = getKeywordBundleByIdUseCase.getKeywordBundleId();  // use-case only to provide value
     }
 
@@ -609,6 +610,8 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         setInteractiveState(StateContainer.Interactive.FETCH_REPORTS);
         // enter FETCH_REPORTS state logic
 
+        if (isViewAttached()) getView().switchToNormalMode(groupReportBundleId);
+
         // fetch GroupReportBundle stored to repository by Service when it has finished
         getGroupReportBundleByIdUseCase.setGroupReportId(groupReportBundleId);
         getGroupReportBundleByIdUseCase.execute();
@@ -619,12 +622,10 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (isInteractiveMode()) {
-            mementoInteractive.toBundle(outState);
-        } else {
-            mementoNormal.toBundle(outState);
-        }
+        // save all possible states
         mementoCommon.toBundle(outState);
+        mementoInteractive.toBundle(outState);
+        mementoNormal.toBundle(outState);
     }
 
     /* Contract */
@@ -812,6 +813,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     protected void onRestoreState() {
         mementoCommon = MementoCommon.fromBundle(savedInstanceState);
         if (isInteractiveMode()) {
+            Timber.d("Restore interactive mode");
             mementoInteractive = MementoInteractive.fromBundle(savedInstanceState);
             /**
              * Restore Post in interactive mode. In standard mode {@link ReportPresenter#freshStart()}
@@ -822,7 +824,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
 
             // TODO: re-attach to running service
         } else {
+            Timber.d("Restore normal mode");
             mementoNormal = MementoNormal.fromBundle(savedInstanceState);
+            getGroupReportBundleByIdUseCase.setGroupReportId(mementoNormal.groupReportBundleId);
             freshStart();  // nothing to be restored
         }
     }
@@ -893,9 +897,10 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
         return new UseCase.OnPostExecuteCallback<GroupReportBundle>() {
             @DebugLog @Override
             public void onFinish(@Nullable GroupReportBundle bundle) {
-                long groupReportBundleId = getGroupReportBundleByIdUseCase.getGroupReportId();
+                mementoNormal.groupReportBundleId = getGroupReportBundleByIdUseCase.getGroupReportId();
                 if (bundle == null || bundle.groupReports() == null) {
-                    Timber.e("GroupReportBundle wasn't found by id [%s], or groupReports property is null", groupReportBundleId);
+                    Timber.e("GroupReportBundle wasn't found by id [%s], or groupReports property is null",
+                            mementoNormal.groupReportBundleId);
                     throw new ProgramException();
                 }
                 Timber.i("Use-Case: succeeded to get GroupReportBundle by id");
@@ -996,7 +1001,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
     }
 
     private boolean isInteractiveMode() {
-        return mementoCommon.isInteractiveMode;
+        return isInteractiveMode;
     }
 
     @SuppressWarnings("unchecked")

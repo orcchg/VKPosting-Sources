@@ -564,6 +564,12 @@ public class ReportActivity extends BasePermissionActivity<ReportContract.View, 
         finish();
     }
 
+    @Override
+    public void switchToNormalMode(long groupReportBundleId) {
+        this.groupReportBundleId = groupReportBundleId;
+        isInteractiveMode = false;
+    }
+
     // ------------------------------------------
     @Override
     public void showGroupReports(boolean isEmpty) {

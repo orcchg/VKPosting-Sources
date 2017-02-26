@@ -42,6 +42,7 @@ public interface ReportContract {
         void updatePostedCounters(int posted, int total);
 
         void closeView();
+        void switchToNormalMode(long groupReportBundleId);
     }
 
     interface SubView extends LceView, MvpListView {
