@@ -374,9 +374,9 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
             List<GroupReport> storedReports = inputGroupReportBundle.groupReports();
             int totalReverted = setListItemsReverted(storedReports);
             if (totalReverted > 0) {
-                Timber.d("Updating GroupReportBundle in repository...");
+                Timber.d("Updating GroupReportBundle in repository, id: %s", mementoNormal.groupReportBundleId);
                 GroupReportBundle bundle = GroupReportBundle.builder()
-                        .setId(inputGroupReportBundle.id())
+                        .setId(mementoNormal.groupReportBundleId)
                         .setGroupReports(storedReports)
                         .setKeywordBundleId(mementoCommon.keywordBundleId)
                         .setPostId(mementoCommon.currentPost.id())
@@ -662,7 +662,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 notReady = false;
             }
         } else {
-            long groupReportBundleId = getGroupReportBundleByIdUseCase.getGroupReportId();
+            long groupReportBundleId = mementoNormal.groupReportBundleId;
             if (groupReportBundleId != Constant.BAD_ID) {
                 Timber.d("GroupReportBundle id [%s] is valid, ready to dump", groupReportBundleId);
                 dumpGroupReportsUseCase.setParameters(new DumpGroupReports.Parameters(groupReportBundleId));
