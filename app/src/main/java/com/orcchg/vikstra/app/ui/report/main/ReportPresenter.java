@@ -377,6 +377,7 @@ public class ReportPresenter extends BaseListPresenter<ReportContract.View> impl
                 Timber.d("Updating GroupReportBundle in repository, id: %s", mementoNormal.groupReportBundleId);
                 GroupReportBundle bundle = GroupReportBundle.builder()
                         .setId(mementoNormal.groupReportBundleId)
+                        .setUserId(EndpointUtility.getCurrentUserId())
                         .setGroupReports(storedReports)
                         .setKeywordBundleId(mementoCommon.keywordBundleId)
                         .setPostId(mementoCommon.currentPost.id())

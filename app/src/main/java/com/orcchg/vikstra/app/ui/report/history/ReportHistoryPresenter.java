@@ -13,7 +13,7 @@ import com.orcchg.vikstra.domain.exception.ProgramException;
 import com.orcchg.vikstra.domain.interactor.base.UseCase;
 import com.orcchg.vikstra.domain.interactor.keyword.GetSpecificKeywordBundles;
 import com.orcchg.vikstra.domain.interactor.post.GetSpecificPosts;
-import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundles;
+import com.orcchg.vikstra.domain.interactor.report.GetGroupReportBundlesForUser;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.model.Heavy;
@@ -37,7 +37,7 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
         implements ReportHistoryContract.Presenter {
     private static final int PrID = Constant.PresenterId.REPORT_HISTORY_PRESENTER;
 
-    private final GetGroupReportBundles getGroupReportBundlesUseCase;
+    private final GetGroupReportBundlesForUser getGroupReportBundlesUseCase;
     private final GetSpecificKeywordBundles getSpecificKeywordBundlesUseCase;
     private final GetSpecificPosts getSpecificPostsUseCase;
 
@@ -100,7 +100,7 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
 
     // --------------------------------------------------------------------------------------------
     @Inject
-    ReportHistoryPresenter(GetGroupReportBundles getGroupReportBundlesUseCase,
+    ReportHistoryPresenter(GetGroupReportBundlesForUser getGroupReportBundlesUseCase,
                            GetSpecificKeywordBundles getSpecificKeywordBundlesUseCase,
                            GetSpecificPosts getSpecificPostsUseCase,
                            PostToSingleGridVoMapper postToSingleGridVoMapper) {

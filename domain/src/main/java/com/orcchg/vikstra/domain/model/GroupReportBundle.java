@@ -18,6 +18,7 @@ public abstract class GroupReportBundle implements Comparable<GroupReportBundle>
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder setId(long id);
+        public abstract Builder setUserId(long userId);
         public abstract Builder setGroupReports(List<GroupReport> reports);
         public abstract Builder setKeywordBundleId(long keywordBundleId);
         public abstract Builder setPostId(long postId);
@@ -26,6 +27,7 @@ public abstract class GroupReportBundle implements Comparable<GroupReportBundle>
     }
 
     public abstract long id();
+    public abstract long userId();
     public abstract List<GroupReport> groupReports();
     public abstract long keywordBundleId();
     public abstract long postId();

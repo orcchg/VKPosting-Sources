@@ -2,6 +2,7 @@ package com.orcchg.vikstra.domain.sample;
 
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,7 @@ public class ReportProvider {
     public GroupReportBundle reportBundle() {
         return GroupReportBundle.builder()
                 .setId(BASE_BUNDLE_ID++)
+                .setUserId(EndpointUtility.getCurrentUserId())
                 .setGroupReports(reports(rng.nextInt() % 10 + 1))
                 .setKeywordBundleId(999)
                 .setPostId(1000)

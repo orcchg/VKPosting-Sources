@@ -47,7 +47,7 @@ public class ReportMigration implements RealmMigration {
          *     long timestamp;
          *     long wallPostId;
          *
-         * Version 4, 5
+         * Version 4, 5, 6
          * --------------------------------------
          *     long id;
          *     boolean cancelled;
@@ -86,12 +86,27 @@ public class ReportMigration implements RealmMigration {
          *  ++ long keywordBundleId
          *  ++ long postId
          *     long timestamp
+         *
+         * Version 6
+         * --------------------------------------
+         *     long id;
+         *  ++ long userId;
+         *     RealmList<GroupReportDBO> groupReports
+         *     long keywordBundleId
+         *     long postId
+         *     long timestamp
          */
         if (oldVersion < 5) {
             RealmObjectSchema objectSchema = schema.get("GroupReportBundleDBO");
             objectSchema.addField(GroupReportBundleDBO.COLUMN_KEYWORD_BUNDLE_ID, long.class);
             objectSchema.addField(GroupReportBundleDBO.COLUMN_POST_ID, long.class);
             oldVersion = 5;
+        }
+
+        if (oldVersion < 6) {
+            RealmObjectSchema objectSchema = schema.get("GroupReportBundleDBO");
+            objectSchema.addField(GroupReportBundleDBO.COLUMN_USER_ID, long.class);
+            oldVersion = 6;
         }
     }
 }

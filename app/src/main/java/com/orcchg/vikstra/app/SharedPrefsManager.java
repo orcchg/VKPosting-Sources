@@ -42,6 +42,9 @@ public class SharedPrefsManager {
         return id;
     }
 
+    /* Report */
+    // ------------------------------------------
+
     /* Settings */
     // ------------------------------------------
     @DebugLog @Nullable

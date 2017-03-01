@@ -10,6 +10,7 @@ import com.orcchg.vikstra.domain.model.essense.GroupReportEssence;
 import com.orcchg.vikstra.domain.model.essense.mapper.GroupReportEssenceMapper;
 import com.orcchg.vikstra.domain.repository.IReportRepository;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,6 +61,7 @@ public class ReportRepositoryImpl implements IReportRepository {
                 List<GroupReport> reports = new ArrayList<>();
                 GroupReportBundle bundle = GroupReportBundle.builder()
                         .setId(++lastId)
+                        .setUserId(EndpointUtility.getCurrentUserId())
                         .setGroupReports(reports)
                         .setKeywordBundleId(keywordBundleId)
                         .setPostId(postId)
@@ -113,6 +115,22 @@ public class ReportRepositoryImpl implements IReportRepository {
             try {
                 // TODO: impl cloudly
                 return localSource.groupReports(limit, offset);
+            } finally {
+                lock.unlockRead();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<GroupReportBundle> groupReportsForUser(long userId) {
+        try {
+            lock.lockRead();
+            try {
+                // TODO: impl cloudly
+                return localSource.groupReportsForUser(userId);
             } finally {
                 lock.unlockRead();
             }

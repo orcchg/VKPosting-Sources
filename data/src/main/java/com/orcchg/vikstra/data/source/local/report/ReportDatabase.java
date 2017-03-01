@@ -15,6 +15,7 @@ import com.orcchg.vikstra.data.source.repository.report.IReportStorage;
 import com.orcchg.vikstra.domain.model.GroupReport;
 import com.orcchg.vikstra.domain.model.GroupReportBundle;
 import com.orcchg.vikstra.domain.util.Constant;
+import com.orcchg.vikstra.domain.util.endpoint.EndpointUtility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,6 +113,20 @@ public class ReportDatabase implements IReportStorage {
             models.add(groupReportBundleToDboMapper.mapBack(dbos.get(i)));
         }
         realm.close();
+        return models;
+    }
+
+    @Override
+    public List<GroupReportBundle> groupReportsForUser(long userId) {
+        List<GroupReportBundle> models = new ArrayList<>();
+        if (userId != EndpointUtility.BAD_USER_ID) {
+            Realm realm = Realm.getInstance(migrationComponent.realmConfiguration());
+            RealmResults<GroupReportBundleDBO> dbos = realm.where(GroupReportBundleDBO.class).equalTo(GroupReportBundleDBO.COLUMN_USER_ID, userId).findAll();
+            for (GroupReportBundleDBO dbo : dbos) {
+                models.add(groupReportBundleToDboMapper.mapBack(dbo));
+            }
+            realm.close();
+        }
         return models;
     }
 

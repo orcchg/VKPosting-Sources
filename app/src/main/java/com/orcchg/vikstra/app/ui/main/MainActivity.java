@@ -148,7 +148,7 @@ public class MainActivity extends BaseActivity<MainContract.View, MainContract.P
     private void initToolbar() {
         toolbar.setTitle(R.string.main_screen_title);
         toolbar.setNavigationIcon(null);  // no navigation back from MainScreen
-        toolbar.inflateMenu(R.menu.avatar);
+        toolbar.inflateMenu(R.menu.avatar_history);
         toolbar.setOnMenuItemClickListener((item) -> {
             switch (item.getItemId()) {
 //                case R.id.about:

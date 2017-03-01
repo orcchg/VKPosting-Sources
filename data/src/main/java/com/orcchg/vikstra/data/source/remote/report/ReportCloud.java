@@ -50,6 +50,11 @@ public class ReportCloud implements IReportStorage {
         return null;
     }
 
+    @Override
+    public List<GroupReportBundle> groupReportsForUser(long userId) {
+        return null;
+    }
+
     /* Update */
     // ------------------------------------------
     @Override

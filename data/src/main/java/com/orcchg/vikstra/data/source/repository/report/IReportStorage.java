@@ -20,6 +20,7 @@ public interface IReportStorage extends IStorage {
     // ------------------------------------------
     @Nullable GroupReportBundle groupReports(long id);
     List<GroupReportBundle> groupReports(int limit, int offset);
+    List<GroupReportBundle> groupReportsForUser(long userId);
 
     /* Update */
     // ------------------------------------------

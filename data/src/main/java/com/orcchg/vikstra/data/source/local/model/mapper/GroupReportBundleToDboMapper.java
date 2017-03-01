@@ -52,6 +52,7 @@ public class GroupReportBundleToDboMapper implements DuplexMapper<GroupReportBun
         }
         return GroupReportBundle.builder()
                 .setId(object.id)
+                .setUserId(object.userId)
                 .setGroupReports(reports)
                 .setKeywordBundleId(object.keywordBundleId)
                 .setPostId(object.postId)

@@ -22,6 +22,7 @@ public class GroupReportBundleToDboPopulator implements Populator<GroupReportBun
     @Override
     public void populate(GroupReportBundle object, GroupReportBundleDBO dbo) {
         dbo.id = object.id();
+        dbo.userId = object.userId();
         dbo.groupReports = new RealmList<>();
         dbo.keywordBundleId = object.keywordBundleId();
         dbo.postId = object.postId();

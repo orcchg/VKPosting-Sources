@@ -10,14 +10,14 @@ import com.vk.sdk.VKSdk;
  */
 public class EndpointUtility {
 
-    public static final long BAD_VK_USER_ID = 0;
+    public static final long BAD_USER_ID = 0;
 
     public static long getCurrentUserId() {
         // same logic, as {@link VKSdk#isLoggedIn()}, but we need access_token fields here
         VKAccessToken accessToken = VKAccessToken.currentToken();
         return accessToken != null && !accessToken.isExpired()
                 ? Long.parseLong(accessToken.userId)
-                : BAD_VK_USER_ID;
+                : BAD_USER_ID;
     }
 
     public static int errorCode(Throwable reason) {
