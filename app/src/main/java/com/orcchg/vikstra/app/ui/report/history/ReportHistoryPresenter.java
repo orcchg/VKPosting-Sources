@@ -216,7 +216,10 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
         dropListStat();
 
         // fresh start - load input GroupReportBundle-s
-        if (isViewAttached()) getView().showLoading(getListTag());
+        if (isViewAttached()) {
+            getView().enableSwipeToRefresh(false);
+            getView().showLoading(getListTag());
+        }
         getGroupReportBundlesUseCase.execute();
     }
 
@@ -235,7 +238,11 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
         Timber.d("Total GroupReportBundle-s: %s", bundles.size());
 
         if (bundles.isEmpty()) {
-            if (isViewAttached()) getView().showEmptyList(getListTag());
+            if (isViewAttached()) {
+                getView().enableSwipeToRefresh(true);
+                getView().showEmptyList(getListTag());
+            }
+            stateIdle();  // fallback to idle state
         } else {
             int size = bundles.size();
             long[] keywordBundleIds = new long[size];
@@ -294,6 +301,8 @@ public class ReportHistoryPresenter extends BaseListPresenter<ReportHistoryContr
         Timber.i("stateIdle");
         setState(StateContainer.IDLE);
         // enter IDLE state logic
+
+        if (isViewAttached()) getView().enableSwipeToRefresh(true);
 
         populateList();
     }

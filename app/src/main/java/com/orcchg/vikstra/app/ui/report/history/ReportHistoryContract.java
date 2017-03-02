@@ -6,6 +6,8 @@ import com.orcchg.vikstra.app.ui.common.screen.LceView;
 
 public interface ReportHistoryContract {
     interface View extends LceView, MvpListView {
+        void enableSwipeToRefresh(boolean isEnabled);
+
         void openPostViewScreen(long postId);
         void openReportScreen(long groupReportBundleId, long keywordBundleId, long postId);
 

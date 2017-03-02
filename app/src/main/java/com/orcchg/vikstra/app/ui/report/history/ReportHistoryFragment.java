@@ -60,6 +60,12 @@ public class ReportHistoryFragment extends CollectionFragment<ReportHistoryContr
     /* Contract */
     // --------------------------------------------------------------------------------------------
     @Override
+    public void enableSwipeToRefresh(boolean isEnabled) {
+        swipeRefreshLayout.setEnabled(isEnabled);
+    }
+
+    // ------------------------------------------
+    @Override
     public void openPostViewScreen(long postId) {
         navigationComponent.navigator().openPostViewScreen(getActivity(), postId, false);
     }
