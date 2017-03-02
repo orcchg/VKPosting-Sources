@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="com_vk_sdk_AppId">5691108</integer>
+    <integer name="com_vk_sdk_AppId">5904178</integer>
+    <integer name="com_vk_sdk_AppId_old">5691108</integer>
 </resources>

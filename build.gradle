@@ -17,8 +17,8 @@ buildscript {
 allprojects {
     ext {
         androidApplicationId = 'com.orcchg.dev.maxa.vikstra'
-        androidVersionCode = 25
-        androidVersionName = "1.4.25"
+        androidVersionCode = 26
+        androidVersionName = "1.4.26"
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         testApplicationId = 'com.orcchg.vikstra.test'
     }
