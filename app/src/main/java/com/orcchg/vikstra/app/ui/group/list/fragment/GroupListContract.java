@@ -9,7 +9,7 @@ import com.orcchg.vikstra.domain.util.endpoint.AccessTokenTracker;
 
 import java.util.Collection;
 
-interface GroupListContract {
+public interface GroupListContract {
     interface View extends AccessTokenTracker, LceView, MvpListView {
         void enableSwipeToRefresh(boolean isEnabled);
 
